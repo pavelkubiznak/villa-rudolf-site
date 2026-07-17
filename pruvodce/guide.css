@@ -139,15 +139,38 @@ body{margin:0;background:#0E1311}
 
 .vg-map{margin-top:18px;border:1px solid rgba(240,235,225,.12);border-radius:4px;overflow:hidden;background:#0B100E}
 .vg-map .mapholder{position:relative}
-.vg-map svg.map{display:block;width:100%;height:auto}
+.vg-map svg.map{display:block;width:100%;height:auto;max-height:74vh}
 .vg-map .pin{cursor:pointer}
 .vg-mapnote{margin:0;padding:10px 14px;border-top:1px solid rgba(240,235,225,.08);font-size:11px;color:#79817A}
-.vg-popup{position:absolute;pointer-events:none;z-index:5;width:max-content;max-width:230px;background:#141A17;
-  border:1px solid color-mix(in oklab,var(--acc),transparent 40%);border-radius:4px;padding:11px 13px;box-shadow:0 10px 28px rgba(0,0,0,.55)}
-.vg-popup .nm{margin:0;font-family:'Newsreader',serif;font-size:15px;line-height:1.15;color:#F0EBE1}
-.vg-popup .sub{margin:3px 0 0;font-size:11.5px;color:#B4BAAD}
-.vg-popup .meta{margin:7px 0 0;font-size:10.5px;color:#8f978f}
-.vg-popup .price{margin:2px 0 0;font-size:10.5px;font-weight:600;color:var(--acc)}
+
+/* zoom pilulky nad rohem mapy */
+.vg-zoombtns{position:absolute;top:10px;right:10px;display:flex;gap:6px;z-index:4}
+.vg-zoombtn{font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:.02em;color:#CFD4C9;
+  background:rgba(11,16,14,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  border:1px solid rgba(240,235,225,.18);border-radius:999px;padding:6px 11px;cursor:pointer;white-space:nowrap;
+  box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.vg-zoombtn[data-on="true"]{font-weight:700;color:#0E1311;background:var(--vg-ember);border-color:var(--vg-ember)}
+
+/* pevný panel vybraného výletu — přímo pod mapou, nad popiskem */
+.vg-selpanel{min-height:66px;display:flex;align-items:center;border-top:1px solid rgba(240,235,225,.08);
+  padding:12px 14px;background:rgba(16,22,19,.4)}
+.vg-selhint{display:flex;align-items:center;gap:9px;margin:0;font-size:12.5px;color:#79817A}
+.vg-selhint .icon{width:15px;height:15px;color:#5f6a62}
+.vg-selcard{display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:center;width:100%;
+  text-align:left;background:transparent;border:0;padding:0;cursor:pointer}
+.vg-selic{display:flex;flex-direction:column;align-items:center;gap:5px}
+.vg-selic .vg-iconbox{width:42px;height:42px;background:color-mix(in oklab,var(--acc),#0E1311 76%)}
+.vg-selic .vg-iconbox .icon{width:21px;height:21px;stroke-width:1.7}
+.vg-selnum{font-size:10px;font-weight:700;color:var(--acc)}
+.vg-selbd{min-width:0}
+.vg-selbd h3{font-family:'Newsreader',serif;font-weight:400;font-size:1.12rem;line-height:1.12;margin:0;color:#F0EBE1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vg-seltag{margin:3px 0 0;font-size:12px;color:#B4BAAD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vg-selmeta{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:11px;color:#8f978f;flex-wrap:wrap}
+.vg-selmeta .icon{width:12px;height:12px;color:#8f978f}
+.vg-selmeta .sep{color:#4A5350}
+.vg-seldetail{align-self:center;flex:none;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:#0E1311;background:var(--vg-ember);border-radius:999px;padding:9px 13px;white-space:nowrap}
 
 .vg-group{margin-top:34px}
 .vg-grouphead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}

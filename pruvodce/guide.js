@@ -33,6 +33,7 @@
       pubEyebrow: 'Výlety v okolí', pubTitle: 'Kam z Villy Rudolf',
       pubLead: 'Ověřené výlety do hodiny od domu — od procházek s kočárkem po Sněžku. Hosté s rezervací dostanou plán na míru podle počasí a věku dětí.',
       mapNote: 'Ilustrativní mapa — čísla odpovídají katalogu níže. Cíle v kroužku jsou pěšky od vily.',
+      selHint: 'Ťukněte na bod v mapě', zoomFull: 'Celé Krkonoše', zoomNear: 'Okolí vily',
       foodTitle: 'Kam na dobré jídlo', foodSub: 'Prověřeno hosty i majiteli',
       footNote: 'Data z katalogu villa-rudolf-portal · ceny a otevírací doby ověřte před cestou.',
       wxLive: 'počasí: yr.no · živě',
@@ -62,6 +63,7 @@
       pubEyebrow: 'Ausflüge in der Umgebung', pubTitle: 'Wohin von der Villa Rudolf',
       pubLead: 'Geprüfte Ausflüge bis zu einer Stunde vom Haus — vom Kinderwagenspaziergang bis zur Schneekoppe. Gäste mit Reservierung erhalten einen Plan nach Wetter und Kinderalter.',
       mapNote: 'Illustrative Karte — Nummern entsprechen dem Katalog unten. Ziele im Kreis sind zu Fuß erreichbar.',
+      selHint: 'Tippen Sie auf einen Punkt der Karte', zoomFull: 'Ganze Region', zoomNear: 'Rund um die Villa',
       foodTitle: 'Gut essen gehen', foodSub: 'Von Gästen und Gastgebern geprüft',
       footNote: 'Daten aus dem Katalog villa-rudolf-portal · Preise und Öffnungszeiten vorab prüfen.',
       wxLive: 'Wetter: yr.no · live',
@@ -91,6 +93,7 @@
       pubEyebrow: 'Trips nearby', pubTitle: 'Where to go from Villa Rudolf',
       pubLead: 'Verified trips within an hour of the house — from stroller walks to Sněžka. Guests with a booking get a plan tailored to weather and kids’ ages.',
       mapNote: 'Illustrative map — numbers match the catalogue below. Circled spots are walkable from the villa.',
+      selHint: 'Tap a point on the map', zoomFull: 'Whole area', zoomNear: 'Around the villa',
       foodTitle: 'Where to eat well', foodSub: 'Vetted by guests and hosts',
       footNote: 'Data from the villa-rudolf-portal catalogue · verify prices and hours before you go.',
       wxLive: 'weather: yr.no · live',
@@ -120,6 +123,7 @@
       pubEyebrow: 'Wycieczki w okolicy', pubTitle: 'Dokąd z Villi Rudolf',
       pubLead: 'Sprawdzone wycieczki do godziny od domu — od spacerów z wózkiem po Śnieżkę. Goście z rezerwacją dostają plan dopasowany do pogody i wieku dzieci.',
       mapNote: 'Mapa poglądowa — numery odpowiadają katalogowi poniżej. Cele w okręgu są pieszo od willi.',
+      selHint: 'Dotknijcie punktu na mapie', zoomFull: 'Cały region', zoomNear: 'Okolice willi',
       foodTitle: 'Gdzie dobrze zjeść', foodSub: 'Sprawdzone przez gości i gospodarzy',
       footNote: 'Dane z katalogu villa-rudolf-portal · ceny i godziny sprawdźcie przed wyjazdem.',
       wxLive: 'pogoda: yr.no · na żywo',
@@ -275,12 +279,13 @@
   function priceShort(s) { return firstSeg(s, ['·', ';']); }
   function transportLabel(t, L) { return t.byFoot ? L.footLabel : (t.travelMin + ' ' + L.carLabel); }
   function wxFor(forecast, loc, date) { var l = forecast && forecast.byLocation && forecast.byLocation[loc]; return l && l.daily ? l.daily[date] : null; }
+  function findTrip(id) { for (var i = 0; i < DATA.trips.length; i++) if (DATA.trips[i].id === id) return DATA.trips[i]; return null; }
 
   /* ===================== Stav ===================== */
-  var S = { lang: 'cs', mode: 'public', filter: 'vse', visited: {}, wiz: { day: 0, dur: 1, car: 'car', grp: 'deti' }, selPin: null };
+  var S = { lang: 'cs', mode: 'public', filter: 'vse', visited: {}, wiz: { day: 0, dur: 1, car: 'car', grp: 'deti' }, selPin: null, mapZoom: 'full' };
   var DATA = { guest: null, trips: [], food: [], forecast: null };
   var token = qs.get('t') || '';
-  var LAST_MAP = { W: 520, H: 360, pins: {} };
+  var LAST_MAP = { W: 520, H: 360, pins: {}, fullBox: { x: 0, y: 0, w: 520, h: 360 }, zoomBox: null };
 
   function loadPrefs() {
     try {
@@ -313,7 +318,9 @@
   }
   function renderMap(trips, plan, filterId) {
     var lang = S.lang, L = T[lang];
-    var W = 520, padX = 30, padTop = 34, padBot = 30, F = 'Archivo,system-ui,sans-serif';
+    // Větší mapa: menší okraje + svislé roztažení (YSTRETCH) → vyšší render a víc místa
+    // pro namačkaný středový cluster (mapa je ilustrativní, mírná deformace je v pořádku).
+    var W = 520, padX = 16, padTop = 24, padBot = 20, YSTRETCH = 1.4, F = 'Archivo,system-ui,sans-serif';
     var VC = CFG.VILLA_COORDS;
     var showPlan = filterId === 'vse' && plan && plan.length;
     var pickIds = {}; if (showPlan) plan.forEach(function (p) { if (p.pick) pickIds[p.pick.id] = 1; });
@@ -325,16 +332,23 @@
     var raw = [Object.assign(projPoint(VC.lat, VC.lon), { villa: true })]
       .concat(proj.map(function (o) { return Object.assign(projPoint(o.t.coords.lat, o.t.coords.lon), { villa: false }); }));
     var ctx = [[50.795, 15.44], [50.795, 15.90], [50.600, 15.82], [50.700, 15.41], [50.700, 15.92]].map(function (a) { return projPoint(a[0], a[1]); });
-    var minRx = Infinity, maxRx = -Infinity, minRy = Infinity, maxRy = -Infinity, all = raw.concat(ctx);
-    all.forEach(function (p) { minRx = Math.min(minRx, p.rx); maxRx = Math.max(maxRx, p.rx); minRy = Math.min(minRy, p.ry); maxRy = Math.max(maxRy, p.ry); });
+    // Rámec počítáme jen z vily + blízkých cílů + kontextu (zóna „far" se do rozsahu nepočítá,
+    // aby pár vzdálených cílů — Safari na jihu, Karpacz na severu — netvořilo prázdné pásy;
+    // vzdálené piny se pak přichytí na okraj mapy díky clampu v declutteru níže).
+    var extent = [projPoint(VC.lat, VC.lon)]
+      .concat(proj.filter(function (o) { return o.t.zone !== 'far'; }).map(function (o) { return projPoint(o.t.coords.lat, o.t.coords.lon); }))
+      .concat(ctx);
+    var minRx = Infinity, maxRx = -Infinity, minRy = Infinity, maxRy = -Infinity;
+    extent.forEach(function (p) { minRx = Math.min(minRx, p.rx); maxRx = Math.max(maxRx, p.rx); minRy = Math.min(minRy, p.ry); maxRy = Math.max(maxRy, p.ry); });
     var rxRange = maxRx - minRx, ryRange = maxRy - minRy;
-    var scale = (W - 2 * padX) / Math.max(rxRange, 1e-6);
-    var H = Math.round(ryRange * scale + padTop + padBot);
-    var X = function (lon) { return padX + (lon * kx - minRx) * scale; };
-    var Y = function (lat) { return padTop + (-lat - minRy) * scale; };
-    var pts = raw.map(function (p) { return { x: padX + (p.rx - minRx) * scale, y: padTop + (p.ry - minRy) * scale, villa: p.villa }; });
+    var scaleX = (W - 2 * padX) / Math.max(rxRange, 1e-6);
+    var scaleY = scaleX * YSTRETCH;
+    var H = Math.round(ryRange * scaleY + padTop + padBot);
+    var X = function (lon) { return padX + (lon * kx - minRx) * scaleX; };
+    var Y = function (lat) { return padTop + (-lat - minRy) * scaleY; };
+    var pts = raw.map(function (p) { return { x: padX + (p.rx - minRx) * scaleX, y: padTop + (p.ry - minRy) * scaleY, villa: p.villa }; });
     // declutter projektovaných pinů + „moat“ kolem vily (jako v ostrém portálu)
-    var vx0 = pts[0].x, vy0 = pts[0].y, MIN = 19, CLEAR = 48;
+    var vx0 = pts[0].x, vy0 = pts[0].y, MIN = 21, CLEAR = 48;
     for (var it = 0; it < 170; it++) {
       for (var i = 1; i < pts.length; i++) for (var j = i + 1; j < pts.length; j++) {
         var a = pts[i], b = pts[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.001;
@@ -347,7 +361,8 @@
       }
     }
     var vx = +pts[0].x.toFixed(1), vy = +pts[0].y.toFixed(1);
-    LAST_MAP = { W: W, H: H, pins: {} };
+    LAST_MAP = { W: W, H: H, pins: {}, fullBox: { x: 0, y: 0, w: W, h: H }, zoomBox: null };
+    var zoomPts = [{ x: vx, y: vy }]; // vila + kroužek + blízké cíle (≤ 12 min) → tight box pro zoom
 
     var svg = '<svg class="map" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(L.planTitle) + '">';
     svg += '<defs><radialGradient id="vgGlow" cx="50%" cy="72%" r="60%"><stop offset="0%" stop-color="#D68A4C" stop-opacity=".1"/><stop offset="100%" stop-color="#D68A4C" stop-opacity="0"/></radialGradient></defs>';
@@ -386,7 +401,7 @@
     svg += '<text x="' + X(15.5).toFixed(1) + '" y="' + Math.max(16, Y(50.8) - 2).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="10" letter-spacing="2.5" fill="#79817A"' + HALO + '>POLSKO / POLEN</text>';
     svg += '<text x="' + X(15.74).toFixed(1) + '" y="' + (Y(borderLatAt(15.74)) - 4).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="10" fill="#B4BAAD"' + HALO + '>Sněžka · 1603</text>';
     svg += '<text x="' + X(15.63).toFixed(1) + '" y="' + (Y(borderLatAt(15.63)) + 14).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="9" fill="#79817A" opacity=".9"' + HALO + '>Pec p. Sněžkou</text>';
-    svg += '<text x="' + X(15.96).toFixed(1) + '" y="' + Y(50.54).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="9" fill="#79817A" opacity=".9"' + HALO + '>Trutnov</text>';
+    svg += '<text x="' + X(15.95).toFixed(1) + '" y="' + Y(50.58).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="9" fill="#79817A" opacity=".9"' + HALO + '>Trutnov</text>';
     svg += '<text class="upariver" x="' + X(15.83).toFixed(1) + '" y="' + Y(50.605).toFixed(1) + '" font-family="' + F + '" font-size="10" font-style="italic" fill="#5B7A86"' + HALO + '>Úpa</text>';
 
     // kroužek „pěšky od vily“ + piny vila-zóny na spodním půlkruhu (dle designu se nefiltrují pryč, jen ztlumí)
@@ -398,25 +413,42 @@
     function pin(t, x, y, r, dimmable) {
       var op = 1;
       if (!matchFilter(t, filterId)) op = 0.22; else if (S.visited[t.id]) op = 0.35;
-      LAST_MAP.pins[t.id] = { x: x, y: y, accent: t.accent };
+      LAST_MAP.pins[t.id] = { x: x, y: y, accent: t.accent, r: r };
       var halo = (showPlan && pickIds[t.id]) ? '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (r + 2.5).toFixed(1) + '" fill="none" stroke="' + t.accent + '" stroke-opacity=".35" stroke-width="2.4"/>' : '';
-      return '<g class="pin" data-tid="' + t.id + '" tabindex="0" opacity="' + op + '" style="cursor:pointer">' + halo
+      // průhledný větší tap-terč (≥ ~28 px efektivně, ve zoomu „Okolí vily“ výrazně víc)
+      var hit = '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + Math.max(r + 4, 14).toFixed(1) + '" fill="transparent"/>';
+      return '<g class="pin" data-tid="' + t.id + '" tabindex="0" opacity="' + op + '" style="cursor:pointer">' + hit + halo
         + '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(1) + '" fill="#0E1311" stroke="' + t.accent + '" stroke-width="1.6"/>'
         + '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" dy="3.4" text-anchor="middle" font-family="' + F + '" font-size="10" font-weight="700" fill="' + t.accent + '">' + t._num + '</text></g>';
     }
     // projektované piny (vždy vykreslené; ztlumené když nevyhovují filtru)
-    proj.forEach(function (o, idx) { var p = pts[idx + 1]; svg += pin(o.t, p.x, p.y, 10.5); });
+    proj.forEach(function (o, idx) {
+      var p = pts[idx + 1]; svg += pin(o.t, p.x, p.y, 10.5);
+      if (o.t.zone === 'near' && (o.t.travelMin == null || o.t.travelMin <= 12)) zoomPts.push({ x: p.x, y: p.y });
+    });
     // piny na kroužku
     vz.forEach(function (o, idx) {
       var ang = (ringN <= 1 ? 90 : 180 * idx / (ringN - 1)) * Math.PI / 180;
       var x = vx + R_RING * Math.cos(ang), y = vy + R_RING * Math.sin(ang);
-      svg += pin(o.t, x, y, ringR);
+      svg += pin(o.t, x, y, ringR); zoomPts.push({ x: x, y: y });
     });
+    // tight box pro zoom „Okolí vily“ (dorovnaný na poměr stran mapy, ať nevzniknou prázdné pruhy)
+    var zminx = Infinity, zminy = Infinity, zmaxx = -Infinity, zmaxy = -Infinity;
+    zoomPts.forEach(function (p) { zminx = Math.min(zminx, p.x); zminy = Math.min(zminy, p.y); zmaxx = Math.max(zmaxx, p.x); zmaxy = Math.max(zmaxy, p.y); });
+    var zpad = 26;
+    zminx -= zpad; zmaxx += zpad; zminy -= (zpad + 16); zmaxy += zpad; // navíc místo nahoře na popisky vily
+    var targetAR = W / H, zbw = zmaxx - zminx, zbh = zmaxy - zminy;
+    if (zbw / zbh > targetAR) { var nh = zbw / targetAR, cyz = (zminy + zmaxy) / 2; zminy = cyz - nh / 2; zmaxy = cyz + nh / 2; }
+    else { var nw = zbh * targetAR, cxz = (zminx + zmaxx) / 2; zminx = cxz - nw / 2; zmaxx = cxz + nw / 2; }
+    zminx = Math.max(0, zminx); zminy = Math.max(0, zminy); zmaxx = Math.min(W, zmaxx); zmaxy = Math.min(H, zmaxy);
+    LAST_MAP.zoomBox = { x: +zminx.toFixed(1), y: +zminy.toFixed(1), w: +(zmaxx - zminx).toFixed(1), h: +(zmaxy - zminy).toFixed(1) };
     // vila (domeček ember) + popisky
     svg += '<path d="M' + (vx - 5) + ' ' + (vy + 5.5) + ' L' + (vx - 5) + ' ' + (vy - 0.5) + ' L' + vx + ' ' + (vy - 5.5) + ' L' + (vx + 5) + ' ' + (vy - 0.5) + ' L' + (vx + 5) + ' ' + (vy + 5.5) + ' Z" fill="#D68A4C" stroke="#0E1311" stroke-width="1" stroke-linejoin="round"/>';
     if (ringN > 0) svg += '<text x="' + vx + '" y="' + (vy - 40).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="8.5" font-weight="600" letter-spacing=".03em" fill="#c79a6a"' + HALO + '>' + esc(L.ringLabel) + '</text>';
     svg += '<text x="' + vx + '" y="' + (vy - 28).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="10.5" font-weight="700" fill="#F0EBE1" paint-order="stroke" stroke="#0B100E" stroke-width="3.2" stroke-linejoin="round">Villa Rudolf</text>';
     svg += '<text x="' + vx + '" y="' + (vy - 17).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="8" fill="#9aa094"' + HALO + '>Luční 519 · Svoboda n. Úpou</text>';
+    // zvýrazňovací kroužek vybraného pinu (polohu nastaví updateSelRing po renderu)
+    svg += '<g id="vg-selring" style="display:none;pointer-events:none"><circle fill="none"/><circle fill="none"/></g>';
     svg += '</svg>';
     return svg;
   }
@@ -576,12 +608,17 @@
 
   function renderCatalogHTML(L, plan) {
     var lang = S.lang, filter = S.filter;
+    // vybraný pin, který vypadl z filtru, zruš (panel se vrátí do prázdného stavu)
+    if (S.selPin) { var _st = findTrip(S.selPin); if (!_st || !matchFilter(_st, filter)) S.selPin = null; }
     var chipLabels = FILTER_IDS.map(function (f) {
       return '<button class="vg-chip" data-filter="' + f + '" data-on="' + (filter === f) + '">' + esc(L.filters[f]) + '</button>';
     }).join('');
     var mapSvg = renderMap(DATA.trips, plan, filter);
-    var mapHTML = '<div class="vg-map"><div class="mapholder" id="vg-mapholder">' + mapSvg
-      + '<div class="vg-popup" id="vg-popup" style="display:none"></div></div>'
+    var zoomBtns = '<div class="vg-zoombtns">'
+      + '<button class="vg-zoombtn" data-zoom="full" data-on="' + (S.mapZoom !== 'near') + '">' + esc(L.zoomFull) + '</button>'
+      + '<button class="vg-zoombtn" data-zoom="near" data-on="' + (S.mapZoom === 'near') + '">' + esc(L.zoomNear) + '</button></div>';
+    var mapHTML = '<div class="vg-map"><div class="mapholder" id="vg-mapholder">' + mapSvg + zoomBtns + '</div>'
+      + '<div class="vg-selpanel" id="vg-selpanel">' + selPanelHTML() + '</div>'
       + '<p class="vg-mapnote">' + esc(L.mapNote) + '</p></div>';
 
     var zones = ['villa', 'near', 'far'];
@@ -724,36 +761,82 @@
     return out;
   }
 
-  /* ===================== Popup na mapě ===================== */
-  function showPopup(id) {
-    var pop = document.getElementById('vg-popup'); if (!pop) return;
-    var pin = LAST_MAP.pins[id]; if (!pin) { pop.style.display = 'none'; return; }
-    var t = null; for (var i = 0; i < DATA.trips.length; i++) if (DATA.trips[i].id === id) { t = DATA.trips[i]; break; }
-    if (!t) return;
+  /* ===================== Pevný panel vybraného výletu (nahrazuje plovoucí popup) ===================== */
+  function selPanelHTML() {
     var L = T[S.lang], lang = S.lang;
-    var xr = pin.x / LAST_MAP.W, yr = pin.y / LAST_MAP.H;
-    var tx = xr > 0.63 ? '-100%' : xr < 0.37 ? '0' : '-50%';
-    var ty = yr > 0.5 ? 'calc(-100% - 14px)' : '14px';
-    pop.style.setProperty('--acc', t.accent);
-    pop.style.left = (xr * 100) + '%'; pop.style.top = (yr * 100) + '%';
-    pop.style.transform = 'translate(' + tx + ',' + ty + ')';
-    pop.innerHTML = '<p class="nm">' + t._num + ' · ' + esc(tt(t.name, lang)) + '</p><p class="sub">' + esc(tt(t.tagline, lang)) + '</p>'
-      + '<p class="meta">' + esc(transportLabel(t, L) + ' · ' + openShort(tt(t.openNote, lang))) + '</p>'
-      + '<p class="price">' + esc(priceShort(tt(t.price, lang))) + '</p>';
-    pop.style.display = 'block';
+    if (!S.selPin) return '<p class="vg-selhint">' + icon('pin') + esc(L.selHint) + '</p>';
+    var t = findTrip(S.selPin);
+    if (!t) return '<p class="vg-selhint">' + icon('pin') + esc(L.selHint) + '</p>';
+    return '<button class="vg-selcard" data-open="' + esc(t.id) + '" style="--acc:' + t.accent + '">'
+      + '<span class="vg-selic"><span class="vg-iconbox">' + icon(t.icon) + '</span><span class="vg-selnum">' + t._num + '</span></span>'
+      + '<span class="vg-selbd"><h3>' + esc(tt(t.name, lang)) + '</h3><p class="vg-seltag">' + esc(tt(t.tagline, lang)) + '</p>'
+      + '<span class="vg-selmeta"><span>' + icon('pin') + esc(transportLabel(t, L)) + '</span><span class="sep">·</span><span>' + icon('ticket') + esc(priceShort(tt(t.price, lang))) + '</span></span></span>'
+      + '<span class="vg-seldetail">' + esc(L.detail) + ' →</span></button>';
   }
-  function hidePopup() { var pop = document.getElementById('vg-popup'); if (pop) pop.style.display = 'none'; S.selPin = null; }
+  function renderSelPanel() {
+    var panel = document.getElementById('vg-selpanel'); if (!panel) return;
+    panel.innerHTML = selPanelHTML();
+    var card = panel.querySelector('[data-open]');
+    if (card) card.addEventListener('click', function () { openDetail(card.dataset.open); });
+  }
+  function selectPin(id) { S.selPin = id; renderSelPanel(); updateSelRing(id); }
+  function deselectPin() { S.selPin = null; renderSelPanel(); updateSelRing(null); }
+  function updateSelRing(id) {
+    var g = document.getElementById('vg-selring'); if (!g) return;
+    var p = id && LAST_MAP.pins[id];
+    if (!p) { g.style.display = 'none'; return; }
+    var cs = g.querySelectorAll('circle'), pr = p.r || 10.5;
+    [[pr + 5, 2.2, 0.95], [pr + 9.5, 1, 0.35]].forEach(function (spec, i) {
+      var c = cs[i]; if (!c) return;
+      c.setAttribute('cx', p.x.toFixed(1)); c.setAttribute('cy', p.y.toFixed(1)); c.setAttribute('r', spec[0].toFixed(1));
+      c.setAttribute('stroke', p.accent); c.setAttribute('stroke-width', spec[1]); c.setAttribute('opacity', spec[2]);
+    });
+    g.style.display = '';
+  }
+
+  /* ===================== Zoom mapy (dvě pevné úrovně, animovaný přechod viewBoxu) ===================== */
+  function prefersReduced() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  function applyViewBox(box, animate) {
+    var s = document.querySelector('.vg-map svg.map'); if (!s) return;
+    var to = [box.x, box.y, box.w, box.h];
+    if (!animate || prefersReduced()) { s.setAttribute('viewBox', to.join(' ')); return; }
+    var from = (s.getAttribute('viewBox') || '').split(/\s+/).map(Number);
+    if (from.length !== 4 || from.some(isNaN)) { s.setAttribute('viewBox', to.join(' ')); return; }
+    var t0 = null, dur = 340, done = false;
+    function ease(u) { return u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2; }
+    function step(ts) {
+      if (done) return;
+      if (t0 == null) t0 = ts; var u = Math.min(1, (ts - t0) / dur), e = ease(u);
+      var vb = [0, 1, 2, 3].map(function (k) { return from[k] + (to[k] - from[k]) * e; });
+      s.setAttribute('viewBox', vb.map(function (n) { return n.toFixed(1); }).join(' '));
+      if (u < 1) requestAnimationFrame(step); else done = true;
+    }
+    requestAnimationFrame(step);
+    // pojistka: když rAF neběží (skrytá/uspaná záložka), nastav cílový stav napevno
+    setTimeout(function () { if (!done) { done = true; s.setAttribute('viewBox', to.join(' ')); } }, dur + 80);
+  }
+  function setMapZoom(level, animate) {
+    S.mapZoom = level;
+    var box = (level === 'near' && LAST_MAP.zoomBox) ? LAST_MAP.zoomBox : LAST_MAP.fullBox;
+    applyViewBox(box, animate);
+    var wrap = document.querySelector('.vg-zoombtns');
+    if (wrap) wrap.querySelectorAll('.vg-zoombtn').forEach(function (b) { b.setAttribute('data-on', String(b.dataset.zoom === level)); });
+  }
+  function restoreMapView() { // po re-renderu: obnov aktuální zoom (bez animace) + zvýraznění vybraného pinu
+    if (S.mapZoom === 'near' && LAST_MAP.zoomBox) applyViewBox(LAST_MAP.zoomBox, false);
+    updateSelRing(S.selPin);
+  }
 
   /* ===================== Wiring ===================== */
   function wire() {
     var app = document.getElementById('app');
-    // jazyk
+    // jazyk (výběr pinu zůstává — panel se jen přepíše do nového jazyka)
     app.querySelectorAll('.vg-lang').forEach(function (b) {
-      b.addEventListener('click', function () { S.lang = b.dataset.lang; S.selPin = null; renderApp(true); });
+      b.addEventListener('click', function () { S.lang = b.dataset.lang; renderApp(true); });
     });
-    // filtr
+    // filtr (vybraný pin se zruší jen když vypadne z filtru — řeší renderCatalogHTML)
     app.querySelectorAll('.vg-chip').forEach(function (b) {
-      b.addEventListener('click', function () { S.filter = b.dataset.filter; S.selPin = null; renderApp(true); });
+      b.addEventListener('click', function () { S.filter = b.dataset.filter; renderApp(true); });
     });
     // wizard chipy
     app.querySelectorAll('[data-wiz]').forEach(function (b) {
@@ -782,7 +865,7 @@
         savePrefs(); renderApp(true);
       });
     });
-    // piny na mapě: 1. tap = popup, 2. tap = detail
+    // piny na mapě: 1. tap = naplní pevný panel + zvýrazní pin, 2. tap téhož = detail
     var holder = document.getElementById('vg-mapholder');
     if (holder) {
       holder.querySelectorAll('.pin').forEach(function (g) {
@@ -790,19 +873,20 @@
           e.preventDefault(); e.stopPropagation();
           var id = g.dataset.tid;
           if (S.selPin === id) { openDetail(id); }
-          else { S.selPin = id; showPopup(id); }
+          else { selectPin(id); }
         };
         g.addEventListener('click', handler);
         g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') handler(e); });
       });
-      holder.addEventListener('click', function (e) { if (!e.target.closest('.pin') && !e.target.closest('.vg-popup')) hidePopup(); });
-      var pop = document.getElementById('vg-popup');
-      if (pop) pop.addEventListener('click', function () { if (S.selPin) openDetail(S.selPin); });
-      // obnovit vybraný popup po re-renderu
-      if (S.selPin && LAST_MAP.pins[S.selPin]) showPopup(S.selPin); else hidePopupSilent();
+      // klik do prázdné mapy (mimo pin i zoom pilulky) = zruší výběr
+      holder.addEventListener('click', function (e) { if (!e.target.closest('.pin') && !e.target.closest('.vg-zoombtns')) deselectPin(); });
+      // zoom pilulky
+      holder.querySelectorAll('.vg-zoombtn').forEach(function (b) {
+        b.addEventListener('click', function (e) { e.stopPropagation(); setMapZoom(b.dataset.zoom, true); });
+      });
+      restoreMapView();
     }
   }
-  function hidePopupSilent() { var pop = document.getElementById('vg-popup'); if (pop) pop.style.display = 'none'; }
 
   // Esc zavírá detail
   window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && sheetEl) closeDetail(); });
