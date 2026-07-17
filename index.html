@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=3">
+<link rel="stylesheet" href="assets/site.css?v=4">
 </head>
 <body>
 <div class="vr-root" data-season="leto">
@@ -39,10 +39,6 @@
         <a href="#vylety" data-t="nav.vylety">Výlety</a>
       </nav>
       <div class="vr-navright">
-        <div class="vr-clock" aria-hidden="true">
-          <div class="vr-clock-track"><span class="vr-clock-dot"></span></div>
-          <span class="vr-clock-lbl" id="vr-clock-lbl">Den</span>
-        </div>
         <div class="vr-langs" role="group" aria-label="Jazyk / Language">
           <button class="vr-lang" data-lang="cs" data-active="true">CS</button>
           <button class="vr-lang" data-lang="en">EN</button>
@@ -173,22 +169,13 @@
     </div>
   </section>
 
-  <!-- ===================== Evening falls (scroll sequence) ===================== -->
-  <section id="vecer" class="vrb-track">
-    <div class="vrb-stage">
-      <div class="vrb-day" id="vrbDay">
-        <img class="vrim-dayphoto summer" src="media/photos/hero-summer.jpg" alt="Villa Rudolf — bazén ve dne" loading="lazy">
-        <img class="vrim-dayphoto winter" src="media/photos/hero-winter.jpg" alt="Villa Rudolf v zimě" loading="lazy">
-      </div>
-      <img class="vrim-photo" id="vrbNight" src="media/photos/gallery6.jpg" alt="Villa Rudolf — bazén v noci" style="opacity:0" loading="lazy">
-      <div class="vrim-dusk" id="vrbDusk"></div>
-      <div class="vrim-glow" id="vrbGlow" style="opacity:0"></div>
-      <div class="vrim-vig"></div>
-      <div class="vrim-scrim"></div>
-      <div class="vrim-endcopy" id="vrbCopy">
-        <span class="vrim-eyebrow" data-t="band.eyebrow">Jeden večer tady</span>
-        <p data-t="hero.nightLine">Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy.</p>
-      </div>
+  <!-- ===================== Evening (static night scene) ===================== -->
+  <section id="vecer" class="sec-vecer">
+    <img class="vr-vecer-img" src="media/photos/gallery6.jpg" alt="Villa Rudolf — bazén a ohniště po setmění" loading="lazy">
+    <div class="vr-vecer-vig"></div>
+    <div class="vr-vecer-copy vr-reveal">
+      <span class="vr-eyebrow" data-t="band.eyebrow">Jeden večer tady</span>
+      <p data-t="hero.nightLine">Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy.</p>
     </div>
   </section>
 
@@ -320,7 +307,7 @@
     <div class="vr-book-wrap">
       <span class="vr-eyebrow vr-reveal" data-t="cta.eyebrow">Rezervace</span>
       <h2 class="vr-book-title vr-reveal" data-t="cta.title">Rezervujte celý dům pro svou skupinu</h2>
-      <p class="vr-book-body vr-reveal" data-t="cta.body">Vyberte v kalendáři příjezd a odjezd.</p>
+      <p class="vr-book-body vr-reveal" data-t="cta.body">Vyberte v kalendáři příjezd a odjezd a pošlete nám nezávaznou poptávku. Termín vám osobně potvrdíme e-mailem.</p>
       <div class="vr-book vr-reveal">
         <div class="vr-cal-card">
           <div class="vr-cal-wrap" id="vr-cal"></div>
@@ -336,7 +323,7 @@
           <div class="vr-book-sel"><span id="vr-sel-label">Vyberte termín v kalendáři</span> <span class="nl" id="vr-sel-nights"></span></div>
           <div class="vr-book-price" id="vr-price" style="display:none">
             <div class="row"><span data-t="book.total">Celkem za pobyt</span><span class="v" id="vr-price-total"></span></div>
-            <div class="row dep"><span data-t="book.deposit">Záloha 30 % nyní</span><span class="v" id="vr-price-deposit"></span></div>
+            <div class="row dep"><span data-t="book.deposit">Záloha 30 %</span><span class="v" id="vr-price-deposit"></span></div>
           </div>
           <label>
             <span data-t="cta.lblGuests">Počet hostů</span>
@@ -346,10 +333,10 @@
             <span data-t="cta.lblEmail">E-mail</span>
             <input id="vr-email" type="email" data-t-ph="cta.phEmail" placeholder="vas@email.cz" autocomplete="email">
           </label>
-          <button type="button" class="vr-book-pay" id="vr-pay"><span data-t="book.pay">Odeslat poptávku</span> <span aria-hidden="true">&#8594;</span></button>
+          <button type="button" class="vr-book-pay" id="vr-pay"><span data-t="book.pay">Odeslat nezávaznou poptávku</span> <span aria-hidden="true">&#8594;</span></button>
           <div class="vr-book-note">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
-            <span data-t="book.stripeNote">Platba zálohy až po potvrzení termínu.</span>
+            <span data-t="book.stripeNote">Nezávazná poptávka — žádná platba předem. Termín vám osobně potvrdíme e-mailem.</span>
           </div>
         </aside>
       </div>
@@ -395,6 +382,6 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=3" defer></script>
+<script src="assets/site.js?v=4" defer></script>
 </body>
 </html>

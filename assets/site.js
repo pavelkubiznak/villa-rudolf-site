@@ -85,13 +85,13 @@ const T = {
     },
     book: {
       summary: 'Vaše rezervace', pick: 'Vyberte termín v kalendáři',
-      total: 'Celkem za pobyt', deposit: 'Záloha 30 % nyní',
-      pay: 'Odeslat poptávku', stripeNote: 'Platba zálohy až po potvrzení termínu. Odešleme vám shrnutí e-mailem, nezávazně.',
+      total: 'Celkem za pobyt', deposit: 'Záloha 30 %',
+      pay: 'Odeslat nezávaznou poptávku', stripeNote: 'Nezávazná poptávka — žádná platba předem. Termín vám osobně potvrdíme e-mailem.',
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
     },
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
-      body: 'Vyberte v kalendáři příjezd a odjezd. Termín potvrdíte zálohou — zbytek se platí až před příjezdem.',
+      body: 'Vyberte v kalendáři příjezd a odjezd a pošlete nám nezávaznou poptávku. Termín vám osobně potvrdíme e-mailem.',
       lblGuests: 'Počet hostů', phGuests: 'Dospělí + děti',
       lblEmail: 'E-mail', phEmail: 'vas@email.cz',
     },
@@ -178,13 +178,13 @@ const T = {
     },
     book: {
       summary: 'Your stay', pick: 'Pick your dates in the calendar',
-      total: 'Total for the stay', deposit: '30% deposit due now',
-      pay: 'Send request', stripeNote: 'Deposit is payable only after we confirm your dates. We’ll email you a summary, no obligation.',
+      total: 'Total for the stay', deposit: '30% deposit',
+      pay: 'Send non-binding inquiry', stripeNote: 'Non-binding inquiry — no payment upfront. We’ll confirm your dates personally by email.',
       free: 'Available', booked: 'Booked', chosen: 'Your stay', demo: 'Sample availability — will connect to the booking system',
     },
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
-      body: 'Pick arrival and departure in the calendar. A deposit confirms your dates — the balance is due before arrival.',
+      body: 'Pick arrival and departure in the calendar and send us a non-binding inquiry. We’ll confirm your dates personally by email.',
       lblGuests: 'Guests', phGuests: 'Adults + children',
       lblEmail: 'Email', phEmail: 'you@email.com',
     },
@@ -271,13 +271,13 @@ const T = {
     },
     book: {
       summary: 'Euer Aufenthalt', pick: 'Wählt den Termin im Kalender',
-      total: 'Gesamt für den Aufenthalt', deposit: '30 % Anzahlung jetzt',
-      pay: 'Anfrage senden', stripeNote: 'Die Anzahlung ist erst nach Bestätigung des Termins fällig. Wir senden euch unverbindlich eine Zusammenfassung per E-Mail.',
+      total: 'Gesamt für den Aufenthalt', deposit: '30 % Anzahlung',
+      pay: 'Unverbindliche Anfrage senden', stripeNote: 'Unverbindliche Anfrage — keine Vorauszahlung. Wir bestätigen euren Termin persönlich per E-Mail.',
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
     },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
-      body: 'Wählt An- und Abreise im Kalender. Eine Anzahlung bestätigt den Termin — der Rest ist erst vor der Anreise fällig.',
+      body: 'Wählt An- und Abreise im Kalender und sendet uns eine unverbindliche Anfrage. Wir bestätigen euren Termin persönlich per E-Mail.',
       lblGuests: 'Gäste', phGuests: 'Erwachsene + Kinder',
       lblEmail: 'E-Mail', phEmail: 'du@email.de',
     },
@@ -364,13 +364,13 @@ const T = {
     },
     book: {
       summary: 'Wasz pobyt', pick: 'Wybierz termin w kalendarzu',
-      total: 'Razem za pobyt', deposit: 'Zaliczka 30% teraz',
-      pay: 'Wyślij zapytanie', stripeNote: 'Zaliczkę płacicie dopiero po potwierdzeniu terminu. Wyślemy podsumowanie e-mailem, niezobowiązująco.',
+      total: 'Razem za pobyt', deposit: 'Zaliczka 30%',
+      pay: 'Wyślij niezobowiązujące zapytanie', stripeNote: 'Niezobowiązujące zapytanie — bez płatności z góry. Termin potwierdzimy osobiście e-mailem.',
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
     },
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
-      body: 'Wybierz w kalendarzu przyjazd i wyjazd. Zaliczka potwierdza termin — resztę zapłacisz przed przyjazdem.',
+      body: 'Wybierz w kalendarzu przyjazd i wyjazd i wyślij nam niezobowiązujące zapytanie. Termin potwierdzimy osobiście e-mailem.',
       lblGuests: 'Goście', phGuests: 'Dorośli + dzieci',
       lblEmail: 'E-mail', phEmail: 'ty@email.pl',
     },
@@ -380,7 +380,7 @@ const T = {
 };
 
 /* ============================ State + helpers ============================ */
-const state = { lang: 'cs', season: 'leto', scrolled: false, zone: 0, scene: 0, lb: -1, selStart: 0, selEnd: 0, mob: false };
+const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, lb: -1, selStart: 0, selEnd: 0, mob: false };
 const NIGHT_RATE = 20000;
 const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
 const PANO_FILES = ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds'];
@@ -640,10 +640,6 @@ function applySeasonButtons() {
   });
 }
 function applyTip() { $('#vrim-tip').textContent = state.season === 'zima' ? tt().hero.tipWinter : tt().hero.tipSummer; }
-function updateClockLabel() {
-  const TL = { cs: ['Den', 'Soumrak', 'Noc'], en: ['Day', 'Dusk', 'Night'], de: ['Tag', 'Dämmerung', 'Nacht'], pl: ['Dzień', 'Zmierzch', 'Noc'] };
-  $('#vr-clock-lbl').textContent = (TL[state.lang] || TL.cs)[state.zone || 0];
-}
 
 function setLang(lang) {
   if (!T[lang] || state.lang === lang) return;
@@ -652,13 +648,13 @@ function setLang(lang) {
   applyLangButtons(); setTexts();
   renderFacts(); renderAmenities(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderTrips();
-  renderCalendar(); renderBookingPanel(); applyTip(); updateClockLabel();
+  renderCalendar(); renderBookingPanel(); applyTip();
 }
 function eagerLoadSeason(season) {
-  // Hero/band photos for a season may be lazy; force them to load so the
+  // Hero photos for a season may be lazy; force them to load so the
   // crossfade has real pixels to show.
   const cls = season === 'zima' ? 'winter' : 'summer';
-  $all('.vrim-dayphoto.' + cls + ',.vrim-photo').forEach((img) => {
+  $all('.vrim-dayphoto.' + cls).forEach((img) => {
     if (img.getAttribute('loading') === 'lazy') img.setAttribute('loading', 'eager');
   });
 }
@@ -762,10 +758,9 @@ function initPano() {
   loop();
 }
 
-/* ============================ Scroll-driven cinematics (rAF) ============================ */
+/* ============================ Hero parallax + nav state (rAF) ============================ */
 function startRaf() {
   const clamp = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
-  const ease = (x) => x * x * (3 - 2 * x);
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let mx = 0, my = 0, cmx = 0, cmy = 0;
   if (!reduce) window.addEventListener('mousemove', (e) => {
@@ -779,35 +774,61 @@ function startRaf() {
     try {
       const vh = window.innerHeight || 1;
       cmx += (mx - cmx) * 0.06; cmy += (my - cmy) * 0.06;
-      const heroPhoto = $id('vrhPhoto'), hint = $id('vrimHint'), band = $id('vecer');
+      const heroPhoto = $id('vrhPhoto'), hint = $id('vrimHint');
       const hp = clamp(window.scrollY / vh);
       if (heroPhoto) heroPhoto.style.transform = 'scale(1.08) translate(' + (cmx * -8).toFixed(1) + 'px,' + (hp * 46 + cmy * -6).toFixed(1) + 'px)';
       if (hint) hint.style.opacity = clamp(1 - hp / 0.5);
-      let pb = 0;
-      if (band) {
-        const br = band.getBoundingClientRect();
-        const btotal = band.offsetHeight - vh;
-        pb = br.top >= vh ? 0 : clamp(-br.top / (btotal || 1));
-        const d2 = ease(clamp((pb - 0.1) / 0.66));
-        const dg = ease(clamp((pb - 0.04) / 0.52));
-        const zima = state.season === 'zima';
-        const tf = 'scale(' + (1.12 - pb * 0.06).toFixed(3) + ') translateY(' + (-pb * 30).toFixed(1) + 'px)';
-        const bDay = $id('vrbDay'), bNight = $id('vrbNight'), bDusk = $id('vrbDusk'), bGlow = $id('vrbGlow'), bCopy = $id('vrbCopy');
-        if (bDay) { bDay.style.transform = tf; bDay.style.filter = 'brightness(' + (1 - dg * (zima ? 0.64 : 0.5)).toFixed(3) + ') saturate(' + (1 - dg * 0.24).toFixed(3) + ')'; }
-        if (bNight) { bNight.style.opacity = (zima ? 0 : d2).toFixed(3); bNight.style.transform = tf; }
-        if (bDusk) bDusk.style.opacity = (Math.sin(clamp(pb / 0.9) * Math.PI) * 0.6).toFixed(3);
-        if (bGlow) bGlow.style.opacity = (d2 * 0.95).toFixed(3);
-        if (bCopy) { const co = ease(clamp((pb - 0.52) / 0.26)); bCopy.style.opacity = co.toFixed(3); bCopy.style.transform = 'translateY(' + ((1 - co) * 30).toFixed(1) + 'px)'; }
-      }
-      const dot = $('.vr-clock-dot');
-      if (dot) dot.style.left = (pb * 100).toFixed(1) + '%';
       const s = window.scrollY > 8;
       if (s !== state.scrolled) { state.scrolled = s; $('.vr-nav').setAttribute('data-scrolled', s ? 'true' : 'false'); }
-      const zone = pb < 0.12 ? 0 : pb < 0.78 ? 1 : 2;
-      if (zone !== state.zone) { state.zone = zone; updateClockLabel(); }
     } catch (e) {}
   };
   render();
+}
+
+/* ============================ Scrollspy (active nav underline) ============================ */
+function startScrollSpy() {
+  const links = $all('.vr-navlinks a[href^="#"], .vr-mob a[href^="#"]');
+  if (!links.length) return;
+  const ids = [];
+  links.forEach((a) => {
+    const id = a.getAttribute('href').slice(1);
+    if (id && document.getElementById(id) && ids.indexOf(id) === -1) ids.push(id);
+  });
+  if (!ids.length) return;
+  // sections in document order, so the topmost visible one wins on overlap
+  const sections = ids.map((id) => document.getElementById(id))
+    .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+
+  let current = null;
+  function setActive(id) {
+    if (id === current) return;
+    current = id;
+    links.forEach((a) => a.setAttribute('data-active', a.getAttribute('href') === '#' + id ? 'true' : 'false'));
+  }
+
+  if ('IntersectionObserver' in window && window.innerHeight) {
+    const visible = {};
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) visible[en.target.id] = true;
+        else delete visible[en.target.id];
+      });
+      // pick the topmost (document-order) section currently crossing the centre band
+      for (let i = 0; i < sections.length; i++) {
+        if (visible[sections[i].id]) { setActive(sections[i].id); break; }
+      }
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    sections.forEach((sec) => io.observe(sec));
+  } else {
+    const onScroll = () => {
+      const y = window.scrollY + (window.innerHeight || 0) * 0.5;
+      let best = null;
+      sections.forEach((sec) => { if (sec.offsetTop <= y) best = sec.id; });
+      if (best) setActive(best);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 }
 
 /* ============================ Reveal on scroll ============================ */
@@ -877,9 +898,9 @@ function init() {
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderFacts(); renderAmenities(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderTrips();
-  renderCalendar(); renderBookingPanel(); applyTip(); updateClockLabel();
+  renderCalendar(); renderBookingPanel(); applyTip();
 
-  startReveal(); startRaf();
+  startReveal(); startRaf(); startScrollSpy();
 
   // Background-preload the OFF-season hero image once the page is idle, so the
   // first Léto/Zima toggle crossfades instantly. (Only the current season is
