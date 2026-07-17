@@ -818,6 +818,10 @@ function startReveal() {
     entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('vr-in'); io.unobserve(en.target); } });
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
   items.forEach((n) => io.observe(n));
+  // pojistka: obsah nesmí zůstat skrytý, když observer nevystřelí (vestavěné prohlížeče, 0×0 viewport při startu)
+  const failSafe = () => items.forEach((n) => n.classList.add('vr-in'));
+  setTimeout(() => { if (items.some((n) => !n.classList.contains('vr-in') && n.getBoundingClientRect().top < innerHeight)) failSafe(); }, 1200);
+  setTimeout(failSafe, 4000);
 }
 
 /* ============================ Mobile menu ============================ */
