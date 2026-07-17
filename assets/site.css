@@ -19,12 +19,15 @@ body{margin:0;background:#0E1311}
 .vr-root a{color:inherit;text-decoration:none}
 .vr-root section[id]{scroll-margin-top:92px}
 
-/* ---------- Scroll reveal (IntersectionObserver, with no-JS fallback) ---------- */
-.js .vr-reveal{opacity:0;transform:translateY(30px);
+/* ---------- Scroll reveal ---------- */
+/* Fail-safe návrh: obsah je viditelný VŽDY; schová se pro animaci až když si JS
+   ověří, že IntersectionObserver reálně střílí (html.io-ok). Rozbité embedy/staré
+   prohlížeče tak nikdy nedostanou černou stránku — jen přijdou o animaci. */
+.io-ok .vr-reveal{opacity:0;transform:translateY(30px);
   transition:opacity .95s cubic-bezier(.2,.7,.15,1),transform .95s cubic-bezier(.2,.7,.15,1)}
-.js .vr-reveal.vr-in{opacity:1;transform:none}
+.io-ok .vr-reveal.vr-in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
-  .js .vr-reveal{opacity:1!important;transform:none!important;transition:none}
+  .io-ok .vr-reveal{opacity:1!important;transform:none!important;transition:none}
 }
 
 /* ---------- Nav ---------- */

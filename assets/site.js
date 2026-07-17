@@ -812,16 +812,22 @@ function startRaf() {
 
 /* ============================ Reveal on scroll ============================ */
 function startReveal() {
+  // Fail-safe: obsah je viditelný by default. Animaci zapneme (html.io-ok) až poté,
+  // co si sondou ověříme, že IntersectionObserver v tomhle prostředí opravdu střílí
+  // (v embedech s nulovým layout viewportem nevystřelí nikdy — pak nic neschováváme).
+  if (!('IntersectionObserver' in window) || !innerHeight) return;
   const items = $all('.vr-reveal');
-  if (!('IntersectionObserver' in window)) { items.forEach((n) => n.classList.add('vr-in')); return; }
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('vr-in'); io.unobserve(en.target); } });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-  items.forEach((n) => io.observe(n));
-  // pojistka: obsah nesmí zůstat skrytý, když observer nevystřelí (vestavěné prohlížeče, 0×0 viewport při startu)
-  const failSafe = () => items.forEach((n) => n.classList.add('vr-in'));
-  setTimeout(() => { if (items.some((n) => !n.classList.contains('vr-in') && n.getBoundingClientRect().top < innerHeight)) failSafe(); }, 1200);
-  setTimeout(failSafe, 4000);
+  const probe = new IntersectionObserver(() => {
+    probe.disconnect();
+    document.documentElement.classList.add('io-ok');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('vr-in'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    items.forEach((n) => io.observe(n));
+    // kdyby po zapnutí animace přesto nic nepřišlo, do 2 s odhal aspoň to, co je ve viewportu
+    setTimeout(() => items.forEach((n) => { if (n.getBoundingClientRect().top < innerHeight) n.classList.add('vr-in'); }), 2000);
+  });
+  probe.observe(document.body);
 }
 
 /* ============================ Mobile menu ============================ */
