@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=4">
+<link rel="stylesheet" href="assets/site.css?v=5">
 </head>
 <body>
 <div class="vr-root" data-season="leto">
@@ -109,7 +109,10 @@
           <span class="vr-eyebrow" data-t="statement.eyebrow">Není to dům. Je to celé místo.</span>
           <p class="vr-lead" data-t="statement.lead">Jinde dostanete pokoje a kousek zahrady…</p>
         </div>
-        <img class="vr-stmt-img" src="media/photos/exterior.jpg" alt="Villa Rudolf — exteriér" loading="lazy">
+        <div class="vr-stmt-imgwrap vr-crossfade">
+          <img class="vr-seasonimg summer" src="media/photos/exterior.jpg" alt="Villa Rudolf — exteriér v létě" loading="lazy">
+          <img class="vr-seasonimg winter" src="media/gallery/winter-snow.jpg" alt="Villa Rudolf — vila ve sněhu" loading="lazy">
+        </div>
       </div>
       <div class="vr-facts vr-reveal" id="vr-facts"></div>
     </div>
@@ -158,7 +161,10 @@
         <h2 class="vr-h2" data-t="amenities.title">Komfort, který drží skupinu pohromadě</h2>
       </div>
       <div class="vr-amen-hero vr-reveal">
-        <img src="media/photos/hero-summer.jpg" alt="Zastřešený vyhřívaný bazén" loading="lazy">
+        <div class="vr-amen-imgwrap vr-crossfade">
+          <img class="vr-seasonimg summer" src="media/gallery/pool-day.jpg" alt="Zastřešený vyhřívaný bazén" loading="lazy">
+          <img class="vr-seasonimg winter" src="media/gallery/pool-night.jpg" alt="Zastřešený bazén večer" loading="lazy">
+        </div>
         <div>
           <span class="vr-tag" id="am-pool-tag">Wellness</span>
           <h3 id="am-pool-name">Zastřešený vyhřívaný bazén</h3>
@@ -171,7 +177,8 @@
 
   <!-- ===================== Evening (static night scene) ===================== -->
   <section id="vecer" class="sec-vecer">
-    <img class="vr-vecer-img" src="media/photos/gallery6.jpg" alt="Villa Rudolf — bazén a ohniště po setmění" loading="lazy">
+    <img class="vr-vecer-img vr-seasonimg summer" src="media/gallery/areal-night.jpg" alt="Villa Rudolf — celý areál po setmění" loading="lazy">
+    <img class="vr-vecer-img vr-seasonimg winter" src="media/gallery/winter-night.jpg" alt="Villa Rudolf — vila v noci se sněhem a měsícem" loading="lazy">
     <div class="vr-vecer-vig"></div>
     <div class="vr-vecer-copy vr-reveal">
       <span class="vr-eyebrow" data-t="band.eyebrow">Jeden večer tady</span>
@@ -190,10 +197,7 @@
           <h2 data-t="ohniste.title">Ohniště s gabionovou stěnou, které večer ožívá</h2>
           <p data-t="ohniste.body">Nově dokončené otevřené ohniště pojme celou skupinu.</p>
         </div>
-        <div class="vr-slot vr-reveal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="8.5" cy="10" r="1.6"></circle><path d="M21 16l-5-5-9 9"></path></svg>
-          <span data-t="photoSoon">Fotku doplníme</span>
-        </div>
+        <img class="vr-reveal" src="media/gallery/firepit-sunset.jpg" alt="Ohniště s prosvětlenou gabionovou stěnou při západu slunce" loading="lazy">
       </div>
     </div>
   </section>
@@ -290,14 +294,8 @@
         </div>
         <span class="vr-sec-note" data-t="gallery.note">Klepnutím zvětšíte</span>
       </div>
-      <div class="vr-gal vr-reveal" id="vr-gal">
-        <img src="media/photos/gallery1_t.jpg" alt="Villa Rudolf 1" loading="lazy">
-        <img src="media/photos/gallery2_t.jpg" alt="Villa Rudolf 2" loading="lazy">
-        <img src="media/photos/gallery3_t.jpg" alt="Villa Rudolf 3" loading="lazy">
-        <img src="media/photos/gallery4_t.jpg" alt="Villa Rudolf 4" loading="lazy">
-        <img src="media/photos/gallery5_t.jpg" alt="Villa Rudolf 5" loading="lazy">
-        <img src="media/photos/gallery6_t.jpg" alt="Villa Rudolf 6" loading="lazy">
-      </div>
+      <div class="vr-gal-chips vr-reveal" id="vr-gal-chips" role="group" aria-label="Filtr galerie"></div>
+      <div class="vr-gal vr-reveal" id="vr-gal"></div>
     </div>
   </section>
 
@@ -382,6 +380,6 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=4" defer></script>
+<script src="assets/site.js?v=5" defer></script>
 </body>
 </html>

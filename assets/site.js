@@ -73,7 +73,7 @@ const T = {
         { name: 'Zimní pozemek', desc: 'Rozlehlý zasněžený pozemek jen pro vás — od domu k bazénu, hřišti a dál.' },
       ],
     },
-    gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte · další fotky a videa se doplní' },
+    gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
     vylety: {
       eyebrow: 'Kam na výlet', title: 'Hory začínají za dveřmi', note: 'Tipy obměňujeme podle sezóny.', drop: 'Sem přijde fotka z výletu', cta: 'Otevřít průvodce výlety',
       items: [
@@ -166,7 +166,7 @@ const T = {
         { name: 'Winter grounds', desc: 'Sweeping snowbound grounds, all yours — from the house to the pool, the playground and beyond.' },
       ],
     },
-    gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge · more photos and video to come' },
+    gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge', all: 'All', leto: 'Summer', zima: 'Winter', vecer: 'Evening', interier: 'Interior' },
     vylety: {
       eyebrow: 'Day trips', title: 'The mountains start at the door', note: 'Tips rotate with the season.', drop: 'A trip photo goes here', cta: 'Open the trips guide',
       items: [
@@ -259,7 +259,7 @@ const T = {
         { name: 'Wintergrundstück', desc: 'Ein weitläufiges verschneites Grundstück, nur für euch — vom Haus zum Pool, zum Spielplatz und weiter.' },
       ],
     },
-    gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern · weitere Fotos folgen' },
+    gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern', all: 'Alle', leto: 'Sommer', zima: 'Winter', vecer: 'Abend', interier: 'Innen' },
     vylety: {
       eyebrow: 'Ausflüge', title: 'Die Berge beginnen vor der Tür', note: 'Tipps je nach Saison.', drop: 'Hier kommt ein Ausflugsfoto', cta: 'Ausflugsführer öffnen',
       items: [
@@ -352,7 +352,7 @@ const T = {
         { name: 'Zimowa posesja', desc: 'Rozległa zaśnieżona posesja tylko dla was — od domu po basen, plac zabaw i dalej.' },
       ],
     },
-    gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć · kolejne zdjęcia wkrótce' },
+    gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć', all: 'Wszystko', leto: 'Lato', zima: 'Zima', vecer: 'Wieczór', interier: 'Wnętrze' },
     vylety: {
       eyebrow: 'Wycieczki', title: 'Góry zaczynają się za drzwiami', note: 'Wskazówki zmieniamy według sezonu.', drop: 'Tu trafi zdjęcie z wycieczki', cta: 'Otwórz przewodnik wycieczek',
       items: [
@@ -380,11 +380,47 @@ const T = {
 };
 
 /* ============================ State + helpers ============================ */
-const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, lb: -1, selStart: 0, selEnd: 0, mob: false };
+const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, lb: -1, lbList: [], galFilter: 'all', selStart: 0, selEnd: 0, mob: false };
 const NIGHT_RATE = 20000;
 const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
 const PANO_FILES = ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds'];
-const GALLERY_FULL = ['gallery1', 'gallery2', 'gallery3', 'gallery4', 'gallery5', 'gallery6'];
+
+/* Per-pano horizontal start point (fraction 0–1 across the equirect image; 0.5 =
+   image centre). Vision-scored "most attractive view" per scene. Mapped to camera
+   yaw in loadPano() so the viewer first faces the described subject. */
+const PANO_YAWF = { living: 0.76, kitchen: 0.4, sauna: 0.5, saunahot: 0.9, bed1: 0.48, bed2: 0.15, pool: 0.42, pergola: 0.49, grounds: 0.65 };
+
+/* Gallery: curated real photos. c = filter category (leto/zima/vecer/interier).
+   Order below is the "Vše" order (greatest-hits interleave). Files live at
+   media/gallery/{slug}.jpg (1600px) and media/gallery/t/{slug}.jpg (640px thumb). */
+const GALLERY = [
+  { s: 'firepit-sunset', c: 'vecer', alt: 'Ohniště a prosvětlená gabionová stěna při západu slunce' },
+  { s: 'winter-snow', c: 'zima', alt: 'Villa Rudolf ve sněhu' },
+  { s: 'pool-day', c: 'leto', alt: 'Zastřešený bazén — pohled prosklenym tunelem' },
+  { s: 'room4-beams', c: 'interier', alt: 'Ložnice s postelí mezi dřevěnými trámy' },
+  { s: 'areal-night', c: 'vecer', alt: 'Celý areál v noci — dům, zářící bazén i ohniště' },
+  { s: 'pergola-exterior', c: 'leto', alt: 'Dřevěná pergola zvenčí' },
+  { s: 'winter-night', c: 'zima', alt: 'Villa Rudolf v noci se sněhem a měsícem' },
+  { s: 'dining-kitchen', c: 'interier', alt: 'Kuchyně a velký jídelní stůl' },
+  { s: 'pool-sunbeds', c: 'leto', alt: 'Bazén s řadou lehátek a domem' },
+  { s: 'aerial-night', c: 'vecer', alt: 'Noční pohled shora na zářící bazén a ohniště' },
+  { s: 'winter-twin-snow', c: 'zima', alt: 'Ložnice se zasněženým výhledem z oken' },
+  { s: 'room2-lamps', c: 'interier', alt: 'Postel s rozsvícenými nočními lampičkami' },
+  { s: 'summer-drive', c: 'leto', alt: 'Příjezdová alej ke vile' },
+  { s: 'pool-night', c: 'vecer', alt: 'Noční bazén pod hvězdnou oblohou' },
+  { s: 'winter-forest', c: 'zima', alt: 'Vila v průhledu mezi zasněženými smrky' },
+  { s: 'suite-billiard', c: 'interier', alt: 'Společenský prostor s kulečníkovým stolem' },
+  { s: 'pergola-view', c: 'leto', alt: 'Výhled z pergoly na bazén a hlavní vilu' },
+  { s: 'firepit-dusk', c: 'vecer', alt: 'Bazén a zahrada za soumraku' },
+  { s: 'winter-night-close', c: 'zima', alt: 'Detailní noční pohled na fasádu vily' },
+  { s: 'room1-corner', c: 'interier', alt: 'Rohová ložnice s výhledem do zeleně' },
+  { s: 'pool-storm', c: 'leto', alt: 'Bazén a dům pod dramatickou oblohou' },
+  { s: 'pergola-night', c: 'vecer', alt: 'Nasvícený altán s prostřeným stolem večer' },
+  { s: 'winter-room-snow', c: 'zima', alt: 'Rohová ložnice se sněhem za okny' },
+  { s: 'sauna-hall', c: 'interier', alt: 'Chodba k sauně s prosklenými dveřmi' },
+  { s: 'summer-house', c: 'leto', alt: 'Villa Rudolf pod korunou stromu v létě' },
+];
+const GAL_FILTERS = ['all', 'leto', 'zima', 'vecer', 'interier'];
 
 function tt() { return T[state.lang] || T.cs; }
 function resolve(obj, path) { return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj); }
@@ -443,9 +479,9 @@ function renderAmenities() {
   $('#am-pool-tag').textContent = t.amenities.items[0].tag;
   $('#am-pool-name').textContent = t.amenities.items[0].name;
   $('#am-pool-desc').textContent = t.amenities.items[0].desc;
-  // three cards: sauna (slot), pergola (photo), playground (slot)
+  // three cards: sauna (placeholder — no fitting photo curated), pergola (photo), playground (photo)
   const cards = [
-    { i: 1, img: null }, { i: 2, img: 'media/photos/pergola.jpg' }, { i: 3, img: null },
+    { i: 1, img: null }, { i: 2, img: 'media/gallery/pergola-exterior.jpg' }, { i: 3, img: 'media/sections/playground.jpg' },
   ];
   const host = $('#vr-amen3'); host.innerHTML = '';
   cards.forEach((c) => {
@@ -517,6 +553,35 @@ function renderTrips() {
     art.appendChild(el('p', { text: it.desc }));
     host.appendChild(art);
   });
+}
+
+/* ============================ Gallery (filterable + lightbox) ============================ */
+function galItems() {
+  return state.galFilter === 'all' ? GALLERY : GALLERY.filter((g) => g.c === state.galFilter);
+}
+function renderGalleryChips() {
+  const t = tt();
+  const host = $('#vr-gal-chips'); if (!host) return;
+  host.innerHTML = '';
+  GAL_FILTERS.forEach((f) => {
+    host.appendChild(el('button', {
+      class: 'vr-gal-chip', type: 'button', 'data-filter': f,
+      'data-active': state.galFilter === f ? 'true' : 'false',
+      'aria-pressed': state.galFilter === f ? 'true' : 'false',
+      text: t.gallery[f],
+      onclick: () => { if (state.galFilter !== f) { state.galFilter = f; renderGallery(); } },
+    }));
+  });
+}
+function renderGallery() {
+  renderGalleryChips();
+  const host = $('#vr-gal'); if (!host) return;
+  const items = galItems();
+  host.innerHTML = '';
+  items.forEach((g, i) => host.appendChild(el('img', {
+    src: 'media/gallery/t/' + g.s + '.jpg', alt: g.alt, loading: 'lazy',
+    onclick: () => lbOpen(items, i),
+  })));
 }
 
 /* ============================ Booking calendar ============================ */
@@ -647,14 +712,14 @@ function setLang(lang) {
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); setTexts();
   renderFacts(); renderAmenities(); renderThumbs(); renderScene();
-  renderSeasonsCards(); renderLokFacts(); renderTrips();
+  renderSeasonsCards(); renderLokFacts(); renderTrips(); renderGallery();
   renderCalendar(); renderBookingPanel(); applyTip();
 }
 function eagerLoadSeason(season) {
-  // Hero photos for a season may be lazy; force them to load so the
+  // Hero + section photos for a season may be lazy; force them to load so the
   // crossfade has real pixels to show.
   const cls = season === 'zima' ? 'winter' : 'summer';
-  $all('.vrim-dayphoto.' + cls).forEach((img) => {
+  $all('.vrim-dayphoto.' + cls + ', .vr-seasonimg.' + cls).forEach((img) => {
     if (img.getAttribute('loading') === 'lazy') img.setAttribute('loading', 'eager');
   });
 }
@@ -664,18 +729,25 @@ function setSeason(season) {
   eagerLoadSeason(season);
   document.querySelector('.vr-root').setAttribute('data-season', season);
   applySeasonButtons(); renderSeasonsCards(); applyTip();
+  // Season → default gallery filter (Zima preselects the winter set; user can
+  // still switch). If the lightbox is open, keep it in sync with the new filter.
+  state.galFilter = season === 'zima' ? 'zima' : 'all';
+  renderGallery();
+  if (state.lb >= 0) lbSet(-1);
 }
 
 /* ============================ Lightbox ============================ */
+function lbOpen(list, i) { state.lbList = (list || []).map((g) => g.s); lbSet(i); }
 function lbSet(i) {
-  state.lb = i;
   const lb = $('#vr-lb');
-  if (i < 0) { lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; return; }
-  $('#vr-lb-img').src = 'media/photos/' + GALLERY_FULL[i] + '.jpg';
-  $('#vr-lb-count').textContent = (i + 1) + ' / ' + GALLERY_FULL.length;
+  const list = state.lbList || [];
+  if (i < 0 || !list.length) { state.lb = -1; lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; return; }
+  state.lb = i;
+  $('#vr-lb-img').src = 'media/gallery/' + list[i] + '.jpg';
+  $('#vr-lb-count').textContent = (i + 1) + ' / ' + list.length;
   lb.style.display = 'flex'; lb.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
 }
-function lbNav(dir) { const n = GALLERY_FULL.length; lbSet((state.lb + dir + n) % n); }
+function lbNav(dir) { const n = (state.lbList || []).length; if (!n) return; lbSet((state.lb + dir + n) % n); }
 
 /* ============================ 360 panorama (three.js, lazy) ============================ */
 let panoInited = false, loadPano = null, panoLastInteract = 0, threeInjected = false;
@@ -714,7 +786,12 @@ function initPano() {
     const spin = $('#vrpSpin');
     if (spin) spin.style.opacity = '1';
     mount.style.opacity = '0.2';
-    userYaw = 0; swayBase = 0; pitch = 0; idle = 0;
+    // Start each scene facing its curated view. Sphere is inside-out (scale
+    // -1,1,1) so camera default (yaw 0) faces texture u=0.75; a target centre at
+    // fraction f maps to yaw = PI*(1.5 - 2f). Snap yaw so the first frame is centred.
+    const yf = PANO_YAWF[f] != null ? PANO_YAWF[f] : 0.5;
+    const iy = Math.PI * (1.5 - 2 * yf);
+    userYaw = iy; swayBase = iy; yaw = iy; pitch = 0; idle = 0;
     loader.load('media/pano/' + f + '.jpg', (tex) => {
       if ('colorSpace' in tex) tex.colorSpace = THREE.SRGBColorSpace;
       tex.minFilter = THREE.LinearFilter;
@@ -873,8 +950,7 @@ function init() {
   $('#sez-sum').addEventListener('click', () => setSeason('leto'));
   $('#sez-win').addEventListener('click', () => setSeason('zima'));
 
-  // gallery lightbox
-  $all('#vr-gal img').forEach((img, i) => img.addEventListener('click', () => lbSet(i)));
+  // gallery lightbox (grid thumbs get their own click handlers in renderGallery)
   $('#vr-lb').addEventListener('click', () => lbSet(-1));
   $('#vr-lb-img').addEventListener('click', (e) => e.stopPropagation());
   $('#vr-lb-prev').addEventListener('click', (e) => { e.stopPropagation(); lbNav(-1); });
@@ -895,9 +971,10 @@ function init() {
 
   // initial render
   document.querySelector('.vr-root').setAttribute('data-season', state.season);
+  state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderFacts(); renderAmenities(); renderThumbs(); renderScene();
-  renderSeasonsCards(); renderLokFacts(); renderTrips();
+  renderSeasonsCards(); renderLokFacts(); renderTrips(); renderGallery();
   renderCalendar(); renderBookingPanel(); applyTip();
 
   startReveal(); startRaf(); startScrollSpy();
