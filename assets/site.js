@@ -34,7 +34,7 @@ const VR_PRICING = {
 const T = {
   cs: {
     photoSoon: 'Fotku doplníme',
-    nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', cta: 'Rezervovat termín' },
+    nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
       eyebrow: 'Soukromé sídlo s vlastním pozemkem · Krkonoše',
       h1a: 'Celé to místo', h1b: 'je jen vaše',
@@ -135,7 +135,7 @@ const T = {
 
   en: {
     photoSoon: 'Photo coming soon',
-    nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', cta: 'Book dates' },
+    nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
       eyebrow: 'A private estate with its own grounds · Krkonoše',
       h1a: 'The whole place', h1b: 'is yours alone',
@@ -236,7 +236,7 @@ const T = {
 
   de: {
     photoSoon: 'Foto folgt',
-    nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', cta: 'Termin buchen' },
+    nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
       eyebrow: 'Ein privates Anwesen mit eigenem Grundstück · Riesengebirge',
       h1a: 'Der ganze Ort', h1b: 'gehört nur euch',
@@ -337,7 +337,7 @@ const T = {
 
   pl: {
     photoSoon: 'Zdjęcie wkrótce',
-    nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', cta: 'Zarezerwuj termin' },
+    nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
       eyebrow: 'Prywatna posiadłość z własną posesją · Karkonosze',
       h1a: 'Całe to miejsce', h1b: 'jest tylko wasze',
