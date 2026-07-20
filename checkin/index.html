@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Villa Rudolf – registrace hosta</title>
+<meta name="theme-color" content="#0E1311">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="checkin.css">
+</head>
+<body>
+<div class="vc-root">
+  <div class="vc-wrap">
+
+    <header class="vc-header">
+      <div class="vc-brand">
+        <span class="nm">Villa Rudolf</span>
+        <span class="bd" data-i18n="brandBadge">Registrace</span>
+      </div>
+      <nav class="vc-langs" id="langs" aria-label="Jazyk / Language">
+        <button type="button" class="vc-lang" data-lang="cs">CS</button>
+        <button type="button" class="vc-lang" data-lang="en">EN</button>
+        <button type="button" class="vc-lang" data-lang="de">DE</button>
+        <button type="button" class="vc-lang" data-lang="pl">PL</button>
+      </nav>
+    </header>
+
+    <!-- ============ FORM ============ -->
+    <main class="vc-main" id="formView">
+      <section class="vc-hero">
+        <p class="vc-eyebrow" data-i18n="eyebrow">Villa Rudolf · Krkonoše</p>
+        <h1 class="vc-title" data-i18n="title">Registrace hosta</h1>
+        <p class="vc-intro" data-i18n="intro">Vyplňte prosím pár údajů. Připravíme vám podle nich personalizovaného průvodce výlety, pošleme informace před příjezdem i kód k zámku.</p>
+      </section>
+
+      <form class="vc-form" id="form" novalidate autocomplete="on">
+
+        <!-- honeypot: skryté pole pro boty -->
+        <div class="vc-hp" aria-hidden="true">
+          <label>Company website
+            <input type="text" id="hp" name="company_website" tabindex="-1" autocomplete="off">
+          </label>
+        </div>
+
+        <label class="vc-field">
+          <span class="vc-lbl" data-i18n="fName">Jméno a příjmení <em>*</em></span>
+          <input type="text" id="f-name" name="name" autocomplete="name" required maxlength="200">
+        </label>
+
+        <label class="vc-field">
+          <span class="vc-lbl" data-i18n="fPhone">Telefon <em>*</em></span>
+          <input type="tel" id="f-phone" name="phone" inputmode="tel" autocomplete="tel" required maxlength="200" placeholder="+420 …">
+        </label>
+
+        <label class="vc-field">
+          <span class="vc-lbl" data-i18n="fEmail">E-mail <em>*</em></span>
+          <input type="email" id="f-email" name="email" inputmode="email" autocomplete="email" required maxlength="200" data-i18n-ph="emailPh" placeholder="vas@email.cz">
+        </label>
+
+        <div class="vc-field">
+          <span class="vc-lbl" data-i18n="fStay">Termín pobytu <em>*</em></span>
+          <div class="vc-dates">
+            <label class="vc-datecol">
+              <span class="vc-sub" data-i18n="fFrom">Od</span>
+              <input type="date" id="f-arrival" name="arrival" required>
+            </label>
+            <label class="vc-datecol">
+              <span class="vc-sub" data-i18n="fTo">Do</span>
+              <input type="date" id="f-departure" name="departure" required>
+            </label>
+          </div>
+        </div>
+
+        <div class="vc-row2">
+          <label class="vc-field">
+            <span class="vc-lbl" data-i18n="fAdults">Počet dospělých <em>*</em></span>
+            <input type="number" id="f-adults" name="adults" inputmode="numeric" min="1" max="30" step="1" value="2" required>
+          </label>
+          <label class="vc-field">
+            <span class="vc-lbl" data-i18n="fChildren">Věky dětí</span>
+            <input type="text" id="f-children" name="children" maxlength="200" data-i18n-ph="childrenPh" placeholder="např. 6, 9">
+          </label>
+        </div>
+
+        <label class="vc-field">
+          <span class="vc-lbl" data-i18n="fLang">Jazyk komunikace</span>
+          <select id="f-commlang" name="commlang">
+            <option value="cs">Čeština</option>
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+            <option value="pl">Polski</option>
+          </select>
+        </label>
+
+        <label class="vc-field">
+          <span class="vc-lbl" data-i18n="fNote">Poznámka</span>
+          <textarea id="f-note" name="note" rows="3" maxlength="1000" data-i18n-ph="notePh" placeholder="Cokoli, co bychom měli vědět (nepovinné)"></textarea>
+        </label>
+
+        <p class="vc-err" id="err" role="alert" hidden></p>
+
+        <button type="submit" class="vc-submit" id="submit">
+          <span class="vc-submit-label" data-i18n="submit">Odeslat registraci</span>
+          <span class="vc-spin" aria-hidden="true"></span>
+        </button>
+
+        <p class="vc-privacy" data-i18n="privacy">Vaše údaje použijeme jen pro komunikaci k vašemu pobytu ve Villa Rudolf. Nikam je nepřeprodáváme.</p>
+      </form>
+    </main>
+
+    <!-- ============ SUCCESS ============ -->
+    <main class="vc-main" id="successView" hidden>
+      <section class="vc-success">
+        <div class="vc-check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h1 class="vc-title" data-i18n="okTitle">Děkujeme!</h1>
+        <p class="vc-intro" data-i18n="okBody">Registrace je hotová. Před příjezdem vám na e-mail pošleme kód k zámku i praktické informace k pobytu.</p>
+
+        <a class="vc-guidebtn" id="guideBtn" href="#" rel="noopener">
+          <span data-i18n="okGuide">Otevřít průvodce výlety</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <p class="vc-okhint" data-i18n="okHint">Průvodce jsme vám připravili na míru — podle termínu pobytu, počtu hostů a věku dětí.</p>
+      </section>
+    </main>
+
+    <footer class="vc-footer">
+      <span>Villa Rudolf · Krkonoše</span>
+    </footer>
+
+  </div>
+</div>
+<script src="checkin.js" defer></script>
+</body>
+</html>

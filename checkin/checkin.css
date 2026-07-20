@@ -1,0 +1,133 @@
+/* Villa Rudolf — registrace hosta (/checkin/).
+   Self-contained. Dark, Newsreader + Archivo, ember akcent — tokeny z assets/site.css.
+   Mobile-first (max 520px). Vanilla CSS, bez frameworku. */
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#0E1311}
+
+:root{
+  --vc-bg:#0E1311;
+  --vc-ember:#D68A4C;
+  --vc-ember-2:color-mix(in oklab,var(--vc-ember),#ffffff 24%);
+  --vc-text:#F0EBE1;
+  --vc-muted:#B4BAAD;
+  --vc-dim:#79817A;
+  --vc-line:rgba(240,235,225,.10);
+  --vc-line-2:rgba(240,235,225,.16);
+  --vc-field:rgba(240,235,225,.04);
+  --vc-err:#E5877A;
+}
+
+.vc-root{min-height:100vh;background:var(--vc-bg);color:var(--vc-text);
+  font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased}
+.vc-wrap{max-width:520px;margin:0 auto;padding:0 18px 64px;position:relative}
+.vc-root a{color:var(--vc-text);text-decoration:none}
+.vc-root button{font-family:inherit}
+
+/* subtle ember glow at the top, like the booking section */
+.vc-wrap::before{content:'';position:absolute;left:50%;top:-40px;width:120%;height:320px;
+  transform:translateX(-50%);pointer-events:none;z-index:0;
+  background:radial-gradient(60% 100% at 50% 0%,rgba(214,138,76,.12),transparent 70%)}
+.vc-header,.vc-main,.vc-footer{position:relative;z-index:1}
+
+/* ---------- Header ---------- */
+.vc-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 0}
+.vc-brand{display:flex;align-items:baseline;gap:8px;min-width:0}
+.vc-brand .nm{font-family:'Newsreader',serif;font-size:19px;letter-spacing:.02em;color:var(--vc-text)}
+.vc-brand .bd{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--vc-ember)}
+.vc-langs{display:flex;gap:4px;flex:none}
+.vc-lang{font-family:'Archivo',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--vc-muted);background:transparent;border:1px solid rgba(240,235,225,.18);border-radius:999px;
+  padding:5px 9px;cursor:pointer;transition:color .2s,background-color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.vc-lang:hover{color:var(--vc-text);border-color:rgba(240,235,225,.34)}
+.vc-lang[data-on="true"]{font-weight:700;color:#0E1311;background:var(--vc-ember);border-color:var(--vc-ember)}
+
+/* ---------- Hero ---------- */
+.vc-hero{margin-top:34px}
+.vc-eyebrow{margin:0;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--vc-ember)}
+.vc-title{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2rem,9vw,2.7rem);line-height:1.06;
+  letter-spacing:-.01em;margin:12px 0 0;text-wrap:balance}
+.vc-intro{font-size:14.5px;line-height:1.62;color:var(--vc-muted);margin:14px 0 0;max-width:44ch}
+
+/* ---------- Form ---------- */
+.vc-form{margin-top:30px;display:flex;flex-direction:column;gap:18px}
+.vc-field{display:flex;flex-direction:column;gap:8px}
+.vc-lbl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9aa094}
+.vc-lbl em{color:var(--vc-ember);font-style:normal}
+.vc-sub{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--vc-dim)}
+
+.vc-form input,
+.vc-form select,
+.vc-form textarea{
+  font-family:'Archivo',sans-serif;font-size:16px;color:var(--vc-text);
+  background:var(--vc-field);border:1px solid var(--vc-line-2);border-radius:3px;
+  padding:13px 14px;outline:none;width:100%;transition:border-color .2s,background-color .2s;
+  -webkit-appearance:none;appearance:none}
+.vc-form input::placeholder,
+.vc-form textarea::placeholder{color:#6c746b}
+.vc-form input:focus,
+.vc-form select:focus,
+.vc-form textarea:focus{border-color:var(--vc-ember);background:rgba(240,235,225,.055)}
+.vc-form input[aria-invalid="true"],
+.vc-form select[aria-invalid="true"]{border-color:var(--vc-err)}
+.vc-form textarea{resize:vertical;min-height:74px;line-height:1.5}
+
+/* native date + select tweaks for the dark theme */
+.vc-form input[type="date"]{min-height:48px}
+.vc-form input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7) sepia(.5) saturate(3) hue-rotate(-8deg);cursor:pointer}
+.vc-form select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa094' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:40px}
+.vc-form select option{background:#141b18;color:var(--vc-text)}
+
+.vc-dates{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vc-datecol{display:flex;flex-direction:column;gap:6px}
+.vc-row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* honeypot — kept in the DOM, hidden from humans + AT */
+.vc-hp{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0}
+
+/* ---------- Error ---------- */
+.vc-err{margin:0;font-size:13px;line-height:1.5;color:var(--vc-err);
+  background:rgba(229,135,122,.08);border:1px solid rgba(229,135,122,.3);border-radius:3px;padding:11px 13px}
+
+/* ---------- Submit ---------- */
+.vc-submit{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  margin-top:4px;font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;letter-spacing:.01em;
+  color:#10150f;background:var(--vc-ember);border:0;border-radius:3px;padding:16px 22px;cursor:pointer;
+  box-shadow:0 10px 30px -12px rgba(214,138,76,.6);transition:background-color .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
+.vc-submit:hover{background:var(--vc-ember-2)}
+.vc-submit[disabled]{opacity:.62;cursor:default}
+.vc-spin{display:none;width:16px;height:16px;border:2px solid rgba(16,21,15,.35);border-top-color:#10150f;
+  border-radius:50%;animation:vcSpin .8s linear infinite}
+.vc-submit[data-busy="true"] .vc-spin{display:inline-block}
+@keyframes vcSpin{to{transform:rotate(360deg)}}
+
+.vc-privacy{margin:2px 0 0;font-size:11.5px;line-height:1.55;color:var(--vc-dim)}
+
+/* ---------- Success ---------- */
+.vc-success{margin-top:52px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.vc-check{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--vc-ember);background:color-mix(in oklab,var(--vc-ember),#0E1311 78%);
+  border:1px solid rgba(214,138,76,.4);animation:vcPop .5s cubic-bezier(.2,.8,.2,1)}
+.vc-check svg{width:32px;height:32px}
+.vc-success .vc-title{margin-top:22px}
+.vc-success .vc-intro{margin-left:auto;margin-right:auto;text-align:center}
+@keyframes vcPop{from{transform:scale(.5);opacity:0}}
+
+.vc-guidebtn{display:inline-flex;align-items:center;gap:9px;margin-top:26px;
+  font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;color:#10150f;background:var(--vc-ember);
+  border-radius:3px;padding:15px 24px;box-shadow:0 10px 30px -12px rgba(214,138,76,.6);
+  transition:background-color .2s;-webkit-tap-highlight-color:transparent}
+.vc-guidebtn:hover{background:var(--vc-ember-2);color:#10150f}
+.vc-guidebtn svg{width:17px;height:17px}
+.vc-okhint{margin:18px 0 0;font-size:12.5px;line-height:1.55;color:var(--vc-dim);max-width:38ch}
+
+/* ---------- Footer ---------- */
+.vc-footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--vc-line);
+  font-size:11.5px;letter-spacing:.04em;color:var(--vc-dim);text-align:center}
+
+@media (prefers-reduced-motion:reduce){
+  .vc-check,.vc-spin{animation:none}
+}
