@@ -88,7 +88,10 @@ const T = {
       total: 'Celkem za pobyt', deposit: 'Záloha 30 %',
       pay: 'Odeslat nezávaznou poptávku', stripeNote: 'Nezávazná poptávka — žádná platba předem. Termín vám osobně potvrdíme e-mailem.',
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
+      availFail: 'Dostupnost se nepodařilo načíst.',
     },
+    video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus' },
+    share: { eyebrow: 'Sdílejte', title: 'Byli jste u nás? Pochlubte se.', body: 'Odvezli jste si hezké fotky? Sdílejte je, označte @villarudolfretreat a přidejte #villarudolf — ať je uvidí i další. Ty nejhezčí se můžou objevit přímo tady na webu.', ig: 'Sledovat na Instagramu' },
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
       body: 'Vyberte v kalendáři příjezd a odjezd a pošlete nám nezávaznou poptávku. Termín vám osobně potvrdíme e-mailem.',
@@ -181,7 +184,10 @@ const T = {
       total: 'Total for the stay', deposit: '30% deposit',
       pay: 'Send non-binding inquiry', stripeNote: 'Non-binding inquiry — no payment upfront. We’ll confirm your dates personally by email.',
       free: 'Available', booked: 'Booked', chosen: 'Your stay', demo: 'Sample availability — will connect to the booking system',
+      availFail: 'Availability could not be loaded.',
     },
+    video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus' },
+    share: { eyebrow: 'Share', title: 'Stayed with us? Show it off.', body: 'Took some nice photos? Share them, tag @villarudolfretreat and add #villarudolf so others can see them too. The best ones may appear right here on the site.', ig: 'Follow on Instagram' },
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
       body: 'Pick arrival and departure in the calendar and send us a non-binding inquiry. We’ll confirm your dates personally by email.',
@@ -274,7 +280,10 @@ const T = {
       total: 'Gesamt für den Aufenthalt', deposit: '30 % Anzahlung',
       pay: 'Unverbindliche Anfrage senden', stripeNote: 'Unverbindliche Anfrage — keine Vorauszahlung. Wir bestätigen euren Termin persönlich per E-Mail.',
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
+      availFail: 'Verfügbarkeit konnte nicht geladen werden.',
     },
+    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus' },
+    share: { eyebrow: 'Teilen', title: 'Bei uns gewesen? Zeigt es her.', body: 'Schöne Fotos gemacht? Teilt sie, markiert @villarudolfretreat und fügt #villarudolf hinzu — damit sie auch andere sehen. Die schönsten erscheinen vielleicht direkt hier auf der Website.', ig: 'Auf Instagram folgen' },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
       body: 'Wählt An- und Abreise im Kalender und sendet uns eine unverbindliche Anfrage. Wir bestätigen euren Termin persönlich per E-Mail.',
@@ -367,7 +376,10 @@ const T = {
       total: 'Razem za pobyt', deposit: 'Zaliczka 30%',
       pay: 'Wyślij niezobowiązujące zapytanie', stripeNote: 'Niezobowiązujące zapytanie — bez płatności z góry. Termin potwierdzimy osobiście e-mailem.',
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
+      availFail: 'Nie udało się wczytać dostępności.',
     },
+    video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus' },
+    share: { eyebrow: 'Udostępnij', title: 'Byliście u nas? Pochwalcie się.', body: 'Macie ładne zdjęcia? Udostępnijcie je, oznaczcie @villarudolfretreat i dodajcie #villarudolf — niech zobaczą je też inni. Najlepsze mogą pojawić się właśnie tu, na stronie.', ig: 'Obserwuj na Instagramie' },
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
       body: 'Wybierz w kalendarzu przyjazd i wyjazd i wyślij nam niezobowiązujące zapytanie. Termin potwierdzimy osobiście e-mailem.',
@@ -585,9 +597,62 @@ function renderGallery() {
 }
 
 /* ============================ Booking calendar ============================ */
-function bookedRanges(y, m) {
-  const s = (y * 12 + m) % 3;
-  return s === 0 ? [[4, 8], [18, 21], [27, 29]] : s === 1 ? [[2, 4], [11, 15], [24, 26]] : [[6, 9], [16, 18], [22, 25]];
+/* Real availability. Booked nights come from the shared booking calendar's
+   public history feed (villa-booking-calendar). PRIVACY: only start/end dates
+   are ever read, cached or rendered — guest names and platforms are never
+   touched. `end` is the departure day, so occupied nights are start..end-1. */
+const AVAIL_URL = 'https://pavelkubiznak.github.io/villa-booking-calendar/data/history.json';
+const AVAIL_CACHE_KEY = 'vr_avail_v1';
+const AVAIL_TTL = 3600000; // 1 h
+let BOOKED = new Set();      // integer day-keys (YYYYMMDD) of occupied nights
+let availStatus = 'loading'; // 'loading' | 'ok' | 'fail'
+
+function dkey(d) { return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
+function parseISO(s) { const p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+/* Add every occupied night [start .. end-1] to the blocked set. */
+function addNights(startStr, endStr) {
+  const end = parseISO(endStr);
+  for (let d = parseISO(startStr); d < end; d.setDate(d.getDate() + 1)) BOOKED.add(dkey(d));
+}
+function buildBooked(pairs) {
+  BOOKED = new Set();
+  pairs.forEach((p) => { try { addNights(p.s, p.e); } catch (e) {} });
+}
+/* Reduce the raw feed to future-only {s,e} date pairs — guest/platform dropped
+   here so personal data never reaches the set, the cache, or the DOM. */
+function slimFuture(records) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const out = [];
+  records.forEach((r) => {
+    if (!r || !r.start || !r.end) return;
+    if (parseISO(r.end) > today) out.push({ s: r.start, e: r.end });
+  });
+  return out;
+}
+function loadAvailability() {
+  try {
+    const raw = sessionStorage.getItem(AVAIL_CACHE_KEY);
+    if (raw) {
+      const c = JSON.parse(raw);
+      if (c && c.t && (Date.now() - c.t) < AVAIL_TTL && Array.isArray(c.pairs)) {
+        buildBooked(c.pairs); availStatus = 'ok';
+        renderCalendar(); updateAvailNote(); return;
+      }
+    }
+  } catch (e) {}
+  fetch(AVAIL_URL, { cache: 'no-store' })
+    .then((r) => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then((records) => {
+      const pairs = slimFuture(Array.isArray(records) ? records : []);
+      buildBooked(pairs); availStatus = 'ok';
+      try { sessionStorage.setItem(AVAIL_CACHE_KEY, JSON.stringify({ t: Date.now(), pairs: pairs })); } catch (e) {}
+      renderCalendar(); updateAvailNote();
+    })
+    .catch(() => { availStatus = 'fail'; BOOKED = new Set(); renderCalendar(); updateAvailNote(); });
+}
+function updateAvailNote() {
+  const n = $('#vr-avail-note'); if (!n) return;
+  n.textContent = availStatus === 'fail' ? (tt().book.availFail || '') : '';
 }
 function toD(k) { return new Date(Math.floor(k / 10000), Math.floor(k / 100) % 100 - 1, k % 100); }
 function rangeBlocked(a, b) {
@@ -595,7 +660,7 @@ function rangeBlocked(a, b) {
   while (true) {
     d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
     if (d >= end) return false;
-    if (bookedRanges(d.getFullYear(), d.getMonth()).some((r) => d.getDate() >= r[0] && d.getDate() <= r[1])) return true;
+    if (BOOKED.has(dkey(d))) return true;
   }
 }
 function pickDay(k) {
@@ -648,7 +713,7 @@ function renderCalendar() {
     for (let dd = 1; dd <= dim; dd++) {
       const k = y2 * 10000 + (m + 1) * 100 + dd;
       const isPast = new Date(y2, m, dd) < today;
-      const bk = bookedRanges(y2, m).some((r) => dd >= r[0] && dd <= r[1]);
+      const bk = BOOKED.has(k);
       let st = isPast ? 'p' : bk ? 'b' : 'f';
       if (st === 'f') { if (k === s0 || k === s1) st = 's'; else if (s0 && s1 && k > s0 && k < s1) st = 'r'; }
       const attrs = { class: 'vr-day', type: 'button', 'data-st': st, text: String(dd) };
@@ -658,6 +723,7 @@ function renderCalendar() {
     monthEl.appendChild(grid);
     host.appendChild(monthEl);
   });
+  updateAvailNote();
 }
 
 function renderBookingPanel() {
@@ -976,6 +1042,7 @@ function init() {
   renderFacts(); renderAmenities(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderTrips(); renderGallery();
   renderCalendar(); renderBookingPanel(); applyTip();
+  loadAvailability();
 
   startReveal(); startRaf(); startScrollSpy();
 
