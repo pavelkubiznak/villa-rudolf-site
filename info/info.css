@@ -1,0 +1,117 @@
+/* Villa Rudolf — praktické informace pro hosty (/info/).
+   Self-contained. Dark, Newsreader + Archivo, ember akcent — tokeny sdílené s /checkin/ a assets/site.css.
+   Mobile-first. Vanilla CSS, bez frameworku. */
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#0E1311}
+
+:root{
+  --pi-bg:#0E1311;
+  --pi-ember:#D68A4C;
+  --pi-ember-2:color-mix(in oklab,var(--pi-ember),#ffffff 24%);
+  --pi-text:#F0EBE1;
+  --pi-muted:#B4BAAD;
+  --pi-dim:#79817A;
+  --pi-line:rgba(240,235,225,.10);
+  --pi-line-2:rgba(240,235,225,.16);
+  --pi-card:rgba(240,235,225,.035);
+  --pi-card-2:rgba(240,235,225,.05);
+}
+
+.pi-root{min-height:100vh;background:var(--pi-bg);color:var(--pi-text);
+  font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased}
+.pi-wrap{max-width:920px;margin:0 auto;padding:0 18px 72px;position:relative}
+.pi-root a{color:var(--pi-text);text-decoration:none}
+.pi-root button{font-family:inherit}
+
+/* ember glow at the top */
+.pi-wrap::before{content:'';position:absolute;left:50%;top:-40px;width:120%;height:340px;
+  transform:translateX(-50%);pointer-events:none;z-index:0;
+  background:radial-gradient(60% 100% at 50% 0%,rgba(214,138,76,.12),transparent 70%)}
+.pi-header,.pi-hero,.pi-main,.pi-footer{position:relative;z-index:1}
+
+/* ---------- Header ---------- */
+.pi-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 0}
+.pi-brand{display:flex;align-items:baseline;gap:8px;min-width:0}
+.pi-brand .nm{font-family:'Newsreader',serif;font-size:19px;letter-spacing:.02em;color:var(--pi-text)}
+.pi-brand .bd{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--pi-ember);white-space:nowrap}
+.pi-langs{display:flex;gap:4px;flex:none}
+.pi-lang{font-family:'Archivo',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--pi-muted);background:transparent;border:1px solid rgba(240,235,225,.18);border-radius:999px;
+  padding:5px 9px;cursor:pointer;transition:color .2s,background-color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.pi-lang:hover{color:var(--pi-text);border-color:rgba(240,235,225,.34)}
+.pi-lang[data-on="true"]{font-weight:700;color:#0E1311;background:var(--pi-ember);border-color:var(--pi-ember)}
+
+/* ---------- Hero ---------- */
+.pi-hero{margin-top:34px;max-width:640px}
+.pi-eyebrow{margin:0;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--pi-ember)}
+.pi-title{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2rem,8vw,2.9rem);line-height:1.06;
+  letter-spacing:-.01em;margin:12px 0 0;text-wrap:balance}
+.pi-intro{font-size:15px;line-height:1.62;color:var(--pi-muted);margin:14px 0 0;max-width:52ch}
+
+/* ---------- Section ---------- */
+.pi-main{margin-top:8px}
+.pi-sec{margin-top:48px}
+.pi-sechead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  padding-bottom:14px;border-bottom:1px solid var(--pi-line);margin-bottom:20px}
+.pi-h2{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.5rem,5vw,1.9rem);line-height:1.1;margin:0;letter-spacing:-.01em}
+.pi-sub{margin:0;font-size:13px;line-height:1.5;color:var(--pi-dim)}
+
+/* ---------- Card grid ---------- */
+.pi-grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:680px){.pi-grid{grid-template-columns:1fr 1fr}}
+
+.pi-card{background:var(--pi-card);border:1px solid var(--pi-line-2);border-radius:8px;
+  padding:18px 18px 16px;display:flex;flex-direction:column;transition:border-color .2s,background-color .2s}
+.pi-card:hover{border-color:rgba(214,138,76,.32);background:var(--pi-card-2)}
+
+.pi-ctop{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.pi-ico{flex:none;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--pi-ember);background:color-mix(in oklab,var(--pi-ember),#0E1311 82%);border:1px solid rgba(214,138,76,.28)}
+.pi-ico svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.pi-name{font-family:'Newsreader',serif;font-weight:500;font-size:18px;line-height:1.2;margin:0;flex:1 1 auto;min-width:0}
+.pi-dist{flex:none;font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--pi-muted);
+  background:rgba(240,235,225,.06);border:1px solid var(--pi-line);border-radius:999px;padding:4px 9px;white-space:nowrap}
+.pi-dist-walk{color:#0E1311;background:var(--pi-ember);border-color:var(--pi-ember)}
+.pi-112{flex:none;font-family:'Newsreader',serif;font-weight:500;font-size:26px;line-height:1;color:var(--pi-ember)}
+
+/* rows */
+.pi-rows{display:flex;flex-direction:column;gap:11px}
+.pi-row{display:grid;grid-template-columns:112px 1fr;gap:10px;align-items:baseline}
+.pi-rl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pi-dim);padding-top:1px}
+.pi-rv{font-size:14px;line-height:1.5;color:var(--pi-text)}
+.pi-rv a{color:var(--pi-ember);text-decoration:none}
+.pi-rv a:hover{text-decoration:underline}
+@media(max-width:400px){
+  .pi-row{grid-template-columns:1fr;gap:2px}
+  .pi-rl{padding-top:0}
+}
+
+.pi-body{margin:0;font-size:14px;line-height:1.6;color:var(--pi-muted)}
+.pi-note{margin:12px 0 0;font-size:12px;line-height:1.5;color:var(--pi-dim);font-style:italic}
+
+/* map / action link */
+.pi-map{display:inline-flex;align-items:center;gap:7px;margin-top:16px;align-self:flex-start;
+  font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--pi-ember);
+  border:1px solid rgba(214,138,76,.34);border-radius:999px;padding:7px 13px;
+  transition:background-color .2s,color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.pi-map:hover{background:var(--pi-ember);color:#0E1311;border-color:var(--pi-ember)}
+.pi-map svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* alert (112) card */
+.pi-card-alert{background:color-mix(in oklab,var(--pi-ember),#0E1311 88%);border-color:rgba(214,138,76,.4)}
+.pi-card-alert:hover{border-color:rgba(214,138,76,.55)}
+
+/* disclaimer */
+.pi-disclaimer{margin:40px 0 0;font-size:12.5px;line-height:1.6;color:var(--pi-dim);
+  background:rgba(240,235,225,.03);border:1px solid var(--pi-line);border-radius:8px;padding:14px 16px}
+
+/* ---------- Footer ---------- */
+.pi-footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--pi-line);
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.pi-back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--pi-muted);
+  transition:color .2s}
+.pi-back:hover{color:var(--pi-text)}
+.pi-back svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pi-foot-brand{font-size:11.5px;letter-spacing:.04em;color:var(--pi-dim)}
