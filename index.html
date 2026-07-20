@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=8">
+<link rel="stylesheet" href="assets/site.css?v=9">
 </head>
 <body>
 <div class="vr-root" data-season="leto">
@@ -31,10 +31,8 @@
       <a href="#top" class="vr-brand"><b>VILLA RUDOLF</b><i>KRKONOŠE</i></a>
       <nav class="vr-navlinks" aria-label="Sekce">
         <a href="#dum" data-t="nav.dum">Dům</a>
-        <a href="#interier" data-t="nav.interier">Interiér</a>
         <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
-        <a href="#ohniste" data-t="nav.ohniste">Ohniště</a>
-        <a href="#sezony" data-t="nav.sezony">Sezóny</a>
+        <a href="#recenze" data-t="nav.recenze">Recenze</a>
         <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
         <a href="#vylety" data-t="nav.vylety">Výlety</a>
         <a href="info/" data-t="nav.info">Praktické info</a>
@@ -57,10 +55,8 @@
   <!-- ===================== Mobile menu (added; not in prototype) ===================== -->
   <div class="vr-mob" id="vr-mob" data-open="false">
     <a href="#dum" data-t="nav.dum">Dům</a>
-    <a href="#interier" data-t="nav.interier">Interiér</a>
     <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
-    <a href="#ohniste" data-t="nav.ohniste">Ohniště</a>
-    <a href="#sezony" data-t="nav.sezony">Sezóny</a>
+    <a href="#recenze" data-t="nav.recenze">Recenze</a>
     <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
     <a href="#vylety" data-t="nav.vylety">Výlety</a>
     <a href="info/" data-t="nav.info">Praktické info</a>
@@ -82,9 +78,9 @@
     <div class="vrim-vig"></div>
     <div class="vrim-scrim"></div>
     <div class="vrim-copy" id="vrimCopy">
-      <span class="vrim-eyebrow" data-t="hero.eyebrow">Soukromé sídlo s vlastním pozemkem · Krkonoše</span>
-      <h1 class="vrim-h1"><span data-t="hero.h1a">Celé to místo</span><span class="vrim-h1b" data-t="hero.h1b">je jen vaše</span></h1>
-      <p class="vrim-sub" data-t="hero.sub">Dům i celý rozlehlý pozemek si berete jen pro sebe.</p>
+      <span class="vrim-eyebrow" data-t="hero.eyebrow">Celý dům jen pro vaši skupinu · Krkonoše</span>
+      <h1 class="vrim-h1"><span data-t="hero.h1">Soukromá vila v Krkonoších pro 6–22 hostů</span></h1>
+      <p class="vrim-sub" data-t-html="hero.sub">Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.</p>
       <div class="vrim-actions">
         <a href="#rezervace" class="vr-btn-primary"><span data-t="nav.cta">Rezervovat termín</span> <span aria-hidden="true">&#8594;</span></a>
         <a href="#dum" class="vr-btn-ghost" data-t="hero.ctaSec">Prohlédnout dům</a>
@@ -103,6 +99,14 @@
     </div>
   </section>
 
+  <!-- ===================== Quick facts + trust (ratings) strip ===================== -->
+  <section class="sec-quickfacts">
+    <div class="vr-wrap">
+      <div class="vr-qfacts vr-reveal" id="vr-facts"></div>
+      <div class="vr-ratings vr-reveal" id="vr-ratings"></div>
+    </div>
+  </section>
+
   <!-- ===================== Statement ===================== -->
   <section id="dum" class="sec-dum">
     <div class="vr-wrap">
@@ -116,7 +120,6 @@
           <img class="vr-seasonimg winter" src="media/gallery/winter-snow.jpg" alt="Villa Rudolf — vila ve sněhu" loading="lazy">
         </div>
       </div>
-      <div class="vr-facts vr-reveal" id="vr-facts"></div>
     </div>
   </section>
 
@@ -206,44 +209,16 @@
     </div>
   </section>
 
-  <!-- ===================== Evening (static night scene) ===================== -->
+  <!-- ===================== Evening + Fire pit (merged) ===================== -->
   <section id="vecer" class="sec-vecer">
-    <img class="vr-vecer-img vr-seasonimg summer" src="media/gallery/areal-night.jpg" alt="Villa Rudolf — celý areál po setmění" loading="lazy">
+    <img class="vr-vecer-img vr-seasonimg summer" src="media/gallery/areal-night.jpg" alt="Villa Rudolf — celý areál po setmění s ohništěm a bazénem" loading="lazy">
     <img class="vr-vecer-img vr-seasonimg winter" src="media/gallery/winter-night.jpg" alt="Villa Rudolf — vila v noci se sněhem a měsícem" loading="lazy">
     <div class="vr-vecer-vig"></div>
-    <div class="vr-vecer-copy vr-reveal">
-      <span class="vr-eyebrow" data-t="band.eyebrow">Jeden večer tady</span>
-      <p data-t="hero.nightLine">Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy.</p>
-    </div>
-  </section>
-
-  <!-- ===================== Fire pit ===================== -->
-  <section id="ohniste" class="sec-ohniste">
     <div class="vr-fire-glow"></div>
-    <div class="vr-gabion"></div>
-    <div class="vr-wrap">
-      <div class="vr-ohn-grid">
-        <div class="vr-reveal" style="max-width:620px">
-          <span class="vr-eyebrow" data-t="ohniste.eyebrow">Nová dominanta</span>
-          <h2 data-t="ohniste.title">Ohniště s gabionovou stěnou, které večer ožívá</h2>
-          <p data-t="ohniste.body">Nově dokončené otevřené ohniště pojme celou skupinu.</p>
-        </div>
-        <img class="vr-reveal" src="media/gallery/firepit-sunset.jpg" alt="Ohniště s prosvětlenou gabionovou stěnou při západu slunce" loading="lazy">
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== Group 6–22 ===================== -->
-  <section class="sec-skup">
-    <div class="vr-wrap">
-      <div class="vr-skup vr-reveal">
-        <div class="vr-skup-big">6&#8211;22</div>
-        <div>
-          <span class="vr-eyebrow" data-t="skupina.eyebrow">Vaše parta, ať je jakkoli velká</span>
-          <h2 data-t="skupina.big">Šest kamarádů na motorkách, nebo sraz dvaceti dvou.</h2>
-          <p data-t="skupina.desc">Nestavíme to na čísle.</p>
-        </div>
-      </div>
+    <div class="vr-vecer-copy vr-reveal">
+      <span class="vr-eyebrow" data-t="ohniste.eyebrow">Nová dominanta</span>
+      <h2 class="vr-vecer-title" data-t="ohniste.title">Ohniště s gabionovou stěnou, které večer ožívá</h2>
+      <p class="vr-vecer-body" data-t="ohniste.body">Nově dokončené otevřené ohniště pojme celou skupinu.</p>
     </div>
   </section>
 
@@ -281,6 +256,20 @@
     </div>
   </section>
 
+  <!-- ===================== Reviews ===================== -->
+  <section id="recenze" class="sec-recenze">
+    <div class="vr-wrap">
+      <div class="vr-reveal vr-sec-head">
+        <div style="max-width:700px">
+          <span class="vr-eyebrow" data-t="recenze.eyebrow">Recenze</span>
+          <h2 class="vr-h2" data-t="recenze.title">Co říkají hosté</h2>
+        </div>
+        <span class="vr-sec-note" data-t="recenze.note">Skutečné recenze z Airbnb, Booking.com a Google.</span>
+      </div>
+      <div class="vr-reviews vr-reveal" id="vr-reviews"></div>
+    </div>
+  </section>
+
   <!-- ===================== Location ===================== -->
   <section id="lokalita" class="sec-lokalita">
     <div class="vr-wrap">
@@ -290,9 +279,37 @@
           <h2 class="vr-h2" data-t="lokalita.title">V horách, ale bez kompromisů</h2>
           <div class="vr-lok-facts" id="vr-lokfacts"></div>
         </div>
-        <div class="vr-slot vr-reveal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3z"></path><path d="M9 7v13M15 4v13"></path></svg>
-          <span data-t="photoSoon">Fotku doplníme</span>
+        <div class="vr-map vr-reveal">
+          <!-- Ilustrativní statická mapa (bez externích dlaždic): hřeben se Sněžkou,
+               státní hranice (Polsko), bod vily a směr na Trutnov. -->
+          <svg class="vr-map-svg" viewBox="0 0 400 230" role="img" aria-label="Ilustrativní mapa okolí Villa Rudolf">
+            <defs>
+              <radialGradient id="vrMapGlow" cx="50%" cy="82%" r="60%">
+                <stop offset="0%" stop-color="var(--vr-ember)" stop-opacity=".16"/>
+                <stop offset="100%" stop-color="var(--vr-ember)" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect x="0" y="0" width="400" height="230" fill="#0B100E"/>
+            <rect x="0" y="0" width="400" height="230" fill="url(#vrMapGlow)"/>
+            <!-- ridge silhouette with Sněžka peak -->
+            <path d="M0 96 L64 82 L120 70 L176 40 L210 66 L268 58 L330 74 L400 66 L400 0 L0 0 Z" fill="rgba(240,235,225,.03)"/>
+            <path d="M0 96 L64 82 L120 70 L176 40 L210 66 L268 58 L330 74 L400 66" fill="none" stroke="#4E5A52" stroke-width="1.6"/>
+            <!-- state border (dashed) -->
+            <path d="M0 62 L120 52 L200 26 L300 40 L400 30" fill="none" stroke="#B4BAAD" stroke-width="1.3" stroke-dasharray="7 6" opacity=".5"/>
+            <!-- Sněžka marker -->
+            <circle cx="176" cy="40" r="3" fill="#B4BAAD"/>
+            <text x="176" y="30" text-anchor="middle" font-family="Archivo,sans-serif" font-size="10" letter-spacing="1" fill="#AEB4A8">Sněžka</text>
+            <text x="34" y="20" font-family="Archivo,sans-serif" font-size="9" letter-spacing="2.5" fill="#79817A">POLSKO</text>
+            <!-- villa dot with ember glow -->
+            <circle cx="150" cy="168" r="15" fill="var(--vr-ember)" opacity=".16"/>
+            <circle cx="150" cy="168" r="5" fill="var(--vr-ember)"/>
+            <circle cx="150" cy="168" r="5" fill="none" stroke="#0B100E" stroke-width="1.5"/>
+            <text x="150" y="192" text-anchor="middle" font-family="Archivo,sans-serif" font-size="11" font-weight="600" letter-spacing=".5" fill="#F0EBE1">Villa Rudolf</text>
+            <!-- direction hint to Trutnov -->
+            <path d="M170 176 L246 202" fill="none" stroke="#4E5A52" stroke-width="1.3" stroke-dasharray="3 5"/>
+            <text x="250" y="206" font-family="Archivo,sans-serif" font-size="9.5" letter-spacing="1" fill="#79817A">Trutnov →</text>
+          </svg>
+          <div class="vr-mapdist" id="vr-mapdist"></div>
         </div>
       </div>
     </div>
@@ -339,6 +356,10 @@
       <p class="vr-book-body vr-reveal" data-t="cta.body">Vyberte v kalendáři příjezd a odjezd a pošlete nám nezávaznou poptávku. Termín vám osobně potvrdíme e-mailem.</p>
       <div class="vr-book vr-reveal">
         <div class="vr-cal-card">
+          <div class="vr-cal-nav">
+            <button type="button" class="vr-cal-arrow" id="vr-cal-prev" aria-label="Předchozí měsíce"><span aria-hidden="true">&#8249;</span></button>
+            <button type="button" class="vr-cal-arrow" id="vr-cal-next" aria-label="Další měsíce"><span aria-hidden="true">&#8250;</span></button>
+          </div>
           <div class="vr-cal-wrap" id="vr-cal"></div>
           <div class="vr-legend">
             <span class="sw"><i style="background:rgba(240,235,225,.07);border:1px solid rgba(240,235,225,.18)"></i><span data-t="book.free">Volno</span></span>
@@ -347,36 +368,52 @@
             <span class="demo" id="vr-avail-note" role="status" aria-live="polite"></span>
           </div>
         </div>
-        <aside class="vr-book-aside">
-          <span class="vr-tag" data-t="book.summary">Vaše rezervace</span>
-          <div class="vr-book-sel"><span id="vr-sel-label">Vyberte termín v kalendáři</span> <span class="nl" id="vr-sel-nights"></span></div>
-          <!-- Rozpis ceny à la Airbnb — vykreslí se, jakmile je vybrán platný termín -->
-          <div class="vr-book-price" id="vr-breakdown" style="display:none"></div>
-          <!-- Hláška o minimální délce pobytu (nahradí rozpis, když je termín kratší) -->
-          <div class="vr-book-minstay" id="vr-minstay" role="status" aria-live="polite" style="display:none"></div>
-          <div class="vr-book-guests">
+        <aside class="vr-book-aside" data-state="form">
+          <div class="vr-book-form">
+            <span class="vr-tag" data-t="book.summary">Vaše rezervace</span>
+            <div class="vr-book-sel"><span id="vr-sel-label">Vyberte termín v kalendáři</span> <span class="nl" id="vr-sel-nights"></span></div>
+            <!-- Rozpis ceny à la Airbnb — vykreslí se, jakmile je vybrán platný termín -->
+            <div class="vr-book-price" id="vr-breakdown" style="display:none"></div>
+            <!-- Hláška o minimální délce pobytu (nahradí rozpis, když je termín kratší) -->
+            <div class="vr-book-minstay" id="vr-minstay" role="status" aria-live="polite" style="display:none"></div>
+            <div class="vr-book-guests">
+              <label>
+                <span data-t="cta.lblAdults">Dospělí</span>
+                <input id="vr-adults" type="number" min="1" max="22" step="1" inputmode="numeric" value="2" autocomplete="off">
+              </label>
+              <label>
+                <span data-t="cta.lblChildren">Děti</span>
+                <input id="vr-children" type="number" min="0" max="21" step="1" inputmode="numeric" value="0" autocomplete="off">
+              </label>
+            </div>
+            <div class="vr-book-guestnote" id="vr-guestnote" role="status" aria-live="polite" style="display:none"></div>
             <label>
-              <span data-t="cta.lblAdults">Dospělí</span>
-              <input id="vr-adults" type="number" min="1" max="22" step="1" inputmode="numeric" value="2" autocomplete="off">
+              <span data-t="cta.lblName">Jméno</span>
+              <input id="vr-name" type="text" data-t-ph="cta.phName" placeholder="Vaše jméno" autocomplete="name">
             </label>
             <label>
-              <span data-t="cta.lblChildren">Děti</span>
-              <input id="vr-children" type="number" min="0" max="21" step="1" inputmode="numeric" value="0" autocomplete="off">
+              <span data-t="cta.lblEmail">E-mail</span>
+              <input id="vr-email" type="email" data-t-ph="cta.phEmail" placeholder="vas@email.cz" autocomplete="email">
             </label>
+            <label>
+              <span data-t="cta.lblPhone">Telefon / WhatsApp</span>
+              <input id="vr-phone" type="tel" data-t-ph="cta.phPhone" placeholder="+420… (nepovinné)" autocomplete="tel">
+            </label>
+            <div class="vr-book-msg" id="vr-book-msg" role="alert" aria-live="assertive" style="display:none"></div>
+            <button type="button" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Odeslat žádost o pobyt</span> <span aria-hidden="true">&#8594;</span></button>
+            <div class="vr-book-note">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+              <span data-t="book.stripeNote">Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.</span>
+            </div>
           </div>
-          <div class="vr-book-guestnote" id="vr-guestnote" role="status" aria-live="polite" style="display:none"></div>
-          <label>
-            <span data-t="cta.lblEmail">E-mail</span>
-            <input id="vr-email" type="email" data-t-ph="cta.phEmail" placeholder="vas@email.cz" autocomplete="email">
-          </label>
-          <label>
-            <span data-t="cta.lblPhone">Telefon / WhatsApp</span>
-            <input id="vr-phone" type="tel" data-t-ph="cta.phPhone" placeholder="+420… (nepovinné)" autocomplete="tel">
-          </label>
-          <button type="button" class="vr-book-pay" id="vr-pay"><span data-t="book.pay">Odeslat žádost o pobyt</span> <span aria-hidden="true">&#8594;</span></button>
-          <div class="vr-book-note">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
-            <span data-t="book.stripeNote">Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.</span>
+          <div class="vr-book-success" id="vr-book-success" role="status" aria-live="polite">
+            <div class="vr-book-ok-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"></path></svg>
+            </div>
+            <h3 id="vr-book-oktitle">Žádost přijata</h3>
+            <p id="vr-book-okbody">Ozveme se vám do 24 hodin.</p>
+            <div class="vr-book-sum" id="vr-book-sum"></div>
+            <button type="button" class="vr-book-again" id="vr-book-again"><span id="vr-book-again-lbl">Odeslat další žádost</span></button>
           </div>
         </aside>
       </div>
@@ -421,10 +458,15 @@
         <div>
           <div class="vr-foot-lbl" data-t="footer.contact">Kontakt</div>
           <div class="vr-foot-contact">rezervace@villarudolf.com<br>Krkonoše, Česko</div>
+          <div class="vr-foot-lbl vr-foot-lbl-social" data-t="footer.social">Sledujte nás</div>
+          <a class="vr-foot-social" href="https://www.instagram.com/villarudolfretreat/" target="_blank" rel="noopener noreferrer" aria-label="Instagram @villarudolfretreat">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"></circle></svg>
+            <span>@villarudolfretreat</span>
+          </a>
         </div>
       </div>
       <div class="vr-foot-bottom">
-        <span data-t="footer.rights">© 2025 Villa Rudolf</span>
+        <span data-t="footer.rights">© 2026 Villa Rudolf</span>
         <span>/cs · /en · /de · /pl · /leto · /zima</span>
       </div>
     </div>
@@ -440,6 +482,6 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=8" defer></script>
+<script src="assets/site.js?v=9" defer></script>
 </body>
 </html>

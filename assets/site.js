@@ -30,24 +30,74 @@ const VR_PRICING = {
   maxGuests: 22,             // maximální počet hostů (dospělí + děti)
 };
 
+/* ============================ Supabase (žádost o pobyt → RPC vr_request) ============================ */
+/* Veřejný anon klíč (chráněný RLS) — stejný jako v průvodci / guest portálu / check-inu.
+   Zápis jde JEN přes SECURITY DEFINER funkci public.vr_request; přímý select je RLS zakázán. */
+const VR_SUPABASE = {
+  URL: 'https://fpknbrzbqpalguajskut.supabase.co',
+  ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA',
+};
+
+/* ============================ RECENZE + HODNOCENÍ — jediný editovatelný blok ============================ */
+/* VŠECHNA data hodnocení a recenzí na webu se upravují ZDE. Po každé kontrole ratingů
+   aktualizuj `checkedAt` (ISO datum) — zobrazí se jako „ověřeno DD. M. YYYY".
+   Recenze jsou SKUTEČNÉ, veřejně ověřené citace (Airbnb / Booking.com / Google Maps).
+   quote = originál v jazyce recenze; quote_cs = český překlad (null = originál je česky).
+   NIKDY neměň smysl citace; zkrácení je vyznačeno „…". */
+const VR_REVIEWS = {
+  checkedAt: '2026-07-20',
+  platforms: [
+    { key: 'google',  name: 'Google',      rating: 5.0, outOf: 5,  count: 20, url: 'https://www.google.com/maps/place/Villa+Rudolf/@50.6254426,15.8135792,17z/data=!3m1!4b1!4m6!3m5!1s0x470eed010c87db09:0xb1476ac6b6a154e!8m2!3d50.6254426!4d15.8135792!16s%2Fg%2F11l_3ztv_k' },
+    { key: 'airbnb',  name: 'Airbnb',      rating: 5.0, outOf: 5,  count: 7,  url: 'https://www.airbnb.com/rooms/1122389326464885565' },
+    { key: 'booking', name: 'Booking.com', rating: 9.6, outOf: 10, count: 17, url: 'https://www.booking.com/hotel/cz/villa-with-a-covered-pool-park-and-playground.html' },
+  ],
+  items: [
+    { author: 'Ryan', platform: 'airbnb', lang: 'en',
+      quote: "I stayed at Pavel's place with a huge group of friends and it was the perfect accommodation! … We fit a ton of people comfortably and never felt crowded … everything was spotless.",
+      quote_cs: "Bydleli jsme u Pavla s obrovskou partou přátel a bylo to dokonalé ubytování! … Pohodlně jsme se vešli všichni a nikdy jsme se necítili nahusto … všechno bylo bez poskvrnky." },
+    { author: 'Torsten', platform: 'booking', lang: 'de',
+      quote: "Rundum sehr gut. Der Pool, die Sauna, die Küche, die Zimmeraufteilung – super. Die Betten waren, wie von allen neun Personen bestätigt, sehr gut. Pavel war immer erreichbar…",
+      quote_cs: "Vynikající celkově. Bazén, sauna, kuchyň i uspořádání pokoje byly skvělé. Jak potvrdilo všech devět z nás, postele byly velmi pohodlné. Pavel byl vždy k dispozici…" },
+    { author: 'Marta', platform: 'booking', lang: 'pl',
+      quote: "Duża, wyposażona kuchnia oraz czyste przestrzenie idealnie dla dużej grupy. Dodatkowe atrakcje – sauna, stół bilardowy, wieszak na odzież narciarską – strzał w 10 na zimowe wyjazdy!",
+      quote_cs: "Velká, plně vybavená kuchyň a čisté prostory jsou ideální pro velkou skupinu. Sauna, kulečníkový stůl a věšák na lyžařské oblečení jsou perfektním doplňkem zimního pobytu!" },
+    { author: 'Evžen', platform: 'booking', lang: 'cs',
+      quote: "Moc se nám tu líbilo. Ubytování bylo krásné, čisté a velmi dobře vybavené. … Majitel byl naprosto úžasný - velmi milý, ochotný a ve všem nám pomohl. Komunikace byla perfektní.",
+      quote_cs: null },
+    { author: 'Martina', platform: 'google', lang: 'cs',
+      quote: "Perfektní servis, skvělé zázemí, ochotný majitel, spousta výletů pro každé počasí a všechny věkové kategorie, bazén se dá využít i za deště - super výhoda!",
+      quote_cs: null },
+    { author: 'Grzegorz', platform: 'google', lang: 'pl',
+      quote: null,
+      quote_cs: "Velmi pěkné místo, prostorné pokoje, čisté a dobře udržované, velká kuchyň, plně vybavená, ideální pro větší skupinu. Bylo nás 18 lidí a bylo to velmi relaxační. … Navíc je tam sauna." },
+  ],
+};
+/* Vzdálenosti pro blok Lokalita (ilustrativní mapa + výpis). Editovatelné zde. */
+const VR_DISTANCES = [
+  { place: 'Janské Lázně', km: 4 },
+  { place: 'Pec pod Sněžkou', km: 10 },
+  { place: 'Trutnov', km: 11 },
+];
+
 /* ============================ Translations (verbatim from prototype) ============================ */
 const T = {
   cs: {
     photoSoon: 'Fotku doplníme',
-    nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
+    nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
-      eyebrow: 'Soukromé sídlo s vlastním pozemkem · Krkonoše',
-      h1a: 'Celé to místo', h1b: 'je jen vaše',
-      sub: 'Dům i celý rozlehlý pozemek si berete jen pro sebe. Žádné ploty mezi rodinami, žádné sdílení — jen vaše parta, oheň, bazén a hora kolem dokola.',
-      ctaSec: 'Prohlédnout dům', badge: 'Volné termíny 2025', video: 'Přehrát video',
+      eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
+      h1: 'Soukromá vila v Krkonoších pro 6–22 hostů',
+      sub: 'Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.',
+      ctaSec: 'Prohlédnout dům', badge: 'Volné termíny 2026', video: 'Přehrát video',
       summer: 'Léto', winter: 'Zima', scroll: 'Scroll',
       tipSummer: 'Bazén, pergola a večery u otevřeného ohně.',
       tipWinter: 'Bez řetězů až k domu, skibus zdarma v docházkové vzdálenosti.',
       nightLine: 'Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy — večer tady teprve začíná.',
     },
+    ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno' },
     statement: {
       eyebrow: 'Není to dům. Je to celé místo.',
-      lead: 'Jinde dostanete pokoje a kousek zahrady sdílený s cizími lidmi. Tady si berete celý pozemek — rozlehlý, nerozdělený, jen pro vaši skupinu. Děti běhají v bezpečí na dohled, vy si večer rozděláte oheň, sednete pod pergolu a skočíte do bazénu, kdykoli se vám zachce.',
+      lead: 'Jinde dostanete pokoje a kousek zahrady sdílený s cizími lidmi. Tady si berete celý pozemek — rozlehlý, nerozdělený, jen pro vaši skupinu.',
     },
     band: { eyebrow: 'Jeden večer tady' },
     amenities: {
@@ -119,36 +169,50 @@ const T = {
       pay: 'Odeslat žádost o pobyt', stripeNote: 'Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.',
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
       availFail: 'Dostupnost se nepodařilo načíst.',
+      sending: 'Odesílám…', prevMonths: 'Předchozí měsíce', nextMonths: 'Další měsíce',
+      okTitle: 'Žádost přijata',
+      okBody: 'Ozveme se vám do 24 hodin. Nic zatím neplatíte — termín potvrdíme osobně e-mailem.',
+      okAgain: 'Odeslat další žádost',
+      errRequired: 'Vyplňte prosím e-mail a vyberte platný termín.',
+      errEmail: 'Zkontrolujte prosím e-mailovou adresu.',
+      errRate: 'Přijali jsme příliš mnoho žádostí. Zkuste to prosím později nebo nám napište e-mail.',
+      errGeneric: 'Odeslání se nezdařilo. Zkuste to prosím znovu, nebo nám napište na rezervace@villarudolf.com.',
     },
+    recenze: {
+      eyebrow: 'Recenze', title: 'Co říkají hosté', note: 'Skutečné recenze z Airbnb, Booking.com a Google.',
+    },
+    lokdist: { title: 'Vzdálenosti od domu', skibus: 'Skibus', skibusVal: 'zastávka u domu', unit: 'km' },
     video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus' },
     share: { eyebrow: 'Sdílejte', title: 'Byli jste u nás? Pochlubte se.', body: 'Odvezli jste si hezké fotky? Sdílejte je, označte @villarudolfretreat a přidejte #villarudolf — ať je uvidí i další. Ty nejhezčí se můžou objevit přímo tady na webu.', ig: 'Sledovat na Instagramu' },
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
       body: 'Vyberte v kalendáři příjezd a odjezd, uvidíte rozpis ceny a pošlete nám nezávaznou žádost o pobyt. Termín vám osobně potvrdíme.',
       lblAdults: 'Dospělí', lblChildren: 'Děti',
+      lblName: 'Jméno', phName: 'Vaše jméno',
       lblEmail: 'E-mail', phEmail: 'vas@email.cz',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2025 Villa Rudolf' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás' },
   },
 
   en: {
     photoSoon: 'Photo coming soon',
-    nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
+    nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
-      eyebrow: 'A private estate with its own grounds · Krkonoše',
-      h1a: 'The whole place', h1b: 'is yours alone',
-      sub: 'The house and the entire sweeping grounds, taken just for you. No fences between families, no sharing — only your group, the fire, the pool and the mountain all around.',
-      ctaSec: 'Explore the house', badge: 'Open dates 2025', video: 'Play video',
+      eyebrow: 'The whole house, just for your group · Krkonoše',
+      h1: 'A private villa in the Krkonoše mountains for 6–22 guests',
+      sub: 'The whole place — the house and its sweeping grounds — is <em>yours alone</em>.',
+      ctaSec: 'Explore the house', badge: 'Open dates 2026', video: 'Play video',
       summer: 'Summer', winter: 'Winter', scroll: 'Scroll',
       tipSummer: 'Pool, pergola and evenings around the open fire.',
       tipWinter: 'No chains to the door, free ski bus within walking distance.',
       nightLine: 'Night has fallen. The fire pit, gabion wall and pool have lit themselves — the evening is just beginning.',
     },
+    ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified' },
     statement: {
       eyebrow: 'Not a house. A whole place.',
-      lead: 'Elsewhere you get rooms and a patch of shared garden. Here you take the entire grounds — vast, undivided, yours alone. Children run free and safe in sight, while you light the fire, settle under the pergola and slip into the pool whenever you please.',
+      lead: 'Elsewhere you get rooms and a patch of shared garden. Here you take the entire grounds — vast, undivided, yours alone.',
     },
     band: { eyebrow: 'One evening here' },
     amenities: {
@@ -220,36 +284,50 @@ const T = {
       pay: 'Send stay request', stripeNote: 'This request is non-binding — you pay nothing now. We’ll confirm the dates personally and then send a payment link for the deposit.',
       free: 'Available', booked: 'Booked', chosen: 'Your stay', demo: 'Sample availability — will connect to the booking system',
       availFail: 'Availability could not be loaded.',
+      sending: 'Sending…', prevMonths: 'Previous months', nextMonths: 'Next months',
+      okTitle: 'Request received',
+      okBody: 'We’ll get back to you within 24 hours. You pay nothing yet — we confirm the dates personally by email.',
+      okAgain: 'Send another request',
+      errRequired: 'Please enter your email and pick a valid date range.',
+      errEmail: 'Please check your email address.',
+      errRate: 'We received too many requests. Please try again later or email us.',
+      errGeneric: 'Sending failed. Please try again, or email us at rezervace@villarudolf.com.',
     },
+    recenze: {
+      eyebrow: 'Reviews', title: 'What guests say', note: 'Real reviews from Airbnb, Booking.com and Google.',
+    },
+    lokdist: { title: 'Distances from the house', skibus: 'Ski bus', skibusVal: 'stop at the house', unit: 'km' },
     video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus' },
     share: { eyebrow: 'Share', title: 'Stayed with us? Show it off.', body: 'Took some nice photos? Share them, tag @villarudolfretreat and add #villarudolf so others can see them too. The best ones may appear right here on the site.', ig: 'Follow on Instagram' },
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
       body: 'Pick arrival and departure in the calendar, see the price breakdown and send us a non-binding stay request. We’ll confirm your dates personally.',
       lblAdults: 'Adults', lblChildren: 'Children',
+      lblName: 'Name', phName: 'Your name',
       lblEmail: 'Email', phEmail: 'you@email.com',
       lblPhone: 'Phone / WhatsApp', phPhone: '+420… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2025 Villa Rudolf' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us' },
   },
 
   de: {
     photoSoon: 'Foto folgt',
-    nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
+    nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
-      eyebrow: 'Ein privates Anwesen mit eigenem Grundstück · Riesengebirge',
-      h1a: 'Der ganze Ort', h1b: 'gehört nur euch',
-      sub: 'Das Haus und das gesamte weitläufige Grundstück, nur für euch. Keine Zäune zwischen Familien, kein Teilen — nur eure Gruppe, das Feuer, der Pool und der Berg ringsum.',
-      ctaSec: 'Haus ansehen', badge: 'Freie Termine 2025', video: 'Video abspielen',
+      eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
+      h1: 'Eine private Villa im Riesengebirge für 6–22 Gäste',
+      sub: 'Der ganze Ort — Haus und weitläufiges Grundstück — gehört <em>nur euch</em>.',
+      ctaSec: 'Haus ansehen', badge: 'Freie Termine 2026', video: 'Video abspielen',
       summer: 'Sommer', winter: 'Winter', scroll: 'Scrollen',
       tipSummer: 'Pool, Pergola und Abende am offenen Feuer.',
       tipWinter: 'Ohne Ketten bis zur Tür, kostenloser Skibus in Gehweite.',
       nightLine: 'Es ist dunkel geworden. Feuerstelle, Gabionenwand und Pool leuchten von selbst — der Abend fängt gerade erst an.',
     },
+    ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft' },
     statement: {
       eyebrow: 'Kein Haus. Ein ganzer Ort.',
-      lead: 'Anderswo bekommt ihr Zimmer und ein Stück geteilten Garten. Hier nehmt ihr das ganze Grundstück — weitläufig, ungeteilt, nur für euch. Kinder laufen sicher in Sichtweite, während ihr das Feuer entzündet, euch unter die Pergola setzt und in den Pool springt, wann immer ihr wollt.',
+      lead: 'Anderswo bekommt ihr Zimmer und ein Stück geteilten Garten. Hier nehmt ihr das ganze Grundstück — weitläufig, ungeteilt, nur für euch.',
     },
     band: { eyebrow: 'Ein Abend hier' },
     amenities: {
@@ -321,36 +399,50 @@ const T = {
       pay: 'Aufenthaltsanfrage senden', stripeNote: 'Die Anfrage ist unverbindlich — ihr zahlt jetzt nichts. Wir bestätigen den Termin persönlich und senden danach einen Zahlungslink für die Anzahlung.',
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
       availFail: 'Verfügbarkeit konnte nicht geladen werden.',
+      sending: 'Senden…', prevMonths: 'Vorherige Monate', nextMonths: 'Nächste Monate',
+      okTitle: 'Anfrage erhalten',
+      okBody: 'Wir melden uns innerhalb von 24 Stunden. Ihr zahlt noch nichts — wir bestätigen den Termin persönlich per E-Mail.',
+      okAgain: 'Weitere Anfrage senden',
+      errRequired: 'Bitte gebt eure E-Mail an und wählt einen gültigen Zeitraum.',
+      errEmail: 'Bitte prüft eure E-Mail-Adresse.',
+      errRate: 'Wir haben zu viele Anfragen erhalten. Bitte versucht es später erneut oder schreibt uns eine E-Mail.',
+      errGeneric: 'Senden fehlgeschlagen. Bitte versucht es erneut oder schreibt an rezervace@villarudolf.com.',
     },
+    recenze: {
+      eyebrow: 'Bewertungen', title: 'Was Gäste sagen', note: 'Echte Bewertungen von Airbnb, Booking.com und Google.',
+    },
+    lokdist: { title: 'Entfernungen vom Haus', skibus: 'Skibus', skibusVal: 'Haltestelle am Haus', unit: 'km' },
     video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus' },
     share: { eyebrow: 'Teilen', title: 'Bei uns gewesen? Zeigt es her.', body: 'Schöne Fotos gemacht? Teilt sie, markiert @villarudolfretreat und fügt #villarudolf hinzu — damit sie auch andere sehen. Die schönsten erscheinen vielleicht direkt hier auf der Website.', ig: 'Auf Instagram folgen' },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
       body: 'Wählt An- und Abreise im Kalender, seht die Preisaufstellung und sendet uns eine unverbindliche Aufenthaltsanfrage. Wir bestätigen euren Termin persönlich.',
       lblAdults: 'Erwachsene', lblChildren: 'Kinder',
+      lblName: 'Name', phName: 'Euer Name',
       lblEmail: 'E-Mail', phEmail: 'du@email.de',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2025 Villa Rudolf' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns' },
   },
 
   pl: {
     photoSoon: 'Zdjęcie wkrótce',
-    nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
+    nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
-      eyebrow: 'Prywatna posiadłość z własną posesją · Karkonosze',
-      h1a: 'Całe to miejsce', h1b: 'jest tylko wasze',
-      sub: 'Dom i cała rozległa posesja, wzięte tylko dla was. Żadnych płotów między rodzinami, żadnego dzielenia — tylko wasza grupa, ogień, basen i góra dookoła.',
-      ctaSec: 'Zobacz dom', badge: 'Wolne terminy 2025', video: 'Odtwórz wideo',
+      eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
+      h1: 'Prywatna willa w Karkonoszach dla 6–22 gości',
+      sub: 'Całe to miejsce — dom i rozległa posesja — jest <em>tylko wasze</em>.',
+      ctaSec: 'Zobacz dom', badge: 'Wolne terminy 2026', video: 'Odtwórz wideo',
       summer: 'Lato', winter: 'Zima', scroll: 'Scroll',
       tipSummer: 'Basen, pergola i wieczory przy otwartym ogniu.',
       tipWinter: 'Bez łańcuchów pod same drzwi, darmowy skibus w zasięgu spaceru.',
       nightLine: 'Zapadła noc. Palenisko, ściana gabionowa i basen zapaliły się same — wieczór dopiero się zaczyna.',
     },
+    ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano' },
     statement: {
       eyebrow: 'To nie dom. To całe miejsce.',
-      lead: 'Gdzie indziej dostajecie pokoje i kawałek wspólnego ogrodu. Tu bierzecie całą posesję — rozległą, niepodzieloną, tylko dla was. Dzieci biegają bezpiecznie w zasięgu wzroku, a wy rozpalacie ogień, siadacie pod pergolą i wskakujecie do basenu, kiedy tylko chcecie.',
+      lead: 'Gdzie indziej dostajecie pokoje i kawałek wspólnego ogrodu. Tu bierzecie całą posesję — rozległą, niepodzieloną, tylko dla was.',
     },
     band: { eyebrow: 'Jeden wieczór tutaj' },
     amenities: {
@@ -422,23 +514,38 @@ const T = {
       pay: 'Wyślij prośbę o pobyt', stripeNote: 'Prośba jest niezobowiązująca — teraz nic nie płacisz. Termin potwierdzimy osobiście, a potem wyślemy link do płatności zaliczki.',
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
       availFail: 'Nie udało się wczytać dostępności.',
+      sending: 'Wysyłam…', prevMonths: 'Poprzednie miesiące', nextMonths: 'Następne miesiące',
+      okTitle: 'Prośba przyjęta',
+      okBody: 'Odezwiemy się w ciągu 24 godzin. Na razie nic nie płacisz — termin potwierdzimy osobiście e-mailem.',
+      okAgain: 'Wyślij kolejną prośbę',
+      errRequired: 'Podaj e-mail i wybierz prawidłowy termin.',
+      errEmail: 'Sprawdź adres e-mail.',
+      errRate: 'Otrzymaliśmy zbyt wiele próśb. Spróbuj później lub napisz do nas e-mail.',
+      errGeneric: 'Wysłanie nie powiodło się. Spróbuj ponownie lub napisz na rezervace@villarudolf.com.',
     },
+    recenze: {
+      eyebrow: 'Recenzje', title: 'Co mówią goście', note: 'Prawdziwe recenzje z Airbnb, Booking.com i Google.',
+    },
+    lokdist: { title: 'Odległości od domu', skibus: 'Skibus', skibusVal: 'przystanek przy domu', unit: 'km' },
     video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus' },
     share: { eyebrow: 'Udostępnij', title: 'Byliście u nas? Pochwalcie się.', body: 'Macie ładne zdjęcia? Udostępnijcie je, oznaczcie @villarudolfretreat i dodajcie #villarudolf — niech zobaczą je też inni. Najlepsze mogą pojawić się właśnie tu, na stronie.', ig: 'Obserwuj na Instagramie' },
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
       body: 'Wybierz w kalendarzu przyjazd i wyjazd, zobacz rozpiskę ceny i wyślij nam niezobowiązującą prośbę o pobyt. Termin potwierdzimy osobiście.',
       lblAdults: 'Dorośli', lblChildren: 'Dzieci',
+      lblName: 'Imię', phName: 'Wasze imię',
       lblEmail: 'E-mail', phEmail: 'ty@email.pl',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2025 Villa Rudolf' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas' },
   },
 };
 
 /* ============================ State + helpers ============================ */
-const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, lb: -1, lbList: [], galFilter: 'all', selStart: 0, selEnd: 0, mob: false };
+const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, lb: -1, lbList: [], galFilter: 'all', selStart: 0, selEnd: 0, mob: false, calOffset: 0 };
+/* Kalendář: okno 2 měsíců lze posouvat 0 .. CAL_MAX_OFFSET (dnešek .. +18 měsíců). */
+const CAL_MAX_OFFSET = 17;
 /* Ceny řídí VR_PRICING (nahoře v souboru). */
 const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
 const PANO_FILES = ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds'];
@@ -510,25 +617,134 @@ function setTexts() {
     const v = resolve(t, n.getAttribute('data-t-ph'));
     if (typeof v === 'string') n.setAttribute('placeholder', v);
   });
+  // trusted, first-party HTML strings (e.g. hero sub with <em> accent)
+  $all('[data-t-html]').forEach((n) => {
+    const v = resolve(t, n.getAttribute('data-t-html'));
+    if (typeof v === 'string') n.innerHTML = v;
+  });
   document.documentElement.lang = state.lang;
 }
 
 /* ============================ Dynamic list renders ============================ */
+/* Rychlá fakta pod heroem. Ověřeno z platform listingu Villa Rudolf — needitovat
+   mimo skutečné hodnoty (7 ložnic, 5 koupelen a WC, 22 lůžek = 19+3 přistýlky,
+   257 m², krytý bazén a sauna, soukromý pozemek s parkováním). */
 function renderFacts() {
-  const t = tt();
-  const fl = ({
-    cs: ['celý pozemek jen pro vás', 'plotů a sdílení', 'dní v roce'],
-    en: ['the whole grounds, all yours', 'fences, no sharing', 'days a year'],
-    de: ['das ganze Grundstück, für euch', 'Zäune, kein Teilen', 'Tage im Jahr'],
-    pl: ['cała posesja dla was', 'płotów i dzielenia', 'dni w roku'],
-  })[state.lang] || ['the whole grounds, all yours', 'fences, no sharing', 'days a year'];
-  const facts = [
-    { k: '1', v: fl[0] }, { k: '6–22', v: t.skupina.eyebrow }, { k: '0', v: fl[1] }, { k: '365', v: fl[2] },
-  ];
-  const host = $('#vr-facts'); host.innerHTML = '';
-  facts.forEach((f) => host.appendChild(el('div', null, [
+  const F = ({
+    cs: [
+      { k: '7', v: 'ložnic' },
+      { k: '5', v: 'koupelen a WC' },
+      { k: '22', v: 'lůžek — 19 + 3 přistýlky' },
+      { k: '257 m²', v: 'obytná plocha' },
+      { k: 'Bazén + sauna', v: 'krytý a vyhřívaný', wide: true },
+      { k: 'Vlastní pozemek', v: 's parkováním u domu', wide: true },
+    ],
+    en: [
+      { k: '7', v: 'bedrooms' },
+      { k: '5', v: 'bathrooms & WCs' },
+      { k: '22', v: 'beds — 19 + 3 extra' },
+      { k: '257 m²', v: 'living area' },
+      { k: 'Pool + sauna', v: 'covered & heated', wide: true },
+      { k: 'Private grounds', v: 'with parking at the house', wide: true },
+    ],
+    de: [
+      { k: '7', v: 'Schlafzimmer' },
+      { k: '5', v: 'Bäder & WCs' },
+      { k: '22', v: 'Betten — 19 + 3 Zusatz' },
+      { k: '257 m²', v: 'Wohnfläche' },
+      { k: 'Pool + Sauna', v: 'überdacht & beheizt', wide: true },
+      { k: 'Eigenes Grundstück', v: 'mit Parkplatz am Haus', wide: true },
+    ],
+    pl: [
+      { k: '7', v: 'sypialni' },
+      { k: '5', v: 'łazienek i WC' },
+      { k: '22', v: 'miejsc — 19 + 3 dostawki' },
+      { k: '257 m²', v: 'powierzchnia' },
+      { k: 'Basen + sauna', v: 'kryty i podgrzewany', wide: true },
+      { k: 'Własna posesja', v: 'z parkingiem przy domu', wide: true },
+    ],
+  })[state.lang] || null;
+  const host = $('#vr-facts'); if (!host) return; host.innerHTML = '';
+  (F || []).forEach((f) => host.appendChild(el('div', { class: 'vr-fact' + (f.wide ? ' wide' : '') }, [
     el('div', { class: 'vr-fact-k', text: f.k }), el('div', { class: 'vr-fact-v', text: f.v }),
   ])));
+}
+
+/* Datum ověření hodnocení — lokalizovaný formát z VR_REVIEWS.checkedAt (ISO). */
+function fmtCheckedAt(iso) {
+  const p = String(iso).split('-'); if (p.length !== 3) return iso;
+  const y = +p[0], m = +p[1], d = +p[2];
+  if (state.lang === 'en') {
+    const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][m - 1] || m;
+    return mon + ' ' + d + ', ' + y;
+  }
+  return d + '. ' + m + '. ' + y; // cs / de / pl
+}
+
+/* Řádek hodnocení (Google / Airbnb / Booking.com) + poznámka „ověřeno …". */
+function renderRatings() {
+  const t = tt();
+  const host = $('#vr-ratings'); if (!host) return; host.innerHTML = '';
+  const row = el('div', { class: 'vr-ratings-row' });
+  VR_REVIEWS.platforms.forEach((p) => {
+    const dec = state.lang === 'en' ? '.' : ',';
+    const num = p.rating.toFixed(1).replace('.', dec);
+    const scoreTxt = p.outOf === 5 ? num : num + '/10';
+    const link = el('a', {
+      class: 'vr-rating', href: p.url, target: '_blank', rel: 'noopener noreferrer',
+      'aria-label': p.name + ' ' + scoreTxt + ' (' + p.count + ' ' + t.ratings.reviewsWord + ')',
+    }, [
+      el('span', { class: 'vr-rating-plat', text: p.name }),
+      el('span', { class: 'vr-rating-score' }, [
+        el('b', { text: scoreTxt }),
+        p.outOf === 5 ? el('i', { class: 'vr-star', 'aria-hidden': 'true', text: '★' }) : null,
+      ]),
+      el('span', { class: 'vr-rating-count', text: '(' + p.count + ' ' + t.ratings.reviewsWord + ')' }),
+    ]);
+    row.appendChild(link);
+  });
+  host.appendChild(row);
+  host.appendChild(el('div', { class: 'vr-ratings-note', text: t.ratings.verified + ' ' + fmtCheckedAt(VR_REVIEWS.checkedAt) }));
+}
+
+/* Zvolí text recenze pro aktuální UI jazyk:
+   – vlastní jazyk recenze → originál; cs → český překlad (jinak originál);
+   – ostatní → originál (krátké citace), případně český překlad jako fallback. */
+function reviewText(r) {
+  const L = state.lang;
+  if (r.lang === L && r.quote) return r.quote;
+  if (L === 'cs') return r.quote_cs || r.quote;
+  return r.quote || r.quote_cs;
+}
+function platformByKey(k) { return VR_REVIEWS.platforms.find((p) => p.key === k) || {}; }
+function renderReviews() {
+  const host = $('#vr-reviews'); if (!host) return; host.innerHTML = '';
+  VR_REVIEWS.items.forEach((r) => {
+    const p = platformByKey(r.platform);
+    const fig = el('figure', { class: 'vr-review' }, [
+      el('blockquote', { class: 'vr-review-q', text: reviewText(r) }),
+      el('figcaption', { class: 'vr-review-cap' }, [
+        el('span', { class: 'vr-review-author', text: r.author }),
+        el('a', { class: 'vr-review-badge', href: p.url || '#', target: '_blank', rel: 'noopener noreferrer', text: p.name || r.platform }),
+      ]),
+    ]);
+    host.appendChild(fig);
+  });
+}
+
+/* Blok vzdáleností pro sekci Lokalita (ilustrativní mapa je statická v HTML). */
+function renderLokDistances() {
+  const t = tt();
+  const host = $('#vr-mapdist'); if (!host) return; host.innerHTML = '';
+  host.appendChild(el('div', { class: 'vr-mapdist-title', text: t.lokdist.title }));
+  const list = el('div', { class: 'vr-mapdist-list' });
+  VR_DISTANCES.forEach((d) => list.appendChild(el('div', { class: 'vr-mapdist-row' }, [
+    el('span', { class: 'p', text: d.place }), el('span', { class: 'd', text: d.km + ' ' + t.lokdist.unit }),
+  ])));
+  list.appendChild(el('div', { class: 'vr-mapdist-row' }, [
+    el('span', { class: 'p', text: t.lokdist.skibus }), el('span', { class: 'd', text: t.lokdist.skibusVal }),
+  ]));
+  host.appendChild(list);
 }
 
 function renderAmenities() {
@@ -817,15 +1033,32 @@ function nightsCount() {
   return s0 && s1 ? Math.round((toD(s1) - toD(s0)) / 86400000) : 0;
 }
 
+/* Posun 2měsíčního okna kalendáře (‹ ›), v mezích 0 .. CAL_MAX_OFFSET. */
+function shiftCal(dir) {
+  const next = Math.max(0, Math.min(CAL_MAX_OFFSET, state.calOffset + dir));
+  if (next === state.calOffset) return;
+  state.calOffset = next;
+  renderCalendar();
+}
+function updateCalNav() {
+  const prev = $('#vr-cal-prev'), next = $('#vr-cal-next'); if (!prev || !next) return;
+  const atStart = state.calOffset <= 0, atEnd = state.calOffset >= CAL_MAX_OFFSET;
+  prev.disabled = atStart; prev.setAttribute('aria-disabled', atStart ? 'true' : 'false');
+  next.disabled = atEnd; next.setAttribute('aria-disabled', atEnd ? 'true' : 'false');
+  const t = tt();
+  prev.setAttribute('aria-label', t.book.prevMonths || 'Prev');
+  next.setAttribute('aria-label', t.book.nextMonths || 'Next');
+}
 function renderCalendar() {
   const lang = state.lang;
   const MN = MN_ALL[lang] || MN_ALL.cs;
   const DW = DW_ALL[lang] || DW_ALL.cs;
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const s0 = state.selStart, s1 = state.selEnd;
-  const host = $('#vr-cal'); host.innerHTML = '';
+  const host = $('#vr-cal'); if (!host) return; host.innerHTML = '';
   [0, 1].forEach((off) => {
-    const base = new Date(today.getFullYear(), today.getMonth() + off, 1);
+    // okno posunuté o state.calOffset měsíců od aktuálního měsíce
+    const base = new Date(today.getFullYear(), today.getMonth() + state.calOffset + off, 1);
     const y2 = base.getFullYear(), m = base.getMonth();
     const lead = (base.getDay() + 6) % 7;
     const dim = new Date(y2, m + 1, 0).getDate();
@@ -847,6 +1080,7 @@ function renderCalendar() {
     monthEl.appendChild(grid);
     host.appendChild(monthEl);
   });
+  updateCalNav();
   updateAvailNote();
 }
 
@@ -921,38 +1155,84 @@ function renderBookingPanel() {
   btn.setAttribute('aria-disabled', ok ? 'false' : 'true');
 }
 
-/* Odeslání = ŽÁDOST o pobyt (mailto). Žádná platba — majitel termín potvrdí
-   ručně a teprve poté pošle platební odkaz na zálohu. Tělo e-mailu obsahuje
-   celý rozpis ceny, počet hostů i kontaktní údaje. */
+/* ---------- Odeslani ZADOSTI o pobyt -> Supabase RPC vr_request ----------
+   Zadny mailto, zadna platba. Zadost se ulozi do public.vr_requests (RLS, zapis
+   jen pres SECURITY DEFINER funkci). Majitel termin potvrdi rucne a teprve pote
+   posle platebni odkaz na zalohu. Stavy: klid -> odesilam -> uspech / chyba. */
+let bookSending = false;
+function bookAside() { return $('.vr-book-aside'); }
+function setBookMsg(text) {
+  const m = $('#vr-book-msg'); if (!m) return;
+  if (!text) { m.style.display = 'none'; m.textContent = ''; }
+  else { m.style.display = ''; m.textContent = text; }
+}
+function setBookSending(on) {
+  bookSending = on;
+  const btn = $('#vr-pay'), lbl = $('#vr-pay-label'); if (!btn) return;
+  btn.disabled = on;
+  if (lbl) lbl.textContent = on ? tt().book.sending : tt().book.pay;
+  btn.setAttribute('aria-busy', on ? 'true' : 'false');
+}
+function showBookSuccess(q, s0, s1) {
+  const t = tt(), lang = state.lang;
+  $('#vr-book-oktitle').textContent = t.book.okTitle;
+  $('#vr-book-okbody').textContent = t.book.okBody;
+  const again = $('#vr-book-again-lbl'); if (again) again.textContent = t.book.okAgain;
+  const sum = $('#vr-book-sum'); if (sum) {
+    sum.innerHTML = '';
+    const nb = (NBf[lang] || NBf.cs)(q.nights);
+    sum.appendChild(el('div', { class: 'row' }, [el('span', { class: 'k', text: fmtK(s0) + ' — ' + fmtK(s1) }), el('span', { class: 'v', text: q.nights + ' ' + nb })]));
+    const gl = t.cta.lblAdults + ': ' + q.adults + (q.children ? ' · ' + t.cta.lblChildren + ': ' + q.children : '');
+    sum.appendChild(el('div', { class: 'row' }, [el('span', { class: 'k', text: gl }), el('span', { class: 'v', text: fmtM(q.total) })]));
+  }
+  const a = bookAside(); if (a) a.setAttribute('data-state', 'done');
+  const su = $('#vr-book-success'); if (su && su.scrollIntoView) { try { su.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {} }
+}
+function resetBookForm() {
+  const a = bookAside(); if (a) a.setAttribute('data-state', 'form');
+  setBookMsg(''); setBookSending(false);
+}
 function submitBooking() {
-  const t = tt(), lang = state.lang, m = t.mail;
+  if (bookSending) return;
+  const t = tt(), lang = state.lang;
   const s0 = state.selStart, s1 = state.selEnd;
   const g = readGuests();
-  const email = ($('#vr-email').value || '').trim();
-  const phone = ($('#vr-phone').value || '').trim();
+  const name = (($('#vr-name') && $('#vr-name').value) || '').trim();
+  const email = (($('#vr-email') && $('#vr-email').value) || '').trim();
+  const phone = (($('#vr-phone') && $('#vr-phone').value) || '').trim();
   const q = computeQuote(s0, s1, g.adults, g.children);
-  if (!q.valid || q.guestOver || q.noAdults) return; // pojistka (tlačítko je i disabled)
-  const plain = (str) => String(str).replace(/\u00a0/g, ' '); // nezlomitelné mezery -> obyčejné
-  const SL = SEASON_LABEL[lang] || SEASON_LABEL.cs;
-  const lines = [m.greeting, ''];
-  lines.push(m.dates + ': ' + fmtK(s0) + ' \u2014 ' + fmtK(s1));
-  lines.push(m.nights + ': ' + q.nights + ' ' + (NBf[lang] || NBf.cs)(q.nights));
-  lines.push('');
-  lines.push(m.breakdown + ':');
-  q.groups.forEach((grp) => {
-    const seg = (q.groups.length > 1 || grp.name === 'short') ? ' (' + (SL[grp.name] || '') + ')' : '';
-    lines.push('  ' + grp.nights + ' \u00d7 ' + plain(fmtM(grp.rate)) + seg + ' = ' + plain(fmtM(grp.subtotal)));
-  });
-  lines.push('  ' + m.cleaning + ': ' + plain(fmtM(q.cleaning)));
-  lines.push('  ' + m.cityTax + ' (' + q.adults + ' \u00d7 ' + q.nights + '): ' + plain(fmtM(q.cityTax)));
-  lines.push(m.total + ': ' + plain(fmtM(q.total)));
-  lines.push(m.deposit + ': ' + plain(fmtM(q.deposit)));
-  lines.push('');
-  lines.push(m.adults + ': ' + q.adults + ' \u00b7 ' + m.children + ': ' + q.children);
-  if (email) lines.push(m.from + ': ' + email);
-  if (phone) lines.push(m.phone + ': ' + phone);
-  const href = 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(lines.join('\n'));
-  window.location.href = href;
+  if (!q.valid || q.guestOver || q.noAdults || !name || !email) { setBookMsg(t.book.errRequired); return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setBookMsg(t.book.errEmail); return; }
+  setBookMsg('');
+  setBookSending(true);
+  const breakdown = {
+    nights: q.nights,
+    groups: q.groups.map((grp) => ({ name: grp.name, nights: grp.nights, rate: grp.rate, subtotal: grp.subtotal })),
+    cleaning: q.cleaning, cityTax: q.cityTax, total: q.total, deposit: q.deposit, shortStay: q.shortStay,
+  };
+  const iso = (k) => Math.floor(k / 10000) + '-' + String(Math.floor(k / 100) % 100).padStart(2, '0') + '-' + String(k % 100).padStart(2, '0');
+  const payload = {
+    p_arrival: iso(s0), p_departure: iso(s1),
+    p_adults: q.adults, p_children: q.children,
+    p_name: name, p_email: email, p_phone: phone,
+    p_lang: lang, p_breakdown: breakdown, p_total: q.total,
+  };
+  fetch(VR_SUPABASE.URL + '/rest/v1/rpc/vr_request', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: VR_SUPABASE.ANON_KEY, Authorization: 'Bearer ' + VR_SUPABASE.ANON_KEY },
+    body: JSON.stringify(payload),
+  }).then((r) => r.json().then((data) => ({ ok: r.ok, data: data }))).then((res) => {
+    const d = res.data || {};
+    if (res.ok && d && d.ok === true && d.id) { showBookSuccess(q, s0, s1); return; }
+    const code = d && d.error;
+    let msg = t.book.errGeneric;
+    if (code === 'email_invalid') msg = t.book.errEmail;
+    else if (code === 'rate_limited') msg = t.book.errRate;
+    else if (code === 'dates_invalid' || code === 'adults_invalid' || code === 'children_invalid'
+             || code === 'guests_invalid' || code === 'name_required' || code === 'email_required') msg = t.book.errRequired;
+    setBookSending(false);
+    setBookMsg(msg);
+  }).catch(() => { setBookSending(false); setBookMsg(t.book.errGeneric); });
 }
 
 /* ============================ Language / season / clock ============================ */
@@ -972,9 +1252,11 @@ function setLang(lang) {
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); setTexts();
-  renderFacts(); renderAmenities(); renderThumbs(); renderScene();
-  renderSeasonsCards(); renderLokFacts(); renderTrips(); renderGallery();
+  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
+  renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
   renderCalendar(); renderBookingPanel(); applyTip();
+  // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
+  if ($('#vr-pay-label')) $('#vr-pay-label').textContent = bookSending ? tt().book.sending : tt().book.pay;
 }
 function eagerLoadSeason(season) {
   // Hero + section photos for a season may be lazy; force them to load so the
@@ -1096,25 +1378,19 @@ function initPano() {
   loop();
 }
 
-/* ============================ Hero parallax + nav state (rAF) ============================ */
+/* ============================ Hero scroll parallax + nav state (rAF) ============================ */
+/* Mouse-position parallax odstraněn (dle UX kritiky). Zůstává jen jemný scroll
+   parallax hero fotky a stmívání scroll-hintu; nav se přepíná při odscrollování. */
 function startRaf() {
   const clamp = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let mx = 0, my = 0, cmx = 0, cmy = 0;
-  if (!reduce) window.addEventListener('mousemove', (e) => {
-    mx = (e.clientX / window.innerWidth - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  }, { passive: true });
-
   const $id = (id) => document.getElementById(id);
   const render = () => {
     requestAnimationFrame(render);
     try {
       const vh = window.innerHeight || 1;
-      cmx += (mx - cmx) * 0.06; cmy += (my - cmy) * 0.06;
       const heroPhoto = $id('vrhPhoto'), hint = $id('vrimHint');
       const hp = clamp(window.scrollY / vh);
-      if (heroPhoto) heroPhoto.style.transform = 'scale(1.08) translate(' + (cmx * -8).toFixed(1) + 'px,' + (hp * 46 + cmy * -6).toFixed(1) + 'px)';
+      if (heroPhoto) heroPhoto.style.transform = 'scale(1.08) translateY(' + (hp * 46).toFixed(1) + 'px)';
       if (hint) hint.style.opacity = clamp(1 - hp / 0.5);
       const s = window.scrollY > 8;
       if (s !== state.scrolled) { state.scrolled = s; $('.vr-nav').setAttribute('data-scrolled', s ? 'true' : 'false'); }
@@ -1226,6 +1502,13 @@ function init() {
 
   // booking
   $('#vr-pay').addEventListener('click', submitBooking);
+  // kalendář — posun 2měsíčního okna (‹ ›)
+  const calPrev = $('#vr-cal-prev'), calNext = $('#vr-cal-next');
+  if (calPrev) calPrev.addEventListener('click', () => shiftCal(-1));
+  if (calNext) calNext.addEventListener('click', () => shiftCal(1));
+  // „Odeslat další žádost" — reset úspěšné žádosti zpět na formulář
+  const again = $('#vr-book-again');
+  if (again) again.addEventListener('click', resetBookForm);
   // počty hostů — rozpis se přepočítá živě; na blur se hodnoty srovnají do mezí
   ['#vr-adults', '#vr-children'].forEach((sel) => {
     const inp = $(sel); if (!inp) return;
@@ -1240,8 +1523,8 @@ function init() {
   document.querySelector('.vr-root').setAttribute('data-season', state.season);
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); setTexts();
-  renderFacts(); renderAmenities(); renderThumbs(); renderScene();
-  renderSeasonsCards(); renderLokFacts(); renderTrips(); renderGallery();
+  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
+  renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
   renderCalendar(); renderBookingPanel(); applyTip();
   loadAvailability();
 
