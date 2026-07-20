@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=6">
+<link rel="stylesheet" href="assets/site.css?v=7">
 </head>
 <body>
 <div class="vr-root" data-season="leto">
@@ -350,22 +350,33 @@
         <aside class="vr-book-aside">
           <span class="vr-tag" data-t="book.summary">Vaše rezervace</span>
           <div class="vr-book-sel"><span id="vr-sel-label">Vyberte termín v kalendáři</span> <span class="nl" id="vr-sel-nights"></span></div>
-          <div class="vr-book-price" id="vr-price" style="display:none">
-            <div class="row"><span data-t="book.total">Celkem za pobyt</span><span class="v" id="vr-price-total"></span></div>
-            <div class="row dep"><span data-t="book.deposit">Záloha 30 %</span><span class="v" id="vr-price-deposit"></span></div>
+          <!-- Rozpis ceny à la Airbnb — vykreslí se, jakmile je vybrán platný termín -->
+          <div class="vr-book-price" id="vr-breakdown" style="display:none"></div>
+          <!-- Hláška o minimální délce pobytu (nahradí rozpis, když je termín kratší) -->
+          <div class="vr-book-minstay" id="vr-minstay" role="status" aria-live="polite" style="display:none"></div>
+          <div class="vr-book-guests">
+            <label>
+              <span data-t="cta.lblAdults">Dospělí</span>
+              <input id="vr-adults" type="number" min="1" max="22" step="1" inputmode="numeric" value="2" autocomplete="off">
+            </label>
+            <label>
+              <span data-t="cta.lblChildren">Děti</span>
+              <input id="vr-children" type="number" min="0" max="21" step="1" inputmode="numeric" value="0" autocomplete="off">
+            </label>
           </div>
-          <label>
-            <span data-t="cta.lblGuests">Počet hostů</span>
-            <input id="vr-guests" type="text" data-t-ph="cta.phGuests" placeholder="Dospělí + děti" autocomplete="off">
-          </label>
+          <div class="vr-book-guestnote" id="vr-guestnote" role="status" aria-live="polite" style="display:none"></div>
           <label>
             <span data-t="cta.lblEmail">E-mail</span>
             <input id="vr-email" type="email" data-t-ph="cta.phEmail" placeholder="vas@email.cz" autocomplete="email">
           </label>
-          <button type="button" class="vr-book-pay" id="vr-pay"><span data-t="book.pay">Odeslat nezávaznou poptávku</span> <span aria-hidden="true">&#8594;</span></button>
+          <label>
+            <span data-t="cta.lblPhone">Telefon / WhatsApp</span>
+            <input id="vr-phone" type="tel" data-t-ph="cta.phPhone" placeholder="+420… (nepovinné)" autocomplete="tel">
+          </label>
+          <button type="button" class="vr-book-pay" id="vr-pay"><span data-t="book.pay">Odeslat žádost o pobyt</span> <span aria-hidden="true">&#8594;</span></button>
           <div class="vr-book-note">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
-            <span data-t="book.stripeNote">Nezávazná poptávka — žádná platba předem. Termín vám osobně potvrdíme e-mailem.</span>
+            <span data-t="book.stripeNote">Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.</span>
           </div>
         </aside>
       </div>
@@ -429,6 +440,6 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=6" defer></script>
+<script src="assets/site.js?v=7" defer></script>
 </body>
 </html>

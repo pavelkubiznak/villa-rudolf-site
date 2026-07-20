@@ -277,14 +277,28 @@ body{margin:0;background:#0E1311}
 .vr-book-sel{font-family:'Newsreader',serif;font-size:clamp(1.3rem,1.9vw,1.7rem);color:#F0EBE1;line-height:1.25}
 .vr-book-sel .nl{color:#9aa094;font-size:.68em;white-space:nowrap}
 .vr-book-price{display:flex;flex-direction:column;gap:9px;border-top:1px solid var(--vr-line);padding-top:14px;font-family:'Archivo',sans-serif;font-size:14px}
-.vr-book-price .row{display:flex;justify-content:space-between;gap:12px;color:#C9CEC3}
-.vr-book-price .row .v{color:#F0EBE1;font-weight:600}
+.vr-book-price .row{display:flex;justify-content:space-between;gap:12px;color:#C9CEC3;line-height:1.4}
+.vr-book-price .row .k{padding-right:4px}
+.vr-book-price .row .v{color:#F0EBE1;font-weight:600;white-space:nowrap}
 .vr-book-price .row.dep .v{color:var(--vr-ember-2);font-weight:700}
+/* Rozpis à la Airbnb: součtový řádek s oddělovačem a ztlumená záloha */
+.vr-book-price .row.brk-total{border-top:1px solid var(--vr-line);margin-top:5px;padding-top:13px;font-size:15px;color:#F0EBE1}
+.vr-book-price .row.brk-total .v{font-weight:700}
+.vr-book-price .row.brk-dep{color:#8b9187;font-size:12.5px}
+.vr-book-price .row.brk-dep .v{color:#9aa094;font-weight:600}
+/* Hláška o minimální délce pobytu / překročení kapacity */
+.vr-book-minstay,.vr-book-guestnote{font-family:'Archivo',sans-serif;font-size:13px;line-height:1.5;color:#E7C9A6;background:rgba(214,138,76,.08);border:1px solid rgba(214,138,76,.28);border-radius:3px;padding:12px 14px}
+.vr-book-guestnote{color:#e6b7ac;background:rgba(214,110,86,.09);border-color:rgba(214,110,86,.3)}
+/* Počty hostů — dva vstupy vedle sebe */
+.vr-book-guests{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vr-book-guests label{margin:0}
 .vr-book label{display:flex;flex-direction:column;gap:8px}
 .vr-book label span{font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9aa094}
 .vr-book input{font-family:'Archivo',sans-serif;font-size:15px;color:#EFEAE0;background:rgba(240,235,225,.04);border:1px solid var(--vr-line);border-radius:2px;padding:13px 15px;outline:none}
 .vr-book input:focus{border-color:var(--vr-ember)}
-.vr-book-pay{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;letter-spacing:.02em;color:#10150f;background:var(--vr-ember);border:0;border-radius:2px;padding:16px 24px;cursor:pointer;margin-top:4px}
+.vr-book-pay{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;letter-spacing:.02em;color:#10150f;background:var(--vr-ember);border:0;border-radius:2px;padding:16px 24px;cursor:pointer;margin-top:4px;transition:opacity .2s,background .2s}
+.vr-book-pay:disabled{opacity:.4;cursor:not-allowed;background:#6b6459}
+.vr-book input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .vr-book-note{display:flex;align-items:flex-start;gap:8px;font-family:'Archivo',sans-serif;font-size:11.5px;line-height:1.55;color:#79817A}
 .vr-book-note svg{flex:none;margin-top:2px}
 
