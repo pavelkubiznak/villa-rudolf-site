@@ -232,7 +232,9 @@
         var thumb = document.createElement('div');
         thumb.className = 'va-thumb';
         var img = document.createElement('img');
-        img.loading = 'lazy'; img.alt = ''; img.src = url;
+        // eager: lazy-loaded thumbnaily se v některých kontextech (in-app webview,
+        // krátká stránka) nespustí; pro prototyp nahráváme thumbnaily rovnou.
+        img.decoding = 'async'; img.alt = ''; img.src = url;
         thumb.appendChild(img);
         if (mine) { var b = document.createElement('span'); b.className = 'va-mine-badge'; b.textContent = t('mine'); thumb.appendChild(b); }
         thumb.addEventListener('click', function () { openLightbox(url); });
