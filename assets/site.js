@@ -100,7 +100,7 @@ const T = {
       desc: 'Villa Rudolf – soukromé horské sídlo v Krkonoších. Celý dům i rozlehlý pozemek jen pro vaši skupinu 6–22 lidí: zastřešený bazén, sauna, pergola, ohniště. Léto i zima. Rezervujte celý dům.',
       locale: 'cs_CZ',
     },
-    nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
+    nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
       eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
       eyebrowWinter: 'Lyžování za rohem · Krkonoše',
@@ -216,7 +216,7 @@ const T = {
       minStay: '%S% přijímáme pobyty od %N% nocí. Vyberte prosím delší termín.',
       guestMax: 'Maximálně %N% hostů (dospělí + děti dohromady).',
       pay: 'Odeslat žádost o pobyt', stripeNote: 'Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.',
-      consent: 'Odesláním žádosti berete na vědomí <a href="/podminky/" target="_blank" rel="noopener">podmínky a zpracování osobních údajů</a>.',
+      consent: 'Odesláním žádosti berete na vědomí <a href="/podminky/" target="_blank" rel="noopener">ubytovací podmínky a zpracování osobních údajů</a>.',
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', checkoutOnly: 'pouze odjezd', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
       availFail: 'Dostupnost se nepodařilo načíst.',
       priceHeading: 'Orientační ceník', pricePerNight: '/ noc', priceMin: 'min.',
@@ -246,7 +246,7 @@ const T = {
       lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Podmínky a ochrana údajů' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Ubytovací podmínky a ochrana údajů' },
   },
 
   en: {
@@ -256,7 +256,7 @@ const T = {
       desc: 'Villa Rudolf – a private mountain estate in the Czech Krkonoše. The whole house and grounds for your group of 6–22: covered pool, sauna, pergola, fire pit. Summer and winter. Book the entire house.',
       locale: 'en_GB',
     },
-    nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
+    nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
       eyebrow: 'The whole house, just for your group · Krkonoše',
       eyebrowWinter: 'Skiing just around the corner · Krkonoše',
@@ -372,7 +372,7 @@ const T = {
       minStay: '%S% we accept stays from %N% nights. Please pick a longer range.',
       guestMax: 'Up to %N% guests (adults + children combined).',
       pay: 'Send stay request', stripeNote: 'This request is non-binding — you pay nothing now. We’ll confirm the dates personally and then send a payment link for the deposit.',
-      consent: 'By sending this request you acknowledge our <a href="/podminky/" target="_blank" rel="noopener">terms and the processing of your personal data</a>.',
+      consent: 'By sending this request you acknowledge our <a href="/podminky/" target="_blank" rel="noopener">booking terms and the processing of your personal data</a>.',
       free: 'Available', booked: 'Booked', chosen: 'Your stay', checkoutOnly: 'checkout only', demo: 'Sample availability — will connect to the booking system',
       availFail: 'Availability could not be loaded.',
       priceHeading: 'Price guide', pricePerNight: '/ night', priceMin: 'min.',
@@ -402,7 +402,7 @@ const T = {
       lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Terms & privacy' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Booking terms & privacy' },
   },
 
   de: {
@@ -412,7 +412,7 @@ const T = {
       desc: 'Villa Rudolf – ein privates Berganwesen im Riesengebirge. Das ganze Haus und Grundstück für eure Gruppe von 6–22 Personen: überdachter Pool, Sauna, Pergola, Feuerstelle. Sommer und Winter. Ganzes Haus buchen.',
       locale: 'de_DE',
     },
-    nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
+    nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
       eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
       eyebrowWinter: 'Skifahren gleich um die Ecke · Riesengebirge',
@@ -528,7 +528,7 @@ const T = {
       minStay: '%S% nehmen wir Aufenthalte ab %N% Nächten an. Bitte wählt einen längeren Zeitraum.',
       guestMax: 'Bis zu %N% Gäste (Erwachsene + Kinder zusammen).',
       pay: 'Aufenthaltsanfrage senden', stripeNote: 'Die Anfrage ist unverbindlich — ihr zahlt jetzt nichts. Wir bestätigen den Termin persönlich und senden danach einen Zahlungslink für die Anzahlung.',
-      consent: 'Mit dem Absenden der Anfrage akzeptiert ihr die <a href="/podminky/" target="_blank" rel="noopener">Bedingungen und die Verarbeitung eurer personenbezogenen Daten</a>.',
+      consent: 'Mit dem Absenden der Anfrage akzeptiert ihr die <a href="/podminky/" target="_blank" rel="noopener">Buchungsbedingungen und die Verarbeitung eurer personenbezogenen Daten</a>.',
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', checkoutOnly: 'nur Abreise', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
       availFail: 'Verfügbarkeit konnte nicht geladen werden.',
       priceHeading: 'Preisübersicht', pricePerNight: '/ Nacht', priceMin: 'min.',
@@ -558,7 +558,7 @@ const T = {
       lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Bedingungen & Datenschutz' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Buchungsbedingungen & Datenschutz' },
   },
 
   pl: {
@@ -568,7 +568,7 @@ const T = {
       desc: 'Villa Rudolf – prywatna górska rezydencja w Karkonoszach. Cały dom i posesja dla grupy 6–22 osób: kryty basen, sauna, pergola, palenisko. Lato i zima. Zarezerwuj cały dom.',
       locale: 'pl_PL',
     },
-    nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
+    nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
       eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
       eyebrowWinter: 'Narty tuż za rogiem · Karkonosze',
@@ -684,7 +684,7 @@ const T = {
       minStay: '%S% przyjmujemy pobyty od %N% nocy. Wybierz dłuższy termin.',
       guestMax: 'Maksymalnie %N% gości (dorośli + dzieci razem).',
       pay: 'Wyślij prośbę o pobyt', stripeNote: 'Prośba jest niezobowiązująca — teraz nic nie płacisz. Termin potwierdzimy osobiście, a potem wyślemy link do płatności zaliczki.',
-      consent: 'Wysyłając prośbę, akceptujesz <a href="/podminky/" target="_blank" rel="noopener">warunki i przetwarzanie danych osobowych</a>.',
+      consent: 'Wysyłając prośbę, akceptujesz <a href="/podminky/" target="_blank" rel="noopener">warunki pobytu i przetwarzanie danych osobowych</a>.',
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', checkoutOnly: 'tylko wyjazd', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
       availFail: 'Nie udało się wczytać dostępności.',
       priceHeading: 'Orientacyjny cennik', pricePerNight: '/ noc', priceMin: 'min.',
@@ -714,7 +714,7 @@ const T = {
       lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki i ochrona danych' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki pobytu i prywatność' },
   },
 };
 

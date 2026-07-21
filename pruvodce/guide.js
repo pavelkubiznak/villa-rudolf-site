@@ -27,6 +27,7 @@
    * přes tt(v,lang) = v[lang] || v.cs. Tady jsou jen texty rozhraní ve 4 jazycích. */
   var T = {
     cs: {
+      siteNav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', info: 'Praktické info', book: 'Rezervovat' },
       badge: 'Průvodce', greet: 'Vítejte', family: 'rodino', heroTitle: 'Váš plán na tenhle týden',
       stayPrefix: 'pobyt', todayTip: 'Dnešní tip', moreArrow: 'detail →',
       planTitle: 'Plán na každý den', planSrc: 'počasí: yr.no · živě',
@@ -60,6 +61,7 @@
       tags: { foot: 'pěšky od vily', rain: 'i za deště', outdoor: 'venku', easy: 'nenáročné', hard: 'náročné', heat: 'do horka', clear: 'za jasna', stairs: 'schody', reservation: 'rezervace', border: 'Polsko · doklady' }
     },
     de: {
+      siteNav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', info: 'Gäste-Infos', book: 'Buchen' },
       badge: 'Guide', greet: 'Willkommen', family: 'Familie', heroTitle: 'Ihr Plan für diese Woche',
       stayPrefix: 'Aufenthalt', todayTip: 'Tipp für heute', moreArrow: 'Detail →',
       planTitle: 'Plan für jeden Tag', planSrc: 'Wetter: yr.no · live',
@@ -93,6 +95,7 @@
       tags: { foot: 'zu Fuß', rain: 'auch bei Regen', outdoor: 'draußen', easy: 'leicht', hard: 'anspruchsvoll', heat: 'für heiße Tage', clear: 'bei klarem Wetter', stairs: 'Treppen', reservation: 'Reservierung', border: 'Polen · Ausweis' }
     },
     en: {
+      siteNav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', info: 'Guest info', book: 'Book' },
       badge: 'Guide', greet: 'Welcome', family: 'family', heroTitle: 'Your plan for this week',
       stayPrefix: 'stay', todayTip: 'Today’s tip', moreArrow: 'detail →',
       planTitle: 'A plan for every day', planSrc: 'weather: yr.no · live',
@@ -126,6 +129,7 @@
       tags: { foot: 'walkable', rain: 'rainy-day ok', outdoor: 'outdoors', easy: 'easy', hard: 'strenuous', heat: 'for hot days', clear: 'clear weather', stairs: 'stairs', reservation: 'booking', border: 'Poland · ID' }
     },
     pl: {
+      siteNav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', info: 'Informacje praktyczne', book: 'Rezerwuj' },
       badge: 'Przewodnik', greet: 'Witajcie', family: 'rodzino', heroTitle: 'Wasz plan na ten tydzień',
       stayPrefix: 'pobyt', todayTip: 'Tip na dziś', moreArrow: 'szczegóły →',
       planTitle: 'Plan na każdy dzień', planSrc: 'pogoda: yr.no · na żywo',
@@ -562,7 +566,15 @@
     var langs = ['cs', 'en', 'de', 'pl'].map(function (l) {
       return '<button class="vg-lang" data-lang="' + l + '" data-on="' + (l === S.lang) + '">' + l.toUpperCase() + '</button>';
     }).join('');
-    return '<header class="vg-header"><a class="vg-brand" href="../"><span class="nm">Villa Rudolf</span><span class="bd">' + esc(L.badge) + '</span></a>'
+    var q = '?lang=' + encodeURIComponent(S.lang) + '&season=' + encodeURIComponent(S.season);
+    var n = L.siteNav || {}, links = '';
+    [['dum', n.dum], ['vybaveni', n.vybaveni], ['galerie', n.galerie]].forEach(function (x) {
+      if (x[1]) links += '<a href="../' + q + '#' + x[0] + '">' + esc(x[1]) + '</a>';
+    });
+    if (n.info) links += '<a href="../info/' + q + '">' + esc(n.info) + '</a>';
+    if (n.book) links += '<a class="cta" href="../' + q + '#rezervace">' + esc(n.book) + '</a>';
+    return '<header class="vg-header"><a class="vg-brand" href="../' + q + '"><span class="nm">Villa Rudolf</span><span class="bd">' + esc(L.badge) + '</span></a>'
+      + '<nav class="vg-navlinks" aria-label="Sekce">' + links + '</nav>'
       + '<div class="vg-langs" role="group" aria-label="Jazyk / Language">' + langs + '</div></header>';
   }
 
@@ -845,7 +857,7 @@
       + (webLink ? '<a class="vg-webbtn" href="' + esc(webLink.url) + '" target="_blank" rel="noopener">' + esc(L.dWeb) + ' ↗</a>' : '') + '</div></div>'
       + '<div class="vg-share">' + icon('camera') + '<div class="bd"><p class="t">' + esc(L.shareTitle) + '</p><p class="s">' + esc(L.shareSub) + '</p>'
       + '<div class="links"><a href="https://www.instagram.com/villarudolfretreat/" target="_blank" rel="noopener">Instagram</a>'
-      + '<a href="https://facebook.com/villarudolf" target="_blank" rel="noopener">Facebook</a><span class="hash">#villarudolf</span></div></div></div>'
+      + '<span class="hash">#villarudolf</span></div></div></div>'
       + '</div>';
 
     var ov = document.createElement('div');

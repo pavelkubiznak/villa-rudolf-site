@@ -55,6 +55,16 @@ body:has(.pi-root[data-season="zima"]){background:#eef2f6}
 .pi-brand{display:flex;align-items:baseline;gap:8px;min-width:0}
 .pi-brand .nm{font-family:'Newsreader',serif;font-size:19px;letter-spacing:.02em;color:var(--pi-text)}
 .pi-brand .bd{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--pi-accent);white-space:nowrap}
+/* Sekce hlavního webu i na podstránce — aby menu nezmizelo. */
+.pi-navlinks{display:flex;align-items:center;gap:18px;flex-wrap:wrap;flex:1 1 auto;justify-content:center;min-width:0}
+.pi-navlinks a{font-family:'Archivo',sans-serif;font-size:12.5px;color:var(--pi-text-dim,#8A9490);text-decoration:none;white-space:nowrap;transition:color .25s ease}
+.pi-navlinks a:hover{color:var(--pi-text,#F0EBE1)}
+.pi-navlinks a.cta{font-weight:700;color:var(--pi-accent,#D68A4C)}
+@media(max-width:760px){
+  .pi-header{flex-wrap:wrap}
+  .pi-navlinks{order:3;flex:1 1 100%;justify-content:flex-start;gap:14px;padding-top:12px}
+  .pi-navlinks a{font-size:12px}
+}
 .pi-langs{display:flex;gap:4px;flex:none}
 .pi-lang{font-family:'Archivo',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
   color:var(--pi-muted);background:transparent;border:1px solid var(--pi-line-2);border-radius:999px;

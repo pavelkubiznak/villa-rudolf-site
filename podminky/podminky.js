@@ -7,8 +7,9 @@
 
   var T = {
     cs: {
-      badge: 'Podmínky',
-      title: 'Podmínky a ochrana osobních údajů',
+      nav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', vylety: 'Výlety', info: 'Praktické info', book: 'Rezervovat' },
+      badge: 'Ubytovací podmínky',
+      title: 'Ubytovací podmínky a ochrana údajů',
       intro: 'Storno podmínky, zpracování osobních údajů a kontakt na provozovatele. Střízlivě a přehledně.',
       stornoTitle: 'Storno podmínky',
       stornoLead: 'Záloha ve výši 30 % z celkové ceny je splatná po potvrzení termínu a započítává se do konečné ceny pobytu. Při zrušení rezervace účtujeme storno poplatek podle toho, kolik dní před příjezdem k zrušení dojde:',
@@ -42,8 +43,9 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Krkonoše',
     },
     en: {
-      badge: 'Terms',
-      title: 'Terms & privacy',
+      nav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', vylety: 'Trips', info: 'Guest info', book: 'Book' },
+      badge: 'Booking terms',
+      title: 'Booking terms & privacy',
       intro: 'Cancellation terms, how we handle personal data, and the operator’s contact. Kept short and clear.',
       stornoTitle: 'Cancellation terms',
       stornoLead: 'A deposit of 30% of the total price is due after we confirm your dates and counts towards the final price of the stay. If you cancel, a cancellation fee applies depending on how many days before arrival you cancel:',
@@ -77,8 +79,9 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Krkonoše',
     },
     de: {
-      badge: 'Bedingungen',
-      title: 'Bedingungen & Datenschutz',
+      nav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', vylety: 'Ausflüge', info: 'Gäste-Infos', book: 'Buchen' },
+      badge: 'Buchungsbedingungen',
+      title: 'Buchungsbedingungen & Datenschutz',
       intro: 'Stornobedingungen, Umgang mit personenbezogenen Daten und Kontakt zum Betreiber. Kurz und klar.',
       stornoTitle: 'Stornobedingungen',
       stornoLead: 'Eine Anzahlung von 30 % des Gesamtpreises ist nach Bestätigung des Termins fällig und wird auf den Endpreis des Aufenthalts angerechnet. Bei Stornierung fällt eine Gebühr an, je nachdem, wie viele Tage vor Anreise storniert wird:',
@@ -112,8 +115,9 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Riesengebirge',
     },
     pl: {
-      badge: 'Warunki',
-      title: 'Warunki i ochrona danych',
+      nav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', vylety: 'Wycieczki', info: 'Informacje praktyczne', book: 'Rezerwuj' },
+      badge: 'Warunki pobytu',
+      title: 'Warunki pobytu i prywatność',
       intro: 'Warunki anulowania, przetwarzanie danych osobowych i kontakt do operatora. Krótko i jasno.',
       stornoTitle: 'Warunki anulowania',
       stornoLead: 'Zaliczka w wysokości 30 % ceny całkowitej jest płatna po potwierdzeniu terminu i jest wliczana do ostatecznej ceny pobytu. W razie anulowania pobieramy opłatę zależnie od tego, ile dni przed przyjazdem następuje rezygnacja:',
@@ -148,11 +152,12 @@
     },
   };
 
+  /* Název ať je hned zřejmý — majitel hledal „ubytovací podmínky" a nenašel je. */
   var META = {
-    cs: 'Podmínky a ochrana osobních údajů | Villa Rudolf',
-    en: 'Terms & privacy | Villa Rudolf',
-    de: 'Bedingungen & Datenschutz | Villa Rudolf',
-    pl: 'Warunki i ochrona danych | Villa Rudolf',
+    cs: 'Ubytovací podmínky a ochrana údajů | Villa Rudolf',
+    en: 'Booking terms & privacy | Villa Rudolf',
+    de: 'Buchungsbedingungen & Datenschutz | Villa Rudolf',
+    pl: 'Warunki pobytu i prywatność | Villa Rudolf',
   };
 
   var qs = new URLSearchParams(location.search);
@@ -172,6 +177,22 @@
     if (q === 'leto' || q === 'zima') return q;
     try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') return s; } catch (e) {}
     return 'leto';
+  }
+
+  /* Odkaz na hlavní web se nese jazyk + sezónu, aby se dědičnost nerozbila. */
+  function hp(hash) {
+    var q = '?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season);
+    return '../' + q + (hash ? '#' + hash : '');
+  }
+  /* Stejné sekce jako v hlavičce homepage — odkazují na ../#sekce. */
+  function siteLinks(L) {
+    var n = L.nav, out = '';
+    [['dum', n.dum], ['vybaveni', n.vybaveni], ['galerie', n.galerie], ['vylety', n.vylety]].forEach(function (x) {
+      out += '<a href="' + hp(x[0]) + '">' + esc(x[1]) + '</a>';
+    });
+    out += '<a href="../info/?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season) + '">' + esc(n.info) + '</a>';
+    out += '<a class="cta" href="' + hp('rezervace') + '">' + esc(n.book) + '</a>';
+    return out;
   }
 
   function render() {
@@ -195,7 +216,8 @@
 
     document.getElementById('app').innerHTML =
       '<div class="pd-wrap">'
-      + '<header class="pd-header"><a class="pd-brand" href="../"><span class="nm">Villa Rudolf</span><span class="bd">' + esc(L.badge) + '</span></a>'
+      + '<header class="pd-header"><a class="pd-brand" href="' + hp('') + '"><span class="nm">Villa Rudolf</span><span class="bd">' + esc(L.badge) + '</span></a>'
+      + '<nav class="pd-navlinks" aria-label="Sekce">' + siteLinks(L) + '</nav>'
       + '<nav class="pd-langs" aria-label="Jazyk / Language">' + langs + '</nav></header>'
       + '<section class="pd-hero"><p class="pd-eyebrow">Villa Rudolf · Krkonoše</p><h1 class="pd-title">' + esc(L.title) + '</h1><p class="pd-intro">' + esc(L.intro) + '</p></section>'
       + '<main class="pd-main">'
@@ -205,7 +227,7 @@
       + '<div class="pd-note">' + lockIcon + '<p>' + esc(L.cookies) + '</p></div></section>'
       + '<section class="pd-sec"><h2 class="pd-h2">' + esc(L.operatorTitle) + '</h2><div class="pd-rows">' + opBody + '</div></section>'
       + '</main>'
-      + '<footer class="pd-footer"><a class="pd-back" href="../">' + arrowL + '<span>' + esc(L.back) + '</span></a><span class="pd-foot-brand">' + esc(L.footBrand) + '</span></footer>'
+      + '<footer class="pd-footer"><a class="pd-back" href="' + hp('') + '">' + arrowL + '<span>' + esc(L.back) + '</span></a><span class="pd-foot-brand">' + esc(L.footBrand) + '</span></footer>'
       + '</div>';
 
     Array.prototype.forEach.call(document.querySelectorAll('.pd-lang'), function (b) {

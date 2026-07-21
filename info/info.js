@@ -7,6 +7,7 @@
   var T = {
     cs: {
       htmlLang: 'cs',
+      navDum: 'Dům', navVybaveni: 'Vybavení', navGalerie: 'Galerie', navVylety: 'Výlety', navBook: 'Rezervovat',
       brandBadge: 'Praktické info',
       eyebrow: 'Villa Rudolf · Krkonoše',
       title: 'Praktické informace',
@@ -58,6 +59,7 @@
 
     en: {
       htmlLang: 'en',
+      navDum: 'The House', navVybaveni: 'Amenities', navGalerie: 'Gallery', navVylety: 'Trips', navBook: 'Book',
       brandBadge: 'Guest info',
       eyebrow: 'Villa Rudolf · Giant Mountains',
       title: 'Practical information',
@@ -109,6 +111,7 @@
 
     de: {
       htmlLang: 'de',
+      navDum: 'Das Haus', navVybaveni: 'Ausstattung', navGalerie: 'Galerie', navVylety: 'Ausflüge', navBook: 'Buchen',
       brandBadge: 'Gäste-Info',
       eyebrow: 'Villa Rudolf · Riesengebirge',
       title: 'Praktische Informationen',
@@ -160,6 +163,7 @@
 
     pl: {
       htmlLang: 'pl',
+      navDum: 'Dom', navVybaveni: 'Udogodnienia', navGalerie: 'Galeria', navVylety: 'Wycieczki', navBook: 'Rezerwuj',
       brandBadge: 'Info dla gości',
       eyebrow: 'Villa Rudolf · Karkonosze',
       title: 'Informacje praktyczne',
@@ -235,6 +239,16 @@
       b.setAttribute('data-on', String(b.getAttribute('data-lang') === lang));
     });
     try { localStorage.setItem(LS_KEY, lang); } catch (e) {}
+    syncSiteLinks();
+  }
+
+  /* Odkazy zpět na hlavní web nesou jazyk i sezónu, ať se dědičnost nerozbije. */
+  function syncSiteLinks() {
+    var q = '?lang=' + encodeURIComponent(lang) + '&season=' + encodeURIComponent(season);
+    document.querySelectorAll('.pi-navlinks a[data-site]').forEach(function (a) {
+      a.setAttribute('href', '../' + q + '#' + a.getAttribute('data-site'));
+    });
+    var b = document.querySelector('.pi-brand'); if (b) b.setAttribute('href', '../' + q);
   }
 
   document.querySelectorAll('.pi-lang').forEach(function (b) {
@@ -242,8 +256,8 @@
   });
 
   /* Sezóna dědí z webu — ?season → localStorage vrSeason → léto (stejná logika jako index/site.js). */
+  var season = 'leto';
   (function () {
-    var season = 'leto';
     var q = (qs.get('season') || '').toLowerCase();
     if (q === 'leto' || q === 'zima') season = q;
     else { try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') season = s; } catch (e) {} }

@@ -33,7 +33,7 @@ body{margin:0;background:#0E1311}
 
 /* ---------- Header ---------- */
 .vc-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 0}
-.vc-brand{display:flex;align-items:baseline;gap:8px;min-width:0}
+.vc-brand{display:flex;align-items:baseline;gap:8px;min-width:0;text-decoration:none}
 .vc-brand .nm{font-family:'Newsreader',serif;font-size:19px;letter-spacing:.02em;color:var(--vc-text)}
 .vc-brand .bd{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--vc-ember)}
 .vc-langs{display:flex;gap:4px;flex:none}

@@ -39,6 +39,7 @@
       <nav class="vr-navlinks" aria-label="Sekce">
         <a href="#dum" data-t="nav.dum">Dům</a>
         <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
+        <a href="#galerie" data-t="nav.galerie">Galerie</a>
         <a href="#recenze" data-t="nav.recenze">Recenze</a>
         <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
         <a href="#vylety" data-t="nav.vylety">Výlety</a>
@@ -67,6 +68,7 @@
   <div class="vr-mob" id="vr-mob" data-open="false">
     <a href="#dum" data-t="nav.dum">Dům</a>
     <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
+    <a href="#galerie" data-t="nav.galerie">Galerie</a>
     <a href="#recenze" data-t="nav.recenze">Recenze</a>
     <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
     <a href="#vylety" data-t="nav.vylety">Výlety</a>
@@ -402,7 +404,7 @@
   </section>
 
   <!-- ===================== Gallery ===================== -->
-  <section class="sec-galerie">
+  <section id="galerie" class="sec-galerie">
     <div class="vr-wrap">
       <div class="vr-gal-head vr-reveal">
         <div>
@@ -478,7 +480,7 @@
               <textarea id="vr-message" class="vr-book-textarea" rows="3" maxlength="2000" data-t-ph="cta.phMessage" placeholder="Cokoli, co bychom měli vědět — počet dětí, přijezd, přání… (nepovinné)" autocomplete="off"></textarea>
             </label>
             <div class="vr-book-msg" id="vr-book-msg" role="alert" aria-live="assertive" style="display:none"></div>
-            <p class="vr-book-consent" data-t-html="book.consent">Odesláním žádosti berete na vědomí <a href="/podminky/" target="_blank" rel="noopener">podmínky a zpracování osobních údajů</a>.</p>
+            <p class="vr-book-consent" data-t-html="book.consent">Odesláním žádosti berete na vědomí <a href="/podminky/" target="_blank" rel="noopener">ubytovací podmínky a zpracování osobních údajů</a>.</p>
             <button type="submit" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Odeslat žádost o pobyt</span> <span aria-hidden="true">&#8594;</span></button>
             <div class="vr-book-note">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
@@ -546,7 +548,7 @@
       </div>
       <div class="vr-foot-bottom">
         <span data-t="footer.rights">© 2026 Villa Rudolf</span>
-        <a class="vr-foot-terms" href="podminky/" data-langlink="podminky/" data-t="footer.terms">Podmínky a ochrana údajů</a>
+        <a class="vr-foot-terms" href="podminky/" data-langlink="podminky/" data-t="footer.terms">Ubytovací podmínky a ochrana údajů</a>
       </div>
     </div>
   </footer>
