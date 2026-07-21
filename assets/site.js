@@ -1755,6 +1755,9 @@ function startRaf() {
       if (hint) hint.style.opacity = clamp(1 - hp / 0.5);
       const s = window.scrollY > 8;
       if (s !== state.scrolled) { state.scrolled = s; $('.vr-nav').setAttribute('data-scrolled', s ? 'true' : 'false'); }
+      // sticky mobilní CTA se objeví, jakmile host odscrolluje za hero
+      const sticky = $id('vr-stickycta');
+      if (sticky) { const on = window.scrollY > vh * 0.85 ? 'true' : 'false'; if (sticky.getAttribute('data-show') !== on) sticky.setAttribute('data-show', on); }
     } catch (e) {}
   };
   render();

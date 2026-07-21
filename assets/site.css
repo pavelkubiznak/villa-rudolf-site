@@ -640,12 +640,24 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   .vr-qfacts{grid-template-columns:1fr 1fr;gap:20px 16px}
   .vr-rating{flex:1 1 100%;justify-content:space-between}
 }
+/* Sticky spodní CTA na mobilu (nav CTA je ≤960px skryté). Skryté by default;
+   zobrazí se jen ≤960px a až po odscrollování za hero (JS přepíná data-show). */
+.vr-stickycta{display:none}
 @media(max-width:960px){
   .vr-navlinks{display:none}
   .vr-navcta{display:none}
   .vr-nav-season{display:none}
   .vr-burger{display:flex}
   .vr-book{grid-template-columns:1fr}
+  .vr-stickycta{display:flex;align-items:center;justify-content:center;gap:8px;
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;
+    color:#10150f;background:var(--vr-ember);
+    padding:16px 20px;padding-bottom:calc(16px + env(safe-area-inset-bottom));
+    box-shadow:0 -6px 26px rgba(0,0,0,.32);
+    transform:translateY(120%);opacity:0;pointer-events:none;
+    transition:transform .35s cubic-bezier(.2,.7,.15,1),opacity .3s}
+  .vr-stickycta[data-show="true"]{transform:none;opacity:1;pointer-events:auto}
 }
 @media(max-width:880px){
   .vr-2col,.vr-ohn-grid,.vr-lok-grid,.vr-amen-hero{grid-template-columns:1fr}
