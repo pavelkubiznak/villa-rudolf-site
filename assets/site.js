@@ -143,6 +143,19 @@ const T = {
         ],
       },
     },
+    bedrooms: {
+      eyebrow: 'Ložnice a lůžka',
+      title: 'Kde se u nás vyspíte',
+      note: '7 ložnic a 22 lůžek — pohodlné spaní pro celou skupinu i pro rodiny.',
+      noBunk: 'Žádné patrové postele — klidnější spaní i pro rodiče s malými dětmi.',
+      rooms: [
+        { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi · vlastní kuchyňka a kulečník' },
+        { name: 'Pokoj 1', cap: '2 hosté', beds: 'Manželská postel' },
+        { name: 'Pokoj 2', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka)' },
+        { name: 'Pokoj 3', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka)' },
+        { name: 'Pokoj 4', cap: '2 hosté', beds: 'Manželská postel' },
+      ],
+    },
     ohniste: {
       eyebrow: 'Nová dominanta', caption: 'Detail ohniště a gabionové stěny',
       title: 'Ohniště s gabionovou stěnou, které večer ožívá',
@@ -283,6 +296,19 @@ const T = {
           { tag: 'Wellness', name: 'Covered pool in the cold', desc: 'A heated pool under cover — swim even in midwinter, with snow lying outside.' },
         ],
       },
+    },
+    bedrooms: {
+      eyebrow: 'Bedrooms & beds',
+      title: 'Where you’ll sleep',
+      note: '7 bedrooms and 22 beds — comfortable sleeping for the whole group and for families.',
+      noBunk: 'No bunk beds — a calmer night, ideal for parents with small children too.',
+      rooms: [
+        { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds · own kitchenette and billiard table' },
+        { name: 'Room 1', cap: '2 guests', beds: 'Double bed' },
+        { name: 'Room 2', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed)' },
+        { name: 'Room 3', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed)' },
+        { name: 'Room 4', cap: '2 guests', beds: 'Double bed' },
+      ],
     },
     ohniste: {
       eyebrow: 'New centrepiece', caption: 'Detail of the fire pit and gabion wall',
@@ -425,6 +451,19 @@ const T = {
         ],
       },
     },
+    bedrooms: {
+      eyebrow: 'Schlafzimmer & Betten',
+      title: 'Wo ihr schlaft',
+      note: '7 Schlafzimmer und 22 Betten — bequemer Schlaf für die ganze Gruppe und für Familien.',
+      noBunk: 'Keine Etagenbetten — ruhigerer Schlaf, auch ideal für Eltern mit kleinen Kindern.',
+      rooms: [
+        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten · eigene Küchenzeile und Billardtisch' },
+        { name: 'Zimmer 1', cap: '2 Gäste', beds: 'Doppelbett' },
+        { name: 'Zimmer 2', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett)' },
+        { name: 'Zimmer 3', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett)' },
+        { name: 'Zimmer 4', cap: '2 Gäste', beds: 'Doppelbett' },
+      ],
+    },
     ohniste: {
       eyebrow: 'Neues Herzstück', caption: 'Detail der Feuerstelle und Gabionenwand',
       title: 'Eine Feuerstelle mit Gabionenwand, die abends zum Leben erwacht',
@@ -565,6 +604,19 @@ const T = {
           { tag: 'Wellness', name: 'Kryty basen nawet w mróz', desc: 'Podgrzewany basen pod dachem — pływacie nawet w środku zimy, gdy na zewnątrz leży śnieg.' },
         ],
       },
+    },
+    bedrooms: {
+      eyebrow: 'Sypialnie i łóżka',
+      title: 'Gdzie będziecie spać',
+      note: '7 sypialni i 22 miejsca do spania — wygodny sen dla całej grupy i dla rodzin.',
+      noBunk: 'Bez łóżek piętrowych — spokojniejszy sen, także dla rodziców z małymi dziećmi.',
+      rooms: [
+        { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi · własny aneks kuchenny i stół bilardowy' },
+        { name: 'Pokój 1', cap: '2 gości', beds: 'Łóżko małżeńskie' },
+        { name: 'Pokój 2', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka)' },
+        { name: 'Pokój 3', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka)' },
+        { name: 'Pokój 4', cap: '2 gości', beds: 'Łóżko małżeńskie' },
+      ],
     },
     ohniste: {
       eyebrow: 'Nowy element', caption: 'Detal paleniska i ściany gabionowej',
@@ -935,6 +987,28 @@ function renderAmenities() {
     art.appendChild(el('h3', { text: it.name }));
     art.appendChild(el('p', { text: it.desc }));
     host.appendChild(art);
+  });
+}
+
+/* Ložnice a lůžka — přehledná mřížka karet (Suite jako široká featured karta +
+   4 pokoje). Data potvrzena majitelem; u Suite se drží střízlivé „3 ložnice
+   s manželskými postelemi, až 10 hostů" (zbylá lůžka se nevymýšlejí). */
+const bedIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17v-6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"></path><path d="M2 17h20"></path><path d="M2 20v-3M22 20v-3"></path><path d="M6 9V7.5A1.5 1.5 0 0 1 7.5 6h9A1.5 1.5 0 0 1 18 7.5V9"></path></svg>';
+const guestsIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
+function renderBedrooms() {
+  const t = tt();
+  const host = $('#vr-beds'); if (!host) return; host.innerHTML = '';
+  const B = t.bedrooms; if (!B) return;
+  (B.rooms || []).forEach((r, i) => {
+    const cap = el('span', { class: 'vr-bed-cap', html: guestsIcon() });
+    cap.appendChild(el('span', { text: r.cap }));
+    host.appendChild(el('article', { class: 'vr-bed' + (i === 0 ? ' vr-bed-suite' : '') }, [
+      el('span', { class: 'vr-bed-ic', 'aria-hidden': 'true', html: bedIcon() }),
+      el('div', { class: 'vr-bed-body' }, [
+        el('div', { class: 'vr-bed-top' }, [el('h3', { text: r.name }), cap]),
+        el('p', { class: 'vr-bed-desc', text: r.beds }),
+      ]),
+    ]));
   });
 }
 
@@ -1641,7 +1715,7 @@ function setLang(lang) {
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); setTexts();
-  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
+  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
@@ -1937,7 +2011,7 @@ function init() {
   applyThemeColor();
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); setTexts();
-  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
+  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
