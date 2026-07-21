@@ -465,7 +465,12 @@
               <span data-t="cta.lblPhone">Telefon / WhatsApp</span>
               <input id="vr-phone" type="tel" data-t-ph="cta.phPhone" placeholder="+420… (nepovinné)" autocomplete="tel">
             </label>
+            <label>
+              <span data-t="cta.lblMessage">Zpráva pro hostitele</span>
+              <textarea id="vr-message" class="vr-book-textarea" rows="3" maxlength="2000" data-t-ph="cta.phMessage" placeholder="Cokoli, co bychom měli vědět — počet dětí, přijezd, přání… (nepovinné)" autocomplete="off"></textarea>
+            </label>
             <div class="vr-book-msg" id="vr-book-msg" role="alert" aria-live="assertive" style="display:none"></div>
+            <p class="vr-book-consent" data-t-html="book.consent">Odesláním žádosti berete na vědomí <a href="/podminky/" target="_blank" rel="noopener">podmínky a zpracování osobních údajů</a>.</p>
             <button type="submit" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Odeslat žádost o pobyt</span> <span aria-hidden="true">&#8594;</span></button>
             <div class="vr-book-note">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
@@ -539,6 +544,16 @@
 
   <!-- ===================== Sticky mobile CTA (≤960px, appears after hero) ===================== -->
   <a class="vr-stickycta" id="vr-stickycta" href="#rezervace" data-show="false" data-t="nav.cta">Rezervovat termín</a>
+
+  <!-- ===================== Video lightbox (full-screen click-to-play) ===================== -->
+  <div class="vr-vlb" id="vr-vlb" role="dialog" aria-modal="true" aria-label="Video" style="display:none" aria-hidden="true">
+    <div class="vr-vlb-backdrop"></div>
+    <button class="vr-vlb-close" id="vr-vlb-close" type="button" aria-label="Zavřít video">&#10005;</button>
+    <div class="vr-vlb-stage" id="vr-vlb-stage">
+      <img class="vr-vlb-poster" id="vr-vlb-poster" alt="" width="1280" height="720">
+      <div class="vr-vlb-frame" id="vr-vlb-frame"></div>
+    </div>
+  </div>
 
   <!-- ===================== Lightbox ===================== -->
   <div class="vr-lb" id="vr-lb" role="dialog" aria-modal="true" aria-label="Galerie" style="display:none" aria-hidden="true">

@@ -149,7 +149,7 @@ const T = {
       note: '7 ložnic a 22 lůžek — pohodlné spaní pro celou skupinu i pro rodiny.',
       noBunk: 'Žádné patrové postele — klidnější spaní i pro rodiče s malými dětmi.',
       rooms: [
-        { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi · vlastní kuchyňka a kulečník' },
+        { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi, 2 samostatná lůžka a 1 lůžko s výsuvným druhým lůžkem · vlastní kuchyňka a kulečník' },
         { name: 'Pokoj 1', cap: '2 hosté', beds: 'Manželská postel' },
         { name: 'Pokoj 2', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka)' },
         { name: 'Pokoj 3', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka)' },
@@ -216,6 +216,7 @@ const T = {
       minStay: '%S% přijímáme pobyty od %N% nocí. Vyberte prosím delší termín.',
       guestMax: 'Maximálně %N% hostů (dospělí + děti dohromady).',
       pay: 'Odeslat žádost o pobyt', stripeNote: 'Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.',
+      consent: 'Odesláním žádosti berete na vědomí <a href="/podminky/" target="_blank" rel="noopener">podmínky a zpracování osobních údajů</a>.',
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', checkoutOnly: 'pouze odjezd', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
       availFail: 'Dostupnost se nepodařilo načíst.',
       priceHeading: 'Orientační ceník', pricePerNight: '/ noc', priceMin: 'min.',
@@ -242,6 +243,7 @@ const T = {
       lblName: 'Jméno', phName: 'Vaše jméno',
       lblEmail: 'E-mail', phEmail: 'vas@email.cz',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (nepovinné)',
+      lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
     footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko' },
@@ -303,7 +305,7 @@ const T = {
       note: '7 bedrooms and 22 beds — comfortable sleeping for the whole group and for families.',
       noBunk: 'No bunk beds — a calmer night, ideal for parents with small children too.',
       rooms: [
-        { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds · own kitchenette and billiard table' },
+        { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds, 2 single beds and 1 bed with a pull-out second bed · own kitchenette and billiard table' },
         { name: 'Room 1', cap: '2 guests', beds: 'Double bed' },
         { name: 'Room 2', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed)' },
         { name: 'Room 3', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed)' },
@@ -370,6 +372,7 @@ const T = {
       minStay: '%S% we accept stays from %N% nights. Please pick a longer range.',
       guestMax: 'Up to %N% guests (adults + children combined).',
       pay: 'Send stay request', stripeNote: 'This request is non-binding — you pay nothing now. We’ll confirm the dates personally and then send a payment link for the deposit.',
+      consent: 'By sending this request you acknowledge our <a href="/podminky/" target="_blank" rel="noopener">terms and the processing of your personal data</a>.',
       free: 'Available', booked: 'Booked', chosen: 'Your stay', checkoutOnly: 'checkout only', demo: 'Sample availability — will connect to the booking system',
       availFail: 'Availability could not be loaded.',
       priceHeading: 'Price guide', pricePerNight: '/ night', priceMin: 'min.',
@@ -396,6 +399,7 @@ const T = {
       lblName: 'Name', phName: 'Your name',
       lblEmail: 'Email', phEmail: 'you@email.com',
       lblPhone: 'Phone / WhatsApp', phPhone: '+420… (optional)',
+      lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
     footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia' },
@@ -457,7 +461,7 @@ const T = {
       note: '7 Schlafzimmer und 22 Betten — bequemer Schlaf für die ganze Gruppe und für Familien.',
       noBunk: 'Keine Etagenbetten — ruhigerer Schlaf, auch ideal für Eltern mit kleinen Kindern.',
       rooms: [
-        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten · eigene Küchenzeile und Billardtisch' },
+        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küchenzeile und Billardtisch' },
         { name: 'Zimmer 1', cap: '2 Gäste', beds: 'Doppelbett' },
         { name: 'Zimmer 2', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett)' },
         { name: 'Zimmer 3', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett)' },
@@ -524,6 +528,7 @@ const T = {
       minStay: '%S% nehmen wir Aufenthalte ab %N% Nächten an. Bitte wählt einen längeren Zeitraum.',
       guestMax: 'Bis zu %N% Gäste (Erwachsene + Kinder zusammen).',
       pay: 'Aufenthaltsanfrage senden', stripeNote: 'Die Anfrage ist unverbindlich — ihr zahlt jetzt nichts. Wir bestätigen den Termin persönlich und senden danach einen Zahlungslink für die Anzahlung.',
+      consent: 'Mit dem Absenden der Anfrage akzeptiert ihr die <a href="/podminky/" target="_blank" rel="noopener">Bedingungen und die Verarbeitung eurer personenbezogenen Daten</a>.',
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', checkoutOnly: 'nur Abreise', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
       availFail: 'Verfügbarkeit konnte nicht geladen werden.',
       priceHeading: 'Preisübersicht', pricePerNight: '/ Nacht', priceMin: 'min.',
@@ -550,6 +555,7 @@ const T = {
       lblName: 'Name', phName: 'Euer Name',
       lblEmail: 'E-Mail', phEmail: 'du@email.de',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (optional)',
+      lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
     footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien' },
@@ -611,7 +617,7 @@ const T = {
       note: '7 sypialni i 22 miejsca do spania — wygodny sen dla całej grupy i dla rodzin.',
       noBunk: 'Bez łóżek piętrowych — spokojniejszy sen, także dla rodziców z małymi dziećmi.',
       rooms: [
-        { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi · własny aneks kuchenny i stół bilardowy' },
+        { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi, 2 pojedyncze łóżka i 1 łóżko z wysuwanym drugim · własny aneks kuchenny i stół bilardowy' },
         { name: 'Pokój 1', cap: '2 gości', beds: 'Łóżko małżeńskie' },
         { name: 'Pokój 2', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka)' },
         { name: 'Pokój 3', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka)' },
@@ -678,6 +684,7 @@ const T = {
       minStay: '%S% przyjmujemy pobyty od %N% nocy. Wybierz dłuższy termin.',
       guestMax: 'Maksymalnie %N% gości (dorośli + dzieci razem).',
       pay: 'Wyślij prośbę o pobyt', stripeNote: 'Prośba jest niezobowiązująca — teraz nic nie płacisz. Termin potwierdzimy osobiście, a potem wyślemy link do płatności zaliczki.',
+      consent: 'Wysyłając prośbę, akceptujesz <a href="/podminky/" target="_blank" rel="noopener">warunki i przetwarzanie danych osobowych</a>.',
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', checkoutOnly: 'tylko wyjazd', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
       availFail: 'Nie udało się wczytać dostępności.',
       priceHeading: 'Orientacyjny cennik', pricePerNight: '/ noc', priceMin: 'min.',
@@ -704,6 +711,7 @@ const T = {
       lblName: 'Imię', phName: 'Wasze imię',
       lblEmail: 'E-mail', phEmail: 'ty@email.pl',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (opcjonalnie)',
+      lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
     footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy' },
@@ -914,28 +922,92 @@ function renderReviews() {
   });
 }
 
-/* ---------- Video: click-to-play lite embed (cookie-free až do kliknutí) ----------
-   Statický náhled + tlačítko Play jsou v HTML; teprve po kliknutí vložíme iframe
-   youtube-nocookie.com s autoplay=1. Žádná externí JS knihovna, nic se z YouTube
-   nenačte, dokud o to host sám neklikne. */
-function playVideo(btn) {
-  const id = btn && btn.getAttribute('data-yt'); if (!id) return;
-  const wrap = btn.closest('.vr-vid'); if (!wrap) return;
-  const label = wrap.querySelector('.vr-vid-label');
-  const title = (label && label.textContent) || 'Villa Rudolf';
-  const holder = el('div', { class: 'vr-vid-thumb vr-vid-playing' });
-  holder.appendChild(el('iframe', {
-    class: 'vr-vid-frame',
+/* ---------- Video: click-to-play FULLSCREEN lightbox (cookie-free až do otevření) ----------
+   Po kliknutí na náhled se karta plynule (FLIP transform, bez knihoven) zvětší přes
+   celý viewport na tmavém podkladu (rgba(0,0,0,.85)); teprve v otevřeném stavu vložíme
+   iframe youtube-nocookie.com s autoplay=1. Zavření: křížek, Esc i klik mimo video —
+   s plynulým zmenšením zpět do karty. Na mobilu vyplní obrazovku (16:9 letterbox). */
+let vlbThumb = null, vlbAnim = false;
+function vlbReduced() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+function vlbInsertFrame(id, label) {
+  const frameHost = $('#vr-vlb-frame'); if (!frameHost) return;
+  frameHost.appendChild(el('iframe', {
     src: 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1',
-    title: title,
+    title: label || 'Villa Rudolf',
     allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
-    allowfullscreen: '',
-    frameborder: '0',
+    allowfullscreen: '', frameborder: '0',
   }));
-  btn.replaceWith(holder);
+}
+function openVideoLightbox(btn) {
+  const id = btn.getAttribute('data-yt'); if (!id) return;
+  const lb = $('#vr-vlb'), stage = $('#vr-vlb-stage'), frameHost = $('#vr-vlb-frame'), poster = $('#vr-vlb-poster');
+  if (!lb || !stage || lb.getAttribute('aria-hidden') === 'false') return;
+  const wrap = btn.closest('.vr-vid');
+  const label = wrap && wrap.querySelector('.vr-vid-label');
+  const labelTxt = (label && label.textContent) || 'Villa Rudolf';
+  const img = btn.querySelector('img');
+  vlbThumb = btn;
+  if (poster && img) poster.src = img.currentSrc || img.src;
+  frameHost.innerHTML = '';
+  // Open state is set synchronously (backdrop + close visible immediately). The
+  // FLIP grow is a progressive enhancement; the iframe is inserted via an
+  // independent timer so playback never depends on the animation.
+  const from = btn.getBoundingClientRect();
+  lb.style.display = 'flex'; lb.setAttribute('aria-hidden', 'false'); lb.setAttribute('data-open', 'true');
+  document.body.style.overflow = 'hidden';
+  vlbFocusClose();
+  const to = stage.getBoundingClientRect();
+  if (!vlbReduced() && to.width && from.width) {
+    const dx = from.left - to.left, dy = from.top - to.top;
+    const sx = from.width / to.width, sy = from.height / to.height;
+    stage.style.transition = 'none';
+    stage.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+    void stage.offsetWidth; // reflow before animating to identity
+    const settle = () => { stage.style.transition = 'transform .34s cubic-bezier(.2,.7,.15,1)'; stage.style.transform = 'none'; };
+    requestAnimationFrame(settle);
+    setTimeout(settle, 60); // fallback if rAF is throttled
+  } else {
+    stage.style.transition = 'none'; stage.style.transform = 'none';
+  }
+  setTimeout(() => vlbInsertFrame(id, labelTxt), vlbReduced() ? 0 : 340);
+}
+function vlbFocusClose() { const c = $('#vr-vlb-close'); if (c) { try { c.focus(); } catch (e) {} } }
+function closeVideoLightbox() {
+  const lb = $('#vr-vlb'), stage = $('#vr-vlb-stage'), frameHost = $('#vr-vlb-frame');
+  if (!lb || lb.getAttribute('aria-hidden') === 'true') return;
+  if (frameHost) frameHost.innerHTML = ''; // stop playback now; poster shows underneath during shrink
+  const finish = () => {
+    lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); lb.removeAttribute('data-open');
+    stage.style.transition = 'none'; stage.style.transform = 'none';
+    document.body.style.overflow = '';
+    if (vlbThumb) { try { vlbThumb.focus(); } catch (e) {} }
+    vlbThumb = null; vlbAnim = false;
+  };
+  lb.setAttribute('data-open', 'false');
+  const from = vlbThumb && vlbThumb.getBoundingClientRect();
+  const to = stage.getBoundingClientRect();
+  if (vlbReduced() || !from || !from.width || !to.width) { finish(); return; }
+  const dx = from.left - to.left, dy = from.top - to.top;
+  const sx = from.width / to.width, sy = from.height / to.height;
+  vlbAnim = true;
+  stage.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
+  stage.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+  const done = (e) => {
+    if (e && e.propertyName && e.propertyName !== 'transform') return;
+    stage.removeEventListener('transitionend', done); finish();
+  };
+  stage.addEventListener('transitionend', done);
+  setTimeout(done, 380);
 }
 function wireVideos() {
-  $all('.vr-vid-thumb[data-yt]').forEach((btn) => btn.addEventListener('click', () => playVideo(btn)));
+  $all('.vr-vid-thumb[data-yt]').forEach((btn) => btn.addEventListener('click', () => openVideoLightbox(btn)));
+  const lb = $('#vr-vlb');
+  if (lb && !lb.dataset.wired) {
+    lb.dataset.wired = '1';
+    lb.addEventListener('click', (e) => { if (!e.target.closest('.vr-vlb-stage')) closeVideoLightbox(); });
+    const c = $('#vr-vlb-close'); if (c) c.addEventListener('click', closeVideoLightbox);
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.getAttribute('aria-hidden') === 'false') closeVideoLightbox(); });
+  }
 }
 /* Lokalizovaný aria-label „Přehrát video: <popis>" na tlačítkách náhledů. */
 function applyVideoAria() {
@@ -1509,6 +1581,7 @@ function submitBooking() {
   const name = (($('#vr-name') && $('#vr-name').value) || '').trim();
   const email = (($('#vr-email') && $('#vr-email').value) || '').trim();
   const phone = (($('#vr-phone') && $('#vr-phone').value) || '').trim();
+  const message = (($('#vr-message') && $('#vr-message').value) || '').trim().slice(0, 2000);
   const q = computeQuote(s0, s1, g.adults, g.children);
   if (!q.valid || q.guestOver || q.noAdults || !name || !email) { setBookMsg(t.book.errRequired); return; }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setBookMsg(t.book.errEmail); return; }
@@ -1525,6 +1598,7 @@ function submitBooking() {
     p_adults: q.adults, p_children: q.children,
     p_name: name, p_email: email, p_phone: phone,
     p_lang: lang, p_breakdown: breakdown, p_total: q.total,
+    p_message: message || null,
   };
   fetch(VR_SUPABASE.URL + '/rest/v1/rpc/vr_request', {
     method: 'POST',
