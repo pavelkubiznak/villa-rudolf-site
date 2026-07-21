@@ -120,11 +120,24 @@
        reviews). Each badge links to its platform; a rotating quote teaser links to
        #recenze. Then the quick-facts grid, then the direct-booking value badge. -->
   <section class="sec-quickfacts">
+    <!-- Full-width guest-review band (edge-to-edge, like the hero): a villa photo
+         (summer/winter swap) under a dark scrim, the numeric ratings on top, and a
+         large rotating REAL guest quote with its visible source (Google / Airbnb /
+         Booking.com) linking to the platform profile. Light text over the scrim in
+         BOTH seasons keeps WCAG AA contrast. -->
+    <div class="vr-trustband vr-reveal" id="vr-trustband">
+      <div class="vr-trustband-bg" aria-hidden="true">
+        <img class="vr-seasonimg summer" src="media/gallery/firepit-sunset.jpg" alt="" loading="lazy" width="1600" height="900">
+        <img class="vr-seasonimg winter" src="media/gallery/winter-night-close.jpg" alt="" loading="lazy" width="1600" height="900">
+      </div>
+      <div class="vr-trustband-scrim" aria-hidden="true"></div>
+      <div class="vr-trustband-inner">
+        <div class="vr-ratings" id="vr-ratings"></div>
+        <div class="vr-quote" id="vr-teaser"></div>
+      </div>
+    </div>
     <div class="vr-wrap">
-      <div class="vr-ratings vr-reveal" id="vr-ratings"></div>
-      <a class="vr-teaser vr-reveal" id="vr-teaser" href="#recenze"></a>
       <div class="vr-qfacts vr-reveal" id="vr-facts"></div>
-      
     </div>
   </section>
 

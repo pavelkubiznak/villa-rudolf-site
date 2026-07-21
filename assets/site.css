@@ -530,7 +530,9 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-share-tag:hover{border-color:var(--vr-accent)}
 
 /* ---------- Quick facts + trust (ratings) strip ---------- */
-.sec-quickfacts{padding:clamp(40px,7vh,80px) 0 clamp(28px,4vh,48px)}
+.sec-quickfacts{padding:0 0 clamp(28px,4vh,48px)}
+/* Facts sit under the full-width review band — give them breathing room. */
+.sec-quickfacts>.vr-wrap{margin-top:clamp(44px,6vw,76px)}
 /* Ratings are now the FIRST thing under the hero — prominent + obviously clickable. */
 .vr-ratings{margin:0 0 clamp(30px,4vw,44px)}
 .vr-ratings-row{display:flex;flex-wrap:wrap;gap:12px}
@@ -564,15 +566,46 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-directbook-txt b{color:var(--vr-text);font-weight:700}
 /* Centered variant used inside the booking intro. */
 .vr-directbook-book{max-width:660px;margin-left:auto;margin-right:auto;text-align:left}
-/* Rotating review teaser under the ratings — links down to #recenze */
-.vr-teaser{display:block;margin-top:clamp(18px,2.4vw,26px);text-decoration:none;max-width:64ch}
-.vr-teaser-q{font-family:'Newsreader',serif;font-style:italic;font-weight:400;font-size:clamp(1.05rem,1.7vw,1.4rem);line-height:1.5;color:var(--vr-text-soft);transition:color .35s ease,opacity .35s ease}
-.vr-teaser-q::before{content:'\201C';color:var(--vr-accent);margin-right:2px}
-.vr-teaser-q::after{content:'\201D';color:var(--vr-accent);margin-left:1px}
-.vr-teaser[data-fade="true"] .vr-teaser-q{opacity:0}
-.vr-teaser-cap{display:inline-flex;align-items:center;gap:8px;margin-top:9px;font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--vr-accent-2);transition:color .6s ease}
-.vr-teaser-cap .vr-teaser-more{color:var(--vr-text-faint);font-weight:500}
-.vr-teaser:hover .vr-teaser-more{color:var(--vr-accent-2)}
+/* ---------- Full-width guest-review band (edge-to-edge, photo + rotating quote) ----------
+   Light text over a dark scrim in BOTH seasons (like the hero), so it stays WCAG AA
+   whether the site is in the dark summer or light winter theme. */
+.vr-trustband{position:relative;overflow:hidden;isolation:isolate;background:#080b0a}
+.vr-trustband-bg{position:absolute;inset:0;z-index:-2}
+.vr-trustband-bg .vr-seasonimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease}
+.vr-trustband-scrim{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(100deg,rgba(6,9,8,.9) 0%,rgba(6,9,8,.7) 48%,rgba(6,9,8,.44) 100%),linear-gradient(0deg,rgba(6,9,8,.66),transparent 42%)}
+.vr-trustband-inner{max-width:1340px;margin:0 auto;padding:clamp(48px,7.5vw,100px) clamp(20px,5vw,64px)}
+/* ratings chips read over the photo (light + translucent) in both seasons */
+.vr-trustband .vr-ratings{margin:0}
+.vr-trustband .vr-rating{flex:0 1 auto;border-color:rgba(240,235,225,.26);background:rgba(10,14,12,.34);backdrop-filter:blur(6px)}
+.vr-trustband .vr-rating:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,.52);box-shadow:0 14px 34px -20px rgba(0,0,0,.7)}
+.vr-trustband .vr-rating-plat{color:#E7E2D6}
+.vr-trustband .vr-rating-score b{color:#FBF7EF}
+.vr-trustband .vr-star{color:var(--vr-ember-2)}
+.vr-trustband .vr-rating-count{color:#C7CCC1}
+.vr-trustband .vr-rating-arrow{color:var(--vr-ember-2)}
+.vr-trustband .vr-ratings-note{color:#B9BEB2}
+/* rotating quote */
+.vr-quote{display:block;max-width:62ch;margin:clamp(26px,3.4vw,44px) 0 0;transition:opacity .35s ease}
+.vr-quote-q{margin:0;font-family:'Newsreader',serif;font-style:italic;font-weight:300;
+  font-size:clamp(1.5rem,3.3vw,2.6rem);line-height:1.32;letter-spacing:-.01em;color:#F6F1E8;
+  text-wrap:balance;text-shadow:0 2px 26px rgba(0,0,0,.5);transition:opacity .35s ease}
+.vr-quote-q::before{content:'\201C';color:var(--vr-ember-2);margin-right:.05em}
+.vr-quote-q::after{content:'\201D';color:var(--vr-ember-2);margin-left:.02em}
+.vr-quote[data-fade="true"] .vr-quote-q{opacity:0}
+.vr-quote-cap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px;margin-top:clamp(16px,2vw,24px)}
+.vr-quote-author{font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;letter-spacing:.02em;color:#DED9CD}
+.vr-quote-source{display:inline-flex;align-items:center;gap:6px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:#F1ECE2;border:1px solid rgba(240,235,225,.32);border-radius:999px;
+  padding:6px 12px;text-decoration:none;background:rgba(10,14,12,.32);transition:border-color .2s ease,background-color .2s ease}
+a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,.55)}
+.vr-quote-source .vr-rating-arrow{color:var(--vr-ember-2);font-size:12px;margin-left:0}
+.vr-quote-more{display:inline-block;margin-top:clamp(14px,1.8vw,20px);font-family:'Archivo',sans-serif;
+  font-size:12.5px;font-weight:600;letter-spacing:.03em;color:var(--vr-ember-2);text-decoration:none}
+.vr-quote-more:hover{color:#F1ECE2}
+@media(max-width:560px){
+  .vr-trustband .vr-rating{flex:1 1 100%;justify-content:space-between}
+}
 
 /* ---------- Reviews ---------- */
 .sec-recenze{padding:clamp(72px,11vh,150px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}

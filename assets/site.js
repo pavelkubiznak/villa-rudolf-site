@@ -1521,7 +1521,10 @@ function teaserTrim(s) {
   return cut.replace(/[…,;:.\-\s]+$/, '') + '…';
 }
 function buildTeaserList() {
-  teaserList = VR_REVIEWS.items.map((r) => ({ q: teaserTrim(reviewText(r)), a: r.author })).filter((x) => x.q);
+  teaserList = VR_REVIEWS.items.map((r) => {
+    const p = platformByKey(r.platform);
+    return { q: teaserTrim(reviewText(r)), a: r.author, source: p.name || r.platform, url: p.url || '', year: r.year || '' };
+  }).filter((x) => x.q);
 }
 function paintTeaser() {
   const host = $('#vr-teaser'); if (!host) return;
@@ -1530,11 +1533,18 @@ function paintTeaser() {
   host.innerHTML = '';
   if (!item) { host.style.display = 'none'; return; }
   host.style.display = '';
-  host.appendChild(el('span', { class: 'vr-teaser-q', text: item.q }));
-  host.appendChild(el('span', { class: 'vr-teaser-cap' }, [
-    el('span', { text: '— ' + item.a }),
-    el('span', { class: 'vr-teaser-more', text: t.ratings.teaserMore + ' →' }),
-  ]));
+  host.appendChild(el('blockquote', { class: 'vr-quote-q', text: item.q }));
+  const srcLabel = item.source + (item.year ? ' · ' + item.year : '');
+  const cap = el('div', { class: 'vr-quote-cap' }, [
+    el('span', { class: 'vr-quote-author', text: '— ' + item.a }),
+    item.url
+      ? el('a', { class: 'vr-quote-source', href: item.url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': srcLabel }, [
+          el('span', { text: srcLabel }), el('span', { class: 'vr-rating-arrow', 'aria-hidden': 'true', text: '↗' }),
+        ])
+      : el('span', { class: 'vr-quote-source', text: srcLabel }),
+  ]);
+  host.appendChild(cap);
+  host.appendChild(el('a', { class: 'vr-quote-more', href: '#recenze', text: t.ratings.teaserMore + ' →' }));
 }
 function renderTeaser() {
   buildTeaserList();
