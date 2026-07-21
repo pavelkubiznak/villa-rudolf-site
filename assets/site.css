@@ -253,19 +253,31 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-tour-hint{font-family:'Archivo',sans-serif;font-size:12.5px;line-height:1.5;color:var(--vr-text-dim);max-width:32ch;text-align:right;transition:color .6s ease}
 /* Pano stage is a FULL-BLEED 3D viewer (edge-to-edge like the hero) — keep its
    internals dark in both seasons. Výška vyplní podstatnou část obrazovky. */
-.vrp-stage{position:relative;overflow:hidden;border-top:1px solid var(--vr-line);border-bottom:1px solid var(--vr-line);background:#0b0f0d;cursor:grab;touch-action:pan-y;
+.vrp-stage{position:relative;overflow:hidden;background:#0b0f0d;cursor:grab;touch-action:pan-y;
   width:100%;height:min(78vh,820px);margin-top:clamp(26px,3.4vw,42px);
-  box-shadow:inset 0 1px 0 rgba(240,235,225,.05),inset 0 0 90px rgba(0,0,0,.4);transition:border-color .6s ease}
+  box-shadow:inset 0 0 90px rgba(0,0,0,.4)}
 .vrp-stage:active{cursor:grabbing}
+/* Měkké okraje (majitel: „ne ostrá hrana, ale fade away nahoře i dole"). Fade
+   jde do var(--vr-bg) → drží v OBOU sezónách (léto tmavé, zima světlé). z-index:2
+   = nad canvasem/scrimem, ale POD ovládáním (drag/caption mají z-index:3), takže
+   nezakrývá titulek scény ani nápovědu „chyť a otáčej". Pruh náhledů níže do
+   spodního fadeu zajíždí (negativní margin). */
+.vrp-stage::before,.vrp-stage::after{content:'';position:absolute;left:0;right:0;z-index:2;pointer-events:none}
+.vrp-stage::before{top:0;height:15%;background:linear-gradient(180deg,var(--vr-bg),transparent)}
+.vrp-stage::after{bottom:0;height:24%;background:linear-gradient(0deg,var(--vr-bg),transparent)}
 .vrp-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity 1s ease}
 .vrp-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(6,9,8,.32),transparent 22%,transparent 60%,rgba(6,9,8,.8))}
 .vrp-vig{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(125% 100% at 50% 44%,transparent 56%,rgba(3,6,9,.36) 84%,rgba(3,6,9,.62) 100%)}
 .vrp-drag{position:absolute;z-index:3;left:50%;top:16px;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:8px 15px;border:1px solid rgba(240,235,225,.18);border-radius:999px;background:rgba(8,11,14,.5);backdrop-filter:blur(10px);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#D5DAD0;pointer-events:none;transition:opacity .5s ease}
 .vrp-drag svg{width:15px;height:15px;opacity:.85}
-.vrp-cap{position:absolute;z-index:3;left:clamp(20px,3vw,32px);bottom:clamp(18px,3vw,28px);pointer-events:none}
+/* Titulek scény posunut výš, aby seděl NAD pruhem náhledů (ten teď zajíždí do
+   spodního fadeu) a zůstal nad tmavou částí panoramatu i v zimě (světlé pozadí). */
+.vrp-cap{position:absolute;z-index:3;left:clamp(20px,3vw,32px);bottom:clamp(80px,9vh,116px);pointer-events:none}
 .vrp-cap h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.5rem,2.6vw,2.3rem);color:#F7F1E8;margin:0;line-height:1.05;text-shadow:0 2px 24px rgba(0,0,0,.6)}
 .vrp-spin{position:absolute;z-index:4;left:50%;top:50%;width:32px;height:32px;margin:-16px 0 0 -16px;border:2px solid rgba(240,235,225,.22);border-top-color:var(--vr-accent);border-radius:50%;opacity:0;pointer-events:none;transition:opacity .25s;animation:vrpRot .9s linear infinite}
-.vrp-strip{display:flex;gap:10px;margin-top:16px;overflow-x:auto;padding-bottom:6px}
+/* Pruh náhledů „sedí ve fadeu" — negativní margin ho vytáhne do spodního okraje
+   stage, z-index ho drží nad panoramatem. */
+.vrp-strip{display:flex;gap:10px;margin-top:clamp(-64px,-6vh,-46px);position:relative;z-index:3;overflow-x:auto;padding-bottom:6px}
 .vrp-thumb{position:relative;flex:0 0 auto;width:132px;height:80px;border-radius:3px;border:1.5px solid transparent;cursor:pointer;opacity:.5;transition:opacity .25s,border-color .25s;padding:0;overflow:hidden;background:#11160f}
 .vrp-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .vrp-thumb span{position:absolute;left:0;right:0;bottom:0;z-index:2;font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,transparent,rgba(4,7,6,.88));padding:16px 7px 5px;text-align:left}
