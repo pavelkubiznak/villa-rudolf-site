@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# /pruvodce/ and /checkin/ are guest-only tools (also noindex via meta) — keep them out of search.
+Disallow: /pruvodce/
+Disallow: /checkin/
+
+Sitemap: https://villarudolf.com/sitemap.xml
