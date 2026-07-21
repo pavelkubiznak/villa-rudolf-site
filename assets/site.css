@@ -36,6 +36,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   --vr-text-dim:#AEB4A8;                   /* secondary */
   --vr-text-faint:#79817A;                 /* notes */
   --vr-text-faintest:#6c746b;              /* dimmest */
+  --vr-text-formlabel:#8c948d;             /* form field labels — WCAG AA (≥4.5:1) on panels */
   /* --- panels + lines --- */
   --vr-panel:rgba(240,235,225,.03);
   --vr-panel-strong:rgba(240,235,225,.05);
@@ -70,6 +71,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   --vr-text-dim:#55636c;
   --vr-text-faint:#74828b;
   --vr-text-faintest:#93a1a9;
+  --vr-text-formlabel:#5c6870;             /* form field labels — WCAG AA on white panel */
   --vr-panel:#ffffff;
   --vr-panel-strong:#ffffff;
   --vr-panel-input:#ffffff;
@@ -411,7 +413,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-book-guests{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .vr-book-guests label{margin:0}
 .vr-book label{display:flex;flex-direction:column;gap:8px}
-.vr-book label span{font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--vr-text-faint);transition:color .6s ease}
+.vr-book label span{font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--vr-text-formlabel);transition:color .6s ease}
 .vr-book input{font-family:'Archivo',sans-serif;font-size:15px;color:var(--vr-text-soft);background:var(--vr-panel-input);border:1px solid var(--vr-line);border-radius:2px;padding:13px 15px;outline:none;transition:border-color .2s,background-color .6s ease,color .6s ease}
 .vr-book input:focus{border-color:var(--vr-ember)}
 .vr-book-pay{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;letter-spacing:.02em;color:#10150f;background:var(--vr-ember);border:0;border-radius:2px;padding:16px 24px;cursor:pointer;margin-top:4px;transition:opacity .2s,background .2s}

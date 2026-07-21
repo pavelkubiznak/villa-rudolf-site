@@ -49,6 +49,12 @@ body{margin:0;background:#0E1311}
 .vc-title{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2rem,9vw,2.7rem);line-height:1.06;
   letter-spacing:-.01em;margin:12px 0 0;text-wrap:balance}
 .vc-intro{font-size:14.5px;line-height:1.62;color:var(--vc-muted);margin:14px 0 0;max-width:44ch}
+/* Clarifying notice: this form is for guests with a confirmed booking */
+.vc-notice{margin:20px 0 0;padding:14px 16px;border:1px solid color-mix(in oklab,var(--vc-ember),transparent 70%);
+  border-radius:6px;background:color-mix(in oklab,var(--vc-ember),transparent 92%);max-width:44ch}
+.vc-notice p{margin:0;font-size:13.5px;line-height:1.55;color:var(--vc-text)}
+.vc-notice a{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--vc-ember-2);text-decoration:none}
+.vc-notice a:hover{text-decoration:underline}
 
 /* ---------- Form ---------- */
 .vc-form{margin-top:30px;display:flex;flex-direction:column;gap:18px}

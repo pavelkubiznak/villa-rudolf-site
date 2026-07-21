@@ -32,6 +32,7 @@
       planTitle: 'Plán na každý den', planSrc: 'počasí: yr.no · živě',
       pubEyebrow: 'Výlety v okolí', pubTitle: 'Kam z Villy Rudolf',
       pubLead: 'Ověřené výlety do hodiny od domu — od procházek s kočárkem po Sněžku. Hosté s rezervací dostanou plán na míru podle počasí a věku dětí.',
+      pubCta: 'Líbí se vám tu? Rezervovat termín →', polandLabel: 'POLSKO',
       mapNote: 'Ilustrativní mapa — čísla odpovídají katalogu níže. Cíle v kroužku jsou pěšky od vily.',
       selHint: 'Ťukněte na bod v mapě', zoomFull: 'Celé Krkonoše', zoomNear: 'Okolí vily',
       foodTitle: 'Kam na dobré jídlo', foodSub: 'Prověřeno hosty i majiteli',
@@ -39,7 +40,7 @@
       wxLive: 'počasí: yr.no · živě',
       dOpen: 'Otevřeno', dPrice: 'Vstupné', dTransport: 'Doprava', dWeb: 'Oficiální web', dRoute: 'Trasa z vily',
       chipLabel: 'Rychlý filtr · platí pro mapu i katalog',
-      shareTitle: 'Vyfotili jste to tady?', shareSub: 'Označte @villarudolf — nejhezčí fotky (se svolením) ukážeme v průvodci.',
+      shareTitle: 'Vyfotili jste to tady?', shareSub: 'Označte @villarudolfretreat — nejhezčí fotky (se svolením) ukážeme v průvodci.',
       zones: ['Pěšky od vily', 'V okolí · do 30 min', 'Na celý den'], ringLabel: 'pěšky od vily',
       filters: { vse: 'Vše', pesky: 'Bez auta', dest: 'Za deště', deti: 'Pro děti', zviratka: 'Zvířátka', vyhledy: 'Výhledy', koupani: 'Koupání', nenarocne: 'Nenáročné' },
       reasons: { wet: 'déšť — pod střechu', nice: 'slunečno — ven', mild: 'polojasno' },
@@ -62,6 +63,7 @@
       planTitle: 'Plan für jeden Tag', planSrc: 'Wetter: yr.no · live',
       pubEyebrow: 'Ausflüge in der Umgebung', pubTitle: 'Wohin von der Villa Rudolf',
       pubLead: 'Geprüfte Ausflüge bis zu einer Stunde vom Haus — vom Kinderwagenspaziergang bis zur Schneekoppe. Gäste mit Reservierung erhalten einen Plan nach Wetter und Kinderalter.',
+      pubCta: 'Gefällt es euch? Termin buchen →', polandLabel: 'POLEN',
       mapNote: 'Illustrative Karte — Nummern entsprechen dem Katalog unten. Ziele im Kreis sind zu Fuß erreichbar.',
       selHint: 'Tippen Sie auf einen Punkt der Karte', zoomFull: 'Ganze Region', zoomNear: 'Rund um die Villa',
       foodTitle: 'Gut essen gehen', foodSub: 'Von Gästen und Gastgebern geprüft',
@@ -69,7 +71,7 @@
       wxLive: 'Wetter: yr.no · live',
       dOpen: 'Geöffnet', dPrice: 'Eintritt', dTransport: 'Anfahrt', dWeb: 'Offizielle Website', dRoute: 'Route ab Villa',
       chipLabel: 'Schnellfilter · gilt für Karte und Katalog',
-      shareTitle: 'Hier fotografiert?', shareSub: 'Markieren Sie @villarudolf — die schönsten Fotos zeigen wir (mit Erlaubnis) im Guide.',
+      shareTitle: 'Hier fotografiert?', shareSub: 'Markieren Sie @villarudolfretreat — die schönsten Fotos zeigen wir (mit Erlaubnis) im Guide.',
       zones: ['Zu Fuß von der Villa', 'In der Nähe · bis 30 Min', 'Für den ganzen Tag'], ringLabel: 'zu Fuß',
       filters: { vse: 'Alle', pesky: 'Ohne Auto', dest: 'Bei Regen', deti: 'Für Kinder', zviratka: 'Tiere', vyhledy: 'Aussichten', koupani: 'Baden', nenarocne: 'Leicht' },
       reasons: { wet: 'Regen — unters Dach', nice: 'sonnig — raus', mild: 'heiter' },
@@ -92,6 +94,7 @@
       planTitle: 'A plan for every day', planSrc: 'weather: yr.no · live',
       pubEyebrow: 'Trips nearby', pubTitle: 'Where to go from Villa Rudolf',
       pubLead: 'Verified trips within an hour of the house — from stroller walks to Sněžka. Guests with a booking get a plan tailored to weather and kids’ ages.',
+      pubCta: 'Like what you see? Book your stay →', polandLabel: 'POLAND',
       mapNote: 'Illustrative map — numbers match the catalogue below. Circled spots are walkable from the villa.',
       selHint: 'Tap a point on the map', zoomFull: 'Whole area', zoomNear: 'Around the villa',
       foodTitle: 'Where to eat well', foodSub: 'Vetted by guests and hosts',
@@ -99,7 +102,7 @@
       wxLive: 'weather: yr.no · live',
       dOpen: 'Open', dPrice: 'Tickets', dTransport: 'Getting there', dWeb: 'Official site', dRoute: 'Route from villa',
       chipLabel: 'Quick filter · applies to map and catalogue',
-      shareTitle: 'Took a photo here?', shareSub: 'Tag @villarudolf — we feature the best ones (with permission) in this guide.',
+      shareTitle: 'Took a photo here?', shareSub: 'Tag @villarudolfretreat — we feature the best ones (with permission) in this guide.',
       zones: ['Walk from the villa', 'Nearby · under 30 min', 'For a full day'], ringLabel: 'walkable',
       filters: { vse: 'All', pesky: 'No car', dest: 'Rainy day', deti: 'For kids', zviratka: 'Animals', vyhledy: 'Views', koupani: 'Swimming', nenarocne: 'Easy' },
       reasons: { wet: 'rain — head indoors', nice: 'sunny — go out', mild: 'partly cloudy' },
@@ -122,6 +125,7 @@
       planTitle: 'Plan na każdy dzień', planSrc: 'pogoda: yr.no · na żywo',
       pubEyebrow: 'Wycieczki w okolicy', pubTitle: 'Dokąd z Villi Rudolf',
       pubLead: 'Sprawdzone wycieczki do godziny od domu — od spacerów z wózkiem po Śnieżkę. Goście z rezerwacją dostają plan dopasowany do pogody i wieku dzieci.',
+      pubCta: 'Podoba się? Zarezerwuj termin →', polandLabel: 'POLSKA',
       mapNote: 'Mapa poglądowa — numery odpowiadają katalogowi poniżej. Cele w okręgu są pieszo od willi.',
       selHint: 'Dotknijcie punktu na mapie', zoomFull: 'Cały region', zoomNear: 'Okolice willi',
       foodTitle: 'Gdzie dobrze zjeść', foodSub: 'Sprawdzone przez gości i gospodarzy',
@@ -129,7 +133,7 @@
       wxLive: 'pogoda: yr.no · na żywo',
       dOpen: 'Otwarte', dPrice: 'Bilety', dTransport: 'Dojazd', dWeb: 'Oficjalna strona', dRoute: 'Trasa z willi',
       chipLabel: 'Szybki filtr · działa na mapę i katalog',
-      shareTitle: 'Macie stąd zdjęcie?', shareSub: 'Oznaczcie @villarudolf — najładniejsze (za zgodą) pokażemy w przewodniku.',
+      shareTitle: 'Macie stąd zdjęcie?', shareSub: 'Oznaczcie @villarudolfretreat — najładniejsze (za zgodą) pokażemy w przewodniku.',
       zones: ['Pieszo od willi', 'W okolicy · do 30 min', 'Na cały dzień'], ringLabel: 'pieszo',
       filters: { vse: 'Wszystko', pesky: 'Bez auta', dest: 'Na deszcz', deti: 'Dla dzieci', zviratka: 'Zwierzęta', vyhledy: 'Widoki', koupani: 'Kąpiel', nenarocne: 'Łatwe' },
       reasons: { wet: 'deszcz — pod dach', nice: 'słonecznie — w teren', mild: 'przejaśnienia' },
@@ -398,7 +402,7 @@
     svg += '<path d="' + mapSmooth(river) + '" fill="none" stroke="#5B7A86" stroke-width="2.2" opacity=".7"/>';
     // popisky (tmavý „halo" přes paint-order kvůli čitelnosti nad piny/hřebenem)
     var HALO = ' paint-order="stroke" stroke="#0B100E" stroke-width="2.8" stroke-linejoin="round"';
-    svg += '<text x="' + X(15.5).toFixed(1) + '" y="' + Math.max(16, Y(50.8) - 2).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="10" letter-spacing="2.5" fill="#79817A"' + HALO + '>POLSKO / POLEN</text>';
+    svg += '<text x="' + X(15.5).toFixed(1) + '" y="' + Math.max(16, Y(50.8) - 2).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="10" letter-spacing="2.5" fill="#79817A"' + HALO + '>' + esc(L.polandLabel) + '</text>';
     svg += '<text x="' + X(15.74).toFixed(1) + '" y="' + (Y(borderLatAt(15.74)) - 4).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="10" fill="#B4BAAD"' + HALO + '>Sněžka · 1603</text>';
     svg += '<text x="' + X(15.63).toFixed(1) + '" y="' + (Y(borderLatAt(15.63)) + 14).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="9" fill="#79817A" opacity=".9"' + HALO + '>Pec p. Sněžkou</text>';
     svg += '<text x="' + X(15.95).toFixed(1) + '" y="' + Y(50.58).toFixed(1) + '" text-anchor="middle" font-family="' + F + '" font-size="9" fill="#79817A" opacity=".9"' + HALO + '>Trutnov</text>';
@@ -689,6 +693,7 @@
     html += renderWizardHTML(L);
     html += renderCatalogHTML(L, plan);
     html += renderFoodHTML(L);
+    if (S.mode === 'public') html += '<section class="vg-pubcta"><a href="https://villarudolf.com/#rezervace" target="_blank" rel="noopener">' + esc(L.pubCta) + '</a></section>';
     html += renderFooterHTML(L);
     html += '</div>';
     document.getElementById('app').innerHTML = html;
@@ -728,7 +733,7 @@
       + '<div class="btns"><a class="vg-routebtn" href="' + esc(mapy) + '" target="_blank" rel="noopener">' + esc(L.dRoute) + ' ↗</a>'
       + (webLink ? '<a class="vg-webbtn" href="' + esc(webLink.url) + '" target="_blank" rel="noopener">' + esc(L.dWeb) + ' ↗</a>' : '') + '</div></div>'
       + '<div class="vg-share">' + icon('camera') + '<div class="bd"><p class="t">' + esc(L.shareTitle) + '</p><p class="s">' + esc(L.shareSub) + '</p>'
-      + '<div class="links"><a href="https://instagram.com/villarudolf" target="_blank" rel="noopener">Instagram</a>'
+      + '<div class="links"><a href="https://www.instagram.com/villarudolfretreat/" target="_blank" rel="noopener">Instagram</a>'
       + '<a href="https://facebook.com/villarudolf" target="_blank" rel="noopener">Facebook</a><span class="hash">#villarudolf</span></div></div></div>'
       + '</div>';
 

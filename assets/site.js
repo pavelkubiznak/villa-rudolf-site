@@ -896,7 +896,7 @@ function renderAmenities() {
   A.cards.forEach((it, i) => {
     const art = el('article');
     const src = imgs[i];
-    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy' }));
+    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy', width: '1200', height: '800' }));
     else art.appendChild(slot(t.photoSoon));
     art.appendChild(el('span', { class: 'vr-tag', text: it.tag }));
     art.appendChild(el('h3', { text: it.name }));
@@ -1445,6 +1445,7 @@ function applySeasonButtons() {
   $all('.vr-segbtn').forEach((b) => {
     const on = b.getAttribute('data-season') === state.season;
     b.setAttribute('data-active', on ? 'true' : 'false');
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
 }
 function applyTip() { $('#vrim-tip').textContent = state.season === 'zima' ? tt().hero.tipWinter : tt().hero.tipSummer; }
