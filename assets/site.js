@@ -157,6 +157,13 @@ const T = {
           { tag: 'Wellness', name: 'Krytý bazén i v mrazu', desc: 'Vyhřívaný bazén pod střechou — plavete i uprostřed zimy, když venku leží sníh.' },
         ],
       },
+      extraTitle: 'A k tomu celoročně',
+      extra: [
+        { name: 'Kuchyně a stůl pro celou skupinu', desc: 'Plně vybavená kuchyně a velký dřevěný stůl, u kterého se sejdete všichni najednou.' },
+        { name: 'Společenská místnost v podkroví', desc: 'Dlouhá sedací souprava pod starým trámem a velký stůl u okna — místo pro večery uvnitř.' },
+        { name: 'Kulečník', desc: 'Kulečníkový stůl v apartmá Suite — na deštivé odpoledne i na turnaj po večeři.' },
+        { name: 'Lyžárna a botník', desc: 'Vestavěná lyžárna s policemi na boty — vybavení nemusí do pokojů.' },
+      ],
     },
     bedrooms: {
       eyebrow: 'Ložnice a lůžka',
@@ -322,6 +329,13 @@ const T = {
           { tag: 'Wellness', name: 'Covered pool in the cold', desc: 'A heated pool under cover — swim even in midwinter, with snow lying outside.' },
         ],
       },
+      extraTitle: 'And year-round',
+      extra: [
+        { name: 'Kitchen and a table for everyone', desc: 'A fully equipped kitchen and a large wooden table that seats the whole group at once.' },
+        { name: 'Attic lounge', desc: 'A long sofa under an old beam and a big table by the window — the place for evenings indoors.' },
+        { name: 'Billiards', desc: 'A billiard table in the Suite apartment — for a rainy afternoon or a tournament after dinner.' },
+        { name: 'Ski and boot room', desc: 'A built-in ski room with shelves for boots — gear never has to go up to the bedrooms.' },
+      ],
     },
     bedrooms: {
       eyebrow: 'Bedrooms & beds',
@@ -487,6 +501,13 @@ const T = {
           { tag: 'Wellness', name: 'Überdachter Pool auch im Frost', desc: 'Ein beheizter Pool unter Dach — schwimmt selbst mitten im Winter, wenn draußen Schnee liegt.' },
         ],
       },
+      extraTitle: 'Und das ganze Jahr über',
+      extra: [
+        { name: 'Küche und ein Tisch für alle', desc: 'Eine voll ausgestattete Küche und ein großer Holztisch, an dem die ganze Gruppe auf einmal Platz findet.' },
+        { name: 'Aufenthaltsraum im Dachgeschoss', desc: 'Eine lange Sitzgruppe unter einem alten Balken und ein großer Tisch am Fenster — der Ort für Abende drinnen.' },
+        { name: 'Billard', desc: 'Ein Billardtisch im Suite-Apartment — für einen Regennachmittag oder ein Turnier nach dem Essen.' },
+        { name: 'Ski- und Schuhraum', desc: 'Ein eingebauter Skiraum mit Regalen für die Schuhe — die Ausrüstung muss nicht in die Zimmer.' },
+      ],
     },
     bedrooms: {
       eyebrow: 'Schlafzimmer & Betten',
@@ -652,6 +673,13 @@ const T = {
           { tag: 'Wellness', name: 'Kryty basen nawet w mróz', desc: 'Podgrzewany basen pod dachem — pływacie nawet w środku zimy, gdy na zewnątrz leży śnieg.' },
         ],
       },
+      extraTitle: 'A do tego przez cały rok',
+      extra: [
+        { name: 'Kuchnia i stół dla całej grupy', desc: 'W pełni wyposażona kuchnia i duży drewniany stół, przy którym siądziecie wszyscy naraz.' },
+        { name: 'Salon na poddaszu', desc: 'Długa sofa pod starą belką i duży stół przy oknie — miejsce na wieczory w środku.' },
+        { name: 'Bilard', desc: 'Stół bilardowy w apartamencie Suite — na deszczowe popołudnie albo turniej po kolacji.' },
+        { name: 'Narciarnia i szafa na buty', desc: 'Wbudowana narciarnia z półkami na buty — sprzęt nie musi wędrować do pokoi.' },
+      ],
     },
     bedrooms: {
       eyebrow: 'Sypialnie i łóżka',
@@ -786,31 +814,24 @@ const PANO_YAWF = { living: 0.76, kitchen: 0.4, sauna: 0.5, saunahot: 0.9, bed1:
    Order below is the "Vše" order (greatest-hits interleave). Files live at
    media/gallery/{slug}.jpg (1600px) and media/gallery/t/{slug}.jpg (640px thumb). */
 const GALLERY = [
-  { s: 'firepit-sunset', c: 'vecer', alt: 'Ohniště a prosvětlená gabionová stěna při západu slunce' },
-  { s: 'winter-snow', c: 'zima', alt: 'Villa Rudolf ve sněhu' },
-  { s: 'pool-day', c: 'leto', alt: 'Zastřešený bazén — pohled prosklenym tunelem' },
-  { s: 'room4-beams', c: 'interier', alt: 'Ložnice s postelí mezi dřevěnými trámy' },
-  { s: 'areal-night', c: 'vecer', alt: 'Celý areál v noci — dům, zářící bazén i ohniště' },
-  { s: 'pergola-exterior', c: 'leto', alt: 'Dřevěná pergola zvenčí' },
-  { s: 'winter-night', c: 'zima', alt: 'Villa Rudolf v noci se sněhem a měsícem' },
-  { s: 'dining-kitchen', c: 'interier', alt: 'Kuchyně a velký jídelní stůl' },
-  { s: 'pool-sunbeds', c: 'leto', alt: 'Bazén s řadou lehátek a domem' },
-  { s: 'aerial-night', c: 'vecer', alt: 'Noční pohled shora na zářící bazén a ohniště' },
-  { s: 'winter-twin-snow', c: 'zima', alt: 'Ložnice se zasněženým výhledem z oken' },
-  { s: 'room2-lamps', c: 'interier', alt: 'Postel s rozsvícenými nočními lampičkami' },
-  { s: 'summer-drive', c: 'leto', alt: 'Příjezdová alej ke vile' },
-  { s: 'pool-night', c: 'vecer', alt: 'Noční bazén pod hvězdnou oblohou' },
-  { s: 'winter-forest', c: 'zima', alt: 'Vila v průhledu mezi zasněženými smrky' },
-  { s: 'suite-billiard', c: 'interier', alt: 'Společenský prostor s kulečníkovým stolem' },
-  { s: 'pergola-view', c: 'leto', alt: 'Výhled z pergoly na bazén a hlavní vilu' },
-  { s: 'firepit-dusk', c: 'vecer', alt: 'Bazén a zahrada za soumraku' },
-  { s: 'winter-night-close', c: 'zima', alt: 'Detailní noční pohled na fasádu vily' },
-  { s: 'room1-corner', c: 'interier', alt: 'Rohová ložnice s výhledem do zeleně' },
-  { s: 'pool-storm', c: 'leto', alt: 'Bazén a dům pod dramatickou oblohou' },
-  { s: 'pergola-night', c: 'vecer', alt: 'Nasvícený altán s prostřeným stolem večer' },
-  { s: 'winter-room-snow', c: 'zima', alt: 'Rohová ložnice se sněhem za okny' },
-  { s: 'sauna-hall', c: 'interier', alt: 'Chodba k sauně s prosklenými dveřmi' },
-  { s: 'summer-house', c: 'leto', alt: 'Villa Rudolf pod korunou stromu v létě' },
+  { s: '01-house-summer', c: 'leto', alt: 'Villa Rudolf z rozlehlé zahrady — hrázděný štít, veranda a terasa' },
+  { s: '09-estate-blue-hour', c: 'vecer', alt: 'Celý pozemek z patra za modré hodiny — bazén, ohniště, pergola a stodola' },
+  { s: '10-winter-night-framed', c: 'zima', alt: 'Vila v noci rámovaná zasněženými větvemi, teplé světlo na sněhu' },
+  { s: '17-pool-hall-interior', c: 'interier', alt: 'Zastřešený bazén — symetrický pohled prosklenou halou' },
+  { s: '03-pool-hall-exterior', c: 'leto', alt: 'Prosklená hala bazénu zvenčí a řada lehátek na trávníku' },
+  { s: '08-firepit-night', c: 'vecer', alt: 'Ohniště v noci — kruh křesílek a gabiony prosvětlené LED' },
+  { s: '11-winter-day', c: 'zima', alt: 'Villa Rudolf v plném zimním slunci pod zasněženými stromy' },
+  { s: '14-table-for-ten', c: 'interier', alt: 'Dlouhý jídelní stůl pro deset s károvaným ubrusem' },
+  { s: '02-playground-house', c: 'leto', alt: 'Dům z boku s lanovým mostem a prolézačkou dětského hřiště' },
+  { s: '06-pergola-night', c: 'vecer', alt: 'Pergola v noci — nasvícený vnitřek svítí teple do tmy' },
+  { s: '12-winter-garden', c: 'zima', alt: 'Pohled přes zasněženou zahradu na vilu mezi vysokými smrky' },
+  { s: '18-sauna-inside', c: 'interier', alt: 'Uvnitř finské sauny — lavice ze světlého dřeva a kamna' },
+  { s: '07-gabion-pool-day', c: 'leto', alt: 'Gabionová opěrná zeď, trávník a zastřešený bazén ve dne' },
+  { s: '05-pergola-autumn', c: 'leto', alt: 'Pergola z boku na podzim proti žluto-oranžovému listí' },
+  { s: '13-frozen-apples', c: 'zima', alt: 'Jabloň se zmrzlými jablky ve sněhu v protisvětle' },
+  { s: '16-dining-room', c: 'interier', alt: 'Jídelna s kuchyňskou linkou a dubovým stolem pro osm' },
+  { s: '04-terrace-loungers', c: 'leto', alt: 'Terasa u bazénu s perspektivní řadou lehátek' },
+  { s: '15-ensuite-bathroom', c: 'interier', alt: 'Koupelna u pokoje — sprchový kout a umyvadlo na dubové skříňce' },
 ];
 const GAL_FILTERS = ['all', 'leto', 'zima', 'vecer', 'interier'];
 /* Fotky karet „Kam na výlet" (pořadí = vylety.items). JEN skutečné snímky z repa —
@@ -1137,18 +1158,40 @@ function renderAmenities() {
   $('#am-pool-desc').textContent = A.hero.desc;
   // 3 cards — skutečné fotky podle sezóny
   const imgs = winter
-    ? ['media/gallery/sauna-hall.jpg', 'media/gallery/firepit-sunset.jpg', 'media/gallery/pool-night.jpg']
-    : ['media/gallery/sauna-hall.jpg', 'media/gallery/pergola-exterior.jpg', 'media/sections/playground.jpg'];
+    ? ['media/sections/am-wellness.jpg', 'media/gallery/08-firepit-night.jpg', 'media/gallery/17-pool-hall-interior.jpg']
+    : ['media/sections/am-wellness.jpg', 'media/sections/am-pergola-table.jpg', 'media/gallery/02-playground-house.jpg'];
   const host = $('#vr-amen3'); host.innerHTML = '';
   A.cards.forEach((it, i) => {
     const art = el('article');
     const src = imgs[i];
-    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy', width: '1200', height: '800' }));
+    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy', decoding: 'async', width: '1200', height: '900' }));
     else art.appendChild(slot(t.photoSoon));
     art.appendChild(el('span', { class: 'vr-tag', text: it.tag }));
     art.appendChild(el('h3', { text: it.name }));
     art.appendChild(el('p', { text: it.desc }));
     host.appendChild(art);
+  });
+  renderAmenityExtras();
+}
+
+/* Celoroční vybavení — jeden řádek karet, které nemají sezónní variantu. */
+const AMEN_EXTRA_IMAGES = [
+  { src: 'media/sections/am-kitchen.jpg', w: 1200, h: 900 },
+  { src: 'media/sections/am-lounge.jpg', w: 1600, h: 1000 },
+  { src: 'media/sections/am-billiard.jpg', w: 1200, h: 900 },
+  { src: 'media/sections/am-skiroom.jpg', w: 1200, h: 900 },
+];
+function renderAmenityExtras() {
+  const t = tt();
+  const host = $('#vr-amen4'); if (!host) return; host.innerHTML = '';
+  const list = (t.amenities && t.amenities.extra) || [];
+  list.forEach((it, i) => {
+    const im = AMEN_EXTRA_IMAGES[i]; if (!im) return;
+    host.appendChild(el('article', {}, [
+      el('img', { src: im.src, alt: it.name, loading: 'lazy', decoding: 'async', width: String(im.w), height: String(im.h) }),
+      el('h3', { text: it.name }),
+      el('p', { text: it.desc }),
+    ]));
   });
 }
 
@@ -1157,6 +1200,15 @@ function renderAmenities() {
    s manželskými postelemi, až 10 hostů" (zbylá lůžka se nevymýšlejí). */
 const bedIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17v-6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"></path><path d="M2 17h20"></path><path d="M2 20v-3M22 20v-3"></path><path d="M6 9V7.5A1.5 1.5 0 0 1 7.5 6h9A1.5 1.5 0 0 1 18 7.5V9"></path></svg>';
 const guestsIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
+/* Fotky ložnic — VÝHRADNĚ lednová sada 2026 (LED podsvícené postele, nové
+   tapety). Starší sada „Suite / room 1–4" se sem záměrně nemíchá. */
+const ROOM_IMAGES = [
+  'media/sections/room-suite.jpg',
+  'media/sections/room-1.jpg',
+  'media/sections/room-2.jpg',
+  'media/sections/room-3.jpg',
+  'media/sections/room-4.jpg',
+];
 function renderBedrooms() {
   const t = tt();
   const host = $('#vr-beds'); if (!host) return; host.innerHTML = '';
@@ -1164,13 +1216,17 @@ function renderBedrooms() {
   (B.rooms || []).forEach((r, i) => {
     const cap = el('span', { class: 'vr-bed-cap', html: guestsIcon() });
     cap.appendChild(el('span', { text: r.cap }));
-    host.appendChild(el('article', { class: 'vr-bed' + (i === 0 ? ' vr-bed-suite' : '') }, [
-      el('span', { class: 'vr-bed-ic', 'aria-hidden': 'true', html: bedIcon() }),
-      el('div', { class: 'vr-bed-body' }, [
-        el('div', { class: 'vr-bed-top' }, [el('h3', { text: r.name }), cap]),
-        el('p', { class: 'vr-bed-desc', text: r.beds }),
+    const kids = [];
+    const src = ROOM_IMAGES[i];
+    if (src) kids.push(el('img', { class: 'vr-bed-img', src: src, alt: r.name + ' — Villa Rudolf', loading: 'lazy', decoding: 'async', width: '1600', height: '1200' }));
+    kids.push(el('div', { class: 'vr-bed-body' }, [
+      el('div', { class: 'vr-bed-top' }, [
+        el('span', { class: 'vr-bed-ic', 'aria-hidden': 'true', html: bedIcon() }),
+        el('h3', { text: r.name }), cap,
       ]),
+      el('p', { class: 'vr-bed-desc', text: r.beds }),
     ]));
+    host.appendChild(el('article', { class: 'vr-bed' + (i === 0 ? ' vr-bed-suite' : '') }, kids));
   });
 }
 
@@ -1266,7 +1322,8 @@ function renderGallery() {
   const items = galItems();
   host.innerHTML = '';
   items.forEach((g, i) => host.appendChild(el('img', {
-    src: 'media/gallery/t/' + g.s + '.jpg', alt: g.alt, loading: 'lazy',
+    src: 'media/gallery/t/' + g.s + '.jpg', alt: g.alt, loading: 'lazy', decoding: 'async',
+    width: '600', height: '400',
     onclick: () => lbOpen(items, i),
   })));
 }

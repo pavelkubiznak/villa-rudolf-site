@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=15">
+<link rel="stylesheet" href="assets/site.css?v=16">
 </head>
 <body>
 <noscript>
@@ -89,8 +89,8 @@
   <!-- ===================== Hero ===================== -->
   <section id="top" class="vrh-hero">
     <div class="vrh-photo" id="vrhPhoto">
-      <img class="vrim-dayphoto summer" src="media/photos/hero-summer.jpg" alt="Villa Rudolf — zastřešený bazén ve dne" fetchpriority="high">
-      <img class="vrim-dayphoto winter" src="media/photos/hero-winter.jpg" alt="Villa Rudolf v zimě" loading="lazy">
+      <img class="vrim-dayphoto summer" src="media/photos/hero-summer.jpg" alt="Villa Rudolf — ohniště s prosvětlenou gabionovou stěnou při západu slunce" fetchpriority="high" decoding="async" width="2400" height="1350">
+      <img class="vrim-dayphoto winter" src="media/photos/hero-winter.jpg" alt="Villa Rudolf v zimní modré hodině — rozsvícená okna a měsíc nad štítem" loading="lazy" decoding="async" width="2400" height="1350">
     </div>
     <div class="vrim-vig"></div>
     <div class="vrim-scrim"></div>
@@ -123,8 +123,8 @@
          BOTH seasons keeps WCAG AA contrast. -->
     <div class="vr-trustband vr-reveal" id="vr-trustband">
       <div class="vr-trustband-bg" aria-hidden="true">
-        <img class="vr-seasonimg summer" src="media/gallery/firepit-sunset.jpg" alt="" loading="lazy" width="1600" height="900">
-        <img class="vr-seasonimg winter" src="media/gallery/winter-night-close.jpg" alt="" loading="lazy" width="1600" height="900">
+        <img class="vr-seasonimg summer" src="media/sections/trustband-summer.jpg" alt="" loading="lazy" decoding="async" width="2400" height="1028">
+        <img class="vr-seasonimg winter" src="media/sections/trustband-winter.jpg" alt="" loading="lazy" decoding="async" width="2400" height="1028">
       </div>
       <div class="vr-trustband-scrim" aria-hidden="true"></div>
       <div class="vr-trustband-inner">
@@ -248,8 +248,8 @@
            fotkami střediska — do té doby zásadně NEpoužívat AI/fake ski fotky. -->
       <div class="vr-amen-hero vr-reveal">
         <div class="vr-amen-imgwrap vr-crossfade">
-          <img class="vr-seasonimg summer" src="media/gallery/pool-day.jpg" alt="Zastřešený vyhřívaný bazén" loading="lazy" width="1200" height="800">
-          <img class="vr-seasonimg winter" src="media/gallery/winter-forest.jpg" alt="Lyžování za rohem — zasněžené Krkonoše u Villa Rudolf" loading="lazy" width="1200" height="800">
+          <img class="vr-seasonimg summer" src="media/gallery/17-pool-hall-interior.jpg" alt="Zastřešený vyhřívaný bazén — pohled prosklenou halou" loading="lazy" decoding="async" width="1600" height="1067">
+          <img class="vr-seasonimg winter" src="media/gallery/11-winter-day.jpg" alt="Lyžování za rohem — Villa Rudolf v zimním slunci" loading="lazy" decoding="async" width="1600" height="1067">
         </div>
         <div>
           <span class="vr-tag" id="am-pool-tag">Wellness</span>
@@ -258,6 +258,10 @@
         </div>
       </div>
       <div class="vr-amen3 vr-reveal" id="vr-amen3"></div>
+      <!-- Celoroční vybavení (nezávislé na sezóně): stůl pro celou skupinu,
+           kulečník, lyžárna, podkrovní společenská místnost. -->
+      <p class="vr-amen-extra-title vr-reveal" data-t="amenities.extraTitle">A k tomu celoročně</p>
+      <div class="vr-amen4 vr-reveal" id="vr-amen4"></div>
     </div>
   </section>
 
@@ -281,8 +285,10 @@
 
   <!-- ===================== Evening + Fire pit (merged) ===================== -->
   <section id="vecer" class="sec-vecer">
-    <img class="vr-vecer-img vr-seasonimg summer" src="media/gallery/areal-night.jpg" alt="Villa Rudolf — celý areál po setmění s ohništěm a bazénem" loading="lazy">
-    <img class="vr-vecer-img vr-seasonimg winter" src="media/gallery/winter-night.jpg" alt="Villa Rudolf — vila v noci se sněhem a měsícem" loading="lazy">
+    <!-- Léto: pohled z okna druhého patra na nasvícený bazén, ohniště a pergolu
+         (majitelem výslovně žádaný záběr — jediný takový v celé sadě). -->
+    <img class="vr-vecer-img vr-seasonimg summer" src="media/sections/evening-window.jpg" alt="Pohled z okna druhého patra Villa Rudolf za soumraku — nasvícený zastřešený bazén, ohniště a pergola" loading="lazy" decoding="async" width="1800" height="1200">
+    <img class="vr-vecer-img vr-seasonimg winter" src="media/gallery/winter-night.jpg" alt="Villa Rudolf — vila v noci se sněhem a měsícem" loading="lazy" decoding="async" width="1600" height="1066">
     <div class="vr-vecer-vig"></div>
     <div class="vr-fire-glow"></div>
     <div class="vr-vecer-copy vr-reveal">
@@ -589,7 +595,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=15" defer></script>
+<script src="assets/site.js?v=16" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>
