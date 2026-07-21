@@ -1528,6 +1528,14 @@ function ensureThree(cb) {
     document.head.appendChild(s);
   } else { setTimeout(() => ensureThree(cb), 80); }
 }
+/* Když se 360° prohlídku nepodaří inicializovat (WebGL nedostupný / chyba
+   kontextu), skryjeme jen prvky prohlídky, aby nezůstal prázdný rám s nadpisem.
+   Videa pod prohlídkou zůstávají viditelná. */
+function hide360() {
+  ['.vr-exphead', '#vrpStage', '#vr-thumbs', '.vr-expdetail'].forEach((sel) => {
+    const n = $(sel); if (n) n.style.display = 'none';
+  });
+}
 function initPano() {
   if (panoInited) return;
   if (typeof THREE === 'undefined') { setTimeout(initPano, 80); return; }
@@ -1535,6 +1543,7 @@ function initPano() {
   if (!mount || !stage) return;
   panoInited = true;
 
+  try {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(72, mount.clientWidth / mount.clientHeight, 0.1, 1100);
   camera.rotation.order = 'YXZ';
@@ -1600,6 +1609,7 @@ function initPano() {
     } catch (e) {}
   };
   loop();
+  } catch (err) { hide360(); }
 }
 
 /* ============================ Hero scroll parallax + nav state (rAF) ============================ */
@@ -1722,8 +1732,10 @@ function init() {
     else if (e.key === 'ArrowRight') lbNav(1);
   });
 
-  // booking
-  $('#vr-pay').addEventListener('click', submitBooking);
+  // booking — real <form>: submit (klik na tlačítko i Enter v poli) → JS preventDefault
+  const bookForm = $('#vr-book-formEl');
+  if (bookForm) bookForm.addEventListener('submit', (e) => { e.preventDefault(); submitBooking(); });
+  else $('#vr-pay').addEventListener('click', submitBooking);
   // kalendář — posun 2měsíčního okna (‹ ›)
   const calPrev = $('#vr-cal-prev'), calNext = $('#vr-cal-next');
   if (calPrev) calPrev.addEventListener('click', () => shiftCal(-1));

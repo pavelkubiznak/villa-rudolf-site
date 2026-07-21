@@ -23,6 +23,13 @@
 <link rel="stylesheet" href="assets/site.css?v=11">
 </head>
 <body>
+<noscript>
+  <div class="vr-noscript">
+    <p><b>Pro plnou funkčnost webu (kalendář, rezervace, 360° prohlídka) povolte prosím JavaScript.</b><br>
+    Please enable JavaScript for the full site. · Bitte aktivieren Sie JavaScript. · Prosimy o włączenie JavaScriptu.</p>
+    <p>Rezervace / Booking / Buchung: <a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a> · <a href="tel:+420775220785">+420 775 220 785</a></p>
+  </div>
+</noscript>
 <div class="vr-root" data-season="leto">
 
   <!-- ===================== Nav ===================== -->
@@ -390,7 +397,7 @@
           </div>
         </div>
         <aside class="vr-book-aside" data-state="form">
-          <div class="vr-book-form">
+          <form class="vr-book-form" id="vr-book-formEl" novalidate>
             <span class="vr-tag" data-t="book.summary">Vaše rezervace</span>
             <div class="vr-book-sel"><span id="vr-sel-label">Vyberte termín v kalendáři</span> <span class="nl" id="vr-sel-nights"></span></div>
             <!-- Přímá rezervace = nejlepší cena (řádek nad rozpisem, plní JS) -->
@@ -423,12 +430,12 @@
               <input id="vr-phone" type="tel" data-t-ph="cta.phPhone" placeholder="+420… (nepovinné)" autocomplete="tel">
             </label>
             <div class="vr-book-msg" id="vr-book-msg" role="alert" aria-live="assertive" style="display:none"></div>
-            <button type="button" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Odeslat žádost o pobyt</span> <span aria-hidden="true">&#8594;</span></button>
+            <button type="submit" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Odeslat žádost o pobyt</span> <span aria-hidden="true">&#8594;</span></button>
             <div class="vr-book-note">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
               <span data-t="book.stripeNote">Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.</span>
             </div>
-          </div>
+          </form>
           <div class="vr-book-success" id="vr-book-success" role="status" aria-live="polite">
             <div class="vr-book-ok-ic" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"></path></svg>
