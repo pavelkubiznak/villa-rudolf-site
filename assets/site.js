@@ -194,7 +194,7 @@ const T = {
       minStay: '%S% přijímáme pobyty od %N% nocí. Vyberte prosím delší termín.',
       guestMax: 'Maximálně %N% hostů (dospělí + děti dohromady).',
       pay: 'Odeslat žádost o pobyt', stripeNote: 'Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.',
-      free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
+      free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', checkoutOnly: 'pouze odjezd', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
       availFail: 'Dostupnost se nepodařilo načíst.',
       sending: 'Odesílám…', prevMonths: 'Předchozí měsíce', nextMonths: 'Další měsíce',
       okTitle: 'Žádost přijata',
@@ -328,7 +328,7 @@ const T = {
       minStay: '%S% we accept stays from %N% nights. Please pick a longer range.',
       guestMax: 'Up to %N% guests (adults + children combined).',
       pay: 'Send stay request', stripeNote: 'This request is non-binding — you pay nothing now. We’ll confirm the dates personally and then send a payment link for the deposit.',
-      free: 'Available', booked: 'Booked', chosen: 'Your stay', demo: 'Sample availability — will connect to the booking system',
+      free: 'Available', booked: 'Booked', chosen: 'Your stay', checkoutOnly: 'checkout only', demo: 'Sample availability — will connect to the booking system',
       availFail: 'Availability could not be loaded.',
       sending: 'Sending…', prevMonths: 'Previous months', nextMonths: 'Next months',
       okTitle: 'Request received',
@@ -462,7 +462,7 @@ const T = {
       minStay: '%S% nehmen wir Aufenthalte ab %N% Nächten an. Bitte wählt einen längeren Zeitraum.',
       guestMax: 'Bis zu %N% Gäste (Erwachsene + Kinder zusammen).',
       pay: 'Aufenthaltsanfrage senden', stripeNote: 'Die Anfrage ist unverbindlich — ihr zahlt jetzt nichts. Wir bestätigen den Termin persönlich und senden danach einen Zahlungslink für die Anzahlung.',
-      free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
+      free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', checkoutOnly: 'nur Abreise', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
       availFail: 'Verfügbarkeit konnte nicht geladen werden.',
       sending: 'Senden…', prevMonths: 'Vorherige Monate', nextMonths: 'Nächste Monate',
       okTitle: 'Anfrage erhalten',
@@ -596,7 +596,7 @@ const T = {
       minStay: '%S% przyjmujemy pobyty od %N% nocy. Wybierz dłuższy termin.',
       guestMax: 'Maksymalnie %N% gości (dorośli + dzieci razem).',
       pay: 'Wyślij prośbę o pobyt', stripeNote: 'Prośba jest niezobowiązująca — teraz nic nie płacisz. Termin potwierdzimy osobiście, a potem wyślemy link do płatności zaliczki.',
-      free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
+      free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', checkoutOnly: 'tylko wyjazd', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
       availFail: 'Nie udało się wczytać dostępności.',
       sending: 'Wysyłam…', prevMonths: 'Poprzednie miesiące', nextMonths: 'Następne miesiące',
       okTitle: 'Prośba przyjęta',
@@ -1028,8 +1028,22 @@ function rangeBlocked(a, b) {
     if (BOOKED.has(dkey(d))) return true;
   }
 }
+/* Den před day-key k (YYYYMMDD). */
+function prevKey(k) { const d = toD(k); d.setDate(d.getDate() - 1); return dkey(d); }
+/* „Pouze odjezd" (checkout-only): den je obsazená noc (v BOOKED), ale předchozí den
+   je volný → je to PRVNÍ noc nějaké rezervace, tedy něčí příjezd. Odjíždějící host
+   tu žádnou noc netráví (ráno odjíždí), takže takový den je pro nového hosta
+   použitelný jako DEN ODJEZDU. Tím se dá poptat celý volný týden mezi dvěma pobyty. */
+function isCheckoutOnly(k) { return BOOKED.has(k) && !BOOKED.has(prevKey(k)); }
 function pickDay(k) {
   const s0 = state.selStart, s1 = state.selEnd;
+  if (isCheckoutOnly(k)) {
+    // checkout-only den nelze použít jako příjezd — jen jako odjezd k rozpracovanému
+    // volnému rozsahu (příjezd s0 zvolen, noci s0..k-1 volné). Jinak klik ignorujeme.
+    if (s0 && !s1 && k > s0 && !rangeBlocked(s0, k)) { state.selEnd = k; }
+    renderCalendar(); renderBookingPanel();
+    return;
+  }
   if (!s0 || s1 || k <= s0) { state.selStart = k; state.selEnd = 0; }
   else if (rangeBlocked(s0, k)) { state.selStart = k; state.selEnd = 0; }
   else { state.selEnd = k; }
@@ -1174,8 +1188,12 @@ function renderCalendar() {
       const k = y2 * 10000 + (m + 1) * 100 + dd;
       const isPast = new Date(y2, m, dd) < today;
       const bk = BOOKED.has(k);
-      let st = isPast ? 'p' : bk ? 'b' : 'f';
+      // checkout-only: obsazený den, jehož předchozí den je volný (něčí příjezd) →
+      // pro nového hosta použitelný jako den odjezdu (Airbnb „half-shaded" den).
+      const checkoutOnly = !isPast && bk && !BOOKED.has(prevKey(k));
+      let st = isPast ? 'p' : (bk ? (checkoutOnly ? 'c' : 'b') : 'f');
       if (st === 'f') { if (k === s0 || k === s1) st = 's'; else if (s0 && s1 && k > s0 && k < s1) st = 'r'; }
+      else if (st === 'c' && k === s1) st = 's'; // vybraný den odjezdu = konec pobytu
       const attrs = { class: 'vr-day', type: 'button', 'data-st': st, text: String(dd) };
       if (st !== 'p' && st !== 'b' && st !== 'e') attrs.onclick = () => pickDay(k);
       grid.appendChild(el('button', attrs));
