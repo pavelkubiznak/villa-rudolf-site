@@ -9,6 +9,17 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://villarudolf.com/vylety/</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="cs" href="https://villarudolf.com/vylety/?lang=cs"/>
+    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="en" href="https://villarudolf.com/vylety/?lang=en"/>
+    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="de" href="https://villarudolf.com/vylety/?lang=de"/>
+    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="pl" href="https://villarudolf.com/vylety/?lang=pl"/>
+    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="x-default" href="https://villarudolf.com/vylety/"/>
+  </url>
+  <url>
     <loc>https://villarudolf.com/info/</loc>
     <lastmod>2026-07-21</lastmod>
     <changefreq>monthly</changefreq>
