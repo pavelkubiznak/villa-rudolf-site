@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=9">
+<link rel="stylesheet" href="assets/site.css?v=10">
 </head>
 <body>
 <div class="vr-root" data-season="leto">
@@ -38,6 +38,10 @@
         <a href="info/" data-t="nav.info">Praktické info</a>
       </nav>
       <div class="vr-navright">
+        <div class="vr-seg vr-nav-season" role="group" aria-label="Sezóna">
+          <button class="vr-segbtn" data-season="leto" data-active="true" data-t="hero.summer">Léto</button>
+          <button class="vr-segbtn" data-season="zima" data-t="hero.winter">Zima</button>
+        </div>
         <div class="vr-langs" role="group" aria-label="Jazyk / Language">
           <button class="vr-lang" data-lang="cs" data-active="true">CS</button>
           <button class="vr-lang" data-lang="en">EN</button>
@@ -61,6 +65,10 @@
     <a href="#vylety" data-t="nav.vylety">Výlety</a>
     <a href="info/" data-t="nav.info">Praktické info</a>
     <a href="#rezervace" class="vr-mob-cta" data-t="nav.cta">Rezervovat termín</a>
+    <div class="vr-seg vr-mob-season" role="group" aria-label="Sezóna">
+      <button class="vr-segbtn" data-season="leto" data-active="true" data-t="hero.summer">Léto</button>
+      <button class="vr-segbtn" data-season="zima" data-t="hero.winter">Zima</button>
+    </div>
     <div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">
       <button class="vr-lang" data-lang="cs" data-active="true">CS</button>
       <button class="vr-lang" data-lang="en">EN</button>
@@ -99,11 +107,16 @@
     </div>
   </section>
 
-  <!-- ===================== Quick facts + trust (ratings) strip ===================== -->
+  <!-- ===================== Trust (ratings) + quick facts strip ===================== -->
+  <!-- Ratings moved directly under the hero and made prominent (owner couldn't find
+       reviews). Each badge links to its platform; a rotating quote teaser links to
+       #recenze. Then the quick-facts grid, then the direct-booking value badge. -->
   <section class="sec-quickfacts">
     <div class="vr-wrap">
-      <div class="vr-qfacts vr-reveal" id="vr-facts"></div>
       <div class="vr-ratings vr-reveal" id="vr-ratings"></div>
+      <a class="vr-teaser vr-reveal" id="vr-teaser" href="#recenze"></a>
+      <div class="vr-qfacts vr-reveal" id="vr-facts"></div>
+      <div class="vr-directbook vr-reveal" id="vr-directbook"></div>
     </div>
   </section>
 
@@ -194,10 +207,15 @@
         <span class="vr-eyebrow" data-t="amenities.eyebrow">Vybavení</span>
         <h2 class="vr-h2" data-t="amenities.title">Komfort, který drží skupinu pohromadě</h2>
       </div>
+      <!-- Amenity hero card swaps by season (JS fills tag/name/desc):
+           Léto = krytý vyhřívaný bazén, Zima = "Lyžování za rohem".
+           Winter image = our own real winter photo (villa in the snowy forest).
+           TODO(majitel): až SkiResort Černá hora povolí, lze nahradit oficiálními
+           fotkami střediska — do té doby zásadně NEpoužívat AI/fake ski fotky. -->
       <div class="vr-amen-hero vr-reveal">
         <div class="vr-amen-imgwrap vr-crossfade">
           <img class="vr-seasonimg summer" src="media/gallery/pool-day.jpg" alt="Zastřešený vyhřívaný bazén" loading="lazy">
-          <img class="vr-seasonimg winter" src="media/gallery/pool-night.jpg" alt="Zastřešený bazén večer" loading="lazy">
+          <img class="vr-seasonimg winter" src="media/gallery/winter-forest.jpg" alt="Lyžování za rohem — zasněžené Krkonoše u Villa Rudolf" loading="lazy">
         </div>
         <div>
           <span class="vr-tag" id="am-pool-tag">Wellness</span>
@@ -222,18 +240,17 @@
     </div>
   </section>
 
-  <!-- ===================== Seasons ===================== -->
+  <!-- ===================== Seasons — Léto vs. Zima comparison ===================== -->
+  <!-- Slimmed: the whole site now switches season, so this is a plain side-by-side
+       comparison of what each season includes. Both cards always fully visible. -->
   <section id="sezony" class="sec-sezony">
     <div class="vr-wrap">
       <div class="vr-reveal vr-sec-head">
         <div style="max-width:700px">
-          <span class="vr-eyebrow" data-t="sezony.eyebrow">Léto i zima</span>
-          <h2 class="vr-h2" data-t="sezony.title">Jedno místo, dvě atmosféry</h2>
+          <span class="vr-eyebrow" data-t="sezony.eyebrow">Léto vs. Zima</span>
+          <h2 class="vr-h2" data-t="sezony.title">Co vás čeká v každé sezóně</h2>
         </div>
-        <div class="vr-seg" role="group" aria-label="Sezóna">
-          <button class="vr-segbtn" data-season="leto" data-active="true" data-t="hero.summer">Léto</button>
-          <button class="vr-segbtn" data-season="zima" data-t="hero.winter">Zima</button>
-        </div>
+        <span class="vr-sec-note" data-t="sezony.note">Přepněte sezónu nahoře a celý web se promění.</span>
       </div>
       <div class="vr-sez vr-reveal">
         <article class="summer" id="sez-sum" data-on="true">
@@ -242,14 +259,16 @@
             <span class="vr-tag" id="sez-sum-tag">Léto</span>
             <h3 id="sez-sum-title">Dlouhé večery venku</h3>
             <p id="sez-sum-desc"></p>
+            <ul class="vr-sez-list" id="sez-sum-list"></ul>
           </div>
         </article>
-        <article class="winter" id="sez-win" data-on="false">
+        <article class="winter" id="sez-win" data-on="true">
           <img src="media/photos/season-winter.jpg" alt="Zima ve Villa Rudolf" loading="lazy">
           <div class="vr-sez-body">
             <span class="vr-tag" id="sez-win-tag">Zima</span>
             <h3 id="sez-win-title">Lyžovačka bez starostí</h3>
             <p id="sez-win-desc"></p>
+            <ul class="vr-sez-list" id="sez-win-list"></ul>
           </div>
         </article>
       </div>
@@ -354,6 +373,7 @@
       <span class="vr-eyebrow vr-reveal" data-t="cta.eyebrow">Rezervace</span>
       <h2 class="vr-book-title vr-reveal" data-t="cta.title">Rezervujte celý dům pro svou skupinu</h2>
       <p class="vr-book-body vr-reveal" data-t="cta.body">Vyberte v kalendáři příjezd a odjezd a pošlete nám nezávaznou poptávku. Termín vám osobně potvrdíme e-mailem.</p>
+      <div class="vr-directbook vr-directbook-book vr-reveal" id="vr-directbook-book"></div>
       <div class="vr-book vr-reveal">
         <div class="vr-cal-card">
           <div class="vr-cal-nav">
@@ -362,8 +382,8 @@
           </div>
           <div class="vr-cal-wrap" id="vr-cal"></div>
           <div class="vr-legend">
-            <span class="sw"><i style="background:rgba(240,235,225,.07);border:1px solid rgba(240,235,225,.18)"></i><span data-t="book.free">Volno</span></span>
-            <span class="sw"><i style="background:rgba(240,235,225,.02);border:1px solid rgba(240,235,225,.07)"></i><span data-t="book.booked">Obsazeno</span></span>
+            <span class="sw"><i style="background:var(--vr-day-free);border:1px solid var(--vr-line-2)"></i><span data-t="book.free">Volno</span></span>
+            <span class="sw"><i style="background:transparent;border:1px solid var(--vr-line)"></i><span data-t="book.booked">Obsazeno</span></span>
             <span class="sw"><i style="background:var(--vr-ember)"></i><span data-t="book.chosen">Váš pobyt</span></span>
             <span class="demo" id="vr-avail-note" role="status" aria-live="polite"></span>
           </div>
@@ -372,6 +392,8 @@
           <div class="vr-book-form">
             <span class="vr-tag" data-t="book.summary">Vaše rezervace</span>
             <div class="vr-book-sel"><span id="vr-sel-label">Vyberte termín v kalendáři</span> <span class="nl" id="vr-sel-nights"></span></div>
+            <!-- Přímá rezervace = nejlepší cena (řádek nad rozpisem, plní JS) -->
+            <div class="vr-book-direct" id="vr-book-direct"></div>
             <!-- Rozpis ceny à la Airbnb — vykreslí se, jakmile je vybrán platný termín -->
             <div class="vr-book-price" id="vr-breakdown" style="display:none"></div>
             <!-- Hláška o minimální délce pobytu (nahradí rozpis, když je termín kratší) -->
@@ -457,7 +479,7 @@
         </div>
         <div>
           <div class="vr-foot-lbl" data-t="footer.contact">Kontakt</div>
-          <div class="vr-foot-contact">rezervace@villarudolf.com<br>Krkonoše, Česko</div>
+          <div class="vr-foot-contact" id="vr-foot-contact"></div>
           <div class="vr-foot-lbl vr-foot-lbl-social" data-t="footer.social">Sledujte nás</div>
           <a class="vr-foot-social" href="https://www.instagram.com/villarudolfretreat/" target="_blank" rel="noopener noreferrer" aria-label="Instagram @villarudolfretreat">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"></circle></svg>
@@ -482,6 +504,6 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=9" defer></script>
+<script src="assets/site.js?v=10" defer></script>
 </body>
 </html>

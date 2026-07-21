@@ -72,6 +72,14 @@ const VR_REVIEWS = {
       quote_cs: "Velmi pěkné místo, prostorné pokoje, čisté a dobře udržované, velká kuchyň, plně vybavená, ideální pro větší skupinu. Bylo nás 18 lidí a bylo to velmi relaxační. … Navíc je tam sauna." },
   ],
 };
+/* ============================ Kontakt (patička) ============================ */
+/* Telefon hostitele. Zobrazí se v patičce jako klikací tel: odkaz jen tehdy,
+   když je vyplněný — když je prázdný, řádek s telefonem se vůbec nevykreslí. */
+const VR_CONTACT = {
+  email: 'rezervace@villarudolf.com',
+  phone: '+420 775 220 785', // doplní majitel — prázdné '' = řádek skrytý
+};
+
 /* Vzdálenosti pro blok Lokalita (ilustrativní mapa + výpis). Editovatelné zde. */
 const VR_DISTANCES = [
   { place: 'Janské Lázně', km: 4 },
@@ -86,15 +94,22 @@ const T = {
     nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
       eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
+      eyebrowWinter: 'Lyžování za rohem · Krkonoše',
       h1: 'Soukromá vila v Krkonoších pro 6–22 hostů',
       sub: 'Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.',
+      subWinter: 'Lyžování hned za rohem — <em>skibus u domu</em>, Černá hora 4 km.',
       ctaSec: 'Prohlédnout dům', badge: 'Volné termíny 2026', video: 'Přehrát video',
       summer: 'Léto', winter: 'Zima', scroll: 'Scroll',
       tipSummer: 'Bazén, pergola a večery u otevřeného ohně.',
       tipWinter: 'Bez řetězů až k domu, skibus zdarma v docházkové vzdálenosti.',
       nightLine: 'Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy — večer tady teprve začíná.',
     },
-    ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno' },
+    ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno', teaserMore: 'Přečíst recenze' },
+    direct: {
+      badge: '<b>Přímá rezervace = nejlepší cena.</b> O 5 % výhodněji než na platformách. Osobní přístup a férové storno podmínky.',
+      book: '<b>Přímá rezervace = nejlepší cena.</b> O 5 % výhodněji než na platformách. Osobní přístup a férové storno podmínky.',
+      sidebar: 'Přímá rezervace — o 5 % výhodněji než na platformách.',
+    },
     statement: {
       eyebrow: 'Není to dům. Je to celé místo.',
       lead: 'Jinde dostanete pokoje a kousek zahrady sdílený s cizími lidmi. Tady si berete celý pozemek — rozlehlý, nerozdělený, jen pro vaši skupinu.',
@@ -102,12 +117,22 @@ const T = {
     band: { eyebrow: 'Jeden večer tady' },
     amenities: {
       eyebrow: 'Vybavení', title: 'Komfort, který drží skupinu pohromadě', drop: 'Přetáhněte sem fotku',
-      items: [
-        { tag: 'Wellness', name: 'Zastřešený vyhřívaný bazén', desc: 'Bazén pod střechou s ohřevem vody — v provozu za každého počasí, od letního odpoledne po mrazivý zimní večer. Po koupeli rovnou do sauny.' },
-        { tag: 'Wellness', name: 'Privátní sauna', desc: 'Finská sauna jen pro vaši skupinu. Žádné sdílení, žádné časové sloty.' },
-        { tag: 'Venkovní život', name: 'Velká pergola', desc: 'Kryté posezení, kam se vejde celá skupina najednou. Společné večeře venku i za deště.' },
-        { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od pergoly.' },
-      ],
+      summer: {
+        hero: { tag: 'Wellness', name: 'Zastřešený vyhřívaný bazén', desc: 'Bazén pod střechou s ohřevem vody — v provozu za každého počasí, od letního odpoledne po mrazivý zimní večer. Po koupeli rovnou do sauny.' },
+        cards: [
+          { tag: 'Wellness', name: 'Privátní sauna', desc: 'Finská sauna jen pro vaši skupinu. Žádné sdílení, žádné časové sloty.' },
+          { tag: 'Venkovní život', name: 'Velká pergola', desc: 'Kryté posezení, kam se vejde celá skupina najednou. Společné večeře venku i za deště.' },
+          { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od pergoly.' },
+        ],
+      },
+      winter: {
+        hero: { tag: 'Lyžování', name: 'Lyžování hned za rohem', desc: 'Ski Resort Černá hora jen 4 km. Skibus zdarma zastavuje přímo u domu — k vlekům bez auta a hledání parkování. Doma navíc lyžárna na uskladnění vybavení.' },
+        cards: [
+          { tag: 'Wellness', name: 'Po lyžích do sauny', desc: 'Finská sauna jen pro vaši skupinu — ideální po dni na sjezdovce. Žádné sdílení, žádné časové sloty.' },
+          { tag: 'Venkovní život', name: 'Zimní večery u ohniště', desc: 'Nově dokončené ohniště s gabionovou stěnou se po setmění samo nasvítí — teplo pod širým nebem, i když venku mrzne.' },
+          { tag: 'Wellness', name: 'Krytý bazén i v mrazu', desc: 'Vyhřívaný bazén pod střechou — plavete i uprostřed zimy, když venku leží sníh.' },
+        ],
+      },
     },
     ohniste: {
       eyebrow: 'Nová dominanta', caption: 'Detail ohniště a gabionové stěny',
@@ -120,9 +145,11 @@ const T = {
       desc: 'Nestavíme to na čísle. Pohodlně tu přespí až 22 lidí, ale stejně dobře sem sednou rodina, parta přátel i menší skupina — celý dům a celý pozemek je vždycky jen váš.',
     },
     sezony: {
-      eyebrow: 'Léto i zima', title: 'Jedno místo, dvě atmosféry',
-      summer: { tag: 'Léto', title: 'Dlouhé večery venku', desc: 'Bazén, pergola, ohniště a velký pozemek pro děti i dospělé. Turistika a výlety přímo od domu.' },
-      winter: { tag: 'Zima', title: 'Lyžovačka bez starostí', desc: 'Příjezd autem bez řetězů — stačí zimní pneumatiky. Skibus zdarma v docházkové vzdálenosti vás odveze rovnou k vlekům, žádné hledání parkování.' },
+      eyebrow: 'Léto vs. Zima', title: 'Co vás čeká v každé sezóně', note: 'Přepněte sezónu nahoře a celý web se promění.',
+      summer: { tag: 'Léto', title: 'Dlouhé večery venku', desc: 'Bazén, pergola, ohniště a velký pozemek pro děti i dospělé. Turistika a výlety přímo od domu.',
+        list: ['Vyhřívaný bazén, sauna a pergola', 'Ohniště a dlouhé večery na pozemku', 'Turistika a výlety přímo od domu'] },
+      winter: { tag: 'Zima', title: 'Lyžovačka bez starostí', desc: 'Příjezd autem bez řetězů — stačí zimní pneumatiky. Skibus zdarma v docházkové vzdálenosti vás odveze rovnou k vlekům, žádné hledání parkování.',
+        list: ['Ski Resort Černá hora 4 km, skibus u domu', 'Vyhřívaný krytý bazén a sauna', 'Lyžárna a příjezd bez řetězů'] },
     },
     lokalita: {
       eyebrow: 'Lokalita', title: 'V horách, ale bez kompromisů', mapcap: 'Sem přijde mapa / Mapy.cz',
@@ -193,7 +220,7 @@ const T = {
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko' },
   },
 
   en: {
@@ -201,15 +228,22 @@ const T = {
     nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
       eyebrow: 'The whole house, just for your group · Krkonoše',
+      eyebrowWinter: 'Skiing just around the corner · Krkonoše',
       h1: 'A private villa in the Krkonoše mountains for 6–22 guests',
       sub: 'The whole place — the house and its sweeping grounds — is <em>yours alone</em>.',
+      subWinter: 'Skiing just around the corner — <em>ski bus at the door</em>, Černá hora 4 km.',
       ctaSec: 'Explore the house', badge: 'Open dates 2026', video: 'Play video',
       summer: 'Summer', winter: 'Winter', scroll: 'Scroll',
       tipSummer: 'Pool, pergola and evenings around the open fire.',
       tipWinter: 'No chains to the door, free ski bus within walking distance.',
       nightLine: 'Night has fallen. The fire pit, gabion wall and pool have lit themselves — the evening is just beginning.',
     },
-    ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified' },
+    ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified', teaserMore: 'Read the reviews' },
+    direct: {
+      badge: '<b>Book direct = best price.</b> 5% better than the platforms. Personal service and fair cancellation terms.',
+      book: '<b>Book direct = best price.</b> 5% better than the platforms. Personal service and fair cancellation terms.',
+      sidebar: 'Booking direct — 5% better than the platforms.',
+    },
     statement: {
       eyebrow: 'Not a house. A whole place.',
       lead: 'Elsewhere you get rooms and a patch of shared garden. Here you take the entire grounds — vast, undivided, yours alone.',
@@ -217,12 +251,22 @@ const T = {
     band: { eyebrow: 'One evening here' },
     amenities: {
       eyebrow: 'Amenities', title: 'Comfort that keeps the group together', drop: 'Drop a photo here',
-      items: [
-        { tag: 'Wellness', name: 'Covered heated pool', desc: 'An indoor pool with heated water — open in any weather, from summer afternoons to frozen winter nights. Straight from the water into the sauna.' },
-        { tag: 'Wellness', name: 'Private sauna', desc: 'A Finnish sauna for your group only. No sharing, no time slots.' },
-        { tag: 'Outdoor living', name: 'Large pergola', desc: 'Covered seating big enough for the whole group at once. Shared dinners outside, even in the rain.' },
-        { tag: 'For families', name: 'Children’s playground', desc: 'Climbing frames, a small climbing wall and a rope wall. The kids get their own space in sight of the pergola.' },
-      ],
+      summer: {
+        hero: { tag: 'Wellness', name: 'Covered heated pool', desc: 'An indoor pool with heated water — open in any weather, from summer afternoons to frozen winter nights. Straight from the water into the sauna.' },
+        cards: [
+          { tag: 'Wellness', name: 'Private sauna', desc: 'A Finnish sauna for your group only. No sharing, no time slots.' },
+          { tag: 'Outdoor living', name: 'Large pergola', desc: 'Covered seating big enough for the whole group at once. Shared dinners outside, even in the rain.' },
+          { tag: 'For families', name: 'Children’s playground', desc: 'Climbing frames, a small climbing wall and a rope wall. The kids get their own space in sight of the pergola.' },
+        ],
+      },
+      winter: {
+        hero: { tag: 'Skiing', name: 'Skiing just around the corner', desc: 'Ski Resort Černá hora just 4 km away. A free ski bus stops right at the house — reach the lifts without the car or the parking hunt. Plus a ski room at home for your gear.' },
+        cards: [
+          { tag: 'Wellness', name: 'Sauna after the slopes', desc: 'A Finnish sauna for your group only — perfect after a day on the piste. No sharing, no time slots.' },
+          { tag: 'Outdoor living', name: 'Winter evenings by the fire', desc: 'The newly finished fire pit with a gabion wall lights up on its own after dark — warmth under the open sky, even in the frost.' },
+          { tag: 'Wellness', name: 'Covered pool in the cold', desc: 'A heated pool under cover — swim even in midwinter, with snow lying outside.' },
+        ],
+      },
     },
     ohniste: {
       eyebrow: 'New centrepiece', caption: 'Detail of the fire pit and gabion wall',
@@ -235,9 +279,11 @@ const T = {
       desc: 'It isn’t about the number. Up to 22 sleep here in comfort, but a family, a circle of friends or a smaller group fit just as well — the whole house and grounds are always yours alone.',
     },
     sezony: {
-      eyebrow: 'Summer & winter', title: 'One place, two atmospheres',
-      summer: { tag: 'Summer', title: 'Long evenings outside', desc: 'Pool, pergola, fire pit and a large grounds for kids and adults alike. Hiking and trips straight from the house.' },
-      winter: { tag: 'Winter', title: 'Skiing without the hassle', desc: 'Drive up without snow chains — winter tyres are enough. A free ski bus within walking distance takes you straight to the lifts, no parking to hunt for.' },
+      eyebrow: 'Summer vs. Winter', title: 'What each season brings', note: 'Switch season above and the whole site transforms.',
+      summer: { tag: 'Summer', title: 'Long evenings outside', desc: 'Pool, pergola, fire pit and a large grounds for kids and adults alike. Hiking and trips straight from the house.',
+        list: ['Heated pool, sauna and pergola', 'Fire pit and long evenings on the grounds', 'Hiking and trips straight from the house'] },
+      winter: { tag: 'Winter', title: 'Skiing without the hassle', desc: 'Drive up without snow chains — winter tyres are enough. A free ski bus within walking distance takes you straight to the lifts, no parking to hunt for.',
+        list: ['Ski Resort Černá hora 4 km, ski bus at the house', 'Heated covered pool and sauna', 'Ski room and access without snow chains'] },
     },
     lokalita: {
       eyebrow: 'Location', title: 'In the mountains, without compromise', mapcap: 'Map / Mapy.cz goes here',
@@ -308,7 +354,7 @@ const T = {
       lblPhone: 'Phone / WhatsApp', phPhone: '+420… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia' },
   },
 
   de: {
@@ -316,15 +362,22 @@ const T = {
     nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
       eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
+      eyebrowWinter: 'Skifahren gleich um die Ecke · Riesengebirge',
       h1: 'Eine private Villa im Riesengebirge für 6–22 Gäste',
       sub: 'Der ganze Ort — Haus und weitläufiges Grundstück — gehört <em>nur euch</em>.',
+      subWinter: 'Skifahren gleich um die Ecke — <em>Skibus am Haus</em>, Černá hora 4 km.',
       ctaSec: 'Haus ansehen', badge: 'Freie Termine 2026', video: 'Video abspielen',
       summer: 'Sommer', winter: 'Winter', scroll: 'Scrollen',
       tipSummer: 'Pool, Pergola und Abende am offenen Feuer.',
       tipWinter: 'Ohne Ketten bis zur Tür, kostenloser Skibus in Gehweite.',
       nightLine: 'Es ist dunkel geworden. Feuerstelle, Gabionenwand und Pool leuchten von selbst — der Abend fängt gerade erst an.',
     },
-    ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft' },
+    ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft', teaserMore: 'Bewertungen lesen' },
+    direct: {
+      badge: '<b>Direkt buchen = bester Preis.</b> 5 % günstiger als über die Plattformen. Persönlicher Service und faire Stornobedingungen.',
+      book: '<b>Direkt buchen = bester Preis.</b> 5 % günstiger als über die Plattformen. Persönlicher Service und faire Stornobedingungen.',
+      sidebar: 'Direkt buchen — 5 % günstiger als über die Plattformen.',
+    },
     statement: {
       eyebrow: 'Kein Haus. Ein ganzer Ort.',
       lead: 'Anderswo bekommt ihr Zimmer und ein Stück geteilten Garten. Hier nehmt ihr das ganze Grundstück — weitläufig, ungeteilt, nur für euch.',
@@ -332,12 +385,22 @@ const T = {
     band: { eyebrow: 'Ein Abend hier' },
     amenities: {
       eyebrow: 'Ausstattung', title: 'Komfort, der die Gruppe zusammenhält', drop: 'Foto hierher ziehen',
-      items: [
-        { tag: 'Wellness', name: 'Überdachter beheizter Pool', desc: 'Ein Innenpool mit beheiztem Wasser — bei jedem Wetter nutzbar, vom Sommernachmittag bis zur frostigen Winternacht. Aus dem Wasser direkt in die Sauna.' },
-        { tag: 'Wellness', name: 'Private Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe. Kein Teilen, keine Zeitfenster.' },
-        { tag: 'Draußen leben', name: 'Große Pergola', desc: 'Überdachte Sitzplätze für die ganze Gruppe auf einmal. Gemeinsame Abendessen draußen, auch bei Regen.' },
-        { tag: 'Für Familien', name: 'Kinderspielplatz', desc: 'Klettergerüste, eine kleine Kletterwand und eine Seilwand. Die Kinder haben ihren eigenen Bereich in Sichtweite der Pergola.' },
-      ],
+      summer: {
+        hero: { tag: 'Wellness', name: 'Überdachter beheizter Pool', desc: 'Ein Innenpool mit beheiztem Wasser — bei jedem Wetter nutzbar, vom Sommernachmittag bis zur frostigen Winternacht. Aus dem Wasser direkt in die Sauna.' },
+        cards: [
+          { tag: 'Wellness', name: 'Private Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe. Kein Teilen, keine Zeitfenster.' },
+          { tag: 'Draußen leben', name: 'Große Pergola', desc: 'Überdachte Sitzplätze für die ganze Gruppe auf einmal. Gemeinsame Abendessen draußen, auch bei Regen.' },
+          { tag: 'Für Familien', name: 'Kinderspielplatz', desc: 'Klettergerüste, eine kleine Kletterwand und eine Seilwand. Die Kinder haben ihren eigenen Bereich in Sichtweite der Pergola.' },
+        ],
+      },
+      winter: {
+        hero: { tag: 'Skifahren', name: 'Skifahren gleich um die Ecke', desc: 'Skigebiet Černá hora nur 4 km entfernt. Ein kostenloser Skibus hält direkt am Haus — zu den Liften ohne Auto und Parkplatzsuche. Dazu ein Skiraum im Haus für die Ausrüstung.' },
+        cards: [
+          { tag: 'Wellness', name: 'Nach dem Skifahren in die Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe — perfekt nach einem Tag auf der Piste. Kein Teilen, keine Zeitfenster.' },
+          { tag: 'Draußen leben', name: 'Winterabende am Feuer', desc: 'Die neu fertiggestellte Feuerstelle mit Gabionenwand leuchtet nach Einbruch der Dunkelheit von selbst — Wärme unter freiem Himmel, auch bei Frost.' },
+          { tag: 'Wellness', name: 'Überdachter Pool auch im Frost', desc: 'Ein beheizter Pool unter Dach — schwimmt selbst mitten im Winter, wenn draußen Schnee liegt.' },
+        ],
+      },
     },
     ohniste: {
       eyebrow: 'Neues Herzstück', caption: 'Detail der Feuerstelle und Gabionenwand',
@@ -350,9 +413,11 @@ const T = {
       desc: 'Es geht nicht um die Zahl. Bis zu 22 schlafen hier bequem, aber eine Familie, ein Freundeskreis oder eine kleinere Gruppe passen genauso gut — das ganze Haus und Grundstück gehören immer nur euch.',
     },
     sezony: {
-      eyebrow: 'Sommer & Winter', title: 'Ein Ort, zwei Atmosphären',
-      summer: { tag: 'Sommer', title: 'Lange Abende draußen', desc: 'Pool, Pergola, Feuerstelle und ein großes Grundstück für Kinder wie Erwachsene. Wandern und Ausflüge direkt vom Haus.' },
-      winter: { tag: 'Winter', title: 'Skifahren ohne Stress', desc: 'Anfahrt ohne Schneeketten — Winterreifen genügen. Ein kostenloser Skibus in Gehweite bringt euch direkt zu den Liften, keine Parkplatzsuche.' },
+      eyebrow: 'Sommer vs. Winter', title: 'Was jede Jahreszeit bietet', note: 'Wechselt oben die Jahreszeit — die ganze Seite verwandelt sich.',
+      summer: { tag: 'Sommer', title: 'Lange Abende draußen', desc: 'Pool, Pergola, Feuerstelle und ein großes Grundstück für Kinder wie Erwachsene. Wandern und Ausflüge direkt vom Haus.',
+        list: ['Beheizter Pool, Sauna und Pergola', 'Feuerstelle und lange Abende auf dem Grundstück', 'Wandern und Ausflüge direkt vom Haus'] },
+      winter: { tag: 'Winter', title: 'Skifahren ohne Stress', desc: 'Anfahrt ohne Schneeketten — Winterreifen genügen. Ein kostenloser Skibus in Gehweite bringt euch direkt zu den Liften, keine Parkplatzsuche.',
+        list: ['Skigebiet Černá hora 4 km, Skibus am Haus', 'Beheizter überdachter Pool und Sauna', 'Skiraum und Anfahrt ohne Ketten'] },
     },
     lokalita: {
       eyebrow: 'Lage', title: 'In den Bergen, ohne Kompromiss', mapcap: 'Karte / Mapy.cz hier',
@@ -423,7 +488,7 @@ const T = {
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien' },
   },
 
   pl: {
@@ -431,15 +496,22 @@ const T = {
     nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
       eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
+      eyebrowWinter: 'Narty tuż za rogiem · Karkonosze',
       h1: 'Prywatna willa w Karkonoszach dla 6–22 gości',
       sub: 'Całe to miejsce — dom i rozległa posesja — jest <em>tylko wasze</em>.',
+      subWinter: 'Narty tuż za rogiem — <em>skibus przy domu</em>, Černá hora 4 km.',
       ctaSec: 'Zobacz dom', badge: 'Wolne terminy 2026', video: 'Odtwórz wideo',
       summer: 'Lato', winter: 'Zima', scroll: 'Scroll',
       tipSummer: 'Basen, pergola i wieczory przy otwartym ogniu.',
       tipWinter: 'Bez łańcuchów pod same drzwi, darmowy skibus w zasięgu spaceru.',
       nightLine: 'Zapadła noc. Palenisko, ściana gabionowa i basen zapaliły się same — wieczór dopiero się zaczyna.',
     },
-    ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano' },
+    ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano', teaserMore: 'Przeczytaj recenzje' },
+    direct: {
+      badge: '<b>Rezerwacja bezpośrednia = najlepsza cena.</b> O 5% taniej niż na platformach. Osobiste podejście i uczciwe warunki anulacji.',
+      book: '<b>Rezerwacja bezpośrednia = najlepsza cena.</b> O 5% taniej niż na platformach. Osobiste podejście i uczciwe warunki anulacji.',
+      sidebar: 'Rezerwacja bezpośrednia — o 5% taniej niż na platformach.',
+    },
     statement: {
       eyebrow: 'To nie dom. To całe miejsce.',
       lead: 'Gdzie indziej dostajecie pokoje i kawałek wspólnego ogrodu. Tu bierzecie całą posesję — rozległą, niepodzieloną, tylko dla was.',
@@ -447,12 +519,22 @@ const T = {
     band: { eyebrow: 'Jeden wieczór tutaj' },
     amenities: {
       eyebrow: 'Udogodnienia', title: 'Komfort, który trzyma grupę razem', drop: 'Przeciągnij tu zdjęcie',
-      items: [
-        { tag: 'Wellness', name: 'Zadaszony podgrzewany basen', desc: 'Kryty basen z podgrzewaną wodą — czynny w każdą pogodę, od letniego popołudnia po mroźny zimowy wieczór. Prosto z wody do sauny.' },
-        { tag: 'Wellness', name: 'Prywatna sauna', desc: 'Fińska sauna tylko dla waszej grupy. Bez dzielenia, bez okienek czasowych.' },
-        { tag: 'Życie na zewnątrz', name: 'Duża pergola', desc: 'Zadaszone miejsce dla całej grupy naraz. Wspólne kolacje na świeżym powietrzu, nawet w deszcz.' },
-        { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, mała ścianka wspinaczkowa i ścianka linowa. Dzieci mają własną przestrzeń w zasięgu wzroku od pergoli.' },
-      ],
+      summer: {
+        hero: { tag: 'Wellness', name: 'Zadaszony podgrzewany basen', desc: 'Kryty basen z podgrzewaną wodą — czynny w każdą pogodę, od letniego popołudnia po mroźny zimowy wieczór. Prosto z wody do sauny.' },
+        cards: [
+          { tag: 'Wellness', name: 'Prywatna sauna', desc: 'Fińska sauna tylko dla waszej grupy. Bez dzielenia, bez okienek czasowych.' },
+          { tag: 'Życie na zewnątrz', name: 'Duża pergola', desc: 'Zadaszone miejsce dla całej grupy naraz. Wspólne kolacje na świeżym powietrzu, nawet w deszcz.' },
+          { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, mała ścianka wspinaczkowa i ścianka linowa. Dzieci mają własną przestrzeń w zasięgu wzroku od pergoli.' },
+        ],
+      },
+      winter: {
+        hero: { tag: 'Narty', name: 'Narty tuż za rogiem', desc: 'Ośrodek narciarski Černá hora zaledwie 4 km. Darmowy skibus zatrzymuje się przy samym domu — pod wyciągi bez auta i szukania parkingu. W domu dodatkowo narciarnia na sprzęt.' },
+        cards: [
+          { tag: 'Wellness', name: 'Po nartach do sauny', desc: 'Fińska sauna tylko dla waszej grupy — idealna po dniu na stoku. Bez dzielenia, bez okienek czasowych.' },
+          { tag: 'Życie na zewnątrz', name: 'Zimowe wieczory przy ognisku', desc: 'Nowo ukończone palenisko ze ścianą gabionową po zmroku samo się podświetla — ciepło pod gołym niebem, nawet przy mrozie.' },
+          { tag: 'Wellness', name: 'Kryty basen nawet w mróz', desc: 'Podgrzewany basen pod dachem — pływacie nawet w środku zimy, gdy na zewnątrz leży śnieg.' },
+        ],
+      },
     },
     ohniste: {
       eyebrow: 'Nowy element', caption: 'Detal paleniska i ściany gabionowej',
@@ -465,9 +547,11 @@ const T = {
       desc: 'Nie chodzi o liczbę. Wygodnie śpi tu do 22 osób, ale rodzina, grono przyjaciół czy mniejsza grupa zmieszczą się równie dobrze — cały dom i posesja są zawsze tylko wasze.',
     },
     sezony: {
-      eyebrow: 'Lato i zima', title: 'Jedno miejsce, dwie atmosfery',
-      summer: { tag: 'Lato', title: 'Długie wieczory na zewnątrz', desc: 'Basen, pergola, palenisko i duża posesja dla dzieci i dorosłych. Wędrówki i wycieczki prosto z domu.' },
-      winter: { tag: 'Zima', title: 'Narty bez kłopotów', desc: 'Dojazd bez łańcuchów — wystarczą opony zimowe. Darmowy skibus w zasięgu spaceru zawiezie was prosto pod wyciągi, bez szukania parkingu.' },
+      eyebrow: 'Lato vs. Zima', title: 'Co czeka w każdym sezonie', note: 'Przełącz sezon u góry, a cała strona się zmieni.',
+      summer: { tag: 'Lato', title: 'Długie wieczory na zewnątrz', desc: 'Basen, pergola, palenisko i duża posesja dla dzieci i dorosłych. Wędrówki i wycieczki prosto z domu.',
+        list: ['Podgrzewany basen, sauna i pergola', 'Palenisko i długie wieczory na posesji', 'Wędrówki i wycieczki prosto z domu'] },
+      winter: { tag: 'Zima', title: 'Narty bez kłopotów', desc: 'Dojazd bez łańcuchów — wystarczą opony zimowe. Darmowy skibus w zasięgu spaceru zawiezie was prosto pod wyciągi, bez szukania parkingu.',
+        list: ['Ośrodek Černá hora 4 km, skibus przy domu', 'Podgrzewany kryty basen i sauna', 'Narciarnia i dojazd bez łańcuchów'] },
     },
     lokalita: {
       eyebrow: 'Lokalizacja', title: 'W górach, bez kompromisów', mapcap: 'Tu mapa / Mapy.cz',
@@ -538,7 +622,7 @@ const T = {
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy' },
   },
 };
 
@@ -700,6 +784,7 @@ function renderRatings() {
         p.outOf === 5 ? el('i', { class: 'vr-star', 'aria-hidden': 'true', text: '★' }) : null,
       ]),
       el('span', { class: 'vr-rating-count', text: '(' + p.count + ' ' + t.ratings.reviewsWord + ')' }),
+      el('span', { class: 'vr-rating-arrow', 'aria-hidden': 'true', text: '↗' }),
     ]);
     row.appendChild(link);
   });
@@ -725,7 +810,11 @@ function renderReviews() {
       el('blockquote', { class: 'vr-review-q', text: reviewText(r) }),
       el('figcaption', { class: 'vr-review-cap' }, [
         el('span', { class: 'vr-review-author', text: r.author }),
-        el('a', { class: 'vr-review-badge', href: p.url || '#', target: '_blank', rel: 'noopener noreferrer', text: p.name || r.platform }),
+        el('a', { class: 'vr-review-badge', href: p.url || '#', target: '_blank', rel: 'noopener noreferrer',
+          'aria-label': (p.name || r.platform) + ' — ' + (r.author) }, [
+          el('span', { text: p.name || r.platform }),
+          el('span', { class: 'vr-rating-arrow', 'aria-hidden': 'true', text: '↗' }),
+        ]),
       ]),
     ]);
     host.appendChild(fig);
@@ -747,21 +836,27 @@ function renderLokDistances() {
   host.appendChild(list);
 }
 
+/* Vybavení je sezónní. Léto: hero = krytý bazén + sauna / pergola / hřiště.
+   Zima: hero = „Lyžování za rohem" + sauna po lyžích / ohniště / krytý bazén.
+   Všechny fotky jsou naše skutečné (žádné AI/fake ski fotky) — hero zimy používá
+   vr-crossfade obrázek winter-forest.jpg definovaný v HTML. */
 function renderAmenities() {
   const t = tt();
-  // pool hero text
-  $('#am-pool-tag').textContent = t.amenities.items[0].tag;
-  $('#am-pool-name').textContent = t.amenities.items[0].name;
-  $('#am-pool-desc').textContent = t.amenities.items[0].desc;
-  // three cards: sauna (placeholder — no fitting photo curated), pergola (photo), playground (photo)
-  const cards = [
-    { i: 1, img: null }, { i: 2, img: 'media/gallery/pergola-exterior.jpg' }, { i: 3, img: 'media/sections/playground.jpg' },
-  ];
+  const winter = state.season === 'zima';
+  const A = winter ? t.amenities.winter : t.amenities.summer;
+  // hero card (léto = bazén, zima = lyžování za rohem)
+  $('#am-pool-tag').textContent = A.hero.tag;
+  $('#am-pool-name').textContent = A.hero.name;
+  $('#am-pool-desc').textContent = A.hero.desc;
+  // 3 cards — skutečné fotky podle sezóny
+  const imgs = winter
+    ? ['media/gallery/sauna-hall.jpg', 'media/gallery/firepit-sunset.jpg', 'media/gallery/pool-night.jpg']
+    : ['media/gallery/sauna-hall.jpg', 'media/gallery/pergola-exterior.jpg', 'media/sections/playground.jpg'];
   const host = $('#vr-amen3'); host.innerHTML = '';
-  cards.forEach((c) => {
-    const it = t.amenities.items[c.i];
+  A.cards.forEach((it, i) => {
     const art = el('article');
-    if (c.img) art.appendChild(el('img', { src: c.img, alt: it.name, loading: 'lazy' }));
+    const src = imgs[i];
+    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy' }));
     else art.appendChild(slot(t.photoSoon));
     art.appendChild(el('span', { class: 'vr-tag', text: it.tag }));
     art.appendChild(el('h3', { text: it.name }));
@@ -795,17 +890,25 @@ function renderScene() {
   $all('#vr-thumbs .vrp-thumb').forEach((b, i) => b.setAttribute('data-active', i === sc ? 'true' : 'false'));
 }
 
+/* Sekce Sezóny je teď „Léto vs. Zima" srovnání — obě karty vždy plně viditelné,
+   každá s vlastní sezónní tónovanou linkou a seznamem, co je v ní zahrnuté. */
 function renderSeasonsCards() {
   const t = tt();
-  $('#sez-sum-tag').textContent = t.sezony.summer.tag;
-  $('#sez-sum-title').textContent = t.sezony.summer.title;
-  $('#sez-sum-desc').textContent = t.sezony.summer.desc;
-  $('#sez-win-tag').textContent = t.sezony.winter.tag;
-  $('#sez-win-title').textContent = t.sezony.winter.title;
-  $('#sez-win-desc').textContent = t.sezony.winter.desc;
-  const leto = state.season === 'leto';
-  $('#sez-sum').setAttribute('data-on', leto ? 'true' : 'false');
-  $('#sez-win').setAttribute('data-on', leto ? 'false' : 'true');
+  const S = t.sezony.summer, W = t.sezony.winter;
+  $('#sez-sum-tag').textContent = S.tag;
+  $('#sez-sum-title').textContent = S.title;
+  $('#sez-sum-desc').textContent = S.desc;
+  $('#sez-win-tag').textContent = W.tag;
+  $('#sez-win-title').textContent = W.title;
+  $('#sez-win-desc').textContent = W.desc;
+  const fillList = (id, arr) => {
+    const host = $(id); if (!host) return; host.innerHTML = '';
+    (arr || []).forEach((li) => host.appendChild(el('li', { text: li })));
+  };
+  fillList('#sez-sum-list', S.list);
+  fillList('#sez-win-list', W.list);
+  $('#sez-sum').setAttribute('data-on', 'true');
+  $('#sez-win').setAttribute('data-on', 'true');
 }
 
 function renderLokFacts() {
@@ -1247,6 +1350,103 @@ function applySeasonButtons() {
 }
 function applyTip() { $('#vrim-tip').textContent = state.season === 'zima' ? tt().hero.tipWinter : tt().hero.tipSummer; }
 
+/* Hero eyebrow + sub se v zimě přepnou na lyžování. (setTexts() je nastaví na
+   letní znění přes data-t/data-t-html, proto applyHeroSeason voláme až po něm.) */
+function applyHeroSeason() {
+  const t = tt(), winter = state.season === 'zima';
+  const eb = $('.vrim-eyebrow'), sub = $('.vrim-sub');
+  if (eb) eb.textContent = winter ? (t.hero.eyebrowWinter || t.hero.eyebrow) : t.hero.eyebrow;
+  if (sub) sub.innerHTML = winter ? (t.hero.subWinter || t.hero.sub) : t.hero.sub; // first-party trusted HTML (<em>)
+}
+
+/* Přímá rezervace = nejlepší cena — badge v hero pásu, u rezervace a řádek v boxu.
+   Ceny se NEMĚNÍ, jde jen o sdělení. */
+function renderDirectBook() {
+  const t = tt();
+  const shield = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V6l7-3z"></path><path d="M9 12l2 2 4-4"></path></svg>';
+  ['#vr-directbook', '#vr-directbook-book'].forEach((sel) => {
+    const host = $(sel); if (!host) return;
+    host.innerHTML = '';
+    host.appendChild(el('span', { class: 'vr-directbook-ic', 'aria-hidden': 'true', html: shield }));
+    host.appendChild(el('span', { class: 'vr-directbook-txt', html: t.direct.badge })); // first-party trusted HTML (<b>)
+  });
+  const side = $('#vr-book-direct');
+  if (side) side.innerHTML = shield + '<span>' + t.direct.sidebar + '</span>';
+}
+
+/* Rotující ukázka recenzí pod hodnocením — odkazuje dolů na #recenze. */
+let teaserTimer = null, teaserIdx = 0, teaserList = [];
+function teaserTrim(s) {
+  s = String(s || '').replace(/\s+/g, ' ').trim();
+  const MAX = 120;
+  if (s.length <= MAX) return s;
+  let cut = s.slice(0, MAX);
+  const sp = cut.lastIndexOf(' ');
+  if (sp > 60) cut = cut.slice(0, sp);
+  return cut.replace(/[…,;:.\-\s]+$/, '') + '…';
+}
+function buildTeaserList() {
+  teaserList = VR_REVIEWS.items.map((r) => ({ q: teaserTrim(reviewText(r)), a: r.author })).filter((x) => x.q);
+}
+function paintTeaser() {
+  const host = $('#vr-teaser'); if (!host) return;
+  const t = tt();
+  const item = teaserList[teaserIdx] || null;
+  host.innerHTML = '';
+  if (!item) { host.style.display = 'none'; return; }
+  host.style.display = '';
+  host.appendChild(el('span', { class: 'vr-teaser-q', text: item.q }));
+  host.appendChild(el('span', { class: 'vr-teaser-cap' }, [
+    el('span', { text: '— ' + item.a }),
+    el('span', { class: 'vr-teaser-more', text: t.ratings.teaserMore + ' →' }),
+  ]));
+}
+function renderTeaser() {
+  buildTeaserList();
+  if (teaserIdx >= teaserList.length) teaserIdx = 0;
+  paintTeaser();
+}
+function startTeaserRotation() {
+  const host = $('#vr-teaser'); if (!host) return;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || teaserTimer) return; // no auto-rotation under reduced motion
+  teaserTimer = setInterval(() => {
+    if (!teaserList.length) return;
+    host.setAttribute('data-fade', 'true');
+    setTimeout(() => {
+      teaserIdx = (teaserIdx + 1) % teaserList.length;
+      paintTeaser();
+      host.setAttribute('data-fade', 'false');
+    }, 350);
+  }, 6000);
+}
+
+/* Patička — kontakt: e-mail (mailto), „Pavel — váš hostitel", region a telefon
+   (tel: odkaz jen když je VR_CONTACT.phone vyplněné). */
+function renderFooterContact() {
+  const t = tt();
+  const host = $('#vr-foot-contact'); if (!host) return;
+  host.innerHTML = '';
+  const email = VR_CONTACT.email || 'rezervace@villarudolf.com';
+  host.appendChild(el('a', { href: 'mailto:' + email, text: email }));
+  host.appendChild(el('br'));
+  host.appendChild(el('span', { class: 'vr-foot-host', text: t.footer.host }));
+  const phone = (VR_CONTACT.phone || '').trim();
+  if (phone) {
+    host.appendChild(el('br'));
+    host.appendChild(el('a', { href: 'tel:' + phone.replace(/[^\d+]/g, ''), text: phone }));
+  }
+  host.appendChild(el('br'));
+  host.appendChild(el('span', { text: t.footer.region }));
+}
+
+/* Uloží sezónu a sladí meta theme-color s aktuálním motivem. */
+function persistSeason() { try { localStorage.setItem('vrSeason', state.season); } catch (e) {} }
+function applyThemeColor() {
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute('content', state.season === 'zima' ? '#eef2f6' : '#0E1311');
+}
+
 function setLang(lang) {
   if (!T[lang] || state.lang === lang) return;
   state.lang = lang;
@@ -1254,7 +1454,8 @@ function setLang(lang) {
   applyLangButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
-  renderCalendar(); renderBookingPanel(); applyTip();
+  renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
+  renderDirectBook(); renderTeaser(); renderFooterContact();
   // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
   if ($('#vr-pay-label')) $('#vr-pay-label').textContent = bookSending ? tt().book.sending : tt().book.pay;
 }
@@ -1269,9 +1470,12 @@ function eagerLoadSeason(season) {
 function setSeason(season) {
   if ((season !== 'leto' && season !== 'zima') || state.season === season) return;
   state.season = season;
+  persistSeason();
   eagerLoadSeason(season);
   document.querySelector('.vr-root').setAttribute('data-season', season);
-  applySeasonButtons(); renderSeasonsCards(); applyTip();
+  applyThemeColor();
+  applySeasonButtons(); renderSeasonsCards(); applyTip(); applyHeroSeason();
+  renderAmenities(); // hero amenity card (bazén ↔ lyžování) + 3 cards swap by season
   // Season → default gallery filter (Zima preselects the winter set; user can
   // still switch). If the lightbox is open, keep it in sync with the new filter.
   state.galFilter = season === 'zima' ? 'zima' : 'all';
@@ -1476,16 +1680,14 @@ function toggleMob(open) {
 /* ============================ Wire up ============================ */
 function init() {
   document.documentElement.classList.add('js');
-  // restore saved language
+  // restore saved language + season
   try { const saved = localStorage.getItem('vrLang'); if (saved && T[saved]) state.lang = saved; } catch (e) {}
+  try { const s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') state.season = s; } catch (e) {}
 
   // language buttons
   $all('.vr-lang').forEach((b) => b.addEventListener('click', () => setLang(b.getAttribute('data-lang'))));
-  // season buttons
+  // season buttons (nav, hero pill, mobile menu — all .vr-segbtn, kept in sync)
   $all('.vr-segbtn').forEach((b) => b.addEventListener('click', () => setSeason(b.getAttribute('data-season'))));
-  // season card click toggles season
-  $('#sez-sum').addEventListener('click', () => setSeason('leto'));
-  $('#sez-win').addEventListener('click', () => setSeason('zima'));
 
   // gallery lightbox (grid thumbs get their own click handlers in renderGallery)
   $('#vr-lb').addEventListener('click', () => lbSet(-1));
@@ -1521,14 +1723,16 @@ function init() {
 
   // initial render
   document.querySelector('.vr-root').setAttribute('data-season', state.season);
+  applyThemeColor();
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
-  renderCalendar(); renderBookingPanel(); applyTip();
+  renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
+  renderDirectBook(); renderTeaser(); renderFooterContact();
   loadAvailability();
 
-  startReveal(); startRaf(); startScrollSpy();
+  startReveal(); startRaf(); startScrollSpy(); startTeaserRotation();
 
   // Background-preload the OFF-season hero image once the page is idle, so the
   // first Léto/Zima toggle crossfades instantly. (Only the current season is
