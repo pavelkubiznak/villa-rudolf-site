@@ -5,6 +5,8 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:#0E1311}
+/* [hidden] musí přebít author display:flex/inline-flex níže */
+[hidden]{display:none!important}
 
 :root{
   --va-bg:#0E1311;
