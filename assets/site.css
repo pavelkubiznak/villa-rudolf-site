@@ -412,10 +412,13 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-gal-chip{font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--vr-text-muted);background:var(--vr-panel-strong);border:1px solid var(--vr-line);border-radius:999px;padding:9px 18px;cursor:pointer;transition:color .25s,background-color .25s,border-color .25s}
 .vr-gal-chip:hover{color:var(--vr-text);border-color:var(--vr-line-2)}
 .vr-gal-chip[data-active="true"]{color:var(--vr-on-accent);background:var(--vr-accent);border-color:var(--vr-accent)}
-/* masonry-ish gallery (CSS columns) */
-.vr-gal{columns:3;column-gap:14px}
-.vr-gal img{display:block;width:100%;margin:0 0 14px;border-radius:2px;cursor:zoom-in;break-inside:avoid;transition:opacity .3s}
-.vr-gal img:hover{opacity:.86}
+/* Galerie: čtvercová mřížka BEZ deformace (majitel: „fotky roztáhnutý na výšku").
+   aspect-ratio:1/1 + object-fit:cover ořízne náhled na čtverec beze změny poměru
+   stran; lightbox pak otevře 1600px master v původním poměru (object-fit:contain).
+   aspect-ratio drží místo → žádný CLS. */
+.vr-gal{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.vr-gal img{display:block;width:100%;aspect-ratio:1/1;height:auto;object-fit:cover;border-radius:2px;cursor:zoom-in;transition:opacity .3s,transform .3s}
+.vr-gal img:hover{opacity:.9}
 /* ohniště photo (was a placeholder slot) */
 .vr-ohn-grid img{display:block;width:100%;height:clamp(320px,40vw,460px);object-fit:cover;border-radius:2px}
 
@@ -490,9 +493,13 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-root[data-season="leto"] .vr-book-minstay{color:#E7C9A6;background:rgba(214,138,76,.08);border-color:rgba(214,138,76,.28)}
 .vr-root[data-season="leto"] .vr-book-guestnote{color:#e6b7ac;background:rgba(214,110,86,.09);border-color:rgba(214,110,86,.3)}
 /* Počty hostů — dospělí / děti / domácí mazlíčci vedle sebe */
-.vr-book-guests{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* Dospělí / děti / mazlíčci: minmax(0,1fr) + min-width:0 brání přetečení sloupce
+   dlouhým labelem (čeština „Mazlíčci"), align-items:end srovná políčka ke spodní
+   hraně, i kdyby se některý label zalomil na dva řádky → mřížka drží ve všech 4
+   jazycích na mobilu i desktopu. */
+.vr-book-guests{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end}
 @media(max-width:420px){.vr-book-guests{grid-template-columns:1fr 1fr}.vr-book-guests label:last-child{grid-column:1 / -1}}
-.vr-book-guests label{margin:0}
+.vr-book-guests label{margin:0;min-width:0}
 .vr-book label{display:flex;flex-direction:column;gap:8px}
 .vr-book label span{font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--vr-text-formlabel);transition:color .6s ease}
 .vr-book input,.vr-book textarea,.vr-book select{font-family:'Archivo',sans-serif;font-size:15px;color:var(--vr-text-soft);background:var(--vr-panel-input);border:1px solid var(--vr-line);border-radius:2px;padding:13px 15px;outline:none;transition:border-color .2s,background-color .6s ease,color .6s ease}
@@ -810,11 +817,11 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vr-tour-hint{text-align:left}
   .vr-expdetail{grid-template-columns:1fr;gap:10px}
   .vr-vyl{grid-template-columns:1fr 1fr}
-  .vr-gal{columns:2}
+  .vr-gal{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:620px){
   .vr-amen3{grid-template-columns:1fr}
-  .vr-gal{columns:2;column-gap:12px}
+  .vr-gal{grid-template-columns:repeat(2,1fr);gap:12px}
   .vr-facts{grid-template-columns:1fr 1fr}
   .vr-vyl{grid-template-columns:1fr}
   .vr-cal-wrap{grid-template-columns:1fr}

@@ -339,7 +339,7 @@ const T = {
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
       body: 'Vyberte v kalendáři příjezd a odjezd, uvidíte rozpis ceny a pošlete nám nezávaznou žádost o pobyt. Termín vám osobně potvrdíme.',
-      lblAdults: 'Dospělí', lblChildren: 'Děti', lblPets: 'Domácí mazlíčci',
+      lblAdults: 'Dospělí', lblChildren: 'Děti', lblPets: 'Mazlíčci',
       lblName: 'Jméno', phName: 'Vaše jméno',
       lblEmail: 'E-mail', phEmail: 'vas@email.cz',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (nepovinné)',
@@ -1659,7 +1659,7 @@ function renderGallery() {
   host.innerHTML = '';
   items.forEach((g, i) => host.appendChild(el('img', {
     src: 'media/gallery/t/' + g.s + '.jpg', alt: g.alt, loading: 'lazy', decoding: 'async',
-    width: '600', height: '400',
+    width: '600', height: '600',
     onclick: () => lbOpen(items, i),
   })));
 }
