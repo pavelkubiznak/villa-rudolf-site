@@ -553,6 +553,36 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:clamp(36px,5vw,56px);padding-top:24px;border-top:1px solid var(--vr-line);font-family:'Archivo',sans-serif;font-size:12px;color:var(--vr-text-faintest);transition:color .6s ease}
 .vr-foot-terms{color:var(--vr-text-faint);text-decoration:none;transition:color .2s ease}
 .vr-foot-terms:hover{color:var(--vr-accent-2)}
+/* Patička — skupina sekundárních odkazů (Praktické info / Průvodce / Podmínky).
+   „Praktické info" sem přesunuto z hlavního menu (zóna hosta, ne prodejní cesta). */
+.vr-foot-botlinks{display:flex;gap:clamp(14px,2vw,26px);flex-wrap:wrap;align-items:center}
+
+/* ---------- „Co potřebujete vědět před rezervací" (proužek nad ceníkem) ----------
+   Krátký, skenovatelný přehled faktů, které zájemce řeší PŘED poptávkou. */
+.vr-prebook{max-width:1080px;margin:clamp(28px,4vw,44px) auto 0;border:1px solid var(--vr-line);border-radius:3px;
+  background:var(--vr-panel);padding:clamp(18px,2.4vw,28px) clamp(18px,2.6vw,30px);text-align:left;
+  transition:background-color .6s ease,border-color .6s ease}
+.vr-prebook-title{display:block;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--vr-accent);margin-bottom:16px;transition:color .6s ease}
+.vr-prebook-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);
+  gap:14px clamp(20px,3vw,40px)}
+.vr-prebook-list li{display:flex;flex-direction:column;gap:3px;padding-left:15px;position:relative}
+.vr-prebook-list li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;
+  background:var(--vr-ember)}
+.vr-prebook-list b{font-family:'Archivo',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--vr-text-faint);transition:color .6s ease}
+.vr-prebook-list span{font-family:'Archivo',sans-serif;font-size:14.5px;line-height:1.45;color:var(--vr-text-soft);
+  transition:color .6s ease}
+.vr-prebook-link{display:inline-flex;align-items:center;margin-top:18px;font-family:'Archivo',sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--vr-accent);transition:color .2s ease}
+.vr-prebook-link:hover{color:var(--vr-accent-2)}
+@media(max-width:820px){.vr-prebook-list{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.vr-prebook-list{grid-template-columns:1fr}}
+
+/* Sekundární (hostům určený) odkaz v mobilním menu — menší než hlavní položky. */
+.vr-mob .vr-mob-2nd{margin-top:18px;font-family:'Archivo',sans-serif;font-size:15px;font-weight:500;
+  letter-spacing:.02em;color:var(--vr-text-faint)}
+.vr-mob .vr-mob-2nd:hover{color:var(--vr-accent-2)}
 
 /* ---------- Placeholder blocks (replaces prototype's interactive image-slot drop-zones) ---------- */
 .vr-slot{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;

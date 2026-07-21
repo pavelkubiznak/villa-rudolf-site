@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=21">
+<link rel="stylesheet" href="assets/site.css?v=22">
 </head>
 <body>
 <noscript>
@@ -42,8 +42,7 @@
         <a href="#galerie" data-t="nav.galerie">Galerie</a>
         <a href="#recenze" data-t="nav.recenze">Recenze</a>
         <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
-        <a href="#vylety" data-t="nav.vylety">Výlety</a>
-        <a href="info/" data-t="nav.info">Praktické info</a>
+        <a href="vylety/" data-langlink="vylety/" data-t="nav.vylety">Výlety</a>
       </nav>
       <div class="vr-navright">
         <div class="vr-seg vr-nav-season" role="group" aria-label="Sezóna">
@@ -71,13 +70,13 @@
     <a href="#galerie" data-t="nav.galerie">Galerie</a>
     <a href="#recenze" data-t="nav.recenze">Recenze</a>
     <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
-    <a href="#vylety" data-t="nav.vylety">Výlety</a>
-    <a href="info/" data-t="nav.info">Praktické info</a>
+    <a href="vylety/" data-langlink="vylety/" data-t="nav.vylety">Výlety</a>
     <a href="#rezervace" class="vr-mob-cta" data-t="nav.cta">Rezervovat termín</a>
     <div class="vr-seg vr-mob-season" role="group" aria-label="Sezóna">
       <button class="vr-segbtn" data-season="leto" data-active="true" aria-pressed="true" data-t="hero.summer">Léto</button>
       <button class="vr-segbtn" data-season="zima" aria-pressed="false" data-t="hero.winter">Zima</button>
     </div>
+    <a class="vr-mob-2nd" href="info/" data-langlink="info/" data-t="nav.info">Praktické info</a>
     <div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">
       <button class="vr-lang" data-lang="cs" data-active="true">CS</button>
       <button class="vr-lang" data-lang="en">EN</button>
@@ -571,7 +570,7 @@
       </div>
       <div class="vr-vyl vr-reveal" id="vr-vyl"></div>
       <div class="vr-reveal">
-        <a href="pruvodce/" data-langlink="pruvodce/" class="vr-vyl-cta"><span data-t="vylety.cta">Otevřít průvodce výlety</span> <span aria-hidden="true">&#8594;</span></a>
+        <a href="vylety/" data-langlink="vylety/" class="vr-vyl-cta"><span data-t="vylety.cta">Prohlédnout tipy na výlety</span> <span aria-hidden="true">&#8594;</span></a>
       </div>
     </div>
   </section>
@@ -598,7 +597,22 @@
       <span class="vr-eyebrow vr-reveal" data-t="cta.eyebrow">Rezervace</span>
       <h2 class="vr-book-title vr-reveal" data-t="cta.title">Rezervujte celý dům pro svou skupinu</h2>
       <p class="vr-book-body vr-reveal" data-t="cta.body">Vyberte v kalendáři příjezd a odjezd a pošlete nám nezávaznou poptávku. Termín vám osobně potvrdíme e-mailem.</p>
-      
+
+      <!-- Krátký, skenovatelný přehled faktů, které zájemce řeší PŘED poptávkou.
+           Statické fakty (i18n přes data-t); odkaz „Vše praktické" míří na /info/. -->
+      <div class="vr-prebook vr-reveal">
+        <span class="vr-prebook-title" data-t="prebook.title">Co potřebujete vědět před rezervací</span>
+        <ul class="vr-prebook-list">
+          <li><b data-t="prebook.facts.0.k">Kapacita</b><span data-t="prebook.facts.0.v">6–22 hostů v 7 ložnicích</span></li>
+          <li><b data-t="prebook.facts.1.k">Soukromí</b><span data-t="prebook.facts.1.v">Celý dům i pozemek jen pro vaši skupinu</span></li>
+          <li><b data-t="prebook.facts.2.k">Příjezd / odjezd</b><span data-t="prebook.facts.2.v">Check-in od 15:00 · check-out do 10:00</span></li>
+          <li><b data-t="prebook.facts.3.k">Mazlíčci</b><span data-t="prebook.facts.3.v">Pes vítán za poplatek</span></li>
+          <li><b data-t="prebook.facts.4.k">Parkování</b><span data-t="prebook.facts.4.v">Zdarma přímo na pozemku, za bránou</span></li>
+          <li><b data-t="prebook.facts.5.k">Lyžování</b><span data-t="prebook.facts.5.v">Sjezdovky Černá hora 4 km · skibus zdarma 200 m</span></li>
+        </ul>
+        <a class="vr-prebook-link" href="info/" data-langlink="info/" data-t="prebook.link">Vše praktické →</a>
+      </div>
+
       <div class="vr-priceblock vr-reveal" id="vr-priceblock"></div>
       <div class="vr-book vr-reveal">
         <div class="vr-cal-card">
@@ -691,9 +705,9 @@
   <section id="sdilejte" class="sec-sdilet">
     <div class="vr-wrap">
       <div class="vr-share vr-reveal">
-        <span class="vr-eyebrow" data-t="share.eyebrow">Sdílejte</span>
-        <h2 class="vr-share-title" data-t="share.title">Byli jste u nás? Pochlubte se.</h2>
-        <p class="vr-share-body" data-t="share.body">Odvezli jste si hezké fotky? Sdílejte je, označte @villarudolfretreat a přidejte #villarudolf — ať je uvidí i další. Ty nejhezčí se můžou objevit přímo tady na webu.</p>
+        <span class="vr-eyebrow" data-t="share.eyebrow">Ze života vily</span>
+        <h2 class="vr-share-title" data-t="share.title">Jak to u nás vypadá</h2>
+        <p class="vr-share-body" data-t="share.body">Nakoukněte do každodenního života vily na našem Instagramu — proměny ročních období, večery u ohně i momenty našich hostů. A jestli jste u nás byli, označte @villarudolfretreat a #villarudolf, ať vaše fotky uvidí i další.</p>
         <div class="vr-share-actions">
           <a class="vr-share-ig" href="https://www.instagram.com/villarudolfretreat/" target="_blank" rel="noopener noreferrer">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"></circle></svg>
@@ -734,7 +748,11 @@
       </div>
       <div class="vr-foot-bottom">
         <span data-t="footer.rights">© 2026 Villa Rudolf</span>
-        <a class="vr-foot-terms" href="podminky/" data-langlink="podminky/" data-t="footer.terms">Ubytovací podmínky a ochrana údajů</a>
+        <span class="vr-foot-botlinks">
+          <a class="vr-foot-terms" href="info/" data-langlink="info/" data-t="nav.info">Praktické info</a>
+          <a class="vr-foot-terms" href="pruvodce/" data-langlink="pruvodce/" data-t="footer.guide">Průvodce výlety</a>
+          <a class="vr-foot-terms" href="podminky/" data-langlink="podminky/" data-t="footer.terms">Ubytovací podmínky a ochrana údajů</a>
+        </span>
       </div>
     </div>
   </footer>
@@ -763,7 +781,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=21" defer></script>
+<script src="assets/site.js?v=22" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

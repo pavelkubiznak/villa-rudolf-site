@@ -297,7 +297,7 @@ const T = {
     },
     gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
     vylety: {
-      eyebrow: 'Kam na výlet', title: 'Hory začínají za dveřmi', note: 'Tipy obměňujeme podle sezóny.', drop: 'Sem přijde fotka z výletu', cta: 'Otevřít průvodce výlety',
+      eyebrow: 'Kam na výlet', title: 'Hory začínají za dveřmi', note: 'Tipy obměňujeme podle sezóny.', drop: 'Sem přijde fotka z výletu', cta: 'Prohlédnout tipy na výlety',
       items: [
         { tag: 'Celoročně', name: 'Sněžka', desc: 'Nejvyšší hora Česka — pěšky po hřebenech, nebo lanovkou z Pece pod Sněžkou.' },
         { tag: 'Léto', name: 'Hřebenovky a vodopády', desc: 'Značené trasy od pohodových okruhů po celodenní přechody. Mumlavský vodopád zvládnou i děti.' },
@@ -340,7 +340,7 @@ const T = {
       eyebrow: 'Recenze', title: 'Co říkají hosté', note: 'Skutečné recenze z Airbnb, Booking.com a Google.',
     },
     video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', play: 'Přehrát video' },
-    share: { eyebrow: 'Sdílejte', title: 'Byli jste u nás? Pochlubte se.', body: 'Odvezli jste si hezké fotky? Sdílejte je, označte @villarudolfretreat a přidejte #villarudolf — ať je uvidí i další. Ty nejhezčí se můžou objevit přímo tady na webu.', ig: 'Sledovat na Instagramu' },
+    share: { eyebrow: 'Ze života vily', title: 'Jak to u nás vypadá', body: 'Nakoukněte do každodenního života vily na našem Instagramu — proměny ročních období, večery u ohně i momenty našich hostů. A jestli jste u nás byli, označte @villarudolfretreat a #villarudolf, ať vaše fotky uvidí i další.', ig: 'Sledovat na Instagramu' },
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
       body: 'Vyberte v kalendáři příjezd a odjezd, uvidíte rozpis ceny a pošlete nám nezávaznou žádost o pobyt. Termín vám osobně potvrdíme.',
@@ -351,7 +351,18 @@ const T = {
       lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', pets: 'Domácí mazlíčci', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Ubytovací podmínky a ochrana údajů' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Průvodce výlety' },
+    prebook: {
+      title: 'Co potřebujete vědět před rezervací', link: 'Vše praktické →',
+      facts: [
+        { k: 'Kapacita', v: '6–22 hostů v 7 ložnicích' },
+        { k: 'Soukromí', v: 'Celý dům i pozemek jen pro vaši skupinu' },
+        { k: 'Příjezd / odjezd', v: 'Check-in od 15:00 · check-out do 10:00' },
+        { k: 'Mazlíčci', v: 'Pes vítán za poplatek' },
+        { k: 'Parkování', v: 'Zdarma přímo na pozemku, za bránou' },
+        { k: 'Lyžování', v: 'Sjezdovky Černá hora 4 km · skibus zdarma 200 m' },
+      ],
+    },
   },
 
   en: {
@@ -540,7 +551,7 @@ const T = {
     },
     gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge', all: 'All', leto: 'Summer', zima: 'Winter', vecer: 'Evening', interier: 'Interior' },
     vylety: {
-      eyebrow: 'Day trips', title: 'The mountains start at the door', note: 'Tips rotate with the season.', drop: 'A trip photo goes here', cta: 'Open the trips guide',
+      eyebrow: 'Day trips', title: 'The mountains start at the door', note: 'Tips rotate with the season.', drop: 'A trip photo goes here', cta: 'See our trip highlights',
       items: [
         { tag: 'Year-round', name: 'Sněžka', desc: 'The highest peak in Czechia — hike the ridges, or take the cable car from Pec pod Sněžkou.' },
         { tag: 'Summer', name: 'Ridge trails & waterfalls', desc: 'Marked routes from easy loops to full-day traverses. The Mumlava waterfall works with kids too.' },
@@ -583,7 +594,7 @@ const T = {
       eyebrow: 'Reviews', title: 'What guests say', note: 'Real reviews from Airbnb, Booking.com and Google.',
     },
     video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', play: 'Play video' },
-    share: { eyebrow: 'Share', title: 'Stayed with us? Show it off.', body: 'Took some nice photos? Share them, tag @villarudolfretreat and add #villarudolf so others can see them too. The best ones may appear right here on the site.', ig: 'Follow on Instagram' },
+    share: { eyebrow: 'Life at the villa', title: 'See what it’s really like', body: 'Take a look at everyday life at the villa on our Instagram — the change of seasons, evenings by the fire and moments from our guests. And if you’ve stayed with us, tag @villarudolfretreat and #villarudolf so others can see your photos too.', ig: 'Follow on Instagram' },
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
       body: 'Pick arrival and departure in the calendar, see the price breakdown and send us a non-binding stay request. We’ll confirm your dates personally.',
@@ -594,7 +605,18 @@ const T = {
       lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', pets: 'Pets', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Booking terms & privacy' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Booking terms & privacy', guide: 'Trip guide' },
+    prebook: {
+      title: 'What to know before you book', link: 'All the practical info →',
+      facts: [
+        { k: 'Capacity', v: '6–22 guests across 7 bedrooms' },
+        { k: 'Privacy', v: 'The whole house and grounds, just your group' },
+        { k: 'Check-in / out', v: 'Check-in from 15:00 · check-out by 10:00' },
+        { k: 'Pets', v: 'Dogs welcome for a fee' },
+        { k: 'Parking', v: 'Free, right on the property behind the gate' },
+        { k: 'Skiing', v: 'Černá hora slopes 4 km · free ski bus 200 m' },
+      ],
+    },
   },
 
   de: {
@@ -783,7 +805,7 @@ const T = {
     },
     gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern', all: 'Alle', leto: 'Sommer', zima: 'Winter', vecer: 'Abend', interier: 'Innen' },
     vylety: {
-      eyebrow: 'Ausflüge', title: 'Die Berge beginnen vor der Tür', note: 'Tipps je nach Saison.', drop: 'Hier kommt ein Ausflugsfoto', cta: 'Ausflugsführer öffnen',
+      eyebrow: 'Ausflüge', title: 'Die Berge beginnen vor der Tür', note: 'Tipps je nach Saison.', drop: 'Hier kommt ein Ausflugsfoto', cta: 'Ausflugstipps ansehen',
       items: [
         { tag: 'Ganzjährig', name: 'Schneekoppe', desc: 'Der höchste Gipfel Tschechiens — zu Fuß über die Kämme oder mit der Seilbahn ab Pec pod Sněžkou.' },
         { tag: 'Sommer', name: 'Kammwege & Wasserfälle', desc: 'Markierte Routen von leichten Runden bis zu Tagestouren. Der Mumlava-Wasserfall klappt auch mit Kindern.' },
@@ -826,7 +848,7 @@ const T = {
       eyebrow: 'Bewertungen', title: 'Was Gäste sagen', note: 'Echte Bewertungen von Airbnb, Booking.com und Google.',
     },
     video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', play: 'Video abspielen' },
-    share: { eyebrow: 'Teilen', title: 'Bei uns gewesen? Zeigt es her.', body: 'Schöne Fotos gemacht? Teilt sie, markiert @villarudolfretreat und fügt #villarudolf hinzu — damit sie auch andere sehen. Die schönsten erscheinen vielleicht direkt hier auf der Website.', ig: 'Auf Instagram folgen' },
+    share: { eyebrow: 'Leben in der Villa', title: 'So sieht es bei uns aus', body: 'Werfen Sie auf unserem Instagram einen Blick in den Alltag der Villa — der Wechsel der Jahreszeiten, Abende am Feuer und Momente unserer Gäste. Und wenn Sie bei uns waren, markieren Sie @villarudolfretreat und #villarudolf, damit auch andere Ihre Fotos sehen.', ig: 'Auf Instagram folgen' },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
       body: 'Wählt An- und Abreise im Kalender, seht die Preisaufstellung und sendet uns eine unverbindliche Aufenthaltsanfrage. Wir bestätigen euren Termin persönlich.',
@@ -837,7 +859,18 @@ const T = {
       lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', pets: 'Haustiere', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Buchungsbedingungen & Datenschutz' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsführer' },
+    prebook: {
+      title: 'Was Sie vor der Buchung wissen sollten', link: 'Alle Praxis-Infos →',
+      facts: [
+        { k: 'Kapazität', v: '6–22 Gäste in 7 Schlafzimmern' },
+        { k: 'Privatsphäre', v: 'Ganzes Haus und Grundstück, nur Ihre Gruppe' },
+        { k: 'Check-in / -out', v: 'Check-in ab 15:00 · Check-out bis 10:00' },
+        { k: 'Haustiere', v: 'Hunde gegen Gebühr willkommen' },
+        { k: 'Parken', v: 'Kostenlos direkt auf dem Grundstück hinter dem Tor' },
+        { k: 'Skifahren', v: 'Pisten Černá hora 4 km · Skibus gratis 200 m' },
+      ],
+    },
   },
 
   pl: {
@@ -1026,7 +1059,7 @@ const T = {
     },
     gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć', all: 'Wszystko', leto: 'Lato', zima: 'Zima', vecer: 'Wieczór', interier: 'Wnętrze' },
     vylety: {
-      eyebrow: 'Wycieczki', title: 'Góry zaczynają się za drzwiami', note: 'Wskazówki zmieniamy według sezonu.', drop: 'Tu trafi zdjęcie z wycieczki', cta: 'Otwórz przewodnik wycieczek',
+      eyebrow: 'Wycieczki', title: 'Góry zaczynają się za drzwiami', note: 'Wskazówki zmieniamy według sezonu.', drop: 'Tu trafi zdjęcie z wycieczki', cta: 'Zobacz propozycje wycieczek',
       items: [
         { tag: 'Cały rok', name: 'Śnieżka', desc: 'Najwyższy szczyt Czech — pieszo graniami albo kolejką z Pecu pod Śnieżką.' },
         { tag: 'Lato', name: 'Szlaki grzbietowe i wodospady', desc: 'Znakowane trasy od spokojnych pętli po całodniowe przejścia. Wodospad Mumlawy da się przejść z dziećmi.' },
@@ -1069,7 +1102,7 @@ const T = {
       eyebrow: 'Recenzje', title: 'Co mówią goście', note: 'Prawdziwe recenzje z Airbnb, Booking.com i Google.',
     },
     video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', play: 'Odtwórz wideo' },
-    share: { eyebrow: 'Udostępnij', title: 'Byliście u nas? Pochwalcie się.', body: 'Macie ładne zdjęcia? Udostępnijcie je, oznaczcie @villarudolfretreat i dodajcie #villarudolf — niech zobaczą je też inni. Najlepsze mogą pojawić się właśnie tu, na stronie.', ig: 'Obserwuj na Instagramie' },
+    share: { eyebrow: 'Życie w willi', title: 'Zobacz, jak jest u nas naprawdę', body: 'Zajrzyj do codziennego życia willi na naszym Instagramie — zmiana pór roku, wieczory przy ogniu i chwile naszych gości. A jeśli u nas byliście, oznaczcie @villarudolfretreat i #villarudolf, żeby wasze zdjęcia zobaczyli też inni.', ig: 'Obserwuj na Instagramie' },
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
       body: 'Wybierz w kalendarzu przyjazd i wyjazd, zobacz rozpiskę ceny i wyślij nam niezobowiązującą prośbę o pobyt. Termin potwierdzimy osobiście.',
@@ -1080,7 +1113,18 @@ const T = {
       lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', pets: 'Zwierzęta', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki pobytu i prywatność' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki pobytu i prywatność', guide: 'Przewodnik po wycieczkach' },
+    prebook: {
+      title: 'Co warto wiedzieć przed rezerwacją', link: 'Wszystkie informacje praktyczne →',
+      facts: [
+        { k: 'Pojemność', v: '6–22 gości w 7 sypialniach' },
+        { k: 'Prywatność', v: 'Cały dom i teren tylko dla Waszej grupy' },
+        { k: 'Zameldowanie / wym.', v: 'Zameldowanie od 15:00 · wymeldowanie do 10:00' },
+        { k: 'Zwierzęta', v: 'Psy mile widziane za opłatą' },
+        { k: 'Parking', v: 'Za darmo na terenie, za bramą' },
+        { k: 'Narty', v: 'Stoki Czarna Góra 4 km · skibus gratis 200 m' },
+      ],
+    },
   },
 };
 
