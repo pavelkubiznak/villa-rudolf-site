@@ -215,9 +215,19 @@ const T = {
         { name: 'Sauna a odpočinek', desc: 'Finská sauna s prosklenými dveřmi a odpočinková lávka hned vedle — privátně jen pro vaši skupinu.' },
         { name: 'Ve finské sauně', desc: 'Uvnitř vyhřáté sauny — teplé dřevo a klid po dni na horách.' },
         { name: 'Ložnice', desc: 'Jedna z ložnic s kamennou stěnou za čelním panelem — pohodlné spaní pro celou partu.' },
-        { name: 'Zastřešený bazén', desc: 'Vyhřívaný bazén pod posuvným zastřešením — tady se koupete i uprostřed zimy.' },
+        { name: 'Zastřešený bazén', desc: 'Vyhřívaný bazén pod zastřešením — tady se koupete i uprostřed zimy.' },
         { name: 'Pergola', desc: 'Mohutná dřevěná pergola s posezením pro celou skupinu — večer se tu sedí, i když venku leží sníh.' },
         { name: 'Zimní pozemek', desc: 'Rozlehlý zasněžený pozemek jen pro vás — od domu k bazénu, hřišti a dál.' },
+      ],
+      scenesSummer: [
+        { name: 'Příjezd k vile', desc: 'Plocha za bránou, kam zaparkuje celá skupina, a dům na konci příjezdovky mezi vzrostlými stromy.' },
+        { name: 'Zahrada s dětským hřištěm', desc: 'Lanový most, prolézačka a malá lezecká stěna na dohled od domu — děti mají svůj kout uvnitř pozemku.' },
+        { name: 'Bazén u vily', desc: 'Zastřešený vyhřívaný bazén s řadou lehátek hned u domu, kolem dokola vlastní trávník.' },
+        { name: 'Louka s houpačkou a ping-pongem', desc: 'Horní část pozemku: houpačka se skluzavkou, ping-pongový stůl a místo na běhání i na míč.' },
+        { name: 'Dřevěná terasa s posezením', desc: 'Terasa z dubových fošen nad gabionovou zdí — stůl pro celou partu a výhled na pergolu a hory.' },
+        { name: 'Pergola a ohniště', desc: 'Střed pozemku: krytá pergola s grilem vlevo, zapuštěné ohniště s gabionovou stěnou vpravo.' },
+        { name: 'Uvnitř pergoly', desc: 'Pod krovem z masivního dřeva: dlouhý stůl, zděný grilovací pult a otevřené strany do zahrady.' },
+        { name: 'Večerní terasa', desc: 'Po setmění se gabiony i schody nasvítí samy — křesílka u ohniště a v pozadí svítící bazén.' },
       ],
     },
     gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
@@ -387,9 +397,19 @@ const T = {
         { name: 'Sauna & relaxation', desc: 'A Finnish sauna with a glass door and a relaxation bench beside it — privately, just for your group.' },
         { name: 'Inside the sauna', desc: 'Inside the heated sauna — warm wood and quiet after a day in the mountains.' },
         { name: 'Bedroom', desc: 'One of the bedrooms with a stone accent wall behind the headboard — comfortable sleeping for the whole party.' },
-        { name: 'Covered pool', desc: 'A heated pool under a sliding cover — you swim here even in midwinter.' },
+        { name: 'Covered pool', desc: 'A heated pool under cover — you swim here even in midwinter.' },
         { name: 'Pergola', desc: 'A massive timber pergola with seating for the whole group — evenings happen here even with snow on the ground.' },
         { name: 'Winter grounds', desc: 'Sweeping snowbound grounds, all yours — from the house to the pool, the playground and beyond.' },
+      ],
+      scenesSummer: [
+        { name: 'Arriving at the villa', desc: 'The parking area behind the gate with room for the whole group, and the house at the end of the drive among tall trees.' },
+        { name: 'Garden with the playground', desc: 'A rope bridge, a climbing frame and a small climbing wall in sight of the house — the children have their own corner inside the grounds.' },
+        { name: 'The pool beside the house', desc: 'The covered heated pool and its row of sun loungers, right by the house and ringed by your own lawn.' },
+        { name: 'Meadow with swing and table tennis', desc: 'The upper part of the grounds: a swing with a slide, a table-tennis table and room to run around.' },
+        { name: 'The wooden deck', desc: 'An oak deck above the gabion wall — a table for the whole group, looking out to the pergola and the hills.' },
+        { name: 'Pergola and fire pit', desc: 'The centre of the grounds: the covered pergola with its grill on the left, the sunken fire pit with its gabion wall on the right.' },
+        { name: 'Inside the pergola', desc: 'Under a solid timber roof: the long table, a built-in grill counter and open sides onto the garden.' },
+        { name: 'The terrace after dark', desc: 'Once the sun is down the gabions and steps light themselves — chairs around the fire pit, the glowing pool behind.' },
       ],
     },
     gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge', all: 'All', leto: 'Summer', zima: 'Winter', vecer: 'Evening', interier: 'Interior' },
@@ -559,9 +579,19 @@ const T = {
         { name: 'Sauna & Ruhe', desc: 'Eine finnische Sauna mit Glastür und Ruhebank daneben — privat, nur für eure Gruppe.' },
         { name: 'In der Sauna', desc: 'Im Inneren der geheizten Sauna — warmes Holz und Ruhe nach einem Tag in den Bergen.' },
         { name: 'Schlafzimmer', desc: 'Eines der Schlafzimmer mit Steinwand hinter dem Kopfteil — bequemes Schlafen für die ganze Runde.' },
-        { name: 'Überdachter Pool', desc: 'Ein beheizter Pool unter verschiebbarer Überdachung — hier badet ihr selbst mitten im Winter.' },
+        { name: 'Überdachter Pool', desc: 'Ein beheizter Pool unter Überdachung — hier badet ihr selbst mitten im Winter.' },
         { name: 'Pergola', desc: 'Eine massive Holzpergola mit Sitzplätzen für die ganze Gruppe — Abende finden hier statt, auch wenn Schnee liegt.' },
         { name: 'Wintergrundstück', desc: 'Ein weitläufiges verschneites Grundstück, nur für euch — vom Haus zum Pool, zum Spielplatz und weiter.' },
+      ],
+      scenesSummer: [
+        { name: 'Ankunft an der Villa', desc: 'Der Stellplatz hinter dem Tor, auf dem die ganze Gruppe parkt, und das Haus am Ende der Zufahrt zwischen hohen Bäumen.' },
+        { name: 'Garten mit Spielplatz', desc: 'Hängebrücke, Klettergerüst und eine kleine Kletterwand in Sichtweite des Hauses — die Kinder haben ihre eigene Ecke auf dem Grundstück.' },
+        { name: 'Pool am Haus', desc: 'Der überdachte beheizte Pool mit seiner Liegenreihe direkt am Haus, ringsum die eigene Wiese.' },
+        { name: 'Wiese mit Schaukel und Tischtennis', desc: 'Der obere Teil des Grundstücks: Schaukel mit Rutsche, Tischtennisplatte und Platz zum Herumtoben.' },
+        { name: 'Holzterrasse mit Sitzplatz', desc: 'Eine Eichenterrasse über der Gabionenwand — ein Tisch für die ganze Gruppe, Blick auf Pergola und Berge.' },
+        { name: 'Pergola und Feuerstelle', desc: 'Die Mitte des Grundstücks: links die überdachte Pergola mit Grill, rechts die abgesenkte Feuerstelle mit Gabionenwand.' },
+        { name: 'In der Pergola', desc: 'Unter massivem Holzdach: der lange Tisch, ein gemauerter Grilltresen und offene Seiten zum Garten.' },
+        { name: 'Terrasse am Abend', desc: 'Nach Einbruch der Dunkelheit leuchten Gabionen und Stufen von selbst — Sessel an der Feuerstelle, dahinter der beleuchtete Pool.' },
       ],
     },
     gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern', all: 'Alle', leto: 'Sommer', zima: 'Winter', vecer: 'Abend', interier: 'Innen' },
@@ -731,9 +761,19 @@ const T = {
         { name: 'Sauna i relaks', desc: 'Fińska sauna ze szklanymi drzwiami i ławką do relaksu obok — prywatnie, tylko dla waszej grupy.' },
         { name: 'We wnętrzu sauny', desc: 'W środku nagrzanej sauny — ciepłe drewno i spokój po dniu w górach.' },
         { name: 'Sypialnia', desc: 'Jedna z sypialni z kamienną ścianą za zagłówkiem — wygodny sen dla całej ekipy.' },
-        { name: 'Zadaszony basen', desc: 'Podgrzewany basen pod przesuwnym zadaszeniem — kąpiel nawet w środku zimy.' },
+        { name: 'Zadaszony basen', desc: 'Podgrzewany basen pod zadaszeniem — kąpiel nawet w środku zimy.' },
         { name: 'Pergola', desc: 'Masywna drewniana pergola z miejscem dla całej grupy — wieczory trwają tu nawet przy śniegu.' },
         { name: 'Zimowa posesja', desc: 'Rozległa zaśnieżona posesja tylko dla was — od domu po basen, plac zabaw i dalej.' },
+      ],
+      scenesSummer: [
+        { name: 'Podjazd do willi', desc: 'Plac za bramą, na którym zaparkuje cała grupa, i dom na końcu podjazdu wśród wysokich drzew.' },
+        { name: 'Ogród z placem zabaw', desc: 'Most linowy, drabinki i mała ścianka wspinaczkowa w zasięgu wzroku od domu — dzieci mają swój kąt na posesji.' },
+        { name: 'Basen przy willi', desc: 'Zadaszony podgrzewany basen z rzędem leżaków tuż przy domu, dookoła własny trawnik.' },
+        { name: 'Łąka z huśtawką i ping-pongiem', desc: 'Górna część posesji: huśtawka ze zjeżdżalnią, stół do ping-ponga i miejsce do biegania.' },
+        { name: 'Drewniany taras z siedziskami', desc: 'Dębowy taras nad ścianą gabionową — stół dla całej ekipy i widok na pergolę oraz góry.' },
+        { name: 'Pergola i palenisko', desc: 'Środek posesji: po lewej zadaszona pergola z grillem, po prawej wpuszczone palenisko ze ścianą gabionową.' },
+        { name: 'We wnętrzu pergoli', desc: 'Pod masywną drewnianą więźbą: długi stół, murowany blat grillowy i otwarte boki na ogród.' },
+        { name: 'Wieczorny taras', desc: 'Po zmroku gabiony i schody podświetlają się same — fotele przy palenisku, w tle rozświetlony basen.' },
       ],
     },
     gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć', all: 'Wszystko', leto: 'Lato', zima: 'Zima', vecer: 'Wieczór', interier: 'Wnętrze' },
@@ -803,12 +843,27 @@ const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, lb: -1, l
 const CAL_MAX_OFFSET = 17;
 /* Ceny řídí VR_PRICING (nahoře v souboru). */
 const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
-const PANO_FILES = ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds'];
+/* 360° scény jsou SEZÓNNÍ. Zima = původní sada (interiéry + zasněžený pozemek),
+   léto = letní panoramata z Insta360 (celý pozemek za letního podvečera).
+   Pořadí musí přesně odpovídat T[lang].tour.scenes / tour.scenesSummer. */
+const PANO_SETS = {
+  zima: ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds'],
+  leto: ['s_drive', 's_playground', 's_pool', 's_meadow', 's_deck', 's_firepit', 's_pergola', 's_evening'],
+};
+function panoFiles() { return PANO_SETS[state.season] || PANO_SETS.leto; }
+function tourScenes() {
+  const t = tt();
+  const s = state.season === 'zima' ? t.tour.scenes : (t.tour.scenesSummer || t.tour.scenes);
+  return s || [];
+}
 
 /* Per-pano horizontal start point (fraction 0–1 across the equirect image; 0.5 =
    image centre). Vision-scored "most attractive view" per scene. Mapped to camera
    yaw in loadPano() so the viewer first faces the described subject. */
-const PANO_YAWF = { living: 0.76, kitchen: 0.4, sauna: 0.5, saunahot: 0.9, bed1: 0.48, bed2: 0.15, pool: 0.42, pergola: 0.49, grounds: 0.65 };
+const PANO_YAWF = {
+  living: 0.76, kitchen: 0.4, sauna: 0.5, saunahot: 0.9, bed1: 0.48, bed2: 0.15, pool: 0.42, pergola: 0.49, grounds: 0.65,
+  s_drive: 0.5, s_playground: 0.72, s_pool: 0.32, s_meadow: 0.62, s_deck: 0.12, s_firepit: 0.55, s_pergola: 0.5, s_evening: 0.25,
+};
 
 /* Gallery: curated real photos. c = filter category (leto/zima/vecer/interier).
    Order below is the "Vše" order (greatest-hits interleave). Files live at
@@ -1231,27 +1286,27 @@ function renderBedrooms() {
 }
 
 function renderThumbs() {
-  const t = tt();
-  const host = $('#vr-thumbs'); host.innerHTML = '';
-  t.tour.scenes.forEach((s, i) => {
+  const host = $('#vr-thumbs'); if (!host) return; host.innerHTML = '';
+  const files = panoFiles();
+  tourScenes().forEach((s, i) => {
     const b = el('button', {
       class: 'vrp-thumb', type: 'button', 'data-active': i === state.scene ? 'true' : 'false',
-      onclick: () => { panoLastInteract = Date.now(); if (state.scene !== i) { state.scene = i; renderScene(); loadPano(i); } },
-    }, [el('img', { src: 'media/pano/' + PANO_FILES[i] + '_t.jpg', alt: s.name, loading: 'lazy' }), el('span', { text: s.name })]);
+      onclick: () => { panoLastInteract = Date.now(); if (state.scene !== i) { state.scene = i; renderScene(); if (loadPano) loadPano(i); } },
+    }, [el('img', { src: 'media/pano/' + files[i] + '_t.jpg', alt: s.name, loading: 'lazy', decoding: 'async', width: '320', height: '160' }), el('span', { text: s.name })]);
     host.appendChild(b);
   });
 }
 
 function renderScene() {
-  const t = tt();
+  const list = tourScenes();
   const sc = state.scene;
-  const s = t.tour.scenes[sc] || t.tour.scenes[0];
+  const s = list[sc] || list[0]; if (!s) return;
   $('#vrp-capname').textContent = s.name;
   $('#vr-scene-name').textContent = s.name;
   $('#vr-scene-desc').textContent = s.desc;
   const pad = (n) => (n < 10 ? '0' + n : '' + n);
   $('#vr-scene-idx').textContent = pad(sc + 1);
-  $('#vr-scene-count').textContent = pad(PANO_FILES.length);
+  $('#vr-scene-count').textContent = pad(panoFiles().length);
   $all('#vr-thumbs .vrp-thumb').forEach((b, i) => b.setAttribute('data-active', i === sc ? 'true' : 'false'));
 }
 
@@ -2018,6 +2073,12 @@ function setSeason(season) {
   applyThemeColor();
   applySeasonButtons(); renderSeasonsCards(); applyTip(); applyHeroSeason();
   renderAmenities(); // hero amenity card (bazén ↔ lyžování) + 3 cards swap by season
+  // 360° prohlídka má vlastní sadu scén pro každou sezónu — přepni ji celou
+  // (náhledy, popisky, čítač) a nahraj první scénu; stará textura se uvolní
+  // uvnitř loadPano() přes tex.dispose().
+  state.scene = 0;
+  renderThumbs(); renderScene();
+  if (loadPano) loadPano(0);
   // Season → default gallery filter (Zima preselects the winter set; user can
   // still switch). If the lightbox is open, keep it in sync with the new filter.
   state.galFilter = season === 'zima' ? 'zima' : 'all';
@@ -2082,7 +2143,8 @@ function initPano() {
   let yaw = 0, userYaw = 0, pitch = 0, idle = 0, dragging = false, swayBase = 0;
   const loader = new THREE.TextureLoader();
   loadPano = (i) => {
-    const f = PANO_FILES[i] || PANO_FILES[0];
+    const files = panoFiles();
+    const f = files[i] || files[0];
     const spin = $('#vrpSpin');
     if (spin) spin.style.opacity = '1';
     mount.style.opacity = '0.2';
@@ -2131,7 +2193,7 @@ function initPano() {
   setInterval(() => {
     if (dragging) return;
     if (Date.now() - panoLastInteract < 12000) return;
-    const n = ((state.scene || 0) + 1) % PANO_FILES.length;
+    const n = ((state.scene || 0) + 1) % panoFiles().length;
     state.scene = n; renderScene(); loadPano(n);
   }, 9500);
 
