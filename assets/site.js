@@ -99,12 +99,15 @@ const VR_CONTACT = {
   phone: '+420 775 220 785', // doplní majitel — prázdné '' = řádek skrytý
 };
 
-/* Vzdálenosti pro blok Lokalita (ilustrativní mapa + výpis). Editovatelné zde. */
-const VR_DISTANCES = [
-  { place: 'Janské Lázně', km: 4 },
-  { place: 'Pec pod Sněžkou', km: 10 },
-  { place: 'Trutnov', km: 11 },
-];
+/* POČTY VÝLETŮ V OKRUZÍCH (sekce Lokalita).
+   Jediný zdroj pravdy je katalog průvodce — trips.json, pole `zone`:
+     villa = pěšky od brány · near = do 30 minut autem · far = na celý den.
+   Načítá se za běhu (a kešuje na 6 h); hodnoty níže jsou POUZE fallback,
+   když se fetch nepovede nebo běží web bez sítě. */
+const VR_TRIP_COUNTS = { foot: 7, car: 27, day: 4, total: 38 };
+const TRIPS_URL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/trips.json';
+const TRIPS_CACHE_KEY = 'vr_tripcounts_v1';
+const TRIPS_TTL = 21600000; // 6 h
 
 /* ============================ Translations (verbatim from prototype) ============================ */
 const T = {
@@ -135,8 +138,25 @@ const T = {
       sidebar: 'Přímá rezervace — o 5 % výhodněji než na platformách.',
     },
     statement: {
-      eyebrow: 'Není to dům. Je to celé místo.',
-      lead: 'Jinde dostanete pokoje a kousek zahrady sdílený s cizími lidmi. Tady si berete celý pozemek — rozlehlý, nerozdělený, jen pro vaši skupinu.',
+      eyebrow: 'Celý areál jen pro vás',
+      title: 'Za bránou už jste jen vy.',
+      lead: 'Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, 4 500 m² oploceného parku, bazén, saunu, pergolu i ohniště. <span class="vr-sm-hide">Žádná recepce, žádní cizí lidé u snídaně, žádné čekání, až se uvolní sauna.</span>',
+      stats: [
+        { num: '4 500 m²', label: 'oploceného parku jen pro vaši skupinu' },
+        { num: '22 lůžek', label: 'v sedmi ložnicích — a jeden stůl, u kterého sedí celá parta' },
+        { num: '1 skupina', label: 'v areálu je vždycky jen jedna, nikdy dvě najednou' },
+        { num: '0', label: 'prostor sdílených s cizími lidmi' },
+      ],
+      railTitle: 'Pokoje, které nemají strop',
+      rooms: [
+        { name: 'Zastřešený bazén', micro: 'Vyhřívaný a zastřešený — v provozu za každého počasí, bez rezervací a bez front.' },
+        { name: 'Finská sauna', micro: 'Bez slotů a bez čekání. Nikdo si ji nerezervuje před vámi.' },
+        { name: 'Pergola', micro: 'Kryté posezení pro celou partu najednou. Večeře venku, i když prší.' },
+        { name: 'Ohniště s gabionovou stěnou', micro: 'Po setmění se nasvítí samo. Vy jen přiložíte.' },
+        { name: 'Dětské hřiště', micro: 'Na dohled od pergoly, uvnitř plotu. Děti běhají, vy sedíte.' },
+      ],
+      close: 'Nikoho tu nepotkáte, pokud jste ho sami nepozvali.',
+      cta: 'Projít celý areál ve 360°',
     },
     band: { eyebrow: 'Jeden večer tady' },
     amenities: {
@@ -196,13 +216,53 @@ const T = {
         list: ['Ski Resort Černá hora 4 km, skibus u domu', 'Vyhřívaný krytý bazén a sauna', 'Lyžárna a příjezd bez řetězů'] },
     },
     lokalita: {
-      eyebrow: 'Lokalita', title: 'V horách, ale bez kompromisů', mapcap: 'Sem přijde mapa / Mapy.cz',
-      facts: [
-        { k: 'Region', v: 'Krkonoše, Česká republika' },
-        { k: 'Příjezd v zimě', v: 'Bez řetězů, stačí zimní pneumatiky' },
-        { k: 'Skibus', v: 'Zdarma, v docházkové vzdálenosti' },
-        { k: 'Parkování', v: 'Přímo u domu, bez řešení u vleků' },
+      eyebrow: 'Lokalita · Svoboda nad Úpou',
+      title: 'V horách, ne na konci světa.',
+      lead: 'Stojíme ve Svobodě nad Úpou, 150 metrů od centra — obchod, restaurace, vlak i autobus zvládnete pěšky. Sněžka je odsud dvacet minut autem. A z Prahy i z Vratislavi sem dojedete přibližně za dvě hodiny.',
+      leadWinter: 'Skibus do SkiResortu Černá hora–Pec staví 200 metrů od brány a jezdí zdarma — k vlekům se dostanete bez auta a bez hledání parkování. Auto pak může stát celý týden na jednom místě přímo na pozemku.',
+      doorstep: [
+        { num: '150 m', label: 'do centra Svobody — asi dvě minuty pěšky' },
+        { num: '200 m', label: 'k zastávce skibusu — necelé tři minuty pěšky' },
+        { num: '2 h', label: 'přibližně z Prahy i z Vratislavi, z Drážďan tři hodiny' },
+        { num: '4 km', label: 'na sjezdovky Černá hora — skibus jezdí zdarma' },
       ],
+      mapTitle: ['{n} ověřený výlet ve třech okruzích', '{n} ověřené výlety ve třech okruzích', '{n} ověřených výletů ve třech okruzích'],
+      mapNote: 'Vzdálenosti na mapě odpovídají skutečnosti, terén je kreslený. Kroužek kolem vily má poloměr tři kilometry vzdušnou čarou.',
+      legend: '◆ Villa Rudolf · ○ kam dojdete pěšky · ┄ hranice s Polskem · časy a vzdálenosti jsou po silnici',
+      mapAlt: 'Kreslená mapa okolí: Villa Rudolf ve Svobodě nad Úpou, Sněžka, Janské Lázně, Pec pod Sněžkou, Trutnov a hranice s Polskem.',
+      rings: [
+        { name: 'Pěšky od brány', count: ['{n} cíl', '{n} cíle', '{n} cílů'],
+          body: 'Janské Lázně a Stezka korunami stromů, krytý bazén Aquacentrum, lamatreking na rodinné farmě, farmapark Muchomůrka, pohádkové Do Krakonošova, adventure minigolf i střelnice. Na žádný z nich nepotřebujete auto.',
+          link: 'Zobrazit v průvodci →' },
+        { name: 'Do 30 minut autem', count: ['{n} cíl', '{n} cíle', '{n} cílů'],
+          body: 'Sněžka lanovkou nebo pěšky, Černá hora kabinkou, Obří důl i s kočárkem, bobová dráha v Peci, rozhledny, bukový prales Rýchory, koupaliště i lezecká stěna v Trutnově.',
+          link: 'Zobrazit v průvodci →' },
+        { name: 'Na celý den', count: ['{n} cíl', '{n} cíle', '{n} cílů'],
+          body: 'Adršpašské skály, Safari Park Dvůr Králové, sklárna Harrachov s Mumlavskými vodopády a aquapark Tropikana v polském Karpaczi — na ten si vezměte doklady i dětem.',
+          link: 'Zobrazit v průvodci →' },
+      ],
+      arrive: [
+        { k: 'Praha', v: 'přibližně 2 hodiny autem' },
+        { k: 'Vratislav (PL)', v: 'přibližně 2 hodiny autem' },
+        { k: 'Drážďany', v: 'přibližně 3 hodiny autem' },
+        { k: 'Vlakem', v: 'nádraží Svoboda nad Úpou, k domu pěšky' },
+        { k: 'Autobusem', v: 'zastávka ve městě, k domu pěšky' },
+        { k: 'Skibus', v: 'zastávka 200 m od brány, zdarma' },
+        { k: 'Parkování', v: 'přímo na pozemku, za bránou' },
+      ],
+      mapLabels: {
+        villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
+        snezka: 'Sněžka', snezkaMeta: '1603 m',
+        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        cernaHora: 'Černá hora', cernaHoraMeta: 'sjezdovky 4 km',
+        janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
+        trutnov: 'Trutnov', trutnovMeta: '11 km',
+        hmarsov: 'Horní Maršov', obriDul: 'Obří důl', rychory: 'Rýchory', mladeBuky: 'Mladé Buky',
+        upa: 'Úpa', polsko: 'POLSKO', ring: 'PĚŠKY OD BRÁNY',
+        praha: 'Praha ≈ 2 h', vratislav: 'Vratislav ≈ 2 h', drazdany: 'Drážďany ≈ 3 h',
+        adrspach: 'Adršpašské skály 45 min', safari: 'Safari Dvůr Králové 30 min',
+        scale: '0 — 2 km', north: 'S',
+      },
     },
     tour: {
       eyebrow: 'Projděte si dům i pozemek',
@@ -274,7 +334,6 @@ const T = {
     recenze: {
       eyebrow: 'Recenze', title: 'Co říkají hosté', note: 'Skutečné recenze z Airbnb, Booking.com a Google.',
     },
-    lokdist: { title: 'Vzdálenosti od domu', skibus: 'Skibus', skibusVal: 'zastávka u domu', unit: 'km' },
     video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', play: 'Přehrát video' },
     share: { eyebrow: 'Sdílejte', title: 'Byli jste u nás? Pochlubte se.', body: 'Odvezli jste si hezké fotky? Sdílejte je, označte @villarudolfretreat a přidejte #villarudolf — ať je uvidí i další. Ty nejhezčí se můžou objevit přímo tady na webu.', ig: 'Sledovat na Instagramu' },
     cta: {
@@ -317,8 +376,25 @@ const T = {
       sidebar: 'Booking direct — 5% better than the platforms.',
     },
     statement: {
-      eyebrow: 'Not a house. A whole place.',
-      lead: 'Elsewhere you get rooms and a patch of shared garden. Here you take the entire grounds — vast, undivided, yours alone.',
+      eyebrow: 'The whole estate, only yours',
+      title: 'Past the gate, it\'s just you.',
+      lead: 'You are not booking rooms in a house where somebody else is staying too. You take the whole place — the house, 4,500 m² of fenced grounds, the pool, the sauna, the pergola and the fire pit. <span class="vr-sm-hide">No reception desk, no strangers at breakfast, no waiting for the sauna to free up.</span>',
+      stats: [
+        { num: '4,500 m²', label: 'of fenced grounds for your group alone' },
+        { num: '22 beds', label: 'in seven bedrooms — and one table the whole party sits at' },
+        { num: '1 group', label: 'there is only ever one on the estate, never two at once' },
+        { num: '0', label: 'spaces shared with strangers' },
+      ],
+      railTitle: 'Rooms without a ceiling',
+      rooms: [
+        { name: 'The covered pool', micro: 'Heated and under cover — open in any weather, no booking, no queue.' },
+        { name: 'Finnish sauna', micro: 'No slots, no waiting. Nobody has reserved it before you.' },
+        { name: 'The pergola', micro: 'Covered seating for the whole group at once. Dinner outdoors, even in the rain.' },
+        { name: 'Fire pit with a gabion wall', micro: 'It lights itself after dark. You only add the wood.' },
+        { name: 'The playground', micro: 'In sight of the pergola, inside the fence. The children run, you sit.' },
+      ],
+      close: 'You will not meet anyone here you have not invited yourself.',
+      cta: 'Walk the whole estate in 360°',
     },
     band: { eyebrow: 'One evening here' },
     amenities: {
@@ -378,13 +454,53 @@ const T = {
         list: ['Ski Resort Černá hora 4 km, ski bus at the house', 'Heated covered pool and sauna', 'Ski room and access without snow chains'] },
     },
     lokalita: {
-      eyebrow: 'Location', title: 'In the mountains, without compromise', mapcap: 'Map / Mapy.cz goes here',
-      facts: [
-        { k: 'Region', v: 'Krkonoše, Czech Republic' },
-        { k: 'Winter access', v: 'No chains, winter tyres are enough' },
-        { k: 'Ski bus', v: 'Free, within walking distance' },
-        { k: 'Parking', v: 'At the house, none to solve at the lifts' },
+      eyebrow: 'Location · Svoboda nad Úpou',
+      title: 'In the mountains, not at the end of the world.',
+      lead: 'We are in Svoboda nad Úpou, 150 metres from the centre — shop, restaurant, train and bus are all within walking distance. Sněžka is twenty minutes away by car. And Prague and Wrocław are both roughly two hours from here.',
+      leadWinter: 'The free ski bus to SkiResort Černá hora–Pec stops 200 metres from the gate — you reach the lifts without the car and without hunting for a parking space. The car can then stay put on the grounds all week.',
+      doorstep: [
+        { num: '150 m', label: 'to the centre of Svoboda — about a two-minute walk' },
+        { num: '200 m', label: 'to the ski-bus stop — under three minutes on foot' },
+        { num: '2 h', label: 'roughly from Prague and from Wrocław, three from Dresden' },
+        { num: '4 km', label: 'to the Černá hora slopes — the ski bus is free' },
       ],
+      mapTitle: ['{n} tried-and-tested trip in three rings', '{n} tried-and-tested trips in three rings'],
+      mapNote: 'Distances on the map are true to life; the terrain is drawn by hand. The ring around the villa has a radius of three kilometres as the crow flies.',
+      legend: '◆ Villa Rudolf · ○ within walking distance · ┄ the Polish border · times and distances are by road',
+      mapAlt: 'A hand-drawn map of the area: Villa Rudolf in Svoboda nad Úpou, Sněžka, Janské Lázně, Pec pod Sněžkou, Trutnov and the Polish border.',
+      rings: [
+        { name: 'On foot from the gate', count: ['{n} destination', '{n} destinations'],
+          body: 'Janské Lázně and the Treetop Walk, the Aquacentrum indoor pool, llama trekking at a family farm, the Muchomůrka farm park, the Do Krakonošova fairy-tale exhibition, adventure minigolf and a shooting range. Not one of them needs a car.',
+          link: 'See them in the guide →' },
+        { name: 'Within a 30-minute drive', count: ['{n} destination', '{n} destinations'],
+          body: 'Sněžka by cable car or on foot, Černá hora by gondola, Obří důl even with a pushchair, the bobsled track in Pec, lookout towers, the Rýchory beech forest, the lido and the climbing wall in Trutnov.',
+          link: 'See them in the guide →' },
+        { name: 'A full day out', count: ['{n} destination', '{n} destinations'],
+          body: 'The Adršpach rock town, Safari Park Dvůr Králové, the Harrachov glassworks with the Mumlava waterfalls, and the Tropikana aquapark in Karpacz, Poland — take everyone\'s ID for that one, children included.',
+          link: 'See them in the guide →' },
+      ],
+      arrive: [
+        { k: 'Prague', v: 'roughly 2 hours by car' },
+        { k: 'Wrocław (PL)', v: 'roughly 2 hours by car' },
+        { k: 'Dresden', v: 'roughly 3 hours by car' },
+        { k: 'By train', v: 'Svoboda nad Úpou station, then a short walk' },
+        { k: 'By bus', v: 'a stop in town, then a short walk' },
+        { k: 'Ski bus', v: 'stop 200 m from the gate, free of charge' },
+        { k: 'Parking', v: 'on the grounds, behind the gate' },
+      ],
+      mapLabels: {
+        villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
+        snezka: 'Sněžka', snezkaMeta: '1603 m',
+        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        cernaHora: 'Černá hora', cernaHoraMeta: 'ski slopes 4 km',
+        janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
+        trutnov: 'Trutnov', trutnovMeta: '11 km',
+        hmarsov: 'Horní Maršov', obriDul: 'Obří důl', rychory: 'Rýchory', mladeBuky: 'Mladé Buky',
+        upa: 'Úpa', polsko: 'POLAND', ring: 'WALKING DISTANCE',
+        praha: 'Prague ≈ 2 h', vratislav: 'Wrocław ≈ 2 h', drazdany: 'Dresden ≈ 3 h',
+        adrspach: 'Adršpach Rocks 45 min', safari: 'Safari Dvůr Králové 30 min',
+        scale: '0 — 2 km', north: 'N',
+      },
     },
     tour: {
       eyebrow: 'Step inside & out',
@@ -456,7 +572,6 @@ const T = {
     recenze: {
       eyebrow: 'Reviews', title: 'What guests say', note: 'Real reviews from Airbnb, Booking.com and Google.',
     },
-    lokdist: { title: 'Distances from the house', skibus: 'Ski bus', skibusVal: 'stop at the house', unit: 'km' },
     video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', play: 'Play video' },
     share: { eyebrow: 'Share', title: 'Stayed with us? Show it off.', body: 'Took some nice photos? Share them, tag @villarudolfretreat and add #villarudolf so others can see them too. The best ones may appear right here on the site.', ig: 'Follow on Instagram' },
     cta: {
@@ -499,8 +614,25 @@ const T = {
       sidebar: 'Direkt buchen — 5 % günstiger als über die Plattformen.',
     },
     statement: {
-      eyebrow: 'Kein Haus. Ein ganzer Ort.',
-      lead: 'Anderswo bekommt ihr Zimmer und ein Stück geteilten Garten. Hier nehmt ihr das ganze Grundstück — weitläufig, ungeteilt, nur für euch.',
+      eyebrow: 'Das ganze Anwesen nur für euch',
+      title: 'Hinter dem Tor seid ihr unter euch.',
+      lead: 'Ihr bucht keine Zimmer in einem Haus, in dem noch jemand anderes wohnt. Ihr nehmt das ganze Grundstück — das Haus, 4.500 m² eingezäunten Park, Pool, Sauna, Pergola und Feuerstelle. <span class="vr-sm-hide">Keine Rezeption, keine Fremden beim Frühstück, kein Warten, bis die Sauna frei wird.</span>',
+      stats: [
+        { num: '4.500 m²', label: 'eingezäunter Park nur für eure Gruppe' },
+        { num: '22 Betten', label: 'in sieben Schlafzimmern — und ein Tisch für die ganze Runde' },
+        { num: '1 Gruppe', label: 'auf dem Anwesen ist immer nur eine, nie zwei gleichzeitig' },
+        { num: '0', label: 'Räume, die ihr mit Fremden teilt' },
+      ],
+      railTitle: 'Räume ohne Decke',
+      rooms: [
+        { name: 'Überdachter Pool', micro: 'Beheizt und überdacht — bei jedem Wetter offen, ohne Anmeldung, ohne Schlange.' },
+        { name: 'Finnische Sauna', micro: 'Keine Zeitfenster, kein Warten. Niemand hat sie vor euch reserviert.' },
+        { name: 'Pergola', micro: 'Überdachte Sitzplätze für die ganze Gruppe. Abendessen draußen, auch bei Regen.' },
+        { name: 'Feuerstelle mit Gabionenwand', micro: 'Nach Einbruch der Dunkelheit leuchtet sie von selbst. Ihr legt nur nach.' },
+        { name: 'Spielplatz', micro: 'In Sichtweite der Pergola, innerhalb des Zauns. Die Kinder rennen, ihr sitzt.' },
+      ],
+      close: 'Ihr trefft hier niemanden, den ihr nicht selbst eingeladen habt.',
+      cta: 'Das ganze Anwesen in 360° durchgehen',
     },
     band: { eyebrow: 'Ein Abend hier' },
     amenities: {
@@ -560,13 +692,53 @@ const T = {
         list: ['Skigebiet Černá hora 4 km, Skibus am Haus', 'Beheizter überdachter Pool und Sauna', 'Skiraum und Anfahrt ohne Ketten'] },
     },
     lokalita: {
-      eyebrow: 'Lage', title: 'In den Bergen, ohne Kompromiss', mapcap: 'Karte / Mapy.cz hier',
-      facts: [
-        { k: 'Region', v: 'Riesengebirge, Tschechien' },
-        { k: 'Anfahrt im Winter', v: 'Ohne Ketten, Winterreifen genügen' },
-        { k: 'Skibus', v: 'Kostenlos, in Gehweite' },
-        { k: 'Parken', v: 'Am Haus, kein Problem an den Liften' },
+      eyebrow: 'Lage · Svoboda nad Úpou',
+      title: 'In den Bergen, nicht am Ende der Welt.',
+      lead: 'Wir stehen in Svoboda nad Úpou, 150 Meter vom Zentrum — Laden, Restaurant, Bahn und Bus schafft ihr zu Fuß. Die Schneekoppe ist zwanzig Autominuten entfernt. Und aus Prag wie aus Breslau seid ihr in rund zwei Stunden hier.',
+      leadWinter: 'Der kostenlose Skibus zum SkiResort Černá hora–Pec hält 200 Meter vom Tor — zu den Liften kommt ihr ohne Auto und ohne Parkplatzsuche. Das Auto kann dann die ganze Woche auf dem Grundstück stehen bleiben.',
+      doorstep: [
+        { num: '150 m', label: 'ins Zentrum von Svoboda — etwa zwei Minuten zu Fuß' },
+        { num: '200 m', label: 'zur Skibus-Haltestelle — keine drei Minuten zu Fuß' },
+        { num: '2 h', label: 'rund aus Prag und aus Breslau, drei aus Dresden' },
+        { num: '4 km', label: 'zu den Pisten der Černá hora — der Skibus ist kostenlos' },
       ],
+      mapTitle: ['{n} erprobter Ausflug in drei Ringen', '{n} erprobte Ausflüge in drei Ringen'],
+      mapNote: 'Die Entfernungen auf der Karte stimmen, das Gelände ist gezeichnet. Der Ring um die Villa hat drei Kilometer Radius Luftlinie.',
+      legend: '◆ Villa Rudolf · ○ zu Fuß erreichbar · ┄ Grenze zu Polen · Zeiten und Entfernungen gelten auf der Straße',
+      mapAlt: 'Gezeichnete Karte der Umgebung: Villa Rudolf in Svoboda nad Úpou, Schneekoppe, Janské Lázně, Pec pod Sněžkou, Trutnov und die Grenze zu Polen.',
+      rings: [
+        { name: 'Zu Fuß vom Tor', count: ['{n} Ziel', '{n} Ziele'],
+          body: 'Janské Lázně und der Baumwipfelpfad, das Hallenbad Aquacentrum, Lamatrekking auf einer Familienfarm, der Farmapark Muchomůrka, die Märchenausstellung Do Krakonošova, Adventure-Minigolf und ein Schießstand. Für keines davon braucht ihr das Auto.',
+          link: 'Im Reiseführer ansehen →' },
+        { name: 'Bis 30 Autominuten', count: ['{n} Ziel', '{n} Ziele'],
+          body: 'Die Schneekoppe per Seilbahn oder zu Fuß, die Černá hora per Gondel, der Obří důl auch mit Kinderwagen, die Sommerrodelbahn in Pec, Aussichtstürme, der Buchenurwald Rýchory, Freibad und Kletterwand in Trutnov.',
+          link: 'Im Reiseführer ansehen →' },
+        { name: 'Für einen ganzen Tag', count: ['{n} Ziel', '{n} Ziele'],
+          body: 'Die Adersbacher Felsenstadt, der Safari-Park Dvůr Králové, die Glashütte Harrachov mit den Mumlava-Wasserfällen und der Aquapark Tropikana im polnischen Karpacz — dorthin die Ausweise mitnehmen, auch für die Kinder.',
+          link: 'Im Reiseführer ansehen →' },
+      ],
+      arrive: [
+        { k: 'Prag', v: 'rund 2 Stunden mit dem Auto' },
+        { k: 'Breslau (PL)', v: 'rund 2 Stunden mit dem Auto' },
+        { k: 'Dresden', v: 'rund 3 Stunden mit dem Auto' },
+        { k: 'Mit der Bahn', v: 'Bahnhof Svoboda nad Úpou, zu Fuß zum Haus' },
+        { k: 'Mit dem Bus', v: 'Haltestelle im Ort, zu Fuß zum Haus' },
+        { k: 'Skibus', v: 'Haltestelle 200 m vom Tor, kostenlos' },
+        { k: 'Parken', v: 'direkt auf dem Grundstück, hinter dem Tor' },
+      ],
+      mapLabels: {
+        villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
+        snezka: 'Schneekoppe', snezkaMeta: '1603 m',
+        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        cernaHora: 'Černá hora', cernaHoraMeta: 'Pisten 4 km',
+        janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
+        trutnov: 'Trutnov', trutnovMeta: '11 km',
+        hmarsov: 'Horní Maršov', obriDul: 'Obří důl', rychory: 'Rýchory', mladeBuky: 'Mladé Buky',
+        upa: 'Úpa', polsko: 'POLEN', ring: 'ZU FUSS VOM TOR',
+        praha: 'Prag ≈ 2 h', vratislav: 'Breslau ≈ 2 h', drazdany: 'Dresden ≈ 3 h',
+        adrspach: 'Adersbacher Felsen 45 Min.', safari: 'Safari Dvůr Králové 30 Min.',
+        scale: '0 — 2 km', north: 'N',
+      },
     },
     tour: {
       eyebrow: 'Drinnen & draußen',
@@ -638,7 +810,6 @@ const T = {
     recenze: {
       eyebrow: 'Bewertungen', title: 'Was Gäste sagen', note: 'Echte Bewertungen von Airbnb, Booking.com und Google.',
     },
-    lokdist: { title: 'Entfernungen vom Haus', skibus: 'Skibus', skibusVal: 'Haltestelle am Haus', unit: 'km' },
     video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', play: 'Video abspielen' },
     share: { eyebrow: 'Teilen', title: 'Bei uns gewesen? Zeigt es her.', body: 'Schöne Fotos gemacht? Teilt sie, markiert @villarudolfretreat und fügt #villarudolf hinzu — damit sie auch andere sehen. Die schönsten erscheinen vielleicht direkt hier auf der Website.', ig: 'Auf Instagram folgen' },
     cta: {
@@ -681,8 +852,25 @@ const T = {
       sidebar: 'Rezerwacja bezpośrednia — o 5% taniej niż na platformach.',
     },
     statement: {
-      eyebrow: 'To nie dom. To całe miejsce.',
-      lead: 'Gdzie indziej dostajecie pokoje i kawałek wspólnego ogrodu. Tu bierzecie całą posesję — rozległą, niepodzieloną, tylko dla was.',
+      eyebrow: 'Cały teren tylko dla was',
+      title: 'Za bramą jesteście tylko wy.',
+      lead: 'Nie rezerwujecie pokoi w domu, w którym mieszka jeszcze ktoś inny. Bierzecie całą posesję — dom, 4500 m² ogrodzonego parku, basen, saunę, pergolę i palenisko. <span class="vr-sm-hide">Żadnej recepcji, żadnych obcych przy śniadaniu, żadnego czekania, aż zwolni się sauna.</span>',
+      stats: [
+        { num: '4500 m²', label: 'ogrodzonego parku tylko dla waszej grupy' },
+        { num: '22 łóżka', label: 'w siedmiu sypialniach — i jeden stół dla całej ekipy' },
+        { num: '1 grupa', label: 'na terenie jest zawsze tylko jedna, nigdy dwie naraz' },
+        { num: '0', label: 'przestrzeni dzielonych z obcymi' },
+      ],
+      railTitle: 'Pokoje bez sufitu',
+      rooms: [
+        { name: 'Zadaszony basen', micro: 'Podgrzewany i zadaszony — czynny przy każdej pogodzie, bez rezerwacji i bez kolejki.' },
+        { name: 'Fińska sauna', micro: 'Bez okienek i bez czekania. Nikt nie rezerwuje jej przed wami.' },
+        { name: 'Pergola', micro: 'Zadaszone miejsce dla całej ekipy naraz. Kolacja na zewnątrz, nawet gdy pada.' },
+        { name: 'Palenisko ze ścianą gabionową', micro: 'Po zmroku podświetla się samo. Wy tylko dokładacie drewno.' },
+        { name: 'Plac zabaw', micro: 'W zasięgu wzroku od pergoli, wewnątrz ogrodzenia. Dzieci biegają, wy siedzicie.' },
+      ],
+      close: 'Nie spotkacie tu nikogo, kogo sami nie zaprosicie.',
+      cta: 'Przejść cały teren w 360°',
     },
     band: { eyebrow: 'Jeden wieczór tutaj' },
     amenities: {
@@ -742,13 +930,53 @@ const T = {
         list: ['Ośrodek Černá hora 4 km, skibus przy domu', 'Podgrzewany kryty basen i sauna', 'Narciarnia i dojazd bez łańcuchów'] },
     },
     lokalita: {
-      eyebrow: 'Lokalizacja', title: 'W górach, bez kompromisów', mapcap: 'Tu mapa / Mapy.cz',
-      facts: [
-        { k: 'Region', v: 'Karkonosze, Czechy' },
-        { k: 'Dojazd zimą', v: 'Bez łańcuchów, wystarczą opony zimowe' },
-        { k: 'Skibus', v: 'Darmowy, w zasięgu spaceru' },
-        { k: 'Parking', v: 'Przy domu, bez kłopotu pod wyciągami' },
+      eyebrow: 'Lokalizacja · Svoboda nad Úpou',
+      title: 'W górach, a nie na końcu świata.',
+      lead: 'Stoimy w Svobodzie nad Úpou, 150 metrów od centrum — sklep, restauracja, pociąg i autobus są w zasięgu spaceru. Śnieżka jest stąd dwadzieścia minut samochodem. A z Pragi i z Wrocławia dojedziecie tu w mniej więcej dwie godziny.',
+      leadWinter: 'Darmowy skibus do SkiResortu Černá hora–Pec zatrzymuje się 200 metrów od bramy — pod wyciągi dostaniecie się bez auta i bez szukania parkingu. Samochód może potem stać cały tydzień na terenie posesji.',
+      doorstep: [
+        { num: '150 m', label: 'do centrum Svobody — jakieś dwie minuty pieszo' },
+        { num: '200 m', label: 'do przystanku skibusu — niecałe trzy minuty pieszo' },
+        { num: '2 h', label: 'mniej więcej z Pragi i z Wrocławia, trzy z Drezna' },
+        { num: '4 km', label: 'na stoki Černej hory — skibus jeździ za darmo' },
       ],
+      mapTitle: ['{n} sprawdzona wycieczka w trzech kręgach', '{n} sprawdzone wycieczki w trzech kręgach', '{n} sprawdzonych wycieczek w trzech kręgach'],
+      mapNote: 'Odległości na mapie są prawdziwe, teren jest rysowany. Krąg wokół willi ma promień trzech kilometrów w linii prostej.',
+      legend: '◆ Villa Rudolf · ○ dokąd dojdziecie pieszo · ┄ granica z Polską · czasy i odległości liczone drogą',
+      mapAlt: 'Rysowana mapa okolicy: Villa Rudolf w Svobodzie nad Úpou, Śnieżka, Janské Lázně, Pec pod Sněžkou, Trutnov i granica z Polską.',
+      rings: [
+        { name: 'Pieszo od bramy', count: ['{n} cel', '{n} cele', '{n} celów'],
+          body: 'Janské Lázně i Ścieżka w koronach drzew, kryty basen Aquacentrum, trekking z lamami na rodzinnej farmie, farmapark Muchomůrka, bajkowa ekspozycja Do Krakonošova, adventure minigolf i strzelnica. Do żadnego z nich nie potrzebujecie auta.',
+          link: 'Zobacz w przewodniku →' },
+        { name: 'Do 30 minut samochodem', count: ['{n} cel', '{n} cele', '{n} celów'],
+          body: 'Śnieżka kolejką lub pieszo, Černá hora gondolą, Obří důl nawet z wózkiem, tor saneczkowy w Pecu, wieże widokowe, bukowa puszcza Rýchory, kąpielisko i ścianka wspinaczkowa w Trutnovie.',
+          link: 'Zobacz w przewodniku →' },
+        { name: 'Na cały dzień', count: ['{n} cel', '{n} cele', '{n} celów'],
+          body: 'Adršpašské skały, Safari Park Dvůr Králové, huta szkła Harrachov z wodospadami Mumlavy i aquapark Tropikana w Karpaczu — tam weźcie dokumenty także dla dzieci.',
+          link: 'Zobacz w przewodniku →' },
+      ],
+      arrive: [
+        { k: 'Praga', v: 'około 2 godziny samochodem' },
+        { k: 'Wrocław', v: 'około 2 godziny samochodem' },
+        { k: 'Drezno', v: 'około 3 godziny samochodem' },
+        { k: 'Pociągiem', v: 'stacja Svoboda nad Úpou, do domu pieszo' },
+        { k: 'Autobusem', v: 'przystanek w miasteczku, do domu pieszo' },
+        { k: 'Skibus', v: 'przystanek 200 m od bramy, za darmo' },
+        { k: 'Parking', v: 'na terenie posesji, za bramą' },
+      ],
+      mapLabels: {
+        villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
+        snezka: 'Śnieżka', snezkaMeta: '1603 m',
+        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        cernaHora: 'Černá hora', cernaHoraMeta: 'stoki 4 km',
+        janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
+        trutnov: 'Trutnov', trutnovMeta: '11 km',
+        hmarsov: 'Horní Maršov', obriDul: 'Obří důl', rychory: 'Rýchory', mladeBuky: 'Mladé Buky',
+        upa: 'Úpa', polsko: 'POLSKA', ring: 'PIESZO OD BRAMY',
+        praha: 'Praga ≈ 2 h', vratislav: 'Wrocław ≈ 2 h', drazdany: 'Drezno ≈ 3 h',
+        adrspach: 'Adršpašskie skały 45 min', safari: 'Safari Dvůr Králové 30 min',
+        scale: '0 — 2 km', north: 'N',
+      },
     },
     tour: {
       eyebrow: 'W środku i na zewnątrz',
@@ -820,7 +1048,6 @@ const T = {
     recenze: {
       eyebrow: 'Recenzje', title: 'Co mówią goście', note: 'Prawdziwe recenzje z Airbnb, Booking.com i Google.',
     },
-    lokdist: { title: 'Odległości od domu', skibus: 'Skibus', skibusVal: 'przystanek przy domu', unit: 'km' },
     video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', play: 'Odtwórz wideo' },
     share: { eyebrow: 'Udostępnij', title: 'Byliście u nas? Pochwalcie się.', body: 'Macie ładne zdjęcia? Udostępnijcie je, oznaczcie @villarudolfretreat i dodajcie #villarudolf — niech zobaczą je też inni. Najlepsze mogą pojawić się właśnie tu, na stronie.', ig: 'Obserwuj na Instagramie' },
     cta: {
@@ -934,6 +1161,9 @@ function setTexts() {
     if (typeof v === 'string') n.innerHTML = v;
   });
   applyVideoAria();
+  applyTripCounts();   // {n} v okruzích a v nadpisu mapy (plurály podle jazyka)
+  renderArrive();      // blok „Než dorazíte"
+  applyLokLead();      // lead sekce Lokalita je sezónní (léto / zima)
   document.documentElement.lang = state.lang;
 }
 
@@ -1185,18 +1415,76 @@ function applyVideoAria() {
 }
 
 /* Blok vzdáleností pro sekci Lokalita (ilustrativní mapa je statická v HTML). */
-function renderLokDistances() {
+/* ---------- Lokalita: počty výletů, okruhy, „Než dorazíte", sezónní lead ---------- */
+/* Plurál: čeština a polština mají tři tvary (1 / 2–4 / 5+), angličtina a němčina dva. */
+function pluralForm(lang, n) {
+  if (lang === 'cs') return n === 1 ? 0 : (n >= 2 && n <= 4 ? 1 : 2);
+  if (lang === 'pl') {
+    if (n === 1) return 0;
+    const d = n % 10, h = n % 100;
+    return (d >= 2 && d <= 4 && !(h >= 12 && h <= 14)) ? 1 : 2;
+  }
+  return n === 1 ? 0 : 1;
+}
+/* Prvky s data-tpl + data-count nesou šablonu s {n} (řetězec nebo pole tvarů). */
+function applyTripCounts() {
   const t = tt();
-  const host = $('#vr-mapdist'); if (!host) return; host.innerHTML = '';
-  host.appendChild(el('div', { class: 'vr-mapdist-title', text: t.lokdist.title }));
-  const list = el('div', { class: 'vr-mapdist-list' });
-  VR_DISTANCES.forEach((d) => list.appendChild(el('div', { class: 'vr-mapdist-row' }, [
-    el('span', { class: 'p', text: d.place }), el('span', { class: 'd', text: d.km + ' ' + t.lokdist.unit }),
-  ])));
-  list.appendChild(el('div', { class: 'vr-mapdist-row' }, [
-    el('span', { class: 'p', text: t.lokdist.skibus }), el('span', { class: 'd', text: t.lokdist.skibusVal }),
-  ]));
-  host.appendChild(list);
+  $all('[data-tpl][data-count]').forEach((n) => {
+    const v = resolve(t, n.getAttribute('data-tpl'));
+    const key = n.getAttribute('data-count');
+    const num = VR_TRIP_COUNTS[key] != null ? VR_TRIP_COUNTS[key] : VR_TRIP_COUNTS.total;
+    let tpl = v;
+    if (Array.isArray(v)) tpl = v[Math.min(pluralForm(state.lang, num), v.length - 1)];
+    if (typeof tpl !== 'string') return;
+    n.textContent = tpl.replace('{n}', String(num));
+  });
+}
+function renderArrive() {
+  const t = tt();
+  const host = $('#vr-lok-arrive'); if (!host) return; host.innerHTML = '';
+  ((t.lokalita && t.lokalita.arrive) || []).forEach((r) => {
+    host.appendChild(el('div', { class: 'vr-lok-arrive-row' }, [
+      el('dt', { text: r.k }), el('dd', { text: r.v }),
+    ]));
+  });
+}
+function applyLokLead() {
+  const t = tt();
+  const n = $('#vr-lok-lead'); if (!n || !t.lokalita) return;
+  n.textContent = state.season === 'zima' && t.lokalita.leadWinter ? t.lokalita.leadWinter : t.lokalita.lead;
+}
+/* Živé počty z katalogu průvodce. Selhání je bezbolestné — zůstanou fallback čísla. */
+function loadTripCounts() {
+  const apply = (c) => {
+    if (!c || !c.total) return;
+    VR_TRIP_COUNTS.foot = c.foot; VR_TRIP_COUNTS.car = c.car;
+    VR_TRIP_COUNTS.day = c.day; VR_TRIP_COUNTS.total = c.total;
+    applyTripCounts();
+  };
+  try {
+    const raw = localStorage.getItem(TRIPS_CACHE_KEY);
+    if (raw) {
+      const c = JSON.parse(raw);
+      if (c && Date.now() - c.at < TRIPS_TTL) { apply(c); return; }
+    }
+  } catch (e) {}
+  if (typeof fetch !== 'function') return;
+  fetch(TRIPS_URL, { cache: 'no-cache' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      const trips = d && (Array.isArray(d) ? d : d.trips);
+      if (!Array.isArray(trips) || !trips.length) return;
+      const c = { foot: 0, car: 0, day: 0, total: trips.length, at: Date.now() };
+      trips.forEach((tr) => {
+        if (tr.zone === 'villa') c.foot++;
+        else if (tr.zone === 'near') c.car++;
+        else if (tr.zone === 'far') c.day++;
+      });
+      if (!c.foot && !c.car && !c.day) return; // neznámý formát → ponech fallback
+      try { localStorage.setItem(TRIPS_CACHE_KEY, JSON.stringify(c)); } catch (e) {}
+      apply(c);
+    })
+    .catch(() => {});
 }
 
 /* Vybavení je sezónní. Léto: hero = krytý bazén + sauna / pergola / hřiště.
@@ -1331,13 +1619,6 @@ function renderSeasonsCards() {
   $('#sez-win').setAttribute('data-on', 'true');
 }
 
-function renderLokFacts() {
-  const t = tt();
-  const host = $('#vr-lokfacts'); host.innerHTML = '';
-  t.lokalita.facts.forEach((f) => host.appendChild(el('div', { class: 'vr-lok-fact' }, [
-    el('div', { class: 'k', text: f.k }), el('div', { class: 'v', text: f.v }),
-  ])));
-}
 
 function renderTrips() {
   const t = tt();
@@ -2049,7 +2330,7 @@ function setLang(lang) {
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
-  renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
+  renderSeasonsCards(); renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
@@ -2072,6 +2353,7 @@ function setSeason(season) {
   document.querySelector('.vr-root').setAttribute('data-season', season);
   applyThemeColor();
   applySeasonButtons(); renderSeasonsCards(); applyTip(); applyHeroSeason();
+  applyLokLead();    // lead sekce Lokalita má vlastní zimní znění
   renderAmenities(); // hero amenity card (bazén ↔ lyžování) + 3 cards swap by season
   // 360° prohlídka má vlastní sadu scén pro každou sezónu — přepni ji celou
   // (náhledy, popisky, čítač) a nahraj první scénu; stará textura se uvolní
@@ -2366,11 +2648,12 @@ function init() {
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
-  renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
+  renderSeasonsCards(); renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   loadAvailability();
+  loadTripCounts();  // živé počty výletů z trips.json (fallback = VR_TRIP_COUNTS)
 
   startReveal(); startRaf(); startScrollSpy(); startTeaserRotation();
 

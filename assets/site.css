@@ -46,6 +46,13 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   --vr-line-2:rgba(240,235,225,.18);
   --vr-seg-bg:rgba(240,235,225,.06);
   /* --- chrome --- */
+  /* --- kreslená mapa v sekci Lokalita --- */
+  --vr-map-paper:#0B100E;
+  --vr-map-ink:#C6CCC0;
+  --vr-map-ridge:#F0EBE1;
+  --vr-map-water:#5B7A86;
+  --vr-map-road:rgba(240,235,225,.16);
+  --vr-map-ring:var(--vr-ember);
   --vr-nav-bg:rgba(11,15,13,.82);
   --vr-nav-fg:#F0EBE1;                     /* nav text (light by default: sits over hero photo) */
   --vr-nav-fg-muted:#C9CEC3;
@@ -79,6 +86,13 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   --vr-line:rgba(23,36,46,.14);
   --vr-line-2:rgba(23,36,46,.24);
   --vr-seg-bg:rgba(23,36,46,.05);
+  /* Zima: mapa se „zasněží" — světlý papír, modrý inkoust a voda */
+  --vr-map-paper:#F7FAFC;
+  --vr-map-ink:#2A3A45;
+  --vr-map-ridge:#8FB3C6;
+  --vr-map-water:#5F93AE;
+  --vr-map-road:#C6D3DB;
+  --vr-map-ring:var(--vr-accent);
   --vr-nav-bg:rgba(238,242,246,.85);
   --vr-mob-bg:rgba(238,242,246,.98);
 }
@@ -224,9 +238,6 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 
 /* Statement */
 .sec-dum{position:relative;padding:clamp(80px,13vh,170px) 0}
-.vr-2col{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(36px,5vw,90px);align-items:end}
-.vr-lead{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.7rem,3.3vw,2.9rem);line-height:1.18;letter-spacing:-.01em;color:var(--vr-text-soft);margin:20px 0 0;text-wrap:balance;transition:color .6s ease}
-.vr-stmt-img{display:block;width:100%;height:clamp(280px,34vw,420px);object-fit:cover;border-radius:2px}
 .vr-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:clamp(40px,6vw,72px);border-top:1px solid var(--vr-line);padding-top:36px}
 .vr-fact-k{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.6rem,2.6vw,2.4rem);color:var(--vr-accent-2);line-height:1;transition:color .6s ease}
 .vr-fact-v{font-family:'Archivo',sans-serif;font-size:13px;line-height:1.5;color:var(--vr-text-dim);margin-top:9px;letter-spacing:.01em;transition:color .6s ease}
@@ -363,12 +374,6 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 
 /* Location */
 .sec-lokalita{padding:clamp(80px,13vh,170px) 0}
-.vr-lok-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(36px,5vw,80px);align-items:center}
-.vr-lok-facts{margin-top:30px;display:flex;flex-direction:column}
-.vr-lok-fact{display:flex;gap:18px;padding:18px 0;border-top:1px solid var(--vr-line)}
-.vr-lok-fact .k{font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;color:var(--vr-text-soft);min-width:44%;letter-spacing:.01em;transition:color .6s ease}
-.vr-lok-fact .v{font-family:'Archivo',sans-serif;font-size:14px;color:var(--vr-text-dim);line-height:1.5;transition:color .6s ease}
-.vr-lok-grid .vr-slot{display:block;width:100%;height:clamp(320px,42vw,500px)}
 
 /* Trips */
 .sec-vylety{padding:clamp(80px,13vh,170px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
@@ -538,7 +543,6 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-crossfade .vr-seasonimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease}
 .vr-root[data-season="leto"] .vr-seasonimg.summer{opacity:1}
 .vr-root[data-season="zima"] .vr-seasonimg.winter{opacity:1}
-.vr-stmt-imgwrap{height:clamp(280px,34vw,420px)}
 .vr-amen-imgwrap{height:clamp(300px,40vw,480px)}
 
 /* ---------- Winter cool cast (owner: "zima víc do běla") ---------- */
@@ -714,15 +718,6 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
 .vr-review-badge .vr-rating-arrow{font-size:12px;margin-left:0}
 
 /* ---------- Location: illustrated static map + distances (dark map card, both seasons) ---------- */
-.vr-map{border:1px solid var(--vr-line);border-radius:4px;overflow:hidden;background:#0B100E;transition:border-color .6s ease}
-.vr-map-svg{display:block;width:100%;height:auto}
-.vr-mapdist{padding:clamp(16px,2vw,24px) clamp(18px,2.2vw,26px) clamp(18px,2.2vw,26px)}
-.vr-mapdist-title{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--vr-accent-photo);transition:color .6s ease}
-.vr-mapdist-list{margin-top:12px;display:flex;flex-direction:column}
-.vr-mapdist-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:11px 0;border-top:1px solid rgba(240,235,225,.1)}
-.vr-mapdist-row:first-child{border-top:0}
-.vr-mapdist-row .p{font-family:'Archivo',sans-serif;font-size:14.5px;color:#EFEAE0}
-.vr-mapdist-row .d{font-family:'Archivo',sans-serif;font-size:13.5px;font-weight:600;color:var(--vr-accent-photo);white-space:nowrap;transition:color .6s ease}
 
 /* ---------- Booking: month nav arrows ---------- */
 .vr-cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -789,7 +784,7 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vr-stickycta[data-show="true"]{transform:none;opacity:1;pointer-events:auto}
 }
 @media(max-width:880px){
-  .vr-2col,.vr-ohn-grid,.vr-lok-grid,.vr-amen-hero{grid-template-columns:1fr}
+  .vr-ohn-grid,.vr-amen-hero{grid-template-columns:1fr}
   .vr-amen3{grid-template-columns:1fr 1fr}
   .vr-sez{grid-template-columns:1fr}
   .vr-foot{grid-template-columns:1fr;gap:34px}
@@ -812,4 +807,169 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vrim-h1{font-size:clamp(2.2rem,6.5vw,4.8rem)}
   .vrim-sub{margin-top:14px}
   .vrim-actions{margin-top:18px}
+}
+
+/* ================================================================
+   #dum — „Za bránou už jste jen vy."
+   Full-bleed pás → číselný panel překrývající spodní hranu fotky →
+   rail venkovních „pokojů" → zavírací věta + CTA do 360°.
+   Pás zůstává TMAVÝ i ve světlém zimním tématu (světlý text na scrimu),
+   stejně jako .vr-trustband. ================================================ */
+.sec-dum{padding:clamp(48px,7vh,96px) 0 clamp(70px,10vh,130px);overflow-x:clip}
+.vr-own-band{position:relative;width:100vw;margin-inline:calc(50% - 50vw);
+  height:clamp(400px,58vh,600px);overflow:hidden;background:#080b0a}
+.vr-own-bandimg{position:absolute;inset:0;border-radius:0}
+.vr-own-bandimg .vr-seasonimg{object-position:50% 58%;transform:scale(1.06);transition:opacity .8s ease,transform 14s linear}
+.vr-own-band.vr-in .vr-seasonimg{transform:scale(1)}
+.vr-own-band::before,.vr-own-band::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;transition:opacity .6s ease}
+.vr-own-band::before{background:linear-gradient(to top,rgba(6,9,8,.90) 0%,rgba(6,9,8,.55) 36%,rgba(6,9,8,.12) 68%,transparent 100%)}
+.vr-own-band::after{background:linear-gradient(to right,rgba(6,9,8,.58) 0%,rgba(6,9,8,.22) 44%,transparent 70%)}
+.vr-root[data-season="zima"] .vr-own-band::before{opacity:.80}
+.vr-root[data-season="zima"] .vr-own-band::after{opacity:.72}
+.vr-root[data-season="zima"] .vr-own-band{box-shadow:0 -1px 0 var(--vr-line) inset}
+.vr-own-bandcopy{position:absolute;inset:auto 0 0 0;z-index:2;padding-bottom:clamp(28px,4vw,56px)}
+.vr-own-bandcopy .vr-wrap>*{max-width:660px}
+.vr-own-bandcopy .vr-eyebrow{color:var(--vr-accent-photo);font-size:11px;letter-spacing:.17em}
+.vr-own-h2{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(34px,5.2vw,60px);line-height:1.04;
+  letter-spacing:-.015em;color:#F0EBE1;margin:14px 0 0;text-wrap:balance}
+.vr-own-rule{height:1px;width:0;background:var(--vr-ember);margin:20px 0 18px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.vr-own-band.vr-in .vr-own-rule{width:84px}
+.vr-own-lead{font-family:'Archivo',sans-serif;font-size:clamp(15.5px,1.15vw,17px);line-height:1.62;color:#E4E0D6;margin:0;max-width:54ch}
+/* číselný panel — překrývá spodní hranu fotky a sešívá pás se stránkou */
+.vr-own-stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:-56px;position:relative;z-index:2;
+  background:var(--vr-panel-strong);border:1px solid var(--vr-line);border-radius:4px;
+  backdrop-filter:blur(10px);padding:clamp(22px,3vw,34px);transition:background-color .6s ease,border-color .6s ease}
+.vr-own-stat{padding:0 clamp(14px,2vw,28px)}
+.vr-own-stat+.vr-own-stat{border-left:1px solid var(--vr-line)}
+.vr-own-stat .n{display:block;font-family:'Newsreader',serif;font-weight:300;font-size:clamp(28px,3.8vw,44px);
+  line-height:1.05;color:var(--vr-accent);font-variant-numeric:tabular-nums;transition:color .6s ease}
+.vr-own-stat .l{display:block;margin-top:8px;font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.5;
+  color:var(--vr-text-muted);max-width:24ch;transition:color .6s ease}
+/* rail „Pokoje, které nemají strop" */
+.vr-own-railtitle{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(22px,2vw,28px);
+  color:var(--vr-text-soft);margin:clamp(44px,5vw,68px) 0 18px;transition:color .6s ease}
+.vr-own-rail{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.vr-own-tile{position:relative;margin:0;aspect-ratio:3/4;border-radius:3px;overflow:hidden;background:#0b0f0d}
+.vr-own-tile img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.vr-own-tile::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(6,9,8,.90),rgba(6,9,8,.15) 55%,transparent)}
+.vr-own-tile figcaption{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px}
+.vr-own-tile figcaption b{display:block;font-family:'Archivo',sans-serif;font-weight:600;font-size:15px;color:#F0EBE1}
+.vr-own-tile figcaption span{display:block;margin-top:6px;font-family:'Archivo',sans-serif;font-size:13px;line-height:1.45;
+  color:#C9CEC3;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease}
+.vr-own-tile:hover img{transform:scale(1.05)}
+.vr-own-tile:hover figcaption span,.vr-own-tile:focus-within figcaption span{opacity:1;transform:none}
+@media (hover:none){.vr-own-tile figcaption span{opacity:1;transform:none}}
+.io-ok .vr-own-rail .vr-own-tile{opacity:0;transform:translateY(14px);
+  transition:opacity .35s ease,transform .35s ease;transition-delay:calc(var(--i) * 60ms)}
+.io-ok .vr-own-rail.vr-in .vr-own-tile{opacity:1;transform:none}
+.vr-own-foot{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  margin-top:clamp(28px,3.5vw,44px);padding-top:22px;border-top:1px solid var(--vr-line)}
+.vr-own-close{font-family:'Newsreader',serif;font-style:italic;font-weight:300;font-size:clamp(18px,2vw,24px);
+  color:var(--vr-text-soft);margin:0;max-width:36ch;transition:color .6s ease}
+@media(max-width:1000px){
+  .vr-own-rail{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;
+    scroll-padding-left:clamp(20px,5vw,64px);-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(to right,#000 88%,transparent);mask-image:linear-gradient(to right,#000 88%,transparent)}
+  .vr-own-rail::-webkit-scrollbar{display:none}
+  .vr-own-tile{flex:0 0 min(68vw,260px);scroll-snap-align:start;aspect-ratio:4/5}
+}
+@media(max-width:760px){
+  .vr-own-stats{grid-template-columns:repeat(2,1fr);margin-top:24px}
+  .vr-own-stat{border-left:0;padding:16px 0}
+  .vr-own-stat+.vr-own-stat{border-left:0}
+  .vr-own-stat:nth-child(3),.vr-own-stat:nth-child(4){border-top:1px solid var(--vr-line)}
+}
+@media(max-width:720px){
+  .vr-own-band{height:clamp(430px,66vh,540px)}
+  .vr-own-bandimg .vr-seasonimg{object-position:50% 45%}
+  .vr-own-h2{font-size:clamp(30px,8vw,40px)}
+  .vr-sm-hide{display:none}
+}
+@media(max-width:640px){
+  .vr-own-foot{flex-direction:column;align-items:stretch}
+  .vr-own-foot .vr-btn-ghost{justify-content:center}
+}
+
+/* ================================================================
+   #lokalita — „V horách, ne na konci světa."
+   Pás „od dveří" → kreslená mapa (statické inline SVG) → tři okruhy →
+   blok „Než dorazíte". Mapa jede celá přes proměnné --vr-map-*. ======== */
+.vr-lok-head{max-width:820px}
+.vr-lok-lead{font-family:'Archivo',sans-serif;font-size:clamp(15px,1.1vw,17px);line-height:1.7;
+  color:var(--vr-text-muted);margin:18px 0 0;max-width:62ch;transition:color .6s ease}
+.vr-lok-doorstep{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);
+  border-top:1px solid var(--vr-line);border-bottom:1px solid var(--vr-line);
+  padding:clamp(24px,3vw,36px) 0;margin-top:clamp(32px,4vw,56px)}
+.vr-lok-door .n{display:block;font-family:'Newsreader',serif;font-weight:300;font-size:clamp(1.9rem,3.2vw,2.8rem);
+  line-height:1.05;color:var(--vr-accent);font-variant-numeric:tabular-nums;transition:color .6s ease}
+.vr-lok-door .l{display:block;margin-top:8px;font-family:'Archivo',sans-serif;font-size:13px;line-height:1.55;
+  color:var(--vr-text-muted);max-width:24ch;transition:color .6s ease}
+.vr-lokgrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(28px,3.5vw,56px);
+  align-items:start;margin-top:clamp(36px,4vw,60px)}
+.vr-lokmap{margin:0;border:1px solid var(--vr-line);border-radius:4px;overflow:hidden;
+  background:var(--vr-map-paper);transition:background-color .6s ease,border-color .6s ease}
+.vr-lokmap-head{padding:14px 18px;border-bottom:1px solid var(--vr-line);font-family:'Archivo',sans-serif;
+  font-weight:600;font-size:14px;color:var(--vr-text-soft);transition:color .6s ease,border-color .6s ease}
+.vr-lokmap-foot{padding:14px 18px;border-top:1px solid var(--vr-line);transition:border-color .6s ease}
+.vr-lokmap-legend{font-family:'Archivo',sans-serif;font-size:12px;line-height:1.5;color:var(--vr-text-faint);margin:0;transition:color .6s ease}
+.vr-lokmap-note{font-family:'Archivo',sans-serif;font-size:12px;line-height:1.5;color:var(--vr-text-muted);margin:8px 0 0;transition:color .6s ease}
+/* Mapa: velikosti písma v em vůči kořenovému <svg> (CSS přebíjí atributy a na
+   mobilu se všechny popisky zvětší jedním pravidlem). */
+.vr-lokmap-svg{display:block;width:100%;height:auto;font-family:'Archivo',sans-serif;font-size:12px}
+.vr-lokmap-svg *{transition:fill .6s ease,stroke .6s ease}
+.vr-lokmap-svg text{paint-order:stroke;stroke:var(--vr-map-paper);stroke-width:3;stroke-linejoin:round}
+.vr-mp-name{font-size:1em;font-weight:500}
+.vr-mp-meta{font-size:.875em}
+.vr-map-villa{font-size:1.08em;font-weight:600}
+.vr-map-villasub{font-size:.79em;letter-spacing:.18em}
+.vr-map-country{font-size:.83em;letter-spacing:.25em}
+.vr-map-ringlbl{font-size:.79em;letter-spacing:.2em;font-weight:600}
+.vr-map-river{font-family:'Newsreader',serif;font-style:italic;font-size:1em}
+.vr-mexit-lbl{font-size:.92em;font-weight:500}
+.vr-map-scalelbl,.vr-map-northlbl{font-size:.79em}
+.vr-lokmap .vr-mp{transition:opacity .25s ease}
+.vr-lokgrid:has(.vr-ring[data-ring="foot"]:hover) .vr-lokmap .vr-mp:not([data-ring="foot"]){opacity:.25}
+.vr-lokgrid:has(.vr-ring[data-ring="car"]:hover) .vr-lokmap .vr-mp:not([data-ring="car"]){opacity:.25}
+.vr-lokgrid:has(.vr-ring[data-ring="day"]:hover) .vr-lokmap .vr-mp{opacity:.25}
+.vr-map-glow{animation:vrMapBreath 6s ease-in-out infinite}
+@keyframes vrMapBreath{0%,100%{opacity:.82}50%{opacity:1}}
+.vr-lokmap.vr-in .vr-map-wave{animation:vrMapWave 1.2s ease-out .5s 1}
+@keyframes vrMapWave{from{r:12;opacity:.5}to{r:70;opacity:0}}
+/* boční sloupec — tři okruhy + „Než dorazíte" */
+.vr-lokaside .vr-ring{border-top:1px solid var(--vr-line);padding:22px 0}
+.vr-lokaside .vr-ring:first-child{border-top:0;padding-top:0}
+.vr-ring-top{display:flex;align-items:baseline;gap:12px}
+.vr-ring-n{font-family:'Newsreader',serif;font-weight:300;font-size:2.4rem;line-height:1;color:var(--vr-accent);transition:color .6s ease}
+.vr-ring h3{font-family:'Archivo',sans-serif;font-weight:600;font-size:15px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--vr-text-soft);margin:0;transition:color .6s ease}
+.vr-ring-count{display:block;margin-top:6px;font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--vr-accent);transition:color .6s ease}
+.vr-ring p{font-family:'Archivo',sans-serif;font-size:15px;line-height:1.6;color:var(--vr-text-muted);margin:10px 0 0;transition:color .6s ease}
+.vr-ring-link{display:inline-block;margin-top:12px;font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;color:var(--vr-accent);transition:color .6s ease}
+.vr-ring-link:hover{text-decoration:underline}
+.vr-lok-arrive{margin:clamp(24px,3vw,34px) 0 0}
+.vr-lok-arrive-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  border-top:1px solid var(--vr-line);padding:11px 0}
+.vr-lok-arrive dt{font-family:'Archivo',sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--vr-text-faint);margin:0;transition:color .6s ease}
+.vr-lok-arrive dd{font-family:'Archivo',sans-serif;font-size:15px;color:var(--vr-text-soft);margin:0;text-align:right;transition:color .6s ease}
+@media(max-width:1000px){.vr-lokgrid{grid-template-columns:1fr}}
+@media(max-width:760px){
+  .vr-lok-doorstep{grid-template-columns:repeat(2,1fr)}
+  .vr-lokmap{margin-inline:calc(-1 * clamp(20px,5vw,64px));border-left:0;border-right:0;border-radius:0}
+  .vr-lokmap-svg{font-size:16.2px}
+  .vr-lokmap [data-prio="2"]{display:none}
+}
+@media(max-width:640px){
+  .vr-lokaside .vr-ring{padding:18px 0}
+  .vr-ring-n{font-size:1.9rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .vr-own-bandimg .vr-seasonimg{transform:none!important;transition:opacity .8s ease}
+  .vr-own-rule{width:84px!important;transition:none}
+  .io-ok .vr-own-rail .vr-own-tile{opacity:1!important;transform:none!important;transition:none;transition-delay:0s}
+  .vr-map-glow{animation:none;opacity:1}
+  .vr-lokmap.vr-in .vr-map-wave{animation:none}
 }

@@ -751,7 +751,7 @@
           + '<button class="vg-visit" data-visit="' + esc(t.id) + '" title="' + esc(L.visited) + '" aria-label="' + esc(L.visited) + '">✓</button>'
           + '</article>';
       }).join('');
-      return '<div class="vg-group"><div class="vg-grouphead"><h2>' + esc(L.zones[zi]) + '</h2><span class="vg-groupmeta">' + shown.length + ' / ' + items.length + '</span></div>'
+      return '<div class="vg-group" id="vg-zone-' + z + '"><div class="vg-grouphead"><h2>' + esc(L.zones[zi]) + '</h2><span class="vg-groupmeta">' + shown.length + ' / ' + items.length + '</span></div>'
         + '<div class="vg-cards">' + cards + '</div></div>';
     }).join('');
 
@@ -1064,6 +1064,14 @@
       S.lang = T[qLang] ? qLang : (lsLang && T[lsLang]) ? lsLang : (T[navLang] ? navLang : 'cs');
     }
     renderApp(false);
+    /* Deep link z homepage: ?ring=foot|car|day → doskroluj na příslušný okruh.
+       Bez parametru se nic nemění (bezbolestná degradace). */
+    var ring = (qs.get('ring') || '').toLowerCase();
+    var RZONE = { foot: 'villa', car: 'near', day: 'far' };
+    if (RZONE[ring]) {
+      var g = document.getElementById('vg-zone-' + RZONE[ring]);
+      if (g) setTimeout(function () { try { g.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e2) { g.scrollIntoView(); } }, 150);
+    }
   }).catch(function (e) {
     document.getElementById('app').innerHTML = '<div class="vg-loading">Průvodce se nepodařilo načíst. / Der Guide konnte nicht geladen werden.</div>';
     if (window.console) console.error(e);

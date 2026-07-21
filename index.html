@@ -137,18 +137,59 @@
     </div>
   </section>
 
-  <!-- ===================== Statement ===================== -->
+  <!-- ===================== Statement — „Za bránou už jste jen vy" =====================
+       Full-bleed pás (sezónní fotka pod dvěma scrimy) → číselný panel, který
+       překrývá spodní hranu fotky → rail venkovních „pokojů" → zavírací věta a
+       CTA do 360°. Žádný nový JavaScript: vše je HTML + CSS + .vr-reveal a
+       existující sezónní mechanika .vr-crossfade / .vr-seasonimg. -->
   <section id="dum" class="sec-dum">
+    <div class="vr-own-band vr-reveal">
+      <div class="vr-own-bandimg vr-crossfade">
+        <img class="vr-seasonimg summer" src="media/sections/statement-estate.jpg" alt="Villa Rudolf — pozemek s bazénem, pergolou a dětským hřištěm za oplocením" decoding="async" fetchpriority="low" width="2400" height="1028">
+        <img class="vr-seasonimg winter" src="media/gallery/12-winter-garden.jpg" alt="Villa Rudolf a celý zasněžený pozemek za oplocením" decoding="async" loading="lazy" width="1600" height="1067">
+      </div>
+      <div class="vr-own-bandcopy">
+        <div class="vr-wrap">
+          <span class="vr-eyebrow" data-t="statement.eyebrow">Celý areál jen pro vás</span>
+          <h2 class="vr-own-h2" data-t="statement.title">Za bránou už jste jen vy.</h2>
+          <div class="vr-own-rule" aria-hidden="true"></div>
+          <p class="vr-own-lead" data-t-html="statement.lead">Berete si celý pozemek.</p>
+        </div>
+      </div>
+    </div>
     <div class="vr-wrap">
-      <div class="vr-2col vr-reveal">
-        <div>
-          <span class="vr-eyebrow" data-t="statement.eyebrow">Není to dům. Je to celé místo.</span>
-          <p class="vr-lead" data-t="statement.lead">Jinde dostanete pokoje a kousek zahrady…</p>
-        </div>
-        <div class="vr-stmt-imgwrap vr-crossfade">
-          <img class="vr-seasonimg summer" src="media/photos/exterior.jpg" alt="Villa Rudolf — exteriér v létě" loading="lazy">
-          <img class="vr-seasonimg winter" src="media/gallery/winter-snow.jpg" alt="Villa Rudolf — vila ve sněhu" loading="lazy">
-        </div>
+      <div class="vr-own-stats vr-reveal">
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.0.num">4 500 m²</span><span class="l" data-t="statement.stats.0.label"></span></div>
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.1.num">22 lůžek</span><span class="l" data-t="statement.stats.1.label"></span></div>
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.2.num">1 skupina</span><span class="l" data-t="statement.stats.2.label"></span></div>
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.3.num">0</span><span class="l" data-t="statement.stats.3.label"></span></div>
+      </div>
+      <p class="vr-own-railtitle vr-reveal" data-t="statement.railTitle">Pokoje, které nemají strop</p>
+      <div class="vr-own-rail vr-reveal">
+        <figure class="vr-own-tile" style="--i:0">
+          <img src="media/sections/tile-pool.jpg" alt="Zastřešený vyhřívaný bazén — pohled prosklenou halou" loading="lazy" decoding="async" width="900" height="1200">
+          <figcaption><b data-t="statement.rooms.0.name">Zastřešený bazén</b><span data-t="statement.rooms.0.micro"></span></figcaption>
+        </figure>
+        <figure class="vr-own-tile" style="--i:1">
+          <img src="media/sections/tile-sauna.jpg" alt="Uvnitř finské sauny — lavice ze světlého dřeva a kamna" loading="lazy" decoding="async" width="900" height="1200">
+          <figcaption><b data-t="statement.rooms.1.name">Finská sauna</b><span data-t="statement.rooms.1.micro"></span></figcaption>
+        </figure>
+        <figure class="vr-own-tile" style="--i:2">
+          <img src="media/sections/tile-pergola.jpg" alt="Krytá dřevěná pergola na trávníku" loading="lazy" decoding="async" width="900" height="1200">
+          <figcaption><b data-t="statement.rooms.2.name">Pergola</b><span data-t="statement.rooms.2.micro"></span></figcaption>
+        </figure>
+        <figure class="vr-own-tile" style="--i:3">
+          <img src="media/sections/tile-firepit.jpg" alt="Zapuštěné ohniště s gabionovou stěnou a lavicemi" loading="lazy" decoding="async" width="900" height="1200">
+          <figcaption><b data-t="statement.rooms.3.name">Ohniště s gabionovou stěnou</b><span data-t="statement.rooms.3.micro"></span></figcaption>
+        </figure>
+        <figure class="vr-own-tile" style="--i:4">
+          <img src="media/sections/tile-playground.jpg" alt="Lanový most dětského hřiště s výhledem na dům" loading="lazy" decoding="async" width="900" height="1200">
+          <figcaption><b data-t="statement.rooms.4.name">Dětské hřiště</b><span data-t="statement.rooms.4.micro"></span></figcaption>
+        </figure>
+      </div>
+      <div class="vr-own-foot vr-reveal">
+        <p class="vr-own-close" data-t="statement.close">Nikoho tu nepotkáte, pokud jste ho sami nepozvali.</p>
+        <a href="#interier" class="vr-btn-ghost"><span data-t="statement.cta">Projít celý areál ve 360°</span> <span aria-hidden="true">&#8594;</span></a>
       </div>
     </div>
   </section>
@@ -347,46 +388,163 @@
     </div>
   </section>
 
-  <!-- ===================== Location ===================== -->
+  <!-- ===================== Location — „V horách, ne na konci světa" =====================
+       Pás „od dveří" (čísla) → kreslená mapa (statické inline SVG, žádné dlaždice
+       ani mapové API, funguje bez JS) → tři okruhy výletů → blok „Než dorazíte".
+       Počty výletů se dopočítávají z živého trips.json (fallback = konstanta). -->
   <section id="lokalita" class="sec-lokalita">
     <div class="vr-wrap">
-      <div class="vr-lok-grid">
-        <div class="vr-reveal">
-          <span class="vr-eyebrow" data-t="lokalita.eyebrow">Lokalita</span>
-          <h2 class="vr-h2" data-t="lokalita.title">V horách, ale bez kompromisů</h2>
-          <div class="vr-lok-facts" id="vr-lokfacts"></div>
-        </div>
-        <div class="vr-map vr-reveal">
-          <!-- Ilustrativní statická mapa (bez externích dlaždic): hřeben se Sněžkou,
-               státní hranice (Polsko), bod vily a směr na Trutnov. -->
-          <svg class="vr-map-svg" viewBox="0 0 400 230" role="img" aria-label="Ilustrativní mapa okolí Villa Rudolf">
+      <div class="vr-lok-head vr-reveal">
+        <span class="vr-eyebrow" data-t="lokalita.eyebrow">Lokalita · Svoboda nad Úpou</span>
+        <h2 class="vr-h2" data-t="lokalita.title">V horách, ne na konci světa.</h2>
+        <p class="vr-lok-lead" id="vr-lok-lead"></p>
+      </div>
+      <div class="vr-lok-doorstep vr-reveal">
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.0.num">150 m</span><span class="l" data-t="lokalita.doorstep.0.label"></span></div>
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.1.num">200 m</span><span class="l" data-t="lokalita.doorstep.1.label"></span></div>
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.2.num">2 h</span><span class="l" data-t="lokalita.doorstep.2.label"></span></div>
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.3.num">4 km</span><span class="l" data-t="lokalita.doorstep.3.label"></span></div>
+      </div>
+      <div class="vr-lokgrid">
+        <figure class="vr-lokmap vr-reveal">
+          <div class="vr-lokmap-head" data-tpl="lokalita.mapTitle" data-count="total">Ověřené výlety ve třech okruzích</div>
+          <svg class="vr-lokmap-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="vrMapTitle">
+            <title id="vrMapTitle" data-t="lokalita.mapAlt">Kreslená mapa okolí Villa Rudolf</title>
             <defs>
-              <radialGradient id="vrMapGlow" cx="50%" cy="82%" r="60%">
-                <stop offset="0%" stop-color="var(--vr-ember)" stop-opacity=".16"/>
-                <stop offset="100%" stop-color="var(--vr-ember)" stop-opacity="0"/>
+              <pattern id="vrDots" width="14" height="14" patternUnits="userSpaceOnUse">
+                <circle cx="7" cy="7" r=".6" fill="var(--vr-map-ink)"></circle>
+              </pattern>
+              <radialGradient id="vrGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="var(--vr-ember)" stop-opacity=".55"></stop>
+                <stop offset="100%" stop-color="var(--vr-ember)" stop-opacity="0"></stop>
               </radialGradient>
+              <path id="vrRingArc" d="M396,467 A90,90 0 0 1 576,467" fill="none"></path>
             </defs>
-            <rect x="0" y="0" width="400" height="230" fill="#0B100E"/>
-            <rect x="0" y="0" width="400" height="230" fill="url(#vrMapGlow)"/>
-            <!-- ridge silhouette with Sněžka peak -->
-            <path d="M0 96 L64 82 L120 70 L176 40 L210 66 L268 58 L330 74 L400 66 L400 0 L0 0 Z" fill="rgba(240,235,225,.03)"/>
-            <path d="M0 96 L64 82 L120 70 L176 40 L210 66 L268 58 L330 74 L400 66" fill="none" stroke="#4E5A52" stroke-width="1.6"/>
-            <!-- state border (dashed) -->
-            <path d="M0 62 L120 52 L200 26 L300 40 L400 30" fill="none" stroke="#B4BAAD" stroke-width="1.3" stroke-dasharray="7 6" opacity=".5"/>
-            <!-- Sněžka marker -->
-            <circle cx="176" cy="40" r="3" fill="#B4BAAD"/>
-            <text x="176" y="30" text-anchor="middle" font-family="Archivo,sans-serif" font-size="10" letter-spacing="1" fill="#AEB4A8">Sněžka</text>
-            <text x="34" y="20" font-family="Archivo,sans-serif" font-size="9" letter-spacing="2.5" fill="#79817A">POLSKO</text>
-            <!-- villa dot with ember glow -->
-            <circle cx="150" cy="168" r="15" fill="var(--vr-ember)" opacity=".16"/>
-            <circle cx="150" cy="168" r="5" fill="var(--vr-ember)"/>
-            <circle cx="150" cy="168" r="5" fill="none" stroke="#0B100E" stroke-width="1.5"/>
-            <text x="150" y="192" text-anchor="middle" font-family="Archivo,sans-serif" font-size="11" font-weight="600" letter-spacing=".5" fill="#F0EBE1">Villa Rudolf</text>
-            <!-- direction hint to Trutnov -->
-            <path d="M170 176 L246 202" fill="none" stroke="#4E5A52" stroke-width="1.3" stroke-dasharray="3 5"/>
-            <text x="250" y="206" font-family="Archivo,sans-serif" font-size="9.5" letter-spacing="1" fill="#79817A">Trutnov →</text>
+            <rect width="1000" height="700" fill="var(--vr-map-paper)"></rect>
+            <rect width="1000" height="700" fill="url(#vrDots)" opacity=".05"></rect>
+            <g class="vr-map-ridges" fill="var(--vr-map-ridge)">
+              <path opacity=".10" d="M0,150 C120,60 240,120 360,70 C480,20 620,110 760,60 C862,25 940,80 1000,55 L1000,0 L0,0 Z"></path>
+              <path opacity=".16" d="M0,190 C110,150 230,140 330,97 C430,55 560,150 700,120 C820,95 920,140 1000,115 L1000,0 L0,0 Z"></path>
+              <path opacity=".24" d="M0,250 C140,215 260,250 400,215 C540,180 660,240 800,210 C890,190 950,215 1000,205 L1000,0 L0,0 Z"></path>
+            </g>
+            <path d="M310,239 C380,280 470,300 485,345 C495,390 470,430 486,467 C500,505 545,515 560,552 C578,600 650,640 698,683" fill="none" stroke="var(--vr-map-water)" stroke-width="2.6" opacity=".7" stroke-linecap="round"></path>
+            <text class="vr-map-river" data-prio="2" data-t="lokalita.mapLabels.upa" x="516" y="410" fill="var(--vr-map-water)">Úpa</text>
+            <g fill="none" stroke="var(--vr-map-road)" stroke-width="2.2" opacity=".5" stroke-linecap="round">
+              <path d="M486,467 C460,455 435,450 415,435 C390,410 350,375 334,338"></path>
+              <path d="M486,467 C490,420 486,380 485,345 C460,300 330,280 310,239"></path>
+              <path d="M486,467 C510,500 540,520 560,552 C600,600 660,650 698,683"></path>
+            </g>
+            <path d="M120,165 C200,140 260,95 330,80 C420,60 490,120 560,140 C660,168 760,150 880,120" fill="none" stroke="var(--vr-map-ink)" stroke-width="1.4" stroke-dasharray="7 6" opacity=".45"></path>
+            <text class="vr-map-country" data-t="lokalita.mapLabels.polsko" x="300" y="46" fill="var(--vr-map-ink)" opacity=".55">POLSKO</text>
+            <circle cx="486" cy="467" r="90" fill="none" stroke="var(--vr-map-ring)" stroke-width="1.2" stroke-dasharray="4 6" opacity=".8"></circle>
+            <text class="vr-map-ringlbl" fill="var(--vr-map-ring)"><textPath href="#vrRingArc" startOffset="50%" text-anchor="middle" data-t="lokalita.mapLabels.ring">PĚŠKY OD BRÁNY</textPath></text>
+            <g class="vr-mp" data-ring="car" data-prio="1">
+              <circle cx="330" cy="97" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="340" y="98" data-t="lokalita.mapLabels.snezka" fill="var(--vr-map-ink)">snezka</text>
+              <text class="vr-mp-meta" x="340" y="112" data-t="lokalita.mapLabels.snezkaMeta" fill="var(--vr-accent-photo)">–</text>
+            </g>
+            <g class="vr-mp" data-ring="car" data-prio="2">
+              <circle cx="298" cy="201" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="308" y="202" data-t="lokalita.mapLabels.obriDul" fill="var(--vr-map-ink)">obriDul</text>
+            </g>
+            <g class="vr-mp" data-ring="car" data-prio="1">
+              <circle cx="310" cy="239" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="320" y="240" data-t="lokalita.mapLabels.pec" fill="var(--vr-map-ink)">pec</text>
+              <text class="vr-mp-meta" x="320" y="254" data-t="lokalita.mapLabels.pecMeta" fill="var(--vr-accent-photo)">–</text>
+            </g>
+            <g class="vr-mp" data-ring="car" data-prio="1">
+              <circle cx="334" cy="338" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="344" y="339" data-t="lokalita.mapLabels.cernaHora" fill="var(--vr-map-ink)">cernaHora</text>
+              <text class="vr-mp-meta" x="344" y="353" data-t="lokalita.mapLabels.cernaHoraMeta" fill="var(--vr-accent-photo)">–</text>
+            </g>
+            <g class="vr-mp" data-ring="car" data-prio="2">
+              <circle cx="485" cy="345" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="495" y="346" data-t="lokalita.mapLabels.hmarsov" fill="var(--vr-map-ink)">hmarsov</text>
+            </g>
+            <g class="vr-mp" data-ring="foot" data-prio="1">
+              <circle cx="415" cy="435" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="405" y="436" text-anchor="end" data-t="lokalita.mapLabels.janskeLazne" fill="var(--vr-map-ink)">janskeLazne</text>
+              <text class="vr-mp-meta" x="405" y="450" text-anchor="end" data-t="lokalita.mapLabels.janskeLazneMeta" fill="var(--vr-accent-photo)">–</text>
+            </g>
+            <g class="vr-mp" data-ring="car" data-prio="2">
+              <circle cx="585" cy="392" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="575" y="393" text-anchor="end" data-t="lokalita.mapLabels.rychory" fill="var(--vr-map-ink)">rychory</text>
+            </g>
+            <g class="vr-mp" data-ring="car" data-prio="2">
+              <circle cx="560" cy="552" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="550" y="553" text-anchor="end" data-t="lokalita.mapLabels.mladeBuky" fill="var(--vr-map-ink)">mladeBuky</text>
+            </g>
+            <g class="vr-mp" data-ring="car" data-prio="1">
+              <circle cx="698" cy="683" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
+              <text class="vr-mp-name" x="688" y="667" text-anchor="end" data-t="lokalita.mapLabels.trutnov" fill="var(--vr-map-ink)">trutnov</text>
+              <text class="vr-mp-meta" x="688" y="681" text-anchor="end" data-t="lokalita.mapLabels.trutnovMeta" fill="var(--vr-accent-photo)">–</text>
+            </g>
+            <g class="vr-map-villa-g">
+              <circle class="vr-map-glow" cx="486" cy="467" r="26" fill="url(#vrGlow)"></circle>
+              <circle class="vr-map-wave" cx="486" cy="467" r="12" fill="none" stroke="var(--vr-ember)" stroke-width="1.4" opacity="0"></circle>
+              <path d="M486,455 L497,467 L486,479 L475,467 Z" fill="var(--vr-ember)" stroke="var(--vr-map-paper)" stroke-width="1.5"></path>
+              <text class="vr-map-villa" x="486" y="501" text-anchor="middle" data-t="lokalita.mapLabels.villa" fill="var(--vr-map-ink)">Villa Rudolf</text>
+              <text class="vr-map-villasub" x="486" y="516" text-anchor="middle" data-t="lokalita.mapLabels.villaSub" fill="var(--vr-map-ink)" opacity=".7">Svoboda nad Úpou</text>
+            </g>
+            <g class="vr-mexit" data-prio="1">
+              <path d="M96,632 L74,648" stroke="var(--vr-map-ink)" stroke-width="1.2" opacity=".5" stroke-linecap="round"></path>
+              <circle cx="74" cy="648" r="2.4" fill="var(--vr-map-ink)" opacity=".6"></circle>
+              <text class="vr-mexit-lbl" x="102" y="658" text-anchor="start" data-t="lokalita.mapLabels.praha" fill="var(--vr-map-ink)" opacity=".72">praha</text>
+            </g>
+            <g class="vr-mexit" data-prio="1">
+              <path d="M904,78 L926,62" stroke="var(--vr-map-ink)" stroke-width="1.2" opacity=".5" stroke-linecap="round"></path>
+              <circle cx="926" cy="62" r="2.4" fill="var(--vr-map-ink)" opacity=".6"></circle>
+              <text class="vr-mexit-lbl" x="898" y="52" text-anchor="end" data-t="lokalita.mapLabels.vratislav" fill="var(--vr-map-ink)" opacity=".72">vratislav</text>
+            </g>
+            <g class="vr-mexit" data-prio="1">
+              <path d="M96,78 L74,62" stroke="var(--vr-map-ink)" stroke-width="1.2" opacity=".5" stroke-linecap="round"></path>
+              <circle cx="74" cy="62" r="2.4" fill="var(--vr-map-ink)" opacity=".6"></circle>
+              <text class="vr-mexit-lbl" x="102" y="52" text-anchor="start" data-t="lokalita.mapLabels.drazdany" fill="var(--vr-map-ink)" opacity=".72">drazdany</text>
+            </g>
+            <g class="vr-mexit" data-prio="2">
+              <path d="M918,430 L944,430" stroke="var(--vr-map-ink)" stroke-width="1.2" opacity=".5" stroke-linecap="round"></path>
+              <circle cx="944" cy="430" r="2.4" fill="var(--vr-map-ink)" opacity=".6"></circle>
+              <text class="vr-mexit-lbl" x="910" y="416" text-anchor="end" data-t="lokalita.mapLabels.adrspach" fill="var(--vr-map-ink)" opacity=".72">adrspach</text>
+            </g>
+            <g class="vr-mexit" data-prio="2">
+              <path d="M430,654 L430,680" stroke="var(--vr-map-ink)" stroke-width="1.2" opacity=".5" stroke-linecap="round"></path>
+              <circle cx="430" cy="680" r="2.4" fill="var(--vr-map-ink)" opacity=".6"></circle>
+              <text class="vr-mexit-lbl" x="430" y="640" text-anchor="middle" data-t="lokalita.mapLabels.safari" fill="var(--vr-map-ink)" opacity=".72">safari</text>
+            </g>
+            <g class="vr-map-scale" data-prio="2" opacity=".6">
+              <path d="M840,664 L900.3,664 M840,660 L840,668 M900.3,660 L900.3,668" stroke="var(--vr-map-ink)" stroke-width="1.2"></path>
+              <text class="vr-map-scalelbl" x="870" y="654" text-anchor="middle" data-t="lokalita.mapLabels.scale" fill="var(--vr-map-ink)">0 — 2 km</text>
+            </g>
+            <g class="vr-map-north" opacity=".6">
+              <path d="M954,660 L954,624 M954,624 L950,632 M954,624 L958,632" stroke="var(--vr-map-ink)" stroke-width="1.2" fill="none" stroke-linecap="round"></path>
+              <text class="vr-map-northlbl" x="954" y="618" text-anchor="middle" data-t="lokalita.mapLabels.north" fill="var(--vr-map-ink)">S</text>
+            </g>
           </svg>
-          <div class="vr-mapdist" id="vr-mapdist"></div>
+          <div class="vr-lokmap-foot">
+            <p class="vr-lokmap-legend" data-t="lokalita.legend"></p>
+            <p class="vr-lokmap-note" data-t="lokalita.mapNote"></p>
+          </div>
+        </figure>
+        <div class="vr-lokaside vr-reveal">
+          <div class="vr-ring" data-ring="foot">
+            <div class="vr-ring-top"><span class="vr-ring-n">1</span><h3 data-t="lokalita.rings.0.name">Pěšky od brány</h3></div>
+            <span class="vr-ring-count" data-tpl="lokalita.rings.0.count" data-count="foot"></span>
+            <p data-t="lokalita.rings.0.body"></p>
+            <a class="vr-ring-link" href="pruvodce/?ring=foot" data-langlink="pruvodce/?ring=foot" data-t="lokalita.rings.0.link">Zobrazit v průvodci →</a>
+          </div>
+          <div class="vr-ring" data-ring="car">
+            <div class="vr-ring-top"><span class="vr-ring-n">2</span><h3 data-t="lokalita.rings.1.name">Do 30 minut autem</h3></div>
+            <span class="vr-ring-count" data-tpl="lokalita.rings.1.count" data-count="car"></span>
+            <p data-t="lokalita.rings.1.body"></p>
+            <a class="vr-ring-link" href="pruvodce/?ring=car" data-langlink="pruvodce/?ring=car" data-t="lokalita.rings.1.link">Zobrazit v průvodci →</a>
+          </div>
+          <div class="vr-ring" data-ring="day">
+            <div class="vr-ring-top"><span class="vr-ring-n">3</span><h3 data-t="lokalita.rings.2.name">Na celý den</h3></div>
+            <span class="vr-ring-count" data-tpl="lokalita.rings.2.count" data-count="day"></span>
+            <p data-t="lokalita.rings.2.body"></p>
+            <a class="vr-ring-link" href="pruvodce/?ring=day" data-langlink="pruvodce/?ring=day" data-t="lokalita.rings.2.link">Zobrazit v průvodci →</a>
+          </div>
+          <dl class="vr-lok-arrive" id="vr-lok-arrive"></dl>
         </div>
       </div>
     </div>
