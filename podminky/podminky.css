@@ -53,16 +53,13 @@ body:has(.pd-root[data-season="zima"]){background:#eef2f6}
 .pd-brand .bd{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--vr-accent);white-space:nowrap;transition:color .5s ease}
 /* Sekce hlavního webu i na podstránce (majitel: „když se dostaneš na podmínky,
    úplně zmizí menu"). Odkazy míří na ../#sekce a nesou jazyk + sezónu. */
-.pd-navlinks{display:flex;align-items:center;gap:18px;flex-wrap:wrap;flex:1 1 auto;justify-content:center;min-width:0}
-.pd-navlinks a{font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em;color:var(--vr-text-muted);text-decoration:none;white-space:nowrap;transition:color .25s ease}
+.pd-header{flex-wrap:wrap}
+.pd-navlinks{display:flex;align-items:center;gap:16px 20px;flex-wrap:wrap;order:3;flex:1 1 100%;justify-content:flex-start;min-width:0;padding-top:14px}
+.pd-navlinks a{font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em;color:var(--vr-muted);text-decoration:none;white-space:nowrap;transition:color .25s ease}
 .pd-navlinks a:hover{color:var(--vr-text)}
 .pd-navlinks a.cta{font-weight:700;color:var(--vr-accent)}
 .pd-navlinks a.cta:hover{color:var(--vr-ember)}
-@media(max-width:760px){
-  .pd-header{flex-wrap:wrap}
-  .pd-navlinks{order:3;flex:1 1 100%;justify-content:flex-start;gap:14px;padding-top:12px}
-  .pd-navlinks a{font-size:12px}
-}
+@media(max-width:760px){.pd-navlinks{gap:12px 14px}.pd-navlinks a{font-size:12px}}
 .pd-langs{display:flex;gap:4px;flex:none}
 .pd-lang{font-family:'Archivo',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
   color:var(--vr-muted);background:transparent;border:1px solid var(--vr-line-2);border-radius:999px;padding:5px 9px;cursor:pointer;
