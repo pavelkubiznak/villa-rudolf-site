@@ -183,6 +183,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vrim-sub{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.4;color:#E4E0D6;max-width:40ch;margin:20px auto 0;text-shadow:0 1px 18px rgba(0,0,0,.5)}
 .vrim-sub em{font-style:italic;color:var(--vr-accent-photo)}
 .vrim-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:15px;margin-top:32px}
+.vrim-cta-hint{display:block;margin-top:14px;font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em;color:#E4E0D6;text-shadow:0 1px 12px rgba(0,0,0,.55)}
 .vr-btn-primary{display:inline-flex;align-items:center;gap:9px;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:#10150f;background:var(--vr-ember);border-radius:2px;padding:15px 26px;cursor:pointer;box-shadow:0 10px 34px rgba(214,138,76,.4)}
 .vr-btn-primary span{font-size:15px}
 .vr-btn-ghost{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:#F0EBE1;background:rgba(16,21,18,.42);backdrop-filter:blur(6px);border:1px solid rgba(240,235,225,.32);border-radius:2px;padding:14px 24px;cursor:pointer}
@@ -317,6 +318,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .sec-vylety{padding:clamp(80px,13vh,170px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
 .vr-vyl{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(18px,2.2vw,30px);margin-top:clamp(36px,5vw,60px)}
 .vr-vyl .vr-slot{display:block;width:100%;height:clamp(170px,15vw,210px)}
+.vr-vyl article>img{width:100%;height:clamp(170px,15vw,210px);object-fit:cover;border-radius:2px}
 .vr-vyl .vr-tag{display:inline-block;font-size:10.5px;margin-top:16px}
 .vr-vyl h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.25rem,1.8vw,1.55rem);color:var(--vr-text-soft);margin:8px 0 0;line-height:1.12;transition:color .6s ease}
 .vr-vyl p{font-family:'Archivo',sans-serif;font-size:14px;line-height:1.6;color:var(--vr-text-muted);margin:9px 0 0;transition:color .6s ease}
@@ -345,7 +347,19 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-book-wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 clamp(20px,5vw,64px);text-align:center}
 .vr-book-title{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2.2rem,5.4vw,4.4rem);line-height:1.02;letter-spacing:-.02em;color:var(--vr-text);margin:16px auto 0;max-width:18ch;text-wrap:balance;transition:color .6s ease}
 .vr-book-body{font-family:'Archivo',sans-serif;font-size:clamp(15px,1.05vw,17px);line-height:1.72;color:var(--vr-text-muted);margin:20px auto 0;max-width:52ch;transition:color .6s ease}
-.vr-book{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(22px,3vw,40px);max-width:1080px;margin:44px auto 0;text-align:left;align-items:start}
+/* Statický orientační ceník nad kalendářem */
+.vr-priceblock{max-width:1080px;margin:clamp(30px,4vw,44px) auto 0;border:1px solid var(--vr-line);border-radius:3px;background:var(--vr-panel);padding:clamp(16px,2.2vw,24px);text-align:left;transition:background-color .6s ease,border-color .6s ease}
+.vr-priceblock-h{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--vr-accent);margin-bottom:14px;transition:color .6s ease}
+.vr-priceblock-rows{display:grid;gap:0}
+.vr-priceblock-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;border-top:1px solid var(--vr-line);padding:11px 0}
+.vr-priceblock-row:first-child{border-top:0;padding-top:0}
+.vr-priceblock-season{font-family:'Newsreader',serif;font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--vr-text-soft);transition:color .6s ease}
+.vr-priceblock-val{display:flex;flex-direction:column;align-items:flex-end;text-align:right;gap:2px}
+.vr-priceblock-val b{font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;color:var(--vr-text);transition:color .6s ease}
+.vr-priceblock-min{font-family:'Archivo',sans-serif;font-size:12px;color:var(--vr-text-dim);transition:color .6s ease}
+.vr-priceblock-foot{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;padding-top:14px;border-top:1px solid var(--vr-line);font-family:'Archivo',sans-serif;font-size:12.5px;color:var(--vr-text-dim);transition:color .6s ease}
+.vr-priceblock-fx{color:var(--vr-text-faint);font-style:italic}
+.vr-book{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(22px,3vw,40px);max-width:1080px;margin:clamp(20px,2.6vw,32px) auto 0;text-align:left;align-items:start}
 .vr-cal-card{border:1px solid var(--vr-line);border-radius:3px;background:var(--vr-panel);padding:clamp(18px,2.4vw,28px);transition:background-color .6s ease,border-color .6s ease}
 .vr-cal-wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,2.6vw,34px)}
 .vr-cal-title{font-family:'Newsreader',serif;font-size:clamp(1.15rem,1.5vw,1.4rem);color:var(--vr-text);transition:color .6s ease}
@@ -384,6 +398,10 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-book-price .row.brk-total .v{font-weight:700}
 .vr-book-price .row.brk-dep{color:var(--vr-text-faint);font-size:12.5px}
 .vr-book-price .row.brk-dep .v{color:var(--vr-text-dim);font-weight:600}
+/* Orientační přepočet €/zł pod součtem (jen cizojazyčné verze) */
+.vr-book-price .row.brk-fx{margin-top:-4px;font-size:12px;color:var(--vr-text-faint)}
+.vr-book-price .row.brk-fx .k{font-weight:600;color:var(--vr-text-dim)}
+.vr-book-price .row.brk-fx .v{color:var(--vr-text-faint);font-weight:400;font-style:italic;white-space:normal;text-align:right}
 /* Hláška o minimální délce pobytu / překročení kapacity */
 .vr-book-minstay,.vr-book-guestnote{font-family:'Archivo',sans-serif;font-size:13px;line-height:1.5;color:#b5762f;background:rgba(214,138,76,.1);border:1px solid rgba(214,138,76,.34);border-radius:3px;padding:12px 14px}
 .vr-book-guestnote{color:#b4442f;background:rgba(214,110,86,.12);border-color:rgba(214,110,86,.36)}

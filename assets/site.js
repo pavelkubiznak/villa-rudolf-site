@@ -30,6 +30,10 @@ const VR_PRICING = {
   maxGuests: 22,             // maximální počet hostů (dospělí + děti)
 };
 
+/* Orientační přepočet měn pro cizojazyčné verze webu. Ceny se vždy platí v CZK;
+   € / zł se ukazují jen jako přibližný odhad. Pevné kurzy — upravit zde. */
+const VR_FX = { EUR: 25, PLN: 5.9 };
+
 /* ============================ Supabase (žádost o pobyt → RPC vr_request) ============================ */
 /* Veřejný anon klíč (chráněný RLS) — stejný jako v průvodci / guest portálu / check-inu.
    Zápis jde JEN přes SECURITY DEFINER funkci public.vr_request; přímý select je RLS zakázán. */
@@ -103,7 +107,7 @@ const T = {
       h1: 'Soukromá vila v Krkonoších pro 6–22 hostů',
       sub: 'Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.',
       subWinter: 'Lyžování hned za rohem — <em>skibus u domu</em>, Černá hora 4 km.',
-      ctaSec: 'Prohlédnout dům', badge: 'Volné termíny 2026', video: 'Přehrát video',
+      ctaSec: 'Prohlédnout dům', ctaHint: 'Nezávazná žádost — nic neplatíte.', badge: 'Volné termíny 2026', video: 'Přehrát video',
       summer: 'Léto', winter: 'Zima', scroll: 'Scroll',
       tipSummer: 'Bazén, pergola a večery u otevřeného ohně.',
       tipWinter: 'Bez řetězů až k domu, skibus zdarma v docházkové vzdálenosti.',
@@ -201,6 +205,8 @@ const T = {
       pay: 'Odeslat žádost o pobyt', stripeNote: 'Žádost je nezávazná — nic neplatíte. Termín potvrdíme osobně a poté zašleme platební odkaz na zálohu.',
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', checkoutOnly: 'pouze odjezd', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
       availFail: 'Dostupnost se nepodařilo načíst.',
+      priceHeading: 'Orientační ceník', pricePerNight: '/ noc', priceMin: 'min.',
+      priceCleaning: 'Úklid (jednorázově)', priceDeposit: 'Záloha %P% % až po potvrzení termínu', priceFxNote: '',
       sending: 'Odesílám…', prevMonths: 'Předchozí měsíce', nextMonths: 'Další měsíce',
       okTitle: 'Žádost přijata',
       okBody: 'Ozveme se vám do 24 hodin. Nic zatím neplatíte — termín potvrdíme osobně e-mailem.',
@@ -242,7 +248,7 @@ const T = {
       h1: 'A private villa in the Krkonoše mountains for 6–22 guests',
       sub: 'The whole place — the house and its sweeping grounds — is <em>yours alone</em>.',
       subWinter: 'Skiing just around the corner — <em>ski bus at the door</em>, Černá hora 4 km.',
-      ctaSec: 'Explore the house', badge: 'Open dates 2026', video: 'Play video',
+      ctaSec: 'Explore the house', ctaHint: 'Non-binding request — you pay nothing now.', badge: 'Open dates 2026', video: 'Play video',
       summer: 'Summer', winter: 'Winter', scroll: 'Scroll',
       tipSummer: 'Pool, pergola and evenings around the open fire.',
       tipWinter: 'No chains to the door, free ski bus within walking distance.',
@@ -340,6 +346,8 @@ const T = {
       pay: 'Send stay request', stripeNote: 'This request is non-binding — you pay nothing now. We’ll confirm the dates personally and then send a payment link for the deposit.',
       free: 'Available', booked: 'Booked', chosen: 'Your stay', checkoutOnly: 'checkout only', demo: 'Sample availability — will connect to the booking system',
       availFail: 'Availability could not be loaded.',
+      priceHeading: 'Price guide', pricePerNight: '/ night', priceMin: 'min.',
+      priceCleaning: 'Cleaning (one-off)', priceDeposit: '%P%% deposit, only after we confirm your dates', priceFxNote: 'approximate, paid in CZK',
       sending: 'Sending…', prevMonths: 'Previous months', nextMonths: 'Next months',
       okTitle: 'Request received',
       okBody: 'We’ll get back to you within 24 hours. You pay nothing yet — we confirm the dates personally by email.',
@@ -381,7 +389,7 @@ const T = {
       h1: 'Eine private Villa im Riesengebirge für 6–22 Gäste',
       sub: 'Der ganze Ort — Haus und weitläufiges Grundstück — gehört <em>nur euch</em>.',
       subWinter: 'Skifahren gleich um die Ecke — <em>Skibus am Haus</em>, Černá hora 4 km.',
-      ctaSec: 'Haus ansehen', badge: 'Freie Termine 2026', video: 'Video abspielen',
+      ctaSec: 'Haus ansehen', ctaHint: 'Unverbindliche Anfrage — Sie zahlen nichts.', badge: 'Freie Termine 2026', video: 'Video abspielen',
       summer: 'Sommer', winter: 'Winter', scroll: 'Scrollen',
       tipSummer: 'Pool, Pergola und Abende am offenen Feuer.',
       tipWinter: 'Ohne Ketten bis zur Tür, kostenloser Skibus in Gehweite.',
@@ -479,6 +487,8 @@ const T = {
       pay: 'Aufenthaltsanfrage senden', stripeNote: 'Die Anfrage ist unverbindlich — ihr zahlt jetzt nichts. Wir bestätigen den Termin persönlich und senden danach einen Zahlungslink für die Anzahlung.',
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', checkoutOnly: 'nur Abreise', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
       availFail: 'Verfügbarkeit konnte nicht geladen werden.',
+      priceHeading: 'Preisübersicht', pricePerNight: '/ Nacht', priceMin: 'min.',
+      priceCleaning: 'Endreinigung (einmalig)', priceDeposit: '%P%% Anzahlung, erst nach Bestätigung des Termins', priceFxNote: 'ca.-Werte, Zahlung in CZK',
       sending: 'Senden…', prevMonths: 'Vorherige Monate', nextMonths: 'Nächste Monate',
       okTitle: 'Anfrage erhalten',
       okBody: 'Wir melden uns innerhalb von 24 Stunden. Ihr zahlt noch nichts — wir bestätigen den Termin persönlich per E-Mail.',
@@ -520,7 +530,7 @@ const T = {
       h1: 'Prywatna willa w Karkonoszach dla 6–22 gości',
       sub: 'Całe to miejsce — dom i rozległa posesja — jest <em>tylko wasze</em>.',
       subWinter: 'Narty tuż za rogiem — <em>skibus przy domu</em>, Černá hora 4 km.',
-      ctaSec: 'Zobacz dom', badge: 'Wolne terminy 2026', video: 'Odtwórz wideo',
+      ctaSec: 'Zobacz dom', ctaHint: 'Niezobowiązująca prośba — nic nie płacicie.', badge: 'Wolne terminy 2026', video: 'Odtwórz wideo',
       summer: 'Lato', winter: 'Zima', scroll: 'Scroll',
       tipSummer: 'Basen, pergola i wieczory przy otwartym ogniu.',
       tipWinter: 'Bez łańcuchów pod same drzwi, darmowy skibus w zasięgu spaceru.',
@@ -618,6 +628,8 @@ const T = {
       pay: 'Wyślij prośbę o pobyt', stripeNote: 'Prośba jest niezobowiązująca — teraz nic nie płacisz. Termin potwierdzimy osobiście, a potem wyślemy link do płatności zaliczki.',
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', checkoutOnly: 'tylko wyjazd', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
       availFail: 'Nie udało się wczytać dostępności.',
+      priceHeading: 'Orientacyjny cennik', pricePerNight: '/ noc', priceMin: 'min.',
+      priceCleaning: 'Sprzątanie (jednorazowo)', priceDeposit: 'Zaliczka %P%% dopiero po potwierdzeniu terminu', priceFxNote: 'orientacyjnie, płatność w CZK',
       sending: 'Wysyłam…', prevMonths: 'Poprzednie miesiące', nextMonths: 'Następne miesiące',
       okTitle: 'Prośba przyjęta',
       okBody: 'Odezwiemy się w ciągu 24 godzin. Na razie nic nie płacisz — termin potwierdzimy osobiście e-mailem.',
@@ -690,6 +702,14 @@ const GALLERY = [
   { s: 'summer-house', c: 'leto', alt: 'Villa Rudolf pod korunou stromu v létě' },
 ];
 const GAL_FILTERS = ['all', 'leto', 'zima', 'vecer', 'interier'];
+/* Fotky karet „Kam na výlet" (pořadí = vylety.items). JEN skutečné snímky z repa —
+   žádné AI/stažené fotky. Sněžka/hory, letní cesta lesem, lyžování, hřiště pro děti. */
+const TRIP_IMAGES = [
+  'media/gallery/winter-forest.jpg',
+  'media/gallery/summer-drive.jpg',
+  'media/gallery/winter-snow.jpg',
+  'media/sections/playground.jpg',
+];
 
 function tt() { return T[state.lang] || T.cs; }
 function resolve(obj, path) { return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj); }
@@ -942,9 +962,10 @@ function renderLokFacts() {
 function renderTrips() {
   const t = tt();
   const host = $('#vr-vyl'); host.innerHTML = '';
-  t.vylety.items.forEach((it) => {
+  t.vylety.items.forEach((it, i) => {
     const art = el('article');
-    art.appendChild(slot(t.photoSoon));
+    const src = TRIP_IMAGES[i];
+    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy', width: '1200', height: '800' }));
     art.appendChild(el('span', { class: 'vr-tag', text: it.tag }));
     art.appendChild(el('h3', { text: it.name }));
     art.appendChild(el('p', { text: it.desc }));
@@ -1164,6 +1185,13 @@ function computeQuote(s0, s1, adults, children) {
 }
 
 function fmtM(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' Kč'; }
+function fmtNum(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+/* Orientační přepočet CZK → €/zł pro cizojazyčné verze (cs → null, platí se v CZK). */
+function fxLine(czk, lang) {
+  if (lang === 'en' || lang === 'de') return '≈ ' + fmtNum(Math.round(czk / VR_FX.EUR / 5) * 5) + ' €';
+  if (lang === 'pl') return '≈ ' + fmtNum(Math.round(czk / VR_FX.PLN / 10) * 10) + ' zł';
+  return null;
+}
 function fmtK(k) { return (k % 100) + '. ' + (Math.floor(k / 100) % 100) + '.'; }
 function nightsCount() {
   const s0 = state.selStart, s1 = state.selEnd;
@@ -1246,11 +1274,42 @@ function clampGuests() {
   a.value = Math.max(1, Math.min(VR_PRICING.maxGuests, av));
   c.value = Math.max(0, Math.min(VR_PRICING.maxGuests - 1, cv));
 }
+/* Statický orientační ceník nad kalendářem. Hodnoty čerpá z VR_PRICING, aby se
+   nikdy nerozešly s výpočtem. U cizojazyčných verzí přidá přibližný přepočet €/zł. */
+function renderPriceBlock() {
+  const host = $('#vr-priceblock'); if (!host) return;
+  const t = tt(), lang = state.lang;
+  const SL = SEASON_LABEL[lang] || SEASON_LABEL.cs;
+  host.innerHTML = '';
+  host.appendChild(el('div', { class: 'vr-priceblock-h', text: t.book.priceHeading }));
+  const rows = el('div', { class: 'vr-priceblock-rows' });
+  VR_PRICING.seasons.forEach((s) => {
+    const nbWord = (NBf[lang] || NBf.cs)(s.minNights);
+    const fx = fxLine(s.nightly, lang);
+    let meta = t.book.priceMin + ' ' + s.minNights + ' ' + nbWord;
+    if (fx) meta += ' · ' + fx + ' ' + t.book.pricePerNight;
+    rows.appendChild(el('div', { class: 'vr-priceblock-row' }, [
+      el('span', { class: 'vr-priceblock-season', text: SL[s.name] || s.name }),
+      el('span', { class: 'vr-priceblock-val' }, [
+        el('b', { text: fmtM(s.nightly) + ' ' + t.book.pricePerNight }),
+        el('span', { class: 'vr-priceblock-min', text: meta }),
+      ]),
+    ]));
+  });
+  host.appendChild(rows);
+  const foot = el('div', { class: 'vr-priceblock-foot' });
+  const clFx = fxLine(VR_PRICING.cleaning, lang);
+  foot.appendChild(el('span', { text: t.book.priceCleaning + ' ' + fmtM(VR_PRICING.cleaning) + (clFx ? ' (' + clFx + ')' : '') }));
+  foot.appendChild(el('span', { text: (t.book.priceDeposit || '').replace('%P%', VR_PRICING.depositPct) }));
+  if (t.book.priceFxNote) foot.appendChild(el('span', { class: 'vr-priceblock-fx', text: t.book.priceFxNote }));
+  host.appendChild(foot);
+}
 function renderBookingPanel() {
   const t = tt(), lang = state.lang;
   const s0 = state.selStart, s1 = state.selEnd;
   const nights = nightsCount();
-  $('#vr-sel-label').textContent = s0 ? fmtK(s0) + ' — ' + (s1 ? fmtK(s1) : '…') : t.book.pick;
+  const yr = s0 ? Math.floor((s1 || s0) / 10000) : 0;
+  $('#vr-sel-label').textContent = s0 ? fmtK(s0) + ' — ' + (s1 ? fmtK(s1) : '…') + ' ' + yr : t.book.pick;
   $('#vr-sel-nights').textContent = nights ? '· ' + nights + ' ' + (NBf[lang] || NBf.cs)(nights) : '';
 
   const g = readGuests();
@@ -1287,6 +1346,8 @@ function renderBookingPanel() {
     const adWord = (ADf[lang] || ADf.cs)(q.adults), nbWord = (NBf[lang] || NBf.cs)(q.nights);
     brk.appendChild(rowEl(t.book.cityTax + ' (' + q.adults + ' ' + adWord + ' × ' + q.nights + ' ' + nbWord + ')', fmtM(q.cityTax)));
     brk.appendChild(rowEl(t.book.total, fmtM(q.total), 'brk-total'));
+    const fxTot = fxLine(q.total, lang);
+    if (fxTot) brk.appendChild(rowEl(fxTot, t.book.priceFxNote || '', 'brk-fx'));
     brk.appendChild(rowEl((t.book.depositReq || '').replace('%P%', VR_PRICING.depositPct), fmtM(q.deposit), 'brk-dep'));
   }
 
@@ -1538,7 +1599,7 @@ function setLang(lang) {
   applyLangButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
-  renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
+  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
@@ -1829,7 +1890,7 @@ function init() {
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
-  renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
+  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   loadAvailability();
