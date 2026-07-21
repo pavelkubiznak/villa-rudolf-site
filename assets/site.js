@@ -1362,6 +1362,8 @@ function applyHeroSeason() {
 /* Přímá rezervace = nejlepší cena — badge v hero pásu, u rezervace a řádek v boxu.
    Ceny se NEMĚNÍ, jde jen o sdělení. */
 function renderDirectBook() {
+  // Vypnuto na přání majitele: výhodnost přímé rezervace nekomunikujeme, hosté na ni přijdou sami.
+  return;
   const t = tt();
   const shield = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V6l7-3z"></path><path d="M9 12l2 2 4-4"></path></svg>';
   ['#vr-directbook', '#vr-directbook-book'].forEach((sel) => {
