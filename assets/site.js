@@ -197,6 +197,12 @@ const T = {
         { name: 'Pokoj 4', cap: '2 hosté', beds: 'Manželská postel' },
       ],
     },
+    interior: {
+      hint: 'Táhněte myší nebo prstem · klepnutím zvětšíte',
+      open360: 'Prohlédnout ve 360°',
+      rosterTitle: 'Rozpis lůžek',
+      items: { kitchen: 'Kuchyně a jídelna', lounge: 'Společenská místnost v podkroví', suite: 'Apartmá Suite', room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4', sauna: 'Finská sauna', wellness: 'Wellness a sprcha', bath: 'Koupelna se sprchou' },
+    },
     ohniste: {
       eyebrow: 'Nová dominanta', caption: 'Detail ohniště a gabionové stěny',
       title: 'Ohniště s gabionovou stěnou, které večer ožívá',
@@ -433,6 +439,12 @@ const T = {
         { name: 'Room 3', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed)' },
         { name: 'Room 4', cap: '2 guests', beds: 'Double bed' },
       ],
+    },
+    interior: {
+      hint: 'Drag with mouse or finger · tap to enlarge',
+      open360: 'View in 360°',
+      rosterTitle: 'Bed layout',
+      items: { kitchen: 'Kitchen & dining', lounge: 'Attic lounge', suite: 'Apartment Suite', room1: 'Bedroom 1', room2: 'Bedroom 2', room3: 'Bedroom 3', room4: 'Bedroom 4', sauna: 'Finnish sauna', wellness: 'Wellness & shower', bath: 'Bathroom with shower' },
     },
     ohniste: {
       eyebrow: 'New centrepiece', caption: 'Detail of the fire pit and gabion wall',
@@ -671,6 +683,12 @@ const T = {
         { name: 'Zimmer 4', cap: '2 Gäste', beds: 'Doppelbett' },
       ],
     },
+    interior: {
+      hint: 'Mit Maus oder Finger ziehen · zum Vergrößern tippen',
+      open360: 'In 360° ansehen',
+      rosterTitle: 'Bettenaufteilung',
+      items: { kitchen: 'Küche & Essbereich', lounge: 'Aufenthaltsraum im Dachgeschoss', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Bad mit Dusche' },
+    },
     ohniste: {
       eyebrow: 'Neues Herzstück', caption: 'Detail der Feuerstelle und Gabionenwand',
       title: 'Eine Feuerstelle mit Gabionenwand, die abends zum Leben erwacht',
@@ -907,6 +925,12 @@ const T = {
         { name: 'Pokój 3', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka)' },
         { name: 'Pokój 4', cap: '2 gości', beds: 'Łóżko małżeńskie' },
       ],
+    },
+    interior: {
+      hint: 'Przeciągnij myszą lub palcem · dotknij, aby powiększyć',
+      open360: 'Zobacz w 360°',
+      rosterTitle: 'Rozkład łóżek',
+      items: { kitchen: 'Kuchnia i jadalnia', lounge: 'Salon na poddaszu', suite: 'Apartament Suite', room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4', sauna: 'Sauna fińska', wellness: 'Wellness i prysznic', bath: 'Łazienka z prysznicem' },
     },
     ohniste: {
       eyebrow: 'Nowy element', caption: 'Detal paleniska i ściany gabionowej',
@@ -1539,34 +1563,161 @@ function renderAmenityExtras() {
    s manželskými postelemi, až 10 hostů" (zbylá lůžka se nevymýšlejí). */
 const bedIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17v-6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"></path><path d="M2 17h20"></path><path d="M2 20v-3M22 20v-3"></path><path d="M6 9V7.5A1.5 1.5 0 0 1 7.5 6h9A1.5 1.5 0 0 1 18 7.5V9"></path></svg>';
 const guestsIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
-/* Fotky ložnic — VÝHRADNĚ lednová sada 2026 (LED podsvícené postele, nové
-   tapety). Starší sada „Suite / room 1–4" se sem záměrně nemíchá. */
-const ROOM_IMAGES = [
-  'media/sections/room-suite.jpg',
-  'media/sections/room-1.jpg',
-  'media/sections/room-2.jpg',
-  'media/sections/room-3.jpg',
-  'media/sections/room-4.jpg',
+/* ===================== Interiérový karusel (#loznice) =====================
+   Majitel: „hover vypadá klikatelně, klikneš a nic. Chci nekonečný karusel a aby
+   z něj pěkně vystoupila 360." Sekce je teď tažný NEKONEČNÝ karusel interiéru
+   (pokoje + kuchyně + sauna + wellness + koupelny + podkroví). Klik → lightbox;
+   kde existuje zimní 360° scéna, i tlačítko „Prohlédnout ve 360°". Ovládání:
+   myš (drag), trackpad/kolečko, dotyk, šipky i klávesnice; při prefers-reduced-
+   motion žádné auto-posouvání. Rozpis lůžek zůstává jako textový blok pod ním.
+   Fotky VÝHRADNĚ z lednové sady 2026 (generace interiérů se nemíchá).
+   pano = index scény v ZIMNÍ 360° sadě (PANO_SETS.zima), kde daný prostor existuje. */
+const INTERIOR = [
+  { k: 'kitchen',  img: 'media/sections/int-kitchen.jpg',  pano: 1 },
+  { k: 'lounge',   img: 'media/sections/int-lounge.jpg',   pano: 0 },
+  { k: 'suite',    img: 'media/sections/room-suite.jpg' },
+  { k: 'room1',    img: 'media/sections/room-1.jpg' },
+  { k: 'room2',    img: 'media/sections/room-2.jpg' },
+  { k: 'room3',    img: 'media/sections/room-3.jpg' },
+  { k: 'room4',    img: 'media/sections/room-4.jpg' },
+  { k: 'sauna',    img: 'media/sections/int-sauna.jpg',    pano: 3 },
+  { k: 'wellness', img: 'media/sections/int-wellness.jpg', pano: 2 },
+  { k: 'bath',     img: 'media/sections/int-bath.jpg' },
 ];
-function renderBedrooms() {
+const zoomIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20.5 20.5 16 16M11 8v6M8 11h6"></path></svg>';
+const spinIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="10" ry="4.6"></ellipse><path d="M6.5 13.5A6 6 0 0 0 17.5 13.5"></path><path d="M16 10.4 17.7 13l-2.9.5"></path></svg>';
+
+function interiorLbList() { return INTERIOR.map((it) => ({ src: it.img, pano: it.pano })); }
+
+function buildInteriorCard(it, idx) {
   const t = tt();
-  const host = $('#vr-beds'); if (!host) return; host.innerHTML = '';
-  const B = t.bedrooms; if (!B) return;
-  (B.rooms || []).forEach((r, i) => {
-    const cap = el('span', { class: 'vr-bed-cap', html: guestsIcon() });
-    cap.appendChild(el('span', { text: r.cap }));
-    const kids = [];
-    const src = ROOM_IMAGES[i];
-    if (src) kids.push(el('img', { class: 'vr-bed-img', src: src, alt: r.name + ' — Villa Rudolf', loading: 'lazy', decoding: 'async', width: '1600', height: '1200' }));
-    kids.push(el('div', { class: 'vr-bed-body' }, [
-      el('div', { class: 'vr-bed-top' }, [
-        el('span', { class: 'vr-bed-ic', 'aria-hidden': 'true', html: bedIcon() }),
-        el('h3', { text: r.name }), cap,
+  const name = (t.interior && t.interior.items && t.interior.items[it.k]) || '';
+  return el('button', { type: 'button', class: 'vr-car-card', 'data-idx': String(idx), 'aria-label': name }, [
+    el('img', { src: it.img, alt: name + ' — Villa Rudolf', loading: 'lazy', decoding: 'async', width: '900', height: '1200' }),
+    el('span', { class: 'vr-car-badge' + (it.pano != null ? ' is360' : ''), 'aria-hidden': 'true', html: it.pano != null ? spinIcon() : zoomIcon() }),
+    el('span', { class: 'vr-car-cap' }, [el('span', { 'data-t': 'interior.items.' + it.k, text: name })]),
+  ]);
+}
+
+let interiorBuilt = false;
+function renderBedrooms() {
+  if (interiorBuilt) return;   // postaví se jednou; texty (data-t) obnoví setTexts()
+  const track = $('#vr-car-track');
+  if (!track) return;
+  interiorBuilt = true;
+  const COPIES = 3;            // 3 kopie = plný buffer na obou stranách pro plynulou smyčku
+  for (let c = 0; c < COPIES; c++) INTERIOR.forEach((it, i) => track.appendChild(buildInteriorCard(it, i)));
+  setupCarousel(track);
+  buildRoster($('#vr-roster'));
+}
+
+function buildRoster(host) {
+  if (!host) return;
+  const t = tt(); host.innerHTML = '';
+  host.appendChild(el('h3', { class: 'vr-roster-title', 'data-t': 'interior.rosterTitle', text: (t.interior && t.interior.rosterTitle) || '' }));
+  const list = el('dl', { class: 'vr-roster-list' });
+  (t.bedrooms.rooms || []).forEach((r, i) => {
+    list.appendChild(el('div', { class: 'vr-roster-row' }, [
+      el('span', { class: 'vr-roster-ic', 'aria-hidden': 'true', html: bedIcon() }),
+      el('dt', {}, [
+        el('b', { 'data-t': 'bedrooms.rooms.' + i + '.name', text: r.name }),
+        el('span', { class: 'vr-roster-cap', 'data-t': 'bedrooms.rooms.' + i + '.cap', text: r.cap }),
       ]),
-      el('p', { class: 'vr-bed-desc', text: r.beds }),
+      el('dd', { 'data-t': 'bedrooms.rooms.' + i + '.beds', text: r.beds }),
     ]));
-    host.appendChild(el('article', { class: 'vr-bed' + (i === 0 ? ' vr-bed-suite' : '') }, kids));
   });
+  host.appendChild(list);
+}
+
+function setupCarousel(track) {
+  const car = track.parentElement, per = INTERIOR.length;
+  let P = 0, dragging = false, moved = 0, startX = 0, startScroll = 0, lastInteract = 0;
+  const measure = () => {
+    const kids = track.children;
+    if (kids.length < per * 2) { P = 0; return; }
+    P = kids[per].offsetLeft - kids[0].offsetLeft;
+  };
+  const wrap = () => {
+    if (P <= 0) return;
+    const s = track.scrollLeft;
+    if (s >= 2 * P) track.scrollLeft = s - P;
+    else if (s < P) track.scrollLeft = s + P;
+  };
+  const bump = () => { lastInteract = Date.now(); };
+  measure();
+  track.scrollLeft = P || 0;   // start v prostřední kopii
+  window.addEventListener('resize', () => { measure(); wrap(); });
+  $all('img', track).forEach((im) => { if (!im.complete) im.addEventListener('load', measure, { once: true }); });
+  track.addEventListener('scroll', wrap, { passive: true });
+
+  // auto-drift (zleva doprava), pauza při interakci; reduced-motion → vypnuto
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let hover = false, last = 0;
+  const tick = (ts) => {
+    requestAnimationFrame(tick);
+    const dt = last ? ts - last : 16; last = ts;
+    if (reduce || hover || dragging || Date.now() - lastInteract < 2600) return;
+    track.scrollLeft += Math.min(dt, 40) * 0.02; wrap();
+  };
+  if (!reduce) requestAnimationFrame(tick);
+  car.addEventListener('mouseenter', () => { hover = true; });
+  car.addEventListener('mouseleave', () => { hover = false; });
+
+  // myš drag (dotyk necháme nativnímu scrollu)
+  track.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch') return;
+    dragging = true; moved = 0; startX = e.clientX; startScroll = track.scrollLeft;
+    try { track.setPointerCapture(e.pointerId); } catch (x) {}
+    track.classList.add('dragging');
+  });
+  track.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX; moved = Math.max(moved, Math.abs(dx));
+    track.scrollLeft = startScroll - dx; wrap(); bump();
+  });
+  const endDrag = (e) => { if (!dragging) return; dragging = false; track.classList.remove('dragging'); try { track.releasePointerCapture(e.pointerId); } catch (x) {} };
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
+  track.addEventListener('touchstart', bump, { passive: true });
+  track.addEventListener('touchmove', () => { bump(); wrap(); }, { passive: true });
+
+  // kolečko/trackpad → vodorovně
+  track.addEventListener('wheel', (e) => {
+    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (!d) return;
+    track.scrollLeft += d; wrap(); bump(); e.preventDefault();
+  }, { passive: false });
+
+  // šipky (tlačítka) + klávesnice
+  const step = () => Math.max(220, Math.round(car.clientWidth * 0.5));
+  const go = (dir) => { bump(); track.scrollBy({ left: dir * step(), behavior: 'smooth' }); };
+  const pv = $('#vr-car-prev'), nx = $('#vr-car-next');
+  if (pv) pv.addEventListener('click', () => go(-1));
+  if (nx) nx.addEventListener('click', () => go(1));
+  track.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { go(-1); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { go(1); e.preventDefault(); }
+  });
+
+  // klik na kartu → lightbox (potlač, pokud šlo o drag)
+  track.addEventListener('click', (e) => {
+    const card = e.target.closest('.vr-car-card'); if (!card) return;
+    if (moved > 6) { e.preventDefault(); return; }
+    lbOpen(interiorLbList(), +card.getAttribute('data-idx'));
+  });
+}
+
+/* Skok z lightboxu do 360°: interiérové scény žijí jen v ZIMNÍ sadě, takže
+   přepneme na zimu, nastavíme scénu, doskrolujeme k prohlídce a načteme pano. */
+function openTourScene(idx) {
+  if (state.season !== 'zima') setSeason('zima');
+  state.scene = idx;
+  renderScene(); renderThumbs();
+  ensureThree(initPano);
+  const jump = () => { if (loadPano) loadPano(idx); };
+  jump(); setTimeout(jump, 380);
+  const sec = document.getElementById('interier');
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderThumbs() {
@@ -1653,10 +1804,11 @@ function renderGallery() {
   const host = $('#vr-gal'); if (!host) return;
   const items = galItems();
   host.innerHTML = '';
+  const lbList = items.map((g) => ({ src: 'media/gallery/' + g.s + '.jpg' }));
   items.forEach((g, i) => host.appendChild(el('img', {
     src: 'media/gallery/t/' + g.s + '.jpg', alt: g.alt, loading: 'lazy', decoding: 'async',
     width: '600', height: '600',
-    onclick: () => lbOpen(items, i),
+    onclick: () => lbOpen(lbList, i),
   })));
 }
 
@@ -2367,14 +2519,30 @@ function setSeason(season) {
 }
 
 /* ============================ Lightbox ============================ */
-function lbOpen(list, i) { state.lbList = (list || []).map((g) => g.s); lbSet(i); }
+/* list = pole { src, pano? } (galerie i interiérový karusel sdílí jeden lightbox).
+   pano != null → zobraz tlačítko „Prohlédnout ve 360°". */
+function lbOpen(list, i) { state.lbList = list || []; lbSet(i); }
 function lbSet(i) {
   const lb = $('#vr-lb');
   const list = state.lbList || [];
-  if (i < 0 || !list.length) { state.lb = -1; lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; return; }
+  const b360 = $('#vr-lb-360');
+  if (i < 0 || !list.length) {
+    state.lb = -1; lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = '';
+    if (b360) { b360.style.display = 'none'; b360.onclick = null; }
+    return;
+  }
   state.lb = i;
-  $('#vr-lb-img').src = 'media/gallery/' + list[i] + '.jpg';
+  const it = list[i] || {};
+  $('#vr-lb-img').src = it.src || '';
   $('#vr-lb-count').textContent = (i + 1) + ' / ' + list.length;
+  if (b360) {
+    if (it.pano != null) {
+      const p = it.pano;
+      b360.style.display = 'inline-flex';
+      b360.textContent = (tt().interior && tt().interior.open360) || 'View in 360°';
+      b360.onclick = (e) => { e.stopPropagation(); lbSet(-1); openTourScene(p); };
+    } else { b360.style.display = 'none'; b360.onclick = null; }
+  }
   lb.style.display = 'flex'; lb.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
 }
 function lbNav(dir) { const n = (state.lbList || []).length; if (!n) return; lbSet((state.lb + dir + n) % n); }

@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=20">
+<link rel="stylesheet" href="assets/site.css?v=21">
 </head>
 <body>
 <noscript>
@@ -317,7 +317,18 @@
         </div>
         <span class="vr-sec-note" data-t="bedrooms.note">7 ložnic a 22 lůžek — pohodlné spaní pro celou skupinu i pro rodiny.</span>
       </div>
-      <div class="vr-beds vr-reveal" id="vr-beds"></div>
+    </div>
+    <!-- Interiérový karusel: nekonečná smyčka (drag / trackpad / dotyk / šipky /
+         klávesnice), klik na kartu → lightbox; kde existuje zimní 360° scéna,
+         i tlačítko „Prohlédnout ve 360°". Rozpis lůžek zůstává pod karuselem. -->
+    <div class="vr-car vr-reveal" id="vr-car">
+      <div class="vr-car-track" id="vr-car-track" tabindex="0" aria-label="Interiér — projeďte fotky, klepnutím zvětšíte"></div>
+      <button type="button" class="vr-car-arrow prev" id="vr-car-prev" aria-label="Předchozí"><span aria-hidden="true">&#8249;</span></button>
+      <button type="button" class="vr-car-arrow next" id="vr-car-next" aria-label="Další"><span aria-hidden="true">&#8250;</span></button>
+    </div>
+    <div class="vr-wrap">
+      <p class="vr-car-hint vr-reveal" data-t="interior.hint">Táhněte myší nebo prstem · klepnutím zvětšíte</p>
+      <div class="vr-roster vr-reveal" id="vr-roster"></div>
       <p class="vr-beds-foot vr-reveal" data-t="bedrooms.noBunk">Žádné patrové postele — klidnější spaní i pro rodiče s malými dětmi.</p>
     </div>
   </section>
@@ -747,11 +758,12 @@
     <button class="vr-lb-btn vr-lb-prev" id="vr-lb-prev" type="button" aria-label="Předchozí">&#8249;</button>
     <button class="vr-lb-btn vr-lb-next" id="vr-lb-next" type="button" aria-label="Další">&#8250;</button>
     <button class="vr-lb-btn vr-lb-close" id="vr-lb-close" type="button" aria-label="Zavřít">&#10005;</button>
+    <button class="vr-lb-360" id="vr-lb-360" type="button" style="display:none">Prohlédnout ve 360°</button>
     <div class="vr-lb-count" id="vr-lb-count"></div>
   </div>
 
 </div>
-<script src="assets/site.js?v=20" defer></script>
+<script src="assets/site.js?v=21" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

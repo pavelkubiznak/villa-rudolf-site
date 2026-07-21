@@ -314,33 +314,53 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 
 /* ---------- Bedrooms & beds ---------- */
 .sec-loznice{padding:clamp(72px,11vh,150px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
-.vr-beds{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,1.8vw,22px);margin-top:clamp(34px,4.6vw,56px)}
-/* Karta ložnice = fotka (lednová sada 2026) + textová část pod ní.
-   Suite je široká karta: fotka vlevo, text vpravo. */
-.vr-bed{display:flex;flex-direction:column;border:1px solid var(--vr-line);border-radius:4px;background:var(--vr-panel);
-  overflow:hidden;transition:background-color .6s ease,border-color .25s ease,transform .25s ease}
-.vr-bed:hover{border-color:var(--vr-accent);transform:translateY(-2px)}
-.vr-bed-img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
-.vr-bed-suite{grid-column:1/-1;background:var(--vr-panel-strong);border-color:var(--vr-line-2);
-  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:stretch}
-.vr-bed-suite .vr-bed-img{height:100%;aspect-ratio:auto;min-height:clamp(230px,26vw,340px)}
-.vr-bed-suite .vr-bed-body{align-self:center}
-.vr-bed-ic{flex:none;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;
+/* ---- Interiérový karusel (nekonečná tažná smyčka, full-bleed) ---- */
+.vr-car{position:relative;margin-top:clamp(28px,3.6vw,46px)}
+.vr-car-track{display:flex;gap:clamp(12px,1.4vw,18px);overflow-x:auto;overscroll-behavior-x:contain;
+  padding:6px clamp(20px,5vw,64px);scrollbar-width:none;-ms-overflow-style:none;
+  cursor:grab;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+.vr-car-track::-webkit-scrollbar{display:none}
+.vr-car-track.dragging{cursor:grabbing}
+.vr-car-track:focus-visible{outline:2px solid var(--vr-accent);outline-offset:-4px;border-radius:4px}
+.vr-car-card{position:relative;flex:0 0 auto;width:clamp(220px,24vw,290px);aspect-ratio:3/4;
+  border:0;padding:0;border-radius:6px;overflow:hidden;cursor:pointer;background:var(--vr-panel);user-select:none;-webkit-user-select:none;
+  box-shadow:0 8px 30px rgba(0,0,0,.16);transition:transform .3s ease,box-shadow .3s ease;-webkit-tap-highlight-color:transparent}
+.vr-car-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s ease;pointer-events:none}
+.vr-car-card::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 44%,rgba(6,10,8,.76))}
+.vr-car-card:hover{transform:translateY(-4px);box-shadow:0 16px 46px rgba(0,0,0,.3)}
+.vr-car-card:hover img{transform:scale(1.05)}
+.vr-car-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:14px 15px 13px;
+  font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.02rem,1.4vw,1.24rem);line-height:1.15;color:#F7F1E8;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.vr-car-badge{position:absolute;top:11px;right:11px;z-index:3;display:flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:999px;background:rgba(10,14,12,.5);border:1px solid rgba(240,235,225,.28);color:#F0EBE1;
+  backdrop-filter:blur(6px);opacity:0;transform:scale(.82);transition:opacity .25s ease,transform .25s ease}
+.vr-car-card:hover .vr-car-badge,.vr-car-card:focus-visible .vr-car-badge{opacity:1;transform:none}
+.vr-car-badge.is360{background:rgba(214,138,76,.92);border-color:transparent;color:#10150f}
+.vr-car-badge svg{width:20px;height:20px}
+.vr-car-arrow{position:absolute;top:calc(50% - 8px);transform:translateY(-50%);z-index:4;display:flex;align-items:center;justify-content:center;
+  width:46px;height:46px;border-radius:999px;border:1px solid var(--vr-line-2);background:var(--vr-panel-strong);color:var(--vr-text-soft);
+  font-size:24px;line-height:1;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);transition:background .25s,color .25s,border-color .25s}
+.vr-car-arrow:hover{background:var(--vr-accent);color:var(--vr-on-accent);border-color:var(--vr-accent)}
+.vr-car-arrow.prev{left:clamp(8px,2vw,22px)}
+.vr-car-arrow.next{right:clamp(8px,2vw,22px)}
+@media(hover:none){.vr-car-arrow{display:none}}
+@media(prefers-reduced-motion:reduce){.vr-car-card,.vr-car-card img{transition:none}}
+.vr-car-hint{font-family:'Archivo',sans-serif;font-size:12.5px;color:var(--vr-text-faint);margin:clamp(12px,1.4vw,16px) 0 0;transition:color .6s ease}
+/* ---- Rozpis lůžek (textový blok pod karuselem) ---- */
+.vr-roster{margin-top:clamp(24px,2.8vw,36px)}
+.vr-roster-title{font-family:'Archivo',sans-serif;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--vr-accent-2);margin:0 0 8px;transition:color .6s ease}
+.vr-roster-list{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,4vw,56px);margin:0}
+.vr-roster-row{display:grid;grid-template-columns:auto 1fr;column-gap:12px;padding:13px 0;border-top:1px solid var(--vr-line)}
+.vr-roster-ic{grid-column:1;grid-row:1/span 2;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;
   color:var(--vr-accent-2);background:color-mix(in oklab,var(--vr-accent),transparent 88%);
   border:1px solid color-mix(in oklab,var(--vr-accent),transparent 74%);transition:color .6s ease,background-color .6s ease,border-color .6s ease}
-.vr-bed-ic svg{width:18px;height:18px}
-.vr-bed-body{min-width:0;flex:1 1 auto;padding:clamp(16px,1.8vw,24px)}
-.vr-bed-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
-.vr-bed-top h3{flex:1 1 auto}
-.vr-bed-top .vr-bed-cap{margin-left:auto}
-.vr-bed-top h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.2rem,1.8vw,1.55rem);line-height:1.1;color:var(--vr-text-soft);margin:0;transition:color .6s ease}
-.vr-bed-cap{display:inline-flex;align-items:center;gap:6px;font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--vr-accent-2);white-space:nowrap;transition:color .6s ease}
-.vr-bed-cap svg{width:15px;height:15px;flex:none}
-.vr-bed-desc{font-family:'Archivo',sans-serif;font-size:14px;line-height:1.6;color:var(--vr-text-muted);margin:8px 0 0;transition:color .6s ease}
+.vr-roster-ic svg{width:17px;height:17px}
+.vr-roster-row dt{grid-column:2;grid-row:1;margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.vr-roster-row dt b{font-family:'Newsreader',serif;font-weight:500;font-size:1.06rem;color:var(--vr-text-soft);transition:color .6s ease}
+.vr-roster-cap{font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;color:var(--vr-accent-2);transition:color .6s ease}
+.vr-roster-row dd{grid-column:2;grid-row:2;margin:4px 0 0;font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.55;color:var(--vr-text-muted);transition:color .6s ease}
 .vr-beds-foot{font-family:'Archivo',sans-serif;font-size:13px;line-height:1.6;color:var(--vr-text-faint);margin:clamp(20px,2.6vw,30px) 0 0;max-width:60ch;transition:color .6s ease}
-@media(max-width:880px){.vr-beds{grid-template-columns:1fr 1fr}.vr-bed-suite{grid-template-columns:1fr}
-  .vr-bed-suite .vr-bed-img{aspect-ratio:16/9;min-height:0}}
-@media(max-width:520px){.vr-beds{grid-template-columns:1fr}}
+@media(max-width:720px){.vr-roster-list{grid-template-columns:1fr}}
 
 /* Evening (static night scene) — copy sits over a night photo → light in both seasons. */
 .sec-vecer{position:relative;height:clamp(420px,72vh,680px);overflow:hidden;background:#05080a}
@@ -552,6 +572,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-lb-next{right:clamp(10px,3vw,34px);top:50%;transform:translateY(-50%)}
 .vr-lb-close{right:clamp(10px,3vw,34px);top:clamp(10px,3vw,28px);font-size:16px}
 .vr-lb-count{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font-family:'Archivo',sans-serif;font-size:12px;letter-spacing:.14em;color:#AEB4A8}
+/* „Prohlédnout ve 360°" — jen u karet, které mají zimní 360° scénu */
+.vr-lb-360{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);z-index:3;align-items:center;gap:8px;
+  font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;letter-spacing:.01em;color:#10150f;background:var(--vr-ember);
+  border:0;border-radius:999px;padding:12px 22px;cursor:pointer;box-shadow:0 12px 32px rgba(214,138,76,.42)}
+.vr-lb-360:hover{filter:brightness(1.06)}
 
 /* ---------- Keyframes ---------- */
 @keyframes vrNavIn{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
