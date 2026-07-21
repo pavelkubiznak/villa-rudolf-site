@@ -1771,7 +1771,9 @@ function applyMeta() {
 function applyLangLinks() {
   $all('a[data-langlink]').forEach((a) => {
     const base = a.getAttribute('data-langlink');
-    a.setAttribute('href', base + (base.indexOf('?') >= 0 ? '&' : '?') + 'lang=' + state.lang);
+    const sep = base.indexOf('?') >= 0 ? '&' : '?';
+    // carry BOTH language and season so subpages (průvodce, podmínky) inherit the theme
+    a.setAttribute('href', base + sep + 'lang=' + state.lang + '&season=' + state.season);
   });
 }
 /* Promítni jazyk + sezónu do URL (?lang & ?season), ať jsou odkazy sdílitelné. */
@@ -1819,6 +1821,7 @@ function setSeason(season) {
   state.galFilter = season === 'zima' ? 'zima' : 'all';
   renderGallery();
   if (state.lb >= 0) lbSet(-1);
+  applyLangLinks(); // keep ?season on subpage links (průvodce / podmínky) in sync
   syncUrl();
 }
 

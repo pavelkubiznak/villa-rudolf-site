@@ -241,5 +241,16 @@
     b.addEventListener('click', function () { applyLang(b.getAttribute('data-lang')); });
   });
 
+  /* Sezóna dědí z webu — ?season → localStorage vrSeason → léto (stejná logika jako index/site.js). */
+  (function () {
+    var season = 'leto';
+    var q = (qs.get('season') || '').toLowerCase();
+    if (q === 'leto' || q === 'zima') season = q;
+    else { try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') season = s; } catch (e) {} }
+    var root = document.querySelector('.pi-root'); if (root) root.setAttribute('data-season', season);
+    try { localStorage.setItem('vrSeason', season); } catch (e) {}
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', season === 'zima' ? '#eef2f6' : '#0E1311');
+  })();
+
   applyLang(pickInitialLang());
 })();

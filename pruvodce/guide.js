@@ -290,10 +290,27 @@
   function findTrip(id) { for (var i = 0; i < DATA.trips.length; i++) if (DATA.trips[i].id === id) return DATA.trips[i]; return null; }
 
   /* ===================== Stav ===================== */
-  var S = { lang: 'cs', mode: 'public', filter: 'vse', visited: {}, wiz: { day: 0, dur: 1, car: 'car', grp: 'deti' }, selPin: null, mapZoom: 'full' };
+  var S = { lang: 'cs', season: 'leto', mode: 'public', filter: 'vse', visited: {}, wiz: { day: 0, dur: 1, car: 'car', grp: 'deti' }, selPin: null, mapZoom: 'full' };
   var DATA = { guest: null, trips: [], food: [], forecast: null };
   var token = qs.get('t') || '';
   var LAST_MAP = { W: 520, H: 360, pins: {}, fullBox: { x: 0, y: 0, w: 520, h: 360 }, zoomBox: null };
+
+  /* Sezóna dědí z webu — ?season → localStorage vrSeason → léto (stejná logika jako index/site.js).
+     Aplikuje se hned, aby i loading stav a celý průvodce ladil se zimním/letním tématem. */
+  function resolveSeason() {
+    var q = (qs.get('season') || '').toLowerCase();
+    if (q === 'leto' || q === 'zima') return q;
+    try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') return s; } catch (e) {}
+    return 'leto';
+  }
+  S.season = resolveSeason();
+  (function () {
+    var root = document.querySelector('.vg-root');
+    if (root) root.setAttribute('data-season', S.season);
+    try { localStorage.setItem('vrSeason', S.season); } catch (e) {}
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', S.season === 'zima' ? '#eef2f6' : '#0E1311');
+  })();
 
   function loadPrefs() {
     try {
