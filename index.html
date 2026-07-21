@@ -101,17 +101,11 @@
         <a href="#dum" class="vr-btn-ghost" data-t="hero.ctaSec">Prohlédnout dům</a>
       </div>
       <span class="vrim-cta-hint" data-t="hero.ctaHint">Nezávazná žádost — nic neplatíte.</span>
+      <!-- Sezónní tip. Přepínač sezóny je JEN v hlavičce (.vr-nav-season) a v
+           mobilním menu — v heru ho majitel nechce. -->
       <div class="vrim-tipwrap">
-        <div class="vr-seg" role="group" aria-label="Sezóna">
-          <button class="vr-segbtn" data-season="leto" data-active="true" aria-pressed="true" data-t="hero.summer">Léto</button>
-          <button class="vr-segbtn" data-season="zima" aria-pressed="false" data-t="hero.winter">Zima</button>
-        </div>
         <span class="vrim-tip" id="vrim-tip">Bazén, pergola a večery u otevřeného ohně.</span>
       </div>
-    </div>
-    <div class="vrim-hint" id="vrimHint">
-      <span data-t="hero.scroll">Scroll</span>
-      <span class="vrim-mouse"></span>
     </div>
   </section>
 
@@ -167,19 +161,24 @@
         </div>
         <span class="vr-tour-hint" data-t="tour.hint">Chyťte a táhněte myší nebo prstem.</span>
       </div>
+    </div>
 
-      <div class="vrp-stage vr-reveal" id="vrpStage">
-        <canvas class="vrp-canvas" id="vrpCanvas"></canvas>
-        <div class="vrp-spin" id="vrpSpin"></div>
-        <div class="vrp-scrim"></div>
-        <div class="vrp-vig"></div>
-        <div class="vrp-drag" id="vrpDrag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"></path></svg>
-          <span data-t="tour.drag">Chyť a otáčej</span>
-        </div>
-        <div class="vrp-cap"><h3 id="vrp-capname">Společenská místnost</h3></div>
+    <!-- Scéna je FULL-BLEED přes celou šířku viewportu (přání majitele: „ty 360
+         fotky by měly být co největší"). Nadpis výše i pruh náhledů níže zůstávají
+         v běžném .vr-wrap. -->
+    <div class="vrp-stage vr-reveal" id="vrpStage">
+      <canvas class="vrp-canvas" id="vrpCanvas"></canvas>
+      <div class="vrp-spin" id="vrpSpin"></div>
+      <div class="vrp-scrim"></div>
+      <div class="vrp-vig"></div>
+      <div class="vrp-drag" id="vrpDrag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"></path></svg>
+        <span data-t="tour.drag">Chyť a otáčej</span>
       </div>
+      <div class="vrp-cap"><h3 id="vrp-capname">Společenská místnost</h3></div>
+    </div>
 
+    <div class="vr-wrap">
       <div class="vrp-strip vr-reveal" id="vr-thumbs"></div>
 
       <div class="vr-expdetail vr-reveal">
@@ -195,13 +194,20 @@
           <span class="vr-eyebrow" data-t="video.eyebrow">Video</span>
           <h3 class="vr-vidtitle" data-t="video.title">Prohlédněte si vilu na videu</h3>
         </div>
-        <!-- Click-to-play lite embeds: local thumbnail + play button; the
-             youtube-nocookie iframe is injected only on click (no cookies,
-             no external JS, no 3rd-party dependency until the guest asks). -->
+        <!-- Click-to-play lite embeds: ztlumená zpomalená smyčka jako živé pozadí
+             (majitel: „kdyby to video bylo zpomalený a bez zvuku a rovnou jelo
+             jako podkladní fotka"). Klik dál otevírá fullscreen lightbox s PLNÝM
+             videem a zvukem — youtube-nocookie iframe se vkládá až po kliknutí
+             (žádné cookies ani externí JS, dokud si host nepřeje).
+             Smyčka je vlastní majitelův materiál, sestříhaný z týchž videí:
+             ztlumená, zpomalená na 0,6×, bez titulků. Přehrávání řídí JS
+             (IntersectionObserver + prefers-reduced-motion + saveData + <640px). -->
         <div class="vr-vids">
           <div class="vr-vid summer">
             <button type="button" class="vr-vid-thumb" data-yt="ksVpDr-P8ic" aria-label="Přehrát video: Dům, zahrada, bazén a příjezd">
-              <img src="media/video/ksVpDr-P8ic.jpg" alt="" loading="lazy" width="1280" height="720">
+              <video class="vr-vid-loop" data-loop-src="media/video/loop-summer.mp4"
+                     poster="media/video/loop-summer.jpg" muted loop playsinline preload="none"
+                     width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
               <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
             </button>
             <span class="vr-vid-meta">
@@ -211,7 +217,9 @@
           </div>
           <div class="vr-vid winter">
             <button type="button" class="vr-vid-thumb" data-yt="tWCuuovnh2U" aria-label="Přehrát video: Prohlídka domu, sauna a skibus">
-              <img src="media/video/tWCuuovnh2U.jpg" alt="" loading="lazy" width="1280" height="720">
+              <video class="vr-vid-loop" data-loop-src="media/video/loop-winter.mp4"
+                     poster="media/video/loop-winter.jpg" muted loop playsinline preload="none"
+                     width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
               <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
             </button>
             <span class="vr-vid-meta">

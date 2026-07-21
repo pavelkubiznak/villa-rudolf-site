@@ -108,7 +108,7 @@ const T = {
       sub: 'Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.',
       subWinter: 'Lyžování hned za rohem — <em>skibus u domu</em>, Černá hora 4 km.',
       ctaSec: 'Prohlédnout dům', ctaHint: 'Nezávazná žádost — nic neplatíte.', badge: 'Volné termíny 2026', video: 'Přehrát video',
-      summer: 'Léto', winter: 'Zima', scroll: 'Scroll',
+      summer: 'Léto', winter: 'Zima',
       tipSummer: 'Bazén, pergola a večery u otevřeného ohně.',
       tipWinter: 'Bez řetězů až k domu, skibus zdarma v docházkové vzdálenosti.',
       nightLine: 'Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy — večer tady teprve začíná.',
@@ -264,7 +264,7 @@ const T = {
       sub: 'The whole place — the house and its sweeping grounds — is <em>yours alone</em>.',
       subWinter: 'Skiing just around the corner — <em>ski bus at the door</em>, Černá hora 4 km.',
       ctaSec: 'Explore the house', ctaHint: 'Non-binding request — you pay nothing now.', badge: 'Open dates 2026', video: 'Play video',
-      summer: 'Summer', winter: 'Winter', scroll: 'Scroll',
+      summer: 'Summer', winter: 'Winter',
       tipSummer: 'Pool, pergola and evenings around the open fire.',
       tipWinter: 'No chains to the door, free ski bus within walking distance.',
       nightLine: 'Night has fallen. The fire pit, gabion wall and pool have lit themselves — the evening is just beginning.',
@@ -420,7 +420,7 @@ const T = {
       sub: 'Der ganze Ort — Haus und weitläufiges Grundstück — gehört <em>nur euch</em>.',
       subWinter: 'Skifahren gleich um die Ecke — <em>Skibus am Haus</em>, Černá hora 4 km.',
       ctaSec: 'Haus ansehen', ctaHint: 'Unverbindliche Anfrage — Sie zahlen nichts.', badge: 'Freie Termine 2026', video: 'Video abspielen',
-      summer: 'Sommer', winter: 'Winter', scroll: 'Scrollen',
+      summer: 'Sommer', winter: 'Winter',
       tipSummer: 'Pool, Pergola und Abende am offenen Feuer.',
       tipWinter: 'Ohne Ketten bis zur Tür, kostenloser Skibus in Gehweite.',
       nightLine: 'Es ist dunkel geworden. Feuerstelle, Gabionenwand und Pool leuchten von selbst — der Abend fängt gerade erst an.',
@@ -576,7 +576,7 @@ const T = {
       sub: 'Całe to miejsce — dom i rozległa posesja — jest <em>tylko wasze</em>.',
       subWinter: 'Narty tuż za rogiem — <em>skibus przy domu</em>, Černá hora 4 km.',
       ctaSec: 'Zobacz dom', ctaHint: 'Niezobowiązująca prośba — nic nie płacicie.', badge: 'Wolne terminy 2026', video: 'Odtwórz wideo',
-      summer: 'Lato', winter: 'Zima', scroll: 'Scroll',
+      summer: 'Lato', winter: 'Zima',
       tipSummer: 'Basen, pergola i wieczory przy otwartym ogniu.',
       tipWinter: 'Bez łańcuchów pod same drzwi, darmowy skibus w zasięgu spaceru.',
       nightLine: 'Zapadła noc. Palenisko, ściana gabionowa i basen zapaliły się same — wieczór dopiero się zaczyna.',
@@ -945,9 +945,13 @@ function openVideoLightbox(btn) {
   const wrap = btn.closest('.vr-vid');
   const label = wrap && wrap.querySelector('.vr-vid-label');
   const labelTxt = (label && label.textContent) || 'Villa Rudolf';
-  const img = btn.querySelector('img');
+  // Náhled pro FLIP animaci: buď <img>, nebo poster živé smyčky.
+  const img = btn.querySelector('img'), loop = btn.querySelector('.vr-vid-loop');
   vlbThumb = btn;
-  if (poster && img) poster.src = img.currentSrc || img.src;
+  if (poster) {
+    if (img) poster.src = img.currentSrc || img.src;
+    else if (loop && loop.poster) poster.src = loop.poster;
+  }
   frameHost.innerHTML = '';
   // Open state is set synchronously (backdrop + close visible immediately). The
   // FLIP grow is a progressive enhancement; the iframe is inserted via an
@@ -999,8 +1003,43 @@ function closeVideoLightbox() {
   stage.addEventListener('transitionend', done);
   setTimeout(done, 380);
 }
+/* ---------- Živá video-tapeta v kartách videa ----------
+   Ztlumená, zpomalená smyčka místo statického náhledu. Zdroj se nahrává až
+   když je karta ve viewportu; mimo viewport se přehrávání pozastaví. Vůbec se
+   nepřehrává při prefers-reduced-motion, při zapnutém spořiči dat a na úzkých
+   obrazovkách (<640px) — tam zůstane jen poster (mobilní data).
+   Klik na kartu dál otevírá fullscreen lightbox s plným videem a zvukem. */
+function loopsAllowed() {
+  try {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+    if (window.innerWidth && window.innerWidth < 640) return false;
+    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (c && (c.saveData === true || /(^|-)2g$/.test(c.effectiveType || ''))) return false;
+  } catch (e) {}
+  return true;
+}
+function wireVideoLoops() {
+  const vids = $all('.vr-vid-loop[data-loop-src]');
+  if (!vids.length) return;
+  if (!loopsAllowed()) return;                    // jen poster, žádné stahování
+  if (!('IntersectionObserver' in window) || !window.innerHeight) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      const v = en.target;
+      if (en.isIntersecting) {
+        if (!v.src) { v.src = v.getAttribute('data-loop-src'); v.load(); }
+        const p = v.play();
+        if (p && p.catch) p.catch(() => {});      // autoplay blokován → zůstane poster
+      } else if (!v.paused) {
+        try { v.pause(); } catch (e) {}
+      }
+    });
+  }, { rootMargin: '150px 0px', threshold: 0.15 });
+  vids.forEach((v) => { v.muted = true; io.observe(v); });
+}
 function wireVideos() {
   $all('.vr-vid-thumb[data-yt]').forEach((btn) => btn.addEventListener('click', () => openVideoLightbox(btn)));
+  wireVideoLoops();
   const lb = $('#vr-vlb');
   if (lb && !lb.dataset.wired) {
     lb.dataset.wired = '1';
@@ -1909,8 +1948,21 @@ function initPano() {
   mount.addEventListener('touchstart', press, { passive: true });
   window.addEventListener('touchmove', moveE, { passive: true });
   window.addEventListener('touchend', release);
-  const onR = () => { const w = stage.clientWidth, h = stage.clientHeight; camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h, false); };
+  /* Scéna je full-bleed přes celou šířku viewportu, takže se její rozměr mění
+     nejen při resize okna (scrollbar, otočení mobilu, skrytí URL lišty…).
+     ResizeObserver drží drawing buffer i aspect přesně na rozměru stage —
+     bez toho by byl canvas rozmazaný nebo deformovaný. */
+  const onR = () => {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    if (!w || !h) return;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  };
+  onR(); // srovnej hned po initu (stage už má finální full-bleed šířku)
   window.addEventListener('resize', onR, { passive: true });
+  window.addEventListener('orientationchange', onR, { passive: true });
+  if ('ResizeObserver' in window) { try { new ResizeObserver(onR).observe(stage); } catch (e) {} }
 
   // auto-cycle scenes if idle
   setInterval(() => {
@@ -1935,8 +1987,9 @@ function initPano() {
 }
 
 /* ============================ Hero scroll parallax + nav state (rAF) ============================ */
-/* Mouse-position parallax odstraněn (dle UX kritiky). Zůstává jen jemný scroll
-   parallax hero fotky a stmívání scroll-hintu; nav se přepíná při odscrollování. */
+/* Mouse-position parallax odstraněn (dle UX kritiky). Scroll indikátor odstraněn
+   na přání majitele. Zůstává jen jemný scroll parallax hero fotky; nav se
+   přepíná při odscrollování. */
 function startRaf() {
   const clamp = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
   const $id = (id) => document.getElementById(id);
@@ -1944,10 +1997,9 @@ function startRaf() {
     requestAnimationFrame(render);
     try {
       const vh = window.innerHeight || 1;
-      const heroPhoto = $id('vrhPhoto'), hint = $id('vrimHint');
+      const heroPhoto = $id('vrhPhoto');
       const hp = clamp(window.scrollY / vh);
       if (heroPhoto) heroPhoto.style.transform = 'scale(1.08) translateY(' + (hp * 46).toFixed(1) + 'px)';
-      if (hint) hint.style.opacity = clamp(1 - hp / 0.5);
       const s = window.scrollY > 8;
       if (s !== state.scrolled) { state.scrolled = s; $('.vr-nav').setAttribute('data-scrolled', s ? 'true' : 'false'); }
       // sticky mobilní CTA se objeví, jakmile host odscrolluje za hero

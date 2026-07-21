@@ -173,34 +173,42 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vrim-dayphoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease}
 [data-season="leto"] .vrim-dayphoto.summer{opacity:1}
 [data-season="zima"] .vrim-dayphoto.winter{opacity:1}
+/* Hero čitelnost (majitel: „na té fotce to není pořádně vidět"). Tři vrstvy:
+   1) .vrim-scrim — plnovýškový gradient zespodu (nese spodní půlku fotky),
+   2) .vrim-vig   — vinětace do rohů,
+   3) .vrim-copy::before — lokální elipsa přímo pod textovým blokem.
+   Změřeno proti skutečným fotkám (scripts: contrast model): h1 i podtitulek
+   drží ≥4,5:1 v OBOU sezónách na 1440×900 / 1280×800 / 390×844. Nejhorší byla
+   zimní fotka (světlá obloha) — původně jen 1,2:1. */
 .vrim-vig{position:absolute;inset:0;z-index:7;pointer-events:none;
-  background:radial-gradient(120% 90% at 50% 30%,transparent 44%,rgba(3,5,8,.78) 100%),linear-gradient(180deg,rgba(3,5,8,.5),transparent 22%)}
+  background:radial-gradient(120% 90% at 50% 30%,transparent 42%,rgba(3,5,8,.82) 100%),linear-gradient(180deg,rgba(3,5,8,.5),transparent 22%)}
 .vrim-scrim{position:absolute;inset:0;z-index:4;pointer-events:none;
-  background:radial-gradient(120% 92% at 50% 34%,transparent 40%,rgba(4,7,10,.5) 100%),linear-gradient(180deg,rgba(4,7,10,.62),transparent 24%,transparent 40%,rgba(4,7,10,.9))}
+  background:radial-gradient(120% 92% at 50% 34%,transparent 40%,rgba(4,7,10,.5) 100%),
+    linear-gradient(180deg,rgba(4,7,10,.64) 0%,rgba(4,7,10,.12) 22%,rgba(4,7,10,.33) 45%,rgba(4,7,10,.62) 69%,rgba(4,7,10,.88) 100%)}
 .vrim-copy{position:absolute;z-index:8;left:0;right:0;bottom:clamp(80px,15vh,160px);text-align:center;padding:0 clamp(20px,5vw,64px);will-change:transform,opacity}
+/* Lokální elipsa pod textem. .vrim-copy má z-index:8 → tvoří stacking context,
+   takže z-index:-1 sedí pod textem, ale stále NAD vinětací (z-index 7). */
+.vrim-copy::before{content:'';position:absolute;z-index:-1;pointer-events:none;
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(1700px,155%);height:205%;
+  background:radial-gradient(closest-side,rgba(4,7,10,.72) 0%,rgba(4,7,10,.66) 48%,rgba(4,7,10,.44) 73%,rgba(4,7,10,.17) 90%,transparent 100%)}
 /* Hero copy lives over the photo → always light, both seasons. */
 .vrim-eyebrow{display:inline-block;font-family:'Archivo',sans-serif;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--vr-accent-photo);transition:color .6s ease}
-.vrim-h1{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(2.4rem,6vw,5rem);line-height:1;letter-spacing:-.02em;color:#F7F1E8;margin:16px auto 0;max-width:16ch;text-wrap:balance;text-shadow:0 2px 40px rgba(0,0,0,.55)}
+.vrim-h1{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(2.4rem,6vw,5rem);line-height:1;letter-spacing:-.02em;color:#F7F1E8;margin:16px auto 0;max-width:16ch;text-wrap:balance;text-shadow:0 1px 3px rgba(0,0,0,.55),0 2px 18px rgba(0,0,0,.6),0 2px 46px rgba(0,0,0,.5)}
 .vrim-h1 span{display:block}
-.vrim-sub{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.4;color:#E4E0D6;max-width:40ch;margin:20px auto 0;text-shadow:0 1px 18px rgba(0,0,0,.5)}
+.vrim-sub{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.4;color:#E4E0D6;max-width:40ch;margin:20px auto 0;text-shadow:0 1px 3px rgba(0,0,0,.55),0 1px 20px rgba(0,0,0,.55)}
 .vrim-sub em{font-style:italic;color:var(--vr-accent-photo)}
 .vrim-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:15px;margin-top:32px}
 .vrim-cta-hint{display:block;margin-top:14px;font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em;color:#E4E0D6;text-shadow:0 1px 12px rgba(0,0,0,.55)}
 .vr-btn-primary{display:inline-flex;align-items:center;gap:9px;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:#10150f;background:var(--vr-ember);border-radius:2px;padding:15px 26px;cursor:pointer;box-shadow:0 10px 34px rgba(214,138,76,.4)}
 .vr-btn-primary span{font-size:15px}
 .vr-btn-ghost{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:#F0EBE1;background:rgba(16,21,18,.42);backdrop-filter:blur(6px);border:1px solid rgba(240,235,225,.32);border-radius:2px;padding:14px 24px;cursor:pointer}
-.vrim-tipwrap{display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:26px;padding:8px 14px 8px 9px;border:1px solid rgba(240,235,225,.16);border-radius:999px;background:rgba(8,12,11,.5);backdrop-filter:blur(6px)}
+/* Sezónní tip v heru — už BEZ segmentovaného přepínače (ten je jen v hlavičce). */
+.vrim-tipwrap{display:inline-flex;align-items:center;justify-content:center;margin-top:26px;padding:9px 18px;border:1px solid rgba(240,235,225,.16);border-radius:999px;background:rgba(8,12,11,.5);backdrop-filter:blur(6px)}
 .vr-seg{display:inline-flex;background:var(--vr-seg-bg);border:1px solid var(--vr-line);border-radius:999px;padding:3px;transition:background-color .6s ease,border-color .6s ease}
 .vr-segbtn{font-family:'Archivo',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--vr-text-muted);background:transparent;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;transition:background .25s,color .25s}
 .vr-segbtn[data-active="true"]{background:var(--vr-accent);color:var(--vr-on-accent)}
-/* Hero pill sits over the photo: keep its inactive labels readable on the dark glass. */
-.vrim-tipwrap .vr-seg{--vr-seg-bg:rgba(240,235,225,.06);border-color:rgba(240,235,225,.14)}
-.vrim-tipwrap .vr-segbtn{color:#D5DAD0}
-.vrim-tipwrap .vr-segbtn[data-active="true"]{color:var(--vr-on-accent)}
-.vrim-tip{font-family:'Archivo',sans-serif;font-size:12.5px;color:#C7CCC1;max-width:34ch}
-.vrim-hint{position:absolute;z-index:8;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;font-family:'Archivo',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#AEB4A8}
-.vrim-mouse{width:23px;height:37px;border:1.5px solid rgba(240,235,225,.4);border-radius:12px;position:relative}
-.vrim-mouse::after{content:'';position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:2px;background:var(--vr-accent-photo);transform:translateX(-50%);animation:vrimWheel 1.8s ease-in-out infinite}
+.vrim-tip{font-family:'Archivo',sans-serif;font-size:12.5px;color:#D5DAD0;max-width:40ch;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 
 /* ---------- Section shells ---------- */
 .vr-wrap{max-width:1340px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
@@ -222,9 +230,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .sec-interier{padding:clamp(80px,13vh,160px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
 .vr-exphead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
 .vr-tour-hint{font-family:'Archivo',sans-serif;font-size:12.5px;line-height:1.5;color:var(--vr-text-dim);max-width:32ch;text-align:right;transition:color .6s ease}
-/* Pano stage is a framed 3D viewer — keep its internals dark in both seasons. */
-.vrp-stage{position:relative;border-radius:3px;overflow:hidden;border:1px solid var(--vr-line);background:#0b0f0d;cursor:grab;touch-action:pan-y;height:clamp(440px,66vh,700px);margin-top:clamp(26px,3.4vw,42px);
-  box-shadow:inset 0 1px 0 rgba(240,235,225,.05),inset 0 0 60px rgba(0,0,0,.4),0 34px 80px -50px rgba(0,0,0,.9);transition:border-color .6s ease}
+/* Pano stage is a FULL-BLEED 3D viewer (edge-to-edge like the hero) — keep its
+   internals dark in both seasons. Výška vyplní podstatnou část obrazovky. */
+.vrp-stage{position:relative;overflow:hidden;border-top:1px solid var(--vr-line);border-bottom:1px solid var(--vr-line);background:#0b0f0d;cursor:grab;touch-action:pan-y;
+  width:100%;height:min(78vh,820px);margin-top:clamp(26px,3.4vw,42px);
+  box-shadow:inset 0 1px 0 rgba(240,235,225,.05),inset 0 0 90px rgba(0,0,0,.4);transition:border-color .6s ease}
 .vrp-stage:active{cursor:grabbing}
 .vrp-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity 1s ease}
 .vrp-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(6,9,8,.32),transparent 22%,transparent 60%,rgba(6,9,8,.8))}
@@ -485,7 +495,6 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 
 /* ---------- Keyframes ---------- */
 @keyframes vrNavIn{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
-@keyframes vrimWheel{0%{opacity:0;transform:translate(-50%,0)}40%{opacity:1}100%{opacity:0;transform:translate(-50%,11px)}}
 @keyframes vrFlicker{0%,100%{opacity:.82;transform:translateX(-50%) scale(1)}30%{opacity:1;transform:translateX(-50%) scale(1.03)}55%{opacity:.74}78%{opacity:.94;transform:translateX(-50%) scale(1.01)}}
 @keyframes vrpRot{to{transform:rotate(360deg)}}
 @keyframes vrLbIn{from{opacity:0}}
@@ -520,8 +529,16 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-vid{display:block;text-decoration:none;border:1px solid var(--vr-line);border-radius:3px;overflow:hidden;background:var(--vr-panel);transition:border-color .3s ease,transform .3s ease,background-color .6s ease}
 .vr-vid:hover{border-color:var(--vr-accent);transform:translateY(-2px)}
 .vr-vid-thumb{position:relative;display:block;aspect-ratio:16/9;overflow:hidden;background:#0b0f0d;width:100%;margin:0;padding:0;border:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.vr-vid-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.vr-vid-thumb img,.vr-vid-thumb .vr-vid-loop{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
 .vr-vid-thumb:focus-visible{outline:2px solid var(--vr-ember);outline-offset:-3px}
+/* Živá video-tapeta: mírně ztlumená, aby play tlačítko a popisek zůstaly čitelné
+   a bylo pořád zřejmé, že klik otevře plné video. Na hover se rozjasní. */
+.vr-vid-loop{filter:brightness(.82) saturate(.95);transition:transform .5s ease,filter .4s ease}
+.vr-vid:hover .vr-vid-loop{filter:brightness(.95) saturate(1)}
+/* Jemný scrim pod play tlačítkem — drží kontrast i na světlých snímcích. */
+.vr-vid-thumb::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(38% 55% at 50% 50%,rgba(6,9,8,.42),transparent 70%),
+    linear-gradient(180deg,transparent 55%,rgba(6,9,8,.35))}
 /* Full-screen video lightbox (click-to-play, FLIP grow, cookie-free until open) */
 .vr-vlb{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:clamp(10px,3.5vw,48px)}
 .vr-vlb-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.85);opacity:0;transition:opacity .34s ease}
@@ -539,7 +556,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-vlb[data-open="true"] .vr-vlb-close{opacity:1}
 .vr-vlb-close:hover{background:rgba(40,40,40,.85);border-color:var(--vr-ember)}
 @media (prefers-reduced-motion:reduce){.vr-vlb-backdrop,.vr-vlb-stage,.vr-vlb-close{transition:none}}
-.vr-vid:hover .vr-vid-thumb img{transform:scale(1.04)}
+.vr-vid:hover .vr-vid-thumb img,.vr-vid:hover .vr-vid-thumb .vr-vid-loop{transform:scale(1.04)}
 .vr-vid-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;
   background:rgba(11,15,13,.6);backdrop-filter:blur(4px);border:1px solid rgba(240,235,225,.5);
   display:flex;align-items:center;justify-content:center;color:#F7F1E8;transition:background .3s ease,color .3s ease,border-color .3s ease,transform .3s ease}
@@ -719,6 +736,7 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vr-reviews{grid-template-columns:1fr}
   .vr-qfacts{grid-template-columns:1fr 1fr;gap:20px 16px}
   .vr-rating{flex:1 1 100%;justify-content:space-between}
+  .vrp-stage{height:62vh}
 }
 /* Sticky spodní CTA na mobilu (nav CTA je ≤960px skryté). Skryté by default;
    zobrazí se jen ≤960px a až po odscrollování za hero (JS přepíná data-show). */
