@@ -114,7 +114,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-brand{display:flex;flex-direction:column;line-height:1}
 .vr-brand b{font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;letter-spacing:.18em;color:var(--vr-nav-fg);transition:color .4s ease}
 .vr-brand i{font-family:'Archivo',sans-serif;font-weight:600;font-size:10px;letter-spacing:.34em;color:var(--vr-accent);margin-top:5px;font-style:normal;transition:color .6s ease}
-.vr-navlinks{display:flex;gap:30px;font-size:13.5px;font-weight:500;letter-spacing:.02em;color:var(--vr-nav-fg-muted)}
+.vr-navlinks{display:flex;gap:clamp(16px,2vw,30px);font-size:13.5px;font-weight:500;letter-spacing:.02em;color:var(--vr-nav-fg-muted);white-space:nowrap}
 .vr-navlinks a{position:relative;transition:color .2s}
 .vr-navlinks a::after{content:'';position:absolute;left:0;right:0;bottom:-5px;height:1.5px;background:var(--vr-accent);transform:scaleX(0);transform-origin:left;transition:transform .25s,background-color .6s ease}
 .vr-navlinks a:hover{color:var(--vr-nav-fg)}
@@ -202,7 +202,12 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vrim-cta-hint{display:block;margin-top:14px;font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em;color:#E4E0D6;text-shadow:0 1px 12px rgba(0,0,0,.55)}
 .vr-btn-primary{display:inline-flex;align-items:center;gap:9px;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:#10150f;background:var(--vr-ember);border-radius:2px;padding:15px 26px;cursor:pointer;box-shadow:0 10px 34px rgba(214,138,76,.4)}
 .vr-btn-primary span{font-size:15px}
-.vr-btn-ghost{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:#F0EBE1;background:rgba(16,21,18,.42);backdrop-filter:blur(6px);border:1px solid rgba(240,235,225,.32);border-radius:2px;padding:14px 24px;cursor:pointer}
+/* Obě hero tlačítka leží NAD fotkou v obou sezónách, takže si barvu písma drží
+   napevno. Nutná vyšší specificita než .vr-root a{color:inherit} — jinak zdědí
+   --vr-text a v zimě (tmavý text na světlém motivu) zmizí do tmavé fotky. */
+.vr-root .vr-btn-primary{color:#10150f}
+.vr-root .vr-btn-ghost{color:#F0EBE1}
+.vr-btn-ghost{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;background:rgba(16,21,18,.42);backdrop-filter:blur(6px);border:1px solid rgba(240,235,225,.32);border-radius:2px;padding:14px 24px;cursor:pointer}
 /* Sezónní tip v heru — už BEZ segmentovaného přepínače (ten je jen v hlavičce). */
 .vrim-tipwrap{display:inline-flex;align-items:center;justify-content:center;margin-top:26px;padding:9px 18px;border:1px solid rgba(240,235,225,.16);border-radius:999px;background:rgba(8,12,11,.5);backdrop-filter:blur(6px)}
 .vr-seg{display:inline-flex;background:var(--vr-seg-bg);border:1px solid var(--vr-line);border-radius:999px;padding:3px;transition:background-color .6s ease,border-color .6s ease}
