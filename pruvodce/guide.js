@@ -37,6 +37,7 @@
       selHint: 'Ťukněte na bod v mapě', zoomFull: 'Celé Krkonoše', zoomNear: 'Okolí vily',
       foodTitle: 'Kam na dobré jídlo', foodSub: 'Prověřeno hosty i majiteli',
       footNote: 'Data z katalogu villa-rudolf-portal · ceny a otevírací doby ověřte před cestou.',
+      terms: 'Podmínky a ochrana údajů',
       wxLive: 'počasí: yr.no · živě',
       dOpen: 'Otevřeno', dPrice: 'Vstupné', dTransport: 'Doprava', dWeb: 'Oficiální web', dRoute: 'Trasa z vily',
       chipLabel: 'Rychlý filtr · platí pro mapu i katalog',
@@ -68,6 +69,7 @@
       selHint: 'Tippen Sie auf einen Punkt der Karte', zoomFull: 'Ganze Region', zoomNear: 'Rund um die Villa',
       foodTitle: 'Gut essen gehen', foodSub: 'Von Gästen und Gastgebern geprüft',
       footNote: 'Daten aus dem Katalog villa-rudolf-portal · Preise und Öffnungszeiten vorab prüfen.',
+      terms: 'Bedingungen & Datenschutz',
       wxLive: 'Wetter: yr.no · live',
       dOpen: 'Geöffnet', dPrice: 'Eintritt', dTransport: 'Anfahrt', dWeb: 'Offizielle Website', dRoute: 'Route ab Villa',
       chipLabel: 'Schnellfilter · gilt für Karte und Katalog',
@@ -99,6 +101,7 @@
       selHint: 'Tap a point on the map', zoomFull: 'Whole area', zoomNear: 'Around the villa',
       foodTitle: 'Where to eat well', foodSub: 'Vetted by guests and hosts',
       footNote: 'Data from the villa-rudolf-portal catalogue · verify prices and hours before you go.',
+      terms: 'Terms & privacy',
       wxLive: 'weather: yr.no · live',
       dOpen: 'Open', dPrice: 'Tickets', dTransport: 'Getting there', dWeb: 'Official site', dRoute: 'Route from villa',
       chipLabel: 'Quick filter · applies to map and catalogue',
@@ -130,6 +133,7 @@
       selHint: 'Dotknijcie punktu na mapie', zoomFull: 'Cały region', zoomNear: 'Okolice willi',
       foodTitle: 'Gdzie dobrze zjeść', foodSub: 'Sprawdzone przez gości i gospodarzy',
       footNote: 'Dane z katalogu villa-rudolf-portal · ceny i godziny sprawdźcie przed wyjazdem.',
+      terms: 'Warunki i ochrona danych',
       wxLive: 'pogoda: yr.no · na żywo',
       dOpen: 'Otwarte', dPrice: 'Bilety', dTransport: 'Dojazd', dWeb: 'Oficjalna strona', dRoute: 'Trasa z willi',
       chipLabel: 'Szybki filtr · działa na mapę i katalog',
@@ -668,7 +672,9 @@
   }
 
   function renderFooterHTML(L) {
-    return '<footer class="vg-footer"><p>' + esc(L.footNote) + ' · ' + esc(L.wxLive) + '</p><a href="../">← Villa Rudolf</a></footer>';
+    var suffix = 'lang=' + S.lang + (S.season ? '&season=' + S.season : '');
+    return '<footer class="vg-footer"><p>' + esc(L.footNote) + ' · ' + esc(L.wxLive) + '</p>'
+      + '<span class="vg-footlinks"><a href="../">← Villa Rudolf</a><a href="../podminky/?' + suffix + '">' + esc(L.terms) + '</a></span></footer>';
   }
 
   /* ===================== Sestavení celé stránky ===================== */

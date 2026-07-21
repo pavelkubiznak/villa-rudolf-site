@@ -12,6 +12,7 @@
       title: 'Praktické informace',
       intro: 'Vše, co se hodí vědět k pobytu — příjezd, dům, kde nakoupit, lékárna, pohotovost i služby v okolí.',
       back: 'Zpět na web vily',
+      terms: 'Podmínky a ochrana údajů',
 
       lAddr: 'Adresa', lHours: 'Otevírací doba', lPhone: 'Telefon', lParking: 'Parkování', lMap: 'Najít na mapě', lEmergency: 'Pohotovost',
       verify: 'Otevírací dobu doporučujeme ověřit předem.',
@@ -62,6 +63,7 @@
       title: 'Practical information',
       intro: 'Everything worth knowing for your stay — arrival, the house, where to shop, the pharmacy, emergency care and nearby services.',
       back: 'Back to the villa site',
+      terms: 'Terms & privacy',
 
       lAddr: 'Address', lHours: 'Opening hours', lPhone: 'Phone', lParking: 'Parking', lMap: 'Find on map', lEmergency: 'Emergency',
       verify: 'We recommend checking the opening hours in advance.',
@@ -112,6 +114,7 @@
       title: 'Praktische Informationen',
       intro: 'Alles Wissenswerte für Ihren Aufenthalt — Anreise, Haus, Einkaufen, Apotheke, Notdienst und Services in der Umgebung.',
       back: 'Zurück zur Villa-Website',
+      terms: 'Bedingungen & Datenschutz',
 
       lAddr: 'Adresse', lHours: 'Öffnungszeiten', lPhone: 'Telefon', lParking: 'Parken', lMap: 'Auf der Karte finden', lEmergency: 'Notaufnahme',
       verify: 'Wir empfehlen, die Öffnungszeiten vorab zu prüfen.',
@@ -162,6 +165,7 @@
       title: 'Informacje praktyczne',
       intro: 'Wszystko, co warto wiedzieć na pobyt — przyjazd, dom, gdzie zrobić zakupy, apteka, pogotowie i usługi w okolicy.',
       back: 'Powrót na stronę willi',
+      terms: 'Warunki i ochrona danych',
 
       lAddr: 'Adres', lHours: 'Godziny otwarcia', lPhone: 'Telefon', lParking: 'Parking', lMap: 'Znajdź na mapie', lEmergency: 'Pogotowie',
       verify: 'Godziny otwarcia zalecamy sprawdzić z wyprzedzeniem.',

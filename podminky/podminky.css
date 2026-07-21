@@ -1,0 +1,105 @@
+/* Villa Rudolf — Podmínky a ochrana osobních údajů (/podminky/).
+   Self-contained. Seasonal theme via --vr-* variables under [data-season="zima"]
+   (mirrors the homepage: léto = dark, zima = light snow theme; ember CTA stays). */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#0E1311;transition:background-color .5s ease}
+body:has(.pd-root[data-season="zima"]){background:#eef2f6}
+
+.pd-root{
+  --vr-ember:#D68A4C;
+  --vr-accent:#D68A4C;
+  --vr-accent-2:#E7B588;
+  --vr-bg:#0E1311;
+  --vr-bg-2:#101714;
+  --vr-text:#F0EBE1;
+  --vr-muted:#B4BAAD;
+  --vr-dim:#79817A;
+  --vr-line:rgba(240,235,225,.10);
+  --vr-line-2:rgba(240,235,225,.18);
+  --vr-panel:rgba(240,235,225,.035);
+  --vr-panel-2:rgba(240,235,225,.06);
+  --vr-on-accent:#10150f;
+  min-height:100vh;background:var(--vr-bg);color:var(--vr-text);
+  font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;
+  transition:background-color .5s ease,color .5s ease;
+}
+/* Zima: inverted light snow theme */
+.pd-root[data-season="zima"]{
+  --vr-accent:#35708a;
+  --vr-accent-2:#285a70;
+  --vr-bg:#eef2f6;
+  --vr-bg-2:#ffffff;
+  --vr-text:#17242e;
+  --vr-muted:#46545f;
+  --vr-dim:#74828b;
+  --vr-line:rgba(23,36,46,.14);
+  --vr-line-2:rgba(23,36,46,.24);
+  --vr-panel:#ffffff;
+  --vr-panel-2:#ffffff;
+  --vr-on-accent:#ffffff;
+}
+.pd-root a{color:inherit;text-decoration:none}
+.pd-root button{font-family:inherit}
+.pd-wrap{max-width:820px;margin:0 auto;padding:0 18px 72px;position:relative}
+.pd-wrap::before{content:'';position:absolute;left:50%;top:-40px;width:120%;height:320px;transform:translateX(-50%);
+  pointer-events:none;z-index:0;background:radial-gradient(60% 100% at 50% 0%,color-mix(in oklab,var(--vr-accent),transparent 86%),transparent 70%)}
+.pd-header,.pd-hero,.pd-main,.pd-footer{position:relative;z-index:1}
+
+/* Header */
+.pd-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 0}
+.pd-brand{display:flex;align-items:baseline;gap:9px;min-width:0}
+.pd-brand .nm{font-family:'Newsreader',serif;font-size:19px;letter-spacing:.02em;color:var(--vr-text);transition:color .5s ease}
+.pd-brand .bd{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--vr-accent);white-space:nowrap;transition:color .5s ease}
+.pd-langs{display:flex;gap:4px;flex:none}
+.pd-lang{font-family:'Archivo',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--vr-muted);background:transparent;border:1px solid var(--vr-line-2);border-radius:999px;padding:5px 9px;cursor:pointer;
+  transition:color .2s,background-color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.pd-lang:hover{color:var(--vr-text);border-color:var(--vr-line-2)}
+.pd-lang[data-on="true"]{font-weight:700;color:var(--vr-on-accent);background:var(--vr-ember);border-color:var(--vr-ember)}
+
+/* Hero */
+.pd-hero{margin-top:34px;max-width:640px}
+.pd-eyebrow{margin:0;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--vr-accent);transition:color .5s ease}
+.pd-title{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2rem,7vw,2.9rem);line-height:1.06;letter-spacing:-.01em;margin:12px 0 0;text-wrap:balance}
+.pd-intro{font-size:15px;line-height:1.62;color:var(--vr-muted);margin:14px 0 0;max-width:56ch;transition:color .5s ease}
+
+/* Sections */
+.pd-main{margin-top:8px}
+.pd-sec{margin-top:46px}
+.pd-h2{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.5rem,5vw,1.9rem);line-height:1.1;margin:0 0 6px;letter-spacing:-.01em}
+.pd-lead{font-size:14.5px;line-height:1.66;color:var(--vr-muted);margin:8px 0 18px;max-width:70ch;transition:color .5s ease}
+
+/* Storno table */
+.pd-tablewrap{overflow-x:auto;border:1px solid var(--vr-line-2);border-radius:10px;background:var(--vr-panel);transition:background-color .5s ease,border-color .5s ease}
+.pd-table{width:100%;border-collapse:collapse;min-width:340px}
+.pd-table th,.pd-table td{text-align:left;padding:14px 18px;font-size:14.5px;line-height:1.4}
+.pd-table thead th{font-family:'Archivo',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--vr-dim);border-bottom:1px solid var(--vr-line-2)}
+.pd-table tbody tr+tr td{border-top:1px solid var(--vr-line)}
+.pd-table td.when{color:var(--vr-text)}
+.pd-table td.fee{color:var(--vr-accent-2);font-weight:700;white-space:nowrap;text-align:right;transition:color .5s ease}
+.pd-table tbody tr:last-child td.fee{color:var(--vr-ember)}
+
+/* GDPR / operator definition rows */
+.pd-rows{border:1px solid var(--vr-line-2);border-radius:10px;background:var(--vr-panel);overflow:hidden;transition:background-color .5s ease,border-color .5s ease}
+.pd-row{display:grid;grid-template-columns:180px 1fr;gap:14px;padding:15px 18px}
+.pd-row+.pd-row{border-top:1px solid var(--vr-line)}
+.pd-rk{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--vr-dim);padding-top:2px}
+.pd-rv{font-size:14.5px;line-height:1.6;color:var(--vr-text)}
+.pd-rv a{color:var(--vr-accent-2);text-decoration:underline;text-underline-offset:2px;transition:color .5s ease}
+.pd-rv a:hover{color:var(--vr-accent)}
+@media(max-width:520px){.pd-row{grid-template-columns:1fr;gap:4px}.pd-rk{padding-top:0}}
+
+/* Trust note (cookieless) */
+.pd-note{display:flex;gap:11px;align-items:flex-start;margin-top:16px;padding:14px 16px;border-radius:10px;
+  border:1px solid color-mix(in oklab,var(--vr-accent),transparent 66%);background:color-mix(in oklab,var(--vr-accent),transparent 90%);
+  transition:background-color .5s ease,border-color .5s ease}
+.pd-note svg{flex:none;width:18px;height:18px;margin-top:1px;fill:none;stroke:var(--vr-accent-2);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.pd-note p{margin:0;font-size:13.5px;line-height:1.6;color:var(--vr-muted);transition:color .5s ease}
+
+/* Footer */
+.pd-footer{margin-top:50px;padding-top:22px;border-top:1px solid var(--vr-line);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.pd-back{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--vr-muted);transition:color .2s}
+.pd-back:hover{color:var(--vr-text)}
+.pd-back svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pd-foot-brand{font-size:11.5px;letter-spacing:.04em;color:var(--vr-dim)}

@@ -461,6 +461,8 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-foot-contact a:hover{color:var(--vr-accent-2)}
 .vr-foot-contact .vr-foot-host{color:var(--vr-text-dim)}
 .vr-foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:clamp(36px,5vw,56px);padding-top:24px;border-top:1px solid var(--vr-line);font-family:'Archivo',sans-serif;font-size:12px;color:var(--vr-text-faintest);transition:color .6s ease}
+.vr-foot-terms{color:var(--vr-text-faint);text-decoration:none;transition:color .2s ease}
+.vr-foot-terms:hover{color:var(--vr-accent-2)}
 
 /* ---------- Placeholder blocks (replaces prototype's interactive image-slot drop-zones) ---------- */
 .vr-slot{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;

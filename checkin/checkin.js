@@ -39,7 +39,8 @@
       okTitle: 'Děkujeme!',
       okBody: 'Registrace je hotová. Před příjezdem vám na e-mail pošleme kód k zámku i praktické informace k pobytu.',
       okGuide: 'Otevřít průvodce výlety',
-      okHint: 'Průvodce jsme vám připravili na míru — podle termínu pobytu, počtu hostů a věku dětí.'
+      okHint: 'Průvodce jsme vám připravili na míru — podle termínu pobytu, počtu hostů a věku dětí.',
+      terms: 'Podmínky a ochrana údajů'
     },
     en: {
       htmlLang: 'en',
@@ -66,7 +67,8 @@
       okTitle: 'Thank you!',
       okBody: 'You’re registered. Before arrival we’ll e-mail you the lock code and practical info for your stay.',
       okGuide: 'Open the trip guide',
-      okHint: 'We’ve tailored the guide to you — based on your dates, party size and children’s ages.'
+      okHint: 'We’ve tailored the guide to you — based on your dates, party size and children’s ages.',
+      terms: 'Terms & privacy'
     },
     de: {
       htmlLang: 'de',
@@ -93,7 +95,8 @@
       okTitle: 'Vielen Dank!',
       okBody: 'Sie sind registriert. Vor der Anreise senden wir Ihnen den Türcode und praktische Infos per E-Mail.',
       okGuide: 'Ausflugsguide öffnen',
-      okHint: 'Den Guide haben wir für Sie zugeschnitten — nach Zeitraum, Personenzahl und Alter der Kinder.'
+      okHint: 'Den Guide haben wir für Sie zugeschnitten — nach Zeitraum, Personenzahl und Alter der Kinder.',
+      terms: 'Bedingungen & Datenschutz'
     },
     pl: {
       htmlLang: 'pl',
@@ -120,7 +123,8 @@
       okTitle: 'Dziękujemy!',
       okBody: 'Rejestracja gotowa. Przed przyjazdem wyślemy e-mailem kod do zamka i praktyczne informacje.',
       okGuide: 'Otwórz przewodnik po wycieczkach',
-      okHint: 'Przewodnik przygotowaliśmy pod Ciebie — według terminu, liczby osób i wieku dzieci.'
+      okHint: 'Przewodnik przygotowaliśmy pod Ciebie — według terminu, liczby osób i wieku dzieci.',
+      terms: 'Warunki i ochrona danych'
     }
   };
 

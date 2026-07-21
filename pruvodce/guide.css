@@ -217,6 +217,7 @@ body{margin:0;background:#0E1311}
   display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .vg-footer p{margin:0;font-size:11.5px;color:#79817A}
 .vg-footer a{font-size:11.5px;color:#B4BAAD}
+.vg-footlinks{display:inline-flex;gap:16px;flex-wrap:wrap}
 
 /* ---------- Public CTA (jen veřejný režim, na konci katalogu) ---------- */
 .vg-pubcta{margin-top:40px;text-align:center}
