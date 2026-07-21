@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Villa Rudolf – album pobytu</title>
+<!-- Prototyp: sdílené soukromé fotoalbum skupiny. Bez indexace, přístup jen přes ?t= token. -->
+<meta name="theme-color" content="#0E1311">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="album.css?v=1">
+</head>
+<body>
+<div class="va-root">
+  <div class="va-wrap">
+
+    <header class="va-header">
+      <a class="va-brand" href="../">
+        <span class="nm">Villa Rudolf</span>
+        <span class="bd" data-i18n="brandBadge">Album pobytu</span>
+      </a>
+      <nav class="va-langs" id="langs" aria-label="Jazyk / Language">
+        <button type="button" class="va-lang" data-lang="cs">CS</button>
+        <button type="button" class="va-lang" data-lang="en">EN</button>
+        <button type="button" class="va-lang" data-lang="de">DE</button>
+        <button type="button" class="va-lang" data-lang="pl">PL</button>
+      </nav>
+    </header>
+
+    <!-- ============ NO TOKEN GATE ============ -->
+    <main class="va-main" id="gateView" hidden>
+      <section class="va-hero">
+        <p class="va-eyebrow" data-i18n="eyebrow">Villa Rudolf · Krkonoše</p>
+        <h1 class="va-title" data-i18n="gateTitle">Album pobytu</h1>
+        <p class="va-intro" data-i18n="gateBody">Album se otevírá jen přes odkaz z vašeho pobytu. Naskenujte QR kód ve vile nebo použijte odkaz, který jste dostali.</p>
+      </section>
+    </main>
+
+    <!-- ============ ALBUM ============ -->
+    <main class="va-main" id="albumView" hidden>
+      <section class="va-hero">
+        <p class="va-eyebrow" data-i18n="eyebrow">Villa Rudolf · Krkonoše</p>
+        <h1 class="va-title" data-i18n="title">Sdílené album pobytu</h1>
+        <p class="va-intro" data-i18n="intro">Nahrajte sem fotky z pobytu — z výletů, grilování, od rodiny. Album je soukromé: vidí ho jen vaše skupina, veřejnost ani vyhledávače ne.</p>
+      </section>
+
+      <!-- Upload panel -->
+      <section class="va-upload">
+        <label class="va-field">
+          <span class="va-lbl" data-i18n="nick">Vaše přezdívka (nepovinné)</span>
+          <input type="text" id="nick" maxlength="60" autocomplete="nickname" data-i18n-ph="nickPh" placeholder="např. Katka">
+        </label>
+
+        <label class="va-consent-guard">
+          <input type="checkbox" id="guardConsent">
+          <span data-i18n="guardConsent">Potvrzuji, že mám souhlas zákonných zástupců všech osob na fotkách.</span>
+        </label>
+
+        <input type="file" id="fileInput" accept="image/*" multiple hidden>
+        <button type="button" class="va-addbtn" id="addBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span data-i18n="addPhotos">Přidat fotky</span>
+        </button>
+        <p class="va-uphint" data-i18n="upHint">Jen obrázky, do 15 MB. Velké fotky se před nahráním zmenší.</p>
+        <p class="va-err" id="err" role="alert" hidden></p>
+        <div class="va-progress" id="progress" hidden>
+          <div class="va-progress-bar"><span id="progressBar"></span></div>
+          <p class="va-progress-txt" id="progressTxt"></p>
+        </div>
+      </section>
+
+      <!-- Gallery header -->
+      <section class="va-galhead">
+        <p class="va-count" id="count"></p>
+        <button type="button" class="va-dlall" id="dlAll" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          <span data-i18n="dlAll">Stáhnout vše</span>
+        </button>
+      </section>
+
+      <p class="va-consent-note" data-i18n="consentNote">Zaškrtnutím „Villa Rudolf smí použít“ dovolíte majiteli použít fotku na webu / Instagramu. Bez zaškrtnutí ji majitel nikdy neuvidí.</p>
+
+      <!-- Grid -->
+      <section class="va-grid" id="grid" aria-live="polite"></section>
+
+      <p class="va-empty" id="empty" data-i18n="empty" hidden>Zatím tu nejsou žádné fotky. Buďte první!</p>
+      <div class="va-loading" id="loading"><span class="va-spin"></span></div>
+    </main>
+
+    <footer class="va-footer">
+      <span>Villa Rudolf · Krkonoše</span>
+      <span class="va-proto" data-i18n="proto">Prototyp alba</span>
+    </footer>
+
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="va-lightbox" id="lightbox" hidden>
+  <button type="button" class="va-lb-close" id="lbClose" aria-label="Zavřít">&times;</button>
+  <img id="lbImg" alt="">
+</div>
+
+<script src="album.js?v=1" defer></script>
+</body>
+</html>

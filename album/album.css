@@ -1,0 +1,141 @@
+/* Villa Rudolf — album pobytu (/album/) — PROTOTYP.
+   Self-contained. Dark, Newsreader + Archivo, ember akcent (tokeny z checkin/site).
+   Mobile-first. Vanilla CSS, bez frameworku. */
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#0E1311}
+
+:root{
+  --va-bg:#0E1311;
+  --va-ember:#D68A4C;
+  --va-ember-2:color-mix(in oklab,var(--va-ember),#ffffff 24%);
+  --va-text:#F0EBE1;
+  --va-muted:#B4BAAD;
+  --va-dim:#79817A;
+  --va-line:rgba(240,235,225,.10);
+  --va-line-2:rgba(240,235,225,.16);
+  --va-field:rgba(240,235,225,.04);
+  --va-err:#E5877A;
+  --va-ok:#8FC0A9;
+}
+
+.va-root{min-height:100vh;background:var(--va-bg);color:var(--va-text);
+  font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased}
+.va-wrap{max-width:760px;margin:0 auto;padding:0 18px 64px;position:relative}
+.va-root a{color:var(--va-text);text-decoration:none}
+.va-root button{font-family:inherit}
+
+.va-wrap::before{content:'';position:absolute;left:50%;top:-40px;width:120%;height:320px;
+  transform:translateX(-50%);pointer-events:none;z-index:0;
+  background:radial-gradient(60% 100% at 50% 0%,rgba(214,138,76,.12),transparent 70%)}
+.va-header,.va-main,.va-footer{position:relative;z-index:1}
+
+/* ---------- Header ---------- */
+.va-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0 0}
+.va-brand{display:flex;align-items:baseline;gap:8px;min-width:0}
+.va-brand .nm{font-family:'Newsreader',serif;font-size:19px;letter-spacing:.02em;color:var(--va-text)}
+.va-brand .bd{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--va-ember)}
+.va-langs{display:flex;gap:4px;flex:none}
+.va-lang{font-family:'Archivo',sans-serif;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--va-muted);background:transparent;border:1px solid rgba(240,235,225,.18);border-radius:999px;
+  padding:5px 9px;cursor:pointer;transition:color .2s,background-color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.va-lang:hover{color:var(--va-text);border-color:rgba(240,235,225,.34)}
+.va-lang[data-on="true"]{font-weight:700;color:#0E1311;background:var(--va-ember);border-color:var(--va-ember)}
+
+/* ---------- Hero ---------- */
+.va-hero{margin-top:34px}
+.va-eyebrow{margin:0;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--va-ember)}
+.va-title{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2rem,8vw,2.7rem);line-height:1.06;
+  letter-spacing:-.01em;margin:12px 0 0;text-wrap:balance}
+.va-intro{font-size:14.5px;line-height:1.62;color:var(--va-muted);margin:14px 0 0;max-width:54ch}
+
+/* ---------- Upload panel ---------- */
+.va-upload{margin-top:26px;padding:18px;border:1px solid var(--va-line-2);border-radius:8px;
+  background:var(--va-field);display:flex;flex-direction:column;gap:14px}
+.va-field{display:flex;flex-direction:column;gap:8px}
+.va-lbl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9aa094}
+.va-upload input[type="text"]{
+  font-family:'Archivo',sans-serif;font-size:16px;color:var(--va-text);
+  background:rgba(240,235,225,.04);border:1px solid var(--va-line-2);border-radius:3px;
+  padding:12px 14px;outline:none;width:100%;transition:border-color .2s,background-color .2s;-webkit-appearance:none;appearance:none}
+.va-upload input[type="text"]::placeholder{color:#6c746b}
+.va-upload input[type="text"]:focus{border-color:var(--va-ember);background:rgba(240,235,225,.055)}
+
+.va-consent-guard{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5;color:var(--va-muted);cursor:pointer}
+.va-consent-guard input{flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--va-ember)}
+
+.va-addbtn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;color:#10150f;background:var(--va-ember);
+  border:0;border-radius:4px;padding:15px 22px;cursor:pointer;
+  box-shadow:0 10px 30px -12px rgba(214,138,76,.6);transition:background-color .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
+.va-addbtn:hover{background:var(--va-ember-2)}
+.va-addbtn svg{width:19px;height:19px}
+.va-addbtn[disabled]{opacity:.55;cursor:default}
+.va-uphint{margin:0;font-size:11.5px;line-height:1.5;color:var(--va-dim)}
+
+.va-err{margin:0;font-size:13px;line-height:1.5;color:var(--va-err);
+  background:rgba(229,135,122,.08);border:1px solid rgba(229,135,122,.3);border-radius:3px;padding:10px 12px}
+
+.va-progress{margin:0}
+.va-progress-bar{height:6px;border-radius:99px;background:rgba(240,235,225,.1);overflow:hidden}
+.va-progress-bar span{display:block;height:100%;width:0;background:var(--va-ember);transition:width .25s ease}
+.va-progress-txt{margin:8px 0 0;font-size:12px;color:var(--va-muted)}
+
+/* ---------- Gallery header ---------- */
+.va-galhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:30px;flex-wrap:wrap}
+.va-count{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--va-muted)}
+.va-dlall{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--va-text);
+  background:transparent;border:1px solid var(--va-line-2);border-radius:999px;padding:8px 14px;cursor:pointer;
+  transition:border-color .2s,color .2s;-webkit-tap-highlight-color:transparent}
+.va-dlall:hover{border-color:var(--va-ember);color:var(--va-ember)}
+.va-dlall svg{width:15px;height:15px}
+.va-dlall[disabled]{opacity:.5;cursor:default}
+
+.va-consent-note{margin:14px 0 0;font-size:12px;line-height:1.55;color:var(--va-dim);
+  padding:11px 13px;border-left:2px solid rgba(214,138,76,.4);background:rgba(214,138,76,.05);border-radius:0 4px 4px 0}
+
+/* ---------- Grid ---------- */
+.va-grid{margin-top:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:520px){.va-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:720px){.va-grid{grid-template-columns:repeat(4,1fr)}}
+
+.va-card{border:1px solid var(--va-line);border-radius:8px;overflow:hidden;background:rgba(240,235,225,.03);
+  display:flex;flex-direction:column;animation:vaFade .4s ease}
+@keyframes vaFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.va-thumb{position:relative;aspect-ratio:1/1;background:rgba(240,235,225,.05);cursor:pointer;overflow:hidden}
+.va-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+.va-thumb:hover img{transform:scale(1.04)}
+.va-mine-badge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:#10150f;background:var(--va-ember);border-radius:99px;padding:3px 7px}
+.va-cardmeta{padding:9px 10px;display:flex;flex-direction:column;gap:8px}
+.va-uploader{margin:0;font-size:11.5px;color:var(--va-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:14px}
+
+.va-consent{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;line-height:1.35;color:var(--va-muted);cursor:pointer}
+.va-consent input{flex:none;width:16px;height:16px;margin-top:1px;accent-color:var(--va-ember)}
+.va-consent.is-ro{cursor:default;opacity:.75}
+.va-consent.is-on{color:var(--va-ok)}
+
+.va-delete{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--va-dim);
+  background:transparent;border:0;padding:2px 0;cursor:pointer;transition:color .2s;-webkit-tap-highlight-color:transparent}
+.va-delete:hover{color:var(--va-err)}
+.va-delete svg{width:13px;height:13px}
+
+/* ---------- Empty / loading ---------- */
+.va-empty{margin:26px 0;text-align:center;font-size:14px;color:var(--va-dim)}
+.va-loading{display:flex;justify-content:center;padding:30px 0}
+.va-spin{width:24px;height:24px;border:2px solid rgba(240,235,225,.2);border-top-color:var(--va-ember);
+  border-radius:50%;animation:vaSpin .8s linear infinite}
+@keyframes vaSpin{to{transform:rotate(360deg)}}
+
+/* ---------- Footer ---------- */
+.va-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--va-line);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--va-dim)}
+.va-proto{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--va-dim)}
+
+/* ---------- Lightbox ---------- */
+.va-lightbox{position:fixed;inset:0;z-index:50;background:rgba(8,10,9,.94);display:flex;align-items:center;justify-content:center;padding:24px}
+.va-lightbox img{max-width:100%;max-height:100%;border-radius:6px;box-shadow:0 20px 60px -20px rgba(0,0,0,.8)}
+.va-lb-close{position:absolute;top:14px;right:18px;width:42px;height:42px;font-size:30px;line-height:1;color:var(--va-text);
+  background:rgba(240,235,225,.08);border:1px solid var(--va-line-2);border-radius:50%;cursor:pointer}
+.va-lb-close:hover{background:rgba(240,235,225,.16)}
