@@ -220,7 +220,7 @@ const T = {
       eyebrow: 'Recenze', title: 'Co říkají hosté', note: 'Skutečné recenze z Airbnb, Booking.com a Google.',
     },
     lokdist: { title: 'Vzdálenosti od domu', skibus: 'Skibus', skibusVal: 'zastávka u domu', unit: 'km' },
-    video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus' },
+    video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', play: 'Přehrát video' },
     share: { eyebrow: 'Sdílejte', title: 'Byli jste u nás? Pochlubte se.', body: 'Odvezli jste si hezké fotky? Sdílejte je, označte @villarudolfretreat a přidejte #villarudolf — ať je uvidí i další. Ty nejhezčí se můžou objevit přímo tady na webu.', ig: 'Sledovat na Instagramu' },
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
@@ -361,7 +361,7 @@ const T = {
       eyebrow: 'Reviews', title: 'What guests say', note: 'Real reviews from Airbnb, Booking.com and Google.',
     },
     lokdist: { title: 'Distances from the house', skibus: 'Ski bus', skibusVal: 'stop at the house', unit: 'km' },
-    video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus' },
+    video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', play: 'Play video' },
     share: { eyebrow: 'Share', title: 'Stayed with us? Show it off.', body: 'Took some nice photos? Share them, tag @villarudolfretreat and add #villarudolf so others can see them too. The best ones may appear right here on the site.', ig: 'Follow on Instagram' },
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
@@ -502,7 +502,7 @@ const T = {
       eyebrow: 'Bewertungen', title: 'Was Gäste sagen', note: 'Echte Bewertungen von Airbnb, Booking.com und Google.',
     },
     lokdist: { title: 'Entfernungen vom Haus', skibus: 'Skibus', skibusVal: 'Haltestelle am Haus', unit: 'km' },
-    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus' },
+    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', play: 'Video abspielen' },
     share: { eyebrow: 'Teilen', title: 'Bei uns gewesen? Zeigt es her.', body: 'Schöne Fotos gemacht? Teilt sie, markiert @villarudolfretreat und fügt #villarudolf hinzu — damit sie auch andere sehen. Die schönsten erscheinen vielleicht direkt hier auf der Website.', ig: 'Auf Instagram folgen' },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
@@ -643,7 +643,7 @@ const T = {
       eyebrow: 'Recenzje', title: 'Co mówią goście', note: 'Prawdziwe recenzje z Airbnb, Booking.com i Google.',
     },
     lokdist: { title: 'Odległości od domu', skibus: 'Skibus', skibusVal: 'przystanek przy domu', unit: 'km' },
-    video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus' },
+    video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', play: 'Odtwórz wideo' },
     share: { eyebrow: 'Udostępnij', title: 'Byliście u nas? Pochwalcie się.', body: 'Macie ładne zdjęcia? Udostępnijcie je, oznaczcie @villarudolfretreat i dodajcie #villarudolf — niech zobaczą je też inni. Najlepsze mogą pojawić się właśnie tu, na stronie.', ig: 'Obserwuj na Instagramie' },
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
@@ -746,6 +746,7 @@ function setTexts() {
     const v = resolve(t, n.getAttribute('data-t-html'));
     if (typeof v === 'string') n.innerHTML = v;
   });
+  applyVideoAria();
   document.documentElement.lang = state.lang;
 }
 
@@ -858,6 +859,38 @@ function renderReviews() {
       ]),
     ]);
     host.appendChild(fig);
+  });
+}
+
+/* ---------- Video: click-to-play lite embed (cookie-free až do kliknutí) ----------
+   Statický náhled + tlačítko Play jsou v HTML; teprve po kliknutí vložíme iframe
+   youtube-nocookie.com s autoplay=1. Žádná externí JS knihovna, nic se z YouTube
+   nenačte, dokud o to host sám neklikne. */
+function playVideo(btn) {
+  const id = btn && btn.getAttribute('data-yt'); if (!id) return;
+  const wrap = btn.closest('.vr-vid'); if (!wrap) return;
+  const label = wrap.querySelector('.vr-vid-label');
+  const title = (label && label.textContent) || 'Villa Rudolf';
+  const holder = el('div', { class: 'vr-vid-thumb vr-vid-playing' });
+  holder.appendChild(el('iframe', {
+    class: 'vr-vid-frame',
+    src: 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1',
+    title: title,
+    allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+    allowfullscreen: '',
+    frameborder: '0',
+  }));
+  btn.replaceWith(holder);
+}
+function wireVideos() {
+  $all('.vr-vid-thumb[data-yt]').forEach((btn) => btn.addEventListener('click', () => playVideo(btn)));
+}
+/* Lokalizovaný aria-label „Přehrát video: <popis>" na tlačítkách náhledů. */
+function applyVideoAria() {
+  const t = tt();
+  $all('.vr-vid').forEach((v) => {
+    const btn = v.querySelector('.vr-vid-thumb[data-yt]'), label = v.querySelector('.vr-vid-label');
+    if (btn && label) btn.setAttribute('aria-label', (t.video && t.video.play ? t.video.play : 'Play') + ': ' + label.textContent);
   });
 }
 
@@ -1886,6 +1919,8 @@ function init() {
   // mobile menu
   $('#vr-burger').addEventListener('click', () => toggleMob());
   $all('#vr-mob a').forEach((a) => a.addEventListener('click', () => toggleMob(false)));
+  // click-to-play videa (inline youtube-nocookie iframe až po kliknutí)
+  wireVideos();
 
   // initial render
   document.querySelector('.vr-root').setAttribute('data-season', state.season);

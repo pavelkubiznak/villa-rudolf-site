@@ -182,27 +182,30 @@
           <span class="vr-eyebrow" data-t="video.eyebrow">Video</span>
           <h3 class="vr-vidtitle" data-t="video.title">Prohlédněte si vilu na videu</h3>
         </div>
+        <!-- Click-to-play lite embeds: local thumbnail + play button; the
+             youtube-nocookie iframe is injected only on click (no cookies,
+             no external JS, no 3rd-party dependency until the guest asks). -->
         <div class="vr-vids">
-          <a class="vr-vid summer" href="https://www.youtube.com/watch?v=ksVpDr-P8ic" target="_blank" rel="noopener noreferrer">
-            <span class="vr-vid-thumb">
-              <img src="https://img.youtube.com/vi/ksVpDr-P8ic/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
+          <div class="vr-vid summer">
+            <button type="button" class="vr-vid-thumb" data-yt="ksVpDr-P8ic" aria-label="Přehrát video: Dům, zahrada, bazén a příjezd">
+              <img src="media/video/ksVpDr-P8ic.jpg" alt="" loading="lazy" width="1280" height="720">
               <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
-            </span>
+            </button>
             <span class="vr-vid-meta">
               <span class="vr-vid-season" data-t="hero.summer">Léto</span>
               <span class="vr-vid-label" data-t="video.summer">Dům, zahrada, bazén a příjezd</span>
             </span>
-          </a>
-          <a class="vr-vid winter" href="https://www.youtube.com/watch?v=tWCuuovnh2U" target="_blank" rel="noopener noreferrer">
-            <span class="vr-vid-thumb">
-              <img src="https://img.youtube.com/vi/tWCuuovnh2U/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
+          </div>
+          <div class="vr-vid winter">
+            <button type="button" class="vr-vid-thumb" data-yt="tWCuuovnh2U" aria-label="Přehrát video: Prohlídka domu, sauna a skibus">
+              <img src="media/video/tWCuuovnh2U.jpg" alt="" loading="lazy" width="1280" height="720">
               <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
-            </span>
+            </button>
             <span class="vr-vid-meta">
               <span class="vr-vid-season" data-t="hero.winter">Zima</span>
               <span class="vr-vid-label" data-t="video.winter">Prohlídka domu, sauna a skibus</span>
             </span>
-          </a>
+          </div>
         </div>
       </div>
     </div>
