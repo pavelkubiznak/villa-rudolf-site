@@ -341,3 +341,18 @@ body:has(.vg-root[data-season="zima"]){background:#eef2f6}
 .vg-loading{padding:80px 18px;text-align:center;color:var(--vg-dim);font-size:14px}
 
 @media(min-width:520px){.vg-facts{gap:10px 12px}}
+
+/* ---------- Desktop: richer catalog — wider layout, photo cards in 2–3 columns ----------
+   Mobile stays the compact single column; on desktop the catalog grid opens up so the
+   guide no longer feels sparse. Reading/flow blocks + the map stay a comfortable width. */
+@media(min-width:900px){
+  .vg-wrap{max-width:1040px}
+  .vg-hero,.vg-pub,.vg-plan,.vg-wiz,.vg-sec,.vg-food,.vg-credits,.vg-pubcta,.vg-footer,
+  .vg-chiplabel,.vg-chips,.vg-map{max-width:680px;margin-left:auto;margin-right:auto}
+  .vg-chips{padding-left:0;padding-right:0}
+  .vg-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:start}
+  .vg-cardphoto{height:170px}
+}
+@media(min-width:1220px){
+  .vg-cards{grid-template-columns:repeat(3,1fr)}
+}

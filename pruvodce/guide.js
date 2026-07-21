@@ -38,6 +38,7 @@
       foodTitle: 'Kam na dobré jídlo', foodSub: 'Prověřeno hosty i majiteli',
       footNote: 'Data z katalogu villa-rudolf-portal · ceny a otevírací doby ověřte před cestou.',
       terms: 'Podmínky a ochrana údajů',
+      photosTitle: 'Fotografie', photosSub: 'Fotky cílů pocházejí z Wikimedia Commons pod licencemi CC. Uvádíme autora, licenci a odkaz na originál.', photosCommons: 'Wikimedia Commons',
       wxLive: 'počasí: yr.no · živě',
       dOpen: 'Otevřeno', dPrice: 'Vstupné', dTransport: 'Doprava', dWeb: 'Oficiální web', dRoute: 'Trasa z vily',
       chipLabel: 'Rychlý filtr · platí pro mapu i katalog',
@@ -70,6 +71,7 @@
       foodTitle: 'Gut essen gehen', foodSub: 'Von Gästen und Gastgebern geprüft',
       footNote: 'Daten aus dem Katalog villa-rudolf-portal · Preise und Öffnungszeiten vorab prüfen.',
       terms: 'Bedingungen & Datenschutz',
+      photosTitle: 'Fotos', photosSub: 'Die Zielfotos stammen von Wikimedia Commons unter CC-Lizenzen. Wir nennen Autor, Lizenz und einen Link zum Original.', photosCommons: 'Wikimedia Commons',
       wxLive: 'Wetter: yr.no · live',
       dOpen: 'Geöffnet', dPrice: 'Eintritt', dTransport: 'Anfahrt', dWeb: 'Offizielle Website', dRoute: 'Route ab Villa',
       chipLabel: 'Schnellfilter · gilt für Karte und Katalog',
@@ -102,6 +104,7 @@
       foodTitle: 'Where to eat well', foodSub: 'Vetted by guests and hosts',
       footNote: 'Data from the villa-rudolf-portal catalogue · verify prices and hours before you go.',
       terms: 'Terms & privacy',
+      photosTitle: 'Photos', photosSub: 'Destination photos come from Wikimedia Commons under CC licences. We credit the author, licence and a link to the original.', photosCommons: 'Wikimedia Commons',
       wxLive: 'weather: yr.no · live',
       dOpen: 'Open', dPrice: 'Tickets', dTransport: 'Getting there', dWeb: 'Official site', dRoute: 'Route from villa',
       chipLabel: 'Quick filter · applies to map and catalogue',
@@ -134,6 +137,7 @@
       foodTitle: 'Gdzie dobrze zjeść', foodSub: 'Sprawdzone przez gości i gospodarzy',
       footNote: 'Dane z katalogu villa-rudolf-portal · ceny i godziny sprawdźcie przed wyjazdem.',
       terms: 'Warunki i ochrona danych',
+      photosTitle: 'Zdjęcia', photosSub: 'Zdjęcia celów pochodzą z Wikimedia Commons na licencjach CC. Podajemy autora, licencję i link do oryginału.', photosCommons: 'Wikimedia Commons',
       wxLive: 'pogoda: yr.no · na żywo',
       dOpen: 'Otwarte', dPrice: 'Bilety', dTransport: 'Dojazd', dWeb: 'Oficjalna strona', dRoute: 'Trasa z willi',
       chipLabel: 'Szybki filtr · działa na mapę i katalog',
@@ -156,6 +160,70 @@
     }
   };
   var FILTER_IDS = ['vse', 'pesky', 'dest', 'deti', 'zviratka', 'vyhledy', 'koupani', 'nenarocne'];
+
+  /* ===================== Fotografie na kartách katalogu (task 4) =====================
+   * Skutečné fotky nejvýznamnějších cílů. Zdroj: Wikimedia Commons, jen povolené
+   * licence (CC0 / public domain / CC BY / CC BY-SA). Kredity (autor + licence +
+   * odkaz) jsou v PHOTO_CREDITS a vypisují se v sekci „Fotografie" na konci stránky.
+   * U CC BY / CC BY-SA je uvedení autora povinné. */
+  var TRIP_PHOTOS = {
+    'snezka-cablecar': '../media/trips/snezka-cablecar.jpg',
+    'adrspach': '../media/trips/adrspach.jpg',
+    'cerna-hora-kabinka': '../media/trips/cerna-hora-kabinka.jpg',
+    'safari-dvur-kralove': '../media/trips/safari-dvur-kralove.jpg',
+    'baumwipfelpfad': '../media/trips/baumwipfelpfad.jpg',
+    'harrachov-glass': '../media/trips/harrachov-glass.jpg',
+    'cernohorske-raseliniste': '../media/trips/cernohorske-raseliniste.jpg',
+    'obri-dul': '../media/trips/obri-dul.jpg',
+    'stachelberg': '../media/trips/stachelberg.jpg',
+    'koupaliste-trutnov': '../media/trips/koupaliste-trutnov.jpg',
+    'janske-hallenbad': '../media/trips/janske-hallenbad.jpg',
+    'rozhledna-hnedy-vrch': '../media/trips/rozhledna-hnedy-vrch.jpg',
+    'bobsled-pec': '../media/trips/bobsled-pec.jpg',
+    'rychory': '../media/trips/rychory.jpg',
+    'spaleny-mlyn': '../media/trips/spaleny-mlyn.jpg',
+    'aquapark-karpacz': '../media/trips/aquapark-karpacz.jpg'
+  };
+  var PHOTO_CREDITS = [
+    { subject: 'Sněžka', author: 'Jojo', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/', source: 'https://commons.wikimedia.org/wiki/File:Sniezka_Summit.jpg' },
+    { subject: 'Adršpašské skály', author: 'Lestat (Jan Mehlich)', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/', source: 'https://commons.wikimedia.org/wiki/File:Adr%C5%A1pa%C5%A1skoteplick%C3%A9_sk%C3%A1ly_02.JPG' },
+    { subject: 'Černá hora – rozhledna', author: 'ŠJů', license: 'CC BY 4.0', licenseUrl: 'https://creativecommons.org/licenses/by/4.0', source: 'https://commons.wikimedia.org/wiki/File:Jansk%C3%A9_L%C3%A1zn%C4%9B,_%C4%8Cern%C3%A1_hora,_rozhledna_(02).jpg' },
+    { subject: 'Safari Park Dvůr Králové', author: 'Mistvan', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0', source: 'https://commons.wikimedia.org/wiki/File:Equus.grevyi-01-ZOO.Dvur.Kralove.jpg' },
+    { subject: 'Stezka korunami stromů', author: 'Susankovav', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0', source: 'https://commons.wikimedia.org/wiki/File:Stezka_korunami_strom%C5%AF_Krkono%C5%A1e_2024.jpg' },
+    { subject: 'Mumlavské vodopády', author: 'V0lkanic', license: 'CC0', licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', source: 'https://commons.wikimedia.org/wiki/File:Mumlavsk%C3%A9_vodop%C3%A1dy_2025.jpg' },
+    { subject: 'Černohorské rašeliniště', author: 'Petr Vilgus', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0', source: 'https://commons.wikimedia.org/wiki/File:%C4%8Cernohorsk%C3%A9_ra%C5%A1elini%C5%A1t%C4%9B_5.JPG' },
+    { subject: 'Obří důl', author: 'Pudelek', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0', source: 'https://commons.wikimedia.org/wiki/File:Ob%C5%99%C3%AD_d%C5%AFl_v_zim%C4%9B.jpg' },
+    { subject: 'Pevnost Stachelberg', author: 'Harold', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0', source: 'https://commons.wikimedia.org/wiki/File:Stachelberg,_podzem%C3%AD_(rok_2008;_03).jpg' },
+    { subject: 'Trutnov – Krakonošovo náměstí', author: 'Vlach Pavel', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0', source: 'https://commons.wikimedia.org/wiki/File:Trutnov,_Krakono%C5%A1ovo_n%C3%A1m%C4%9Bst%C3%AD_(1).jpg' },
+    { subject: 'Janské Lázně – kolonáda', author: 'ŠJů', license: 'CC BY 4.0', licenseUrl: 'https://creativecommons.org/licenses/by/4.0', source: 'https://commons.wikimedia.org/wiki/File:Jansk%C3%A9_L%C3%A1zn%C4%9B,_kolon%C3%A1da.jpg' },
+    { subject: 'Pec pod Sněžkou', author: 'Sashenka7', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0', source: 'https://commons.wikimedia.org/wiki/File:Pec_pod_Sn%C4%9B%C5%BEkou_2013.jpg' },
+    { subject: 'Pec pod Sněžkou – Horizont', author: 'Ladabohac', license: 'CC0', licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/', source: 'https://commons.wikimedia.org/wiki/File:Vyhl%C3%ADdka_na_Horizont_v_Peci_pod_Sn%C4%9B%C5%BEkou.jpg' },
+    { subject: 'Rýchorská bouda', author: 'Dezidor', license: 'CC BY 3.0', licenseUrl: 'https://creativecommons.org/licenses/by/3.0', source: 'https://commons.wikimedia.org/wiki/File:R%C3%BDchorsk%C3%A1_bouda.jpg' },
+    { subject: 'Malá Úpa', author: 'Pudelek', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0', source: 'https://commons.wikimedia.org/wiki/File:Mal%C3%A1_%C3%9Apa_-_Klein_Aupa.jpg' },
+    { subject: 'Karpacz (PL)', author: 'Stefan Kühn', license: 'CC BY-SA 3.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/', source: 'https://commons.wikimedia.org/wiki/File:Karpacz_Poland_Snezka.jpg' }
+  ];
+
+  /* Doplněk katalogu: masérské studio RK masáže ve Svobodě nad Úpou (studio kamaráda
+   * majitele). Reálné údaje z rkmasaze.cz. Fotku z jejich webu nebereme (autorská
+   * práva) — ponecháváme piktogram. Wellness/relax, ideální „za deště". */
+  var EXTRA_TRIPS = [{
+    id: 'rk-masaze',
+    name: { cs: 'RK masáže — relaxační studio', de: 'RK Massagen — Wellnessstudio', en: 'RK massages — relaxation studio', pl: 'RK masaże — studio relaksu' },
+    tagline: { cs: 'Klasické, lávové kameny i lymfatické masáže přímo ve Svobodě', de: 'Klassische, Hot-Stone- und Lymphmassagen direkt in Svoboda', en: 'Classic, hot-stone and lymphatic massages right in Svoboda', pl: 'Masaże klasyczne, gorącymi kamieniami i limfatyczne w Svobodzie' },
+    desc: {
+      cs: 'Masérské studio přímo ve Svobodě nad Úpou (Kostelní 417) — studio kamaráda majitele. Klasická masáž, lávové kameny, lymfodrenáž, maderoterapie i čínská Tuina — po dni na horách ideální. Objednání předem, nejlépe SMS nebo přes Messenger; rezervovat lze i online.',
+      de: 'Massagestudio direkt in Svoboda nad Úpou (Kostelní 417) — das Studio eines Freundes des Gastgebers. Klassische Massage, Hot Stones, Lymphdrainage, Maderotherapie und chinesisches Tuina — perfekt nach einem Tag in den Bergen. Vorher reservieren, am besten per SMS oder Messenger; auch online buchbar.',
+      en: 'A massage studio right in Svoboda nad Úpou (Kostelní 417) — run by a friend of the host. Classic massage, hot stones, lymphatic drainage, maderotherapy and Chinese Tuina — perfect after a day in the mountains. Book ahead, ideally by SMS or Messenger; online booking is available too.',
+      pl: 'Studio masażu w samej Svobodzie nad Úpou (Kostelní 417) — prowadzone przez przyjaciela gospodarza. Masaż klasyczny, gorące kamienie, drenaż limfatyczny, maderoterapia i chińskie Tuina — idealne po dniu w górach. Rezerwacja z wyprzedzeniem, najlepiej SMS lub Messenger; także online.'
+    },
+    coords: { lat: 50.6285, lon: 15.8127, alt: 520 },
+    zone: 'villa', byFoot: true, travelMin: 0, effort: 'easy',
+    category: 'rain', indoorOrCovered: true, rainOk: true, outdoor: false,
+    accent: '#A67BB0', icon: 'spa',
+    openNote: { cs: 'Objednání předem · rezervace i online', de: 'Vorher reservieren · auch online', en: 'Book ahead · online booking too', pl: 'Rezerwacja wcześniej · także online' },
+    price: { cs: 'Dle typu a délky masáže', de: 'Je nach Art und Dauer', en: 'By massage type and length', pl: 'Zależnie od rodzaju i długości' },
+    links: [{ icon: 'globe', url: 'https://rkmasaze.cz' }, { icon: 'calendar', url: 'https://rkmasaze.notado.cz' }]
+  }];
 
   /* ===================== Počasí: kategorie -> ikona + text (z ostrého portálu) ===================== */
   var CAT = {
@@ -654,8 +722,12 @@
       if (!shown.length) return '';
       var cards = shown.map(function (t) {
         var warn = cardWarn(t, L);
-        var badge = hasPhoto(t) ? '<span class="vg-photobadge">' + icon('camera') + '</span>' : '';
-        return '<article class="vg-card" data-open="' + esc(t.id) + '" data-visited="' + (!!S.visited[t.id]) + '" style="--acc:' + t.accent + '">'
+        var photo = TRIP_PHOTOS[t.id]
+          ? '<div class="vg-cardphoto"><img src="' + esc(TRIP_PHOTOS[t.id]) + '" alt="' + esc(tt(t.name, lang)) + '" loading="lazy" width="1200" height="150"></div>'
+          : '';
+        var badge = (!photo && hasPhoto(t)) ? '<span class="vg-photobadge">' + icon('camera') + '</span>' : '';
+        return '<article class="vg-card' + (photo ? ' has-photo' : '') + '" data-open="' + esc(t.id) + '" data-visited="' + (!!S.visited[t.id]) + '" style="--acc:' + t.accent + '">'
+          + photo
           + '<div class="vg-cardicon"><span class="vg-iconbox">' + icon(t.icon) + badge + '</span><span class="vg-cardnum">' + t._num + '</span></div>'
           + '<div class="vg-cardbody"><h3>' + esc(tt(t.name, lang)) + '</h3><p class="sub">' + esc(tt(t.tagline, lang)) + '</p>'
           + '<div class="vg-cardmeta">'
@@ -688,6 +760,19 @@
     return '<section class="vg-food"><h2>' + esc(L.foodTitle) + '</h2><p class="sub">' + esc(L.foodSub) + '</p><div class="vg-foodlist">' + rows + '</div></section>';
   }
 
+  /* Sekce „Fotografie" — kredity fotek z Wikimedia Commons (autor + licence + odkaz).
+     U CC BY / CC BY-SA je uvedení autora povinné; uvádíme ho u všech. */
+  function renderCreditsHTML(L) {
+    if (!PHOTO_CREDITS.length) return '';
+    var items = PHOTO_CREDITS.map(function (c) {
+      return '<li><span class="who">' + esc(c.subject) + '</span> — ' + esc(c.author)
+        + ' · <a href="' + esc(c.licenseUrl) + '" target="_blank" rel="noopener">' + esc(c.license) + '</a>'
+        + ' · <a href="' + esc(c.source) + '" target="_blank" rel="noopener">' + esc(L.photosCommons) + ' ↗</a></li>';
+    }).join('');
+    return '<section class="vg-credits"><h2>' + esc(L.photosTitle) + '</h2><p class="sub">' + esc(L.photosSub) + '</p>'
+      + '<ul class="vg-creditlist">' + items + '</ul></section>';
+  }
+
   function renderFooterHTML(L) {
     var suffix = 'lang=' + S.lang + (S.season ? '&season=' + S.season : '');
     return '<footer class="vg-footer"><p>' + esc(L.footNote) + ' · ' + esc(L.wxLive) + '</p>'
@@ -716,6 +801,7 @@
     html += renderWizardHTML(L);
     html += renderCatalogHTML(L, plan);
     html += renderFoodHTML(L);
+    html += renderCreditsHTML(L);
     if (S.mode === 'public') html += '<section class="vg-pubcta"><a href="https://villarudolf.com/#rezervace" target="_blank" rel="noopener">' + esc(L.pubCta) + '</a></section>';
     html += renderFooterHTML(L);
     html += '</div>';
@@ -742,8 +828,10 @@
       + '<div class="vg-sheethd"><span class="vg-iconbox">' + icon(t.icon) + '</span><div>'
       + '<span class="cat">' + esc((L.cats[t.category] || t.category) + ' · ' + L.zones[t.zone === 'villa' ? 0 : t.zone === 'near' ? 1 : 2]) + '</span>'
       + '<h2>' + esc(tt(t.name, lang)) + '</h2><p class="sub">' + esc(tt(t.tagline, lang)) + '</p></div></div>'
-      + '<div class="vg-photoslot">' + icon('camera') + '<span>' + esc(L.dropPhoto) + '</span></div>'
-      + '<div class="vg-videosoon">' + icon('play-c') + '<p>' + esc(L.videoSoon) + '</p></div>'
+      + (TRIP_PHOTOS[t.id]
+          ? '<img class="vg-sheetphoto" src="' + esc(TRIP_PHOTOS[t.id]) + '" alt="' + esc(tt(t.name, lang)) + '" loading="lazy">'
+          : '<div class="vg-photoslot">' + icon('camera') + '<span>' + esc(L.dropPhoto) + '</span></div>'
+            + '<div class="vg-videosoon">' + icon('play-c') + '<p>' + esc(L.videoSoon) + '</p></div>')
       + '<p class="vg-desc">' + esc(tt(t.desc, lang)) + '</p>'
       + '<div class="vg-facts">'
       + '<div class="vg-fact"><p class="k">' + esc(L.dOpen) + '</p><p class="v">' + esc(tt(t.openNote, lang)) + '</p></div>'
@@ -948,7 +1036,8 @@
     fetch(CFG.FORECAST_URL).then(function (r) { return r.json(); }).catch(function () { return null; })
   ]).then(function (res) {
     var guest = res[0], tripsRaw = res[1], forecast = res[2];
-    DATA.trips = (tripsRaw.trips || []).map(function (t, i) { t._num = i + 1; return t; });
+    // katalog z portálu + lokální doplňky (RK masáže); číslování až po sloučení
+    DATA.trips = (tripsRaw.trips || []).concat(EXTRA_TRIPS).map(function (t, i) { t._num = i + 1; return t; });
     DATA.food = tripsRaw.food || [];
     DATA.forecast = forecast;
     if (guest) {
