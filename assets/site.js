@@ -149,8 +149,7 @@ const T = {
       ],
       railTitle: 'Pokoje, které nemají strop',
       rooms: [
-        { name: 'Zastřešený bazén', micro: 'Vyhřívaný a zastřešený — v provozu za každého počasí, bez rezervací a bez front.' },
-        { name: 'Finská sauna', micro: 'Bez slotů a bez čekání. Nikdo si ji nerezervuje před vámi.' },
+        { name: 'Bazén pod širým nebem', micro: 'V létě se střecha odsune — plavete pod otevřeným nebem, vyhřívané i za chladných večerů.' },
         { name: 'Pergola', micro: 'Kryté posezení pro celou partu najednou. Večeře venku, i když prší.' },
         { name: 'Ohniště s gabionovou stěnou', micro: 'Po setmění se nasvítí samo. Vy jen přiložíte.' },
         { name: 'Dětské hřiště', micro: 'Na dohled od pergoly, uvnitř plotu. Děti běhají, vy sedíte.' },
@@ -387,8 +386,7 @@ const T = {
       ],
       railTitle: 'Rooms without a ceiling',
       rooms: [
-        { name: 'The covered pool', micro: 'Heated and under cover — open in any weather, no booking, no queue.' },
-        { name: 'Finnish sauna', micro: 'No slots, no waiting. Nobody has reserved it before you.' },
+        { name: 'Pool under the open sky', micro: 'In summer the roof slides away — swim under the open sky, heated even on cool evenings.' },
         { name: 'The pergola', micro: 'Covered seating for the whole group at once. Dinner outdoors, even in the rain.' },
         { name: 'Fire pit with a gabion wall', micro: 'It lights itself after dark. You only add the wood.' },
         { name: 'The playground', micro: 'In sight of the pergola, inside the fence. The children run, you sit.' },
@@ -625,8 +623,7 @@ const T = {
       ],
       railTitle: 'Räume ohne Decke',
       rooms: [
-        { name: 'Überdachter Pool', micro: 'Beheizt und überdacht — bei jedem Wetter offen, ohne Anmeldung, ohne Schlange.' },
-        { name: 'Finnische Sauna', micro: 'Keine Zeitfenster, kein Warten. Niemand hat sie vor euch reserviert.' },
+        { name: 'Pool unter freiem Himmel', micro: 'Im Sommer gleitet das Dach weg — Schwimmen unter freiem Himmel, beheizt auch an kühlen Abenden.' },
         { name: 'Pergola', micro: 'Überdachte Sitzplätze für die ganze Gruppe. Abendessen draußen, auch bei Regen.' },
         { name: 'Feuerstelle mit Gabionenwand', micro: 'Nach Einbruch der Dunkelheit leuchtet sie von selbst. Ihr legt nur nach.' },
         { name: 'Spielplatz', micro: 'In Sichtweite der Pergola, innerhalb des Zauns. Die Kinder rennen, ihr sitzt.' },
@@ -863,8 +860,7 @@ const T = {
       ],
       railTitle: 'Pokoje bez sufitu',
       rooms: [
-        { name: 'Zadaszony basen', micro: 'Podgrzewany i zadaszony — czynny przy każdej pogodzie, bez rezerwacji i bez kolejki.' },
-        { name: 'Fińska sauna', micro: 'Bez okienek i bez czekania. Nikt nie rezerwuje jej przed wami.' },
+        { name: 'Basen pod gołym niebem', micro: 'Latem dach się rozsuwa — pływacie pod otwartym niebem, podgrzewany nawet w chłodne wieczory.' },
         { name: 'Pergola', micro: 'Zadaszone miejsce dla całej ekipy naraz. Kolacja na zewnątrz, nawet gdy pada.' },
         { name: 'Palenisko ze ścianą gabionową', micro: 'Po zmroku podświetla się samo. Wy tylko dokładacie drewno.' },
         { name: 'Plac zabaw', micro: 'W zasięgu wzroku od pergoli, wewnątrz ogrodzenia. Dzieci biegają, wy siedzicie.' },
