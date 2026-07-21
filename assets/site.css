@@ -386,11 +386,15 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-priceblock-rows{display:grid;gap:0}
 .vr-priceblock-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;border-top:1px solid var(--vr-line);padding:11px 0}
 .vr-priceblock-row:first-child{border-top:0;padding-top:0}
-.vr-priceblock-season{font-family:'Newsreader',serif;font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--vr-text-soft);transition:color .6s ease}
+.vr-priceblock-season{display:flex;flex-direction:column;gap:2px;font-family:'Newsreader',serif;font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--vr-text-soft);transition:color .6s ease}
+.vr-priceblock-season b{font-weight:400}
+.vr-priceblock-range{font-family:'Archivo',sans-serif;font-size:12px;color:var(--vr-text-dim);transition:color .6s ease}
+/* „Léto 2026 je téměř obsazené" — ember, ať si toho host všimne. */
+.vr-priceblock-note{font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;color:var(--vr-accent);max-width:42ch;transition:color .6s ease}
 .vr-priceblock-val{display:flex;flex-direction:column;align-items:flex-end;text-align:right;gap:2px}
 .vr-priceblock-val b{font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;color:var(--vr-text);transition:color .6s ease}
 .vr-priceblock-min{font-family:'Archivo',sans-serif;font-size:12px;color:var(--vr-text-dim);transition:color .6s ease}
-.vr-priceblock-foot{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;padding-top:14px;border-top:1px solid var(--vr-line);font-family:'Archivo',sans-serif;font-size:12.5px;color:var(--vr-text-dim);transition:color .6s ease}
+.vr-priceblock-foot{display:flex;flex-direction:column;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid var(--vr-line);font-family:'Archivo',sans-serif;font-size:12.5px;color:var(--vr-text-dim);transition:color .6s ease}
 .vr-priceblock-fx{color:var(--vr-text-faint);font-style:italic}
 .vr-book{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(22px,3vw,40px);max-width:1080px;margin:clamp(20px,2.6vw,32px) auto 0;text-align:left;align-items:start}
 .vr-cal-card{border:1px solid var(--vr-line);border-radius:3px;background:var(--vr-panel);padding:clamp(18px,2.4vw,28px);transition:background-color .6s ease,border-color .6s ease}
@@ -440,13 +444,17 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-book-guestnote{color:#b4442f;background:rgba(214,110,86,.12);border-color:rgba(214,110,86,.36)}
 .vr-root[data-season="leto"] .vr-book-minstay{color:#E7C9A6;background:rgba(214,138,76,.08);border-color:rgba(214,138,76,.28)}
 .vr-root[data-season="leto"] .vr-book-guestnote{color:#e6b7ac;background:rgba(214,110,86,.09);border-color:rgba(214,110,86,.3)}
-/* Počty hostů — dva vstupy vedle sebe */
-.vr-book-guests{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* Počty hostů — dospělí / děti / domácí mazlíčci vedle sebe */
+.vr-book-guests{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:420px){.vr-book-guests{grid-template-columns:1fr 1fr}.vr-book-guests label:last-child{grid-column:1 / -1}}
 .vr-book-guests label{margin:0}
 .vr-book label{display:flex;flex-direction:column;gap:8px}
 .vr-book label span{font-family:'Archivo',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--vr-text-formlabel);transition:color .6s ease}
-.vr-book input,.vr-book textarea{font-family:'Archivo',sans-serif;font-size:15px;color:var(--vr-text-soft);background:var(--vr-panel-input);border:1px solid var(--vr-line);border-radius:2px;padding:13px 15px;outline:none;transition:border-color .2s,background-color .6s ease,color .6s ease}
-.vr-book input:focus,.vr-book textarea:focus{border-color:var(--vr-ember)}
+.vr-book input,.vr-book textarea,.vr-book select{font-family:'Archivo',sans-serif;font-size:15px;color:var(--vr-text-soft);background:var(--vr-panel-input);border:1px solid var(--vr-line);border-radius:2px;padding:13px 15px;outline:none;transition:border-color .2s,background-color .6s ease,color .6s ease}
+.vr-book select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:34px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%239aa39b' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;background-size:11px}
+.vr-book input:focus,.vr-book textarea:focus,.vr-book select:focus{border-color:var(--vr-ember)}
 .vr-book-textarea{resize:vertical;min-height:76px;line-height:1.5}
 .vr-book-consent{font-family:'Archivo',sans-serif;font-size:11.5px;line-height:1.55;color:var(--vr-text-faint);margin:0;transition:color .6s ease}
 .vr-book-consent a{color:var(--vr-accent-2);text-decoration:underline;text-underline-offset:2px}

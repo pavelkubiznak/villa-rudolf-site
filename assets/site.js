@@ -4,31 +4,46 @@
    is replaced (v1 has no Stripe) and a localized placeholder label added. */
 'use strict';
 
-/* ============================ CENÍK — ke schválení majitelem ============================ */
-/* ceník ke schválení majitelem — upravit zde.
-   Hodnoty vycházejí z reálného Airbnb/Booking listingu Villa Rudolf:
-     • letní sezóna (čer–srp): ~11 000 Kč/noc, min. 6 nocí (týdenní pronájmy)
-     • zimní sezóna (svátky + lyžování): ~13 500 Kč/noc, min. 3 noci
-     • mimo sezónu: ~13 900 Kč/noc, min. 2 noci
-     • krátký pobyt na 1 noc (jen mimo sezónu): 16 600 Kč/noc
-     • jednorázový úklid: 3 633 Kč
-     • městský/lázeňský poplatek: 24,22 Kč za dospělého a noc (děti neplatí)
+/* ============================ CENÍK ============================ */
+/* JEDINÉ místo, kde se ceny upravují.
+   Hodnoty převzaty z vlastního inzerátu majitele na e-chalupy.cz (objekt 18852)
+   a ověřeny proti němu 21. 7. 2026:
+     • letní sezóna 1. 5. – 31. 10.: 12 900 Kč/noc, víkend (2 noci) 25 800 Kč
+     • zimní sezóna 15. 12. – 31. 3.: 12 900 Kč/noc, víkend (2 noci) 25 800 Kč
+     • mimo sezónu (duben, listopad, 1.–14. 12.): 11 900 Kč/noc,
+       víkend (2 noci) 22 800 Kč — víkend mimo sezónu je zvýhodněný
+     • minimální pobyt: 2 noci ve všech obdobích
+     • úklid a prádlo: 3 500 Kč za pobyt
+     • městský poplatek: 25 Kč za dospělou osobu a noc (děti neplatí)
+     • pes / domácí mazlíček: 500 Kč za pobyt
+     • vratná kauce: 5 000 Kč (úklid se z ní odečítá)
      • záloha po potvrzení termínu: 30 % z celkové ceny
-   Sezóny se zapisují jako MM-DD. 'zimni' přechází přes Nový rok (12-20 → 03-15).
+     • Vánoce a Silvestr: individuální cena (2026: 94 900 / 99 900 Kč za týden,
+       oba termíny už obsazené) — v ceníku jen jako „poptejte se"
+   Sezóny se zapisují jako MM-DD. 'zimni' přechází přes Nový rok (12-15 → 03-31).
    Poslední sezóna bez from/to ('mimo') je výchozí pro všechny ostatní dny v roce. */
 const VR_PRICING = {
   seasons: [
-    { name: 'letni', from: '07-01', to: '08-31', nightly: 11000, minNights: 6 },
-    { name: 'zimni', from: '12-20', to: '03-15', nightly: 13500, minNights: 3 },
-    { name: 'mimo', nightly: 13900, minNights: 2 },
+    { name: 'letni', from: '05-01', to: '10-31', nightly: 12900, minNights: 2, weekend2: 25800 },
+    { name: 'zimni', from: '12-15', to: '03-31', nightly: 12900, minNights: 2, weekend2: 25800 },
+    { name: 'mimo', nightly: 11900, minNights: 2, weekend2: 22800 },
   ],
-  shortStayNightly: 16600,   // sazba za krátký (1noční) pobyt — jen mimo sezónu
-  shortStayMax: 1,           // do kolika nocí platí krátkodobá sazba
-  cleaning: 3633,            // jednorázový úklidový poplatek (Kč)
-  cityTaxAdultNight: 24.22,  // městský poplatek na dospělého a noc (Kč)
+  cleaning: 3500,            // úklid a prádlo za pobyt (Kč)
+  cityTaxAdultNight: 25,     // městský poplatek na dospělého a noc (Kč)
+  petPerStay: 500,           // pes / domácí mazlíček za pobyt (Kč)
+  bond: 5000,                // vratná kauce (Kč) — jen informace, nepočítá se do ceny
   depositPct: 30,            // záloha v % z celkové ceny (splatná až po potvrzení)
   maxGuests: 22,             // maximální počet hostů (dospělí + děti)
+  maxPets: 5,                // horní mez číselníku mazlíčků ve formuláři
 };
+
+/* Které léto právě prodáváme a které je (téměř) plné.
+   VĚDOMĚ ručně — ať web nikdy sám netvrdí něco, co neplatí.
+   Ověřeno 21. 7. 2026 proti kalendáři obsazenosti (history.json):
+   léto 2026 bylo obsazené ze 71 % (hlavní sezóna VI–IX ze 77 %), volné zbývaly
+   jen jednotlivé kratší termíny → formulace „téměř obsazeno", NE „plně obsazeno".
+   Poznámka se sama přestane zobrazovat po datu noteUntil. */
+const VR_SEASON_NOTE = { summerYear: 2027, almostFullYear: 2026, noteUntil: '2026-11-01' };
 
 /* Orientační přepočet měn pro cizojazyčné verze webu. Ceny se vždy platí v CZK;
    € / zł se ukazují jen jako přibližný odhad. Pevné kurzy — upravit zde. */
@@ -219,7 +234,16 @@ const T = {
       consent: 'Odesláním žádosti berete na vědomí <a href="/podminky/" target="_blank" rel="noopener">ubytovací podmínky a zpracování osobních údajů</a>.',
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', checkoutOnly: 'pouze odjezd', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
       availFail: 'Dostupnost se nepodařilo načíst.',
-      priceHeading: 'Orientační ceník', pricePerNight: '/ noc', priceMin: 'min.',
+      priceHeading: 'Ceník', pricePerNight: '/ noc', priceMin: 'min.',
+      priceWeekend: 'víkend (2 noci)', weekendRate: 'Víkendová cena',
+      priceOffRange: 'duben, listopad a 1.–14. 12.',
+      priceSummerFull: 'Léto %Y% je téměř obsazené — volné jsou už jen jednotlivé termíny.',
+      priceXmas: 'Vánoce a Silvestr', priceXmasVal: 'individuální cena, poptejte se',
+      priceMinStay: 'Minimální pobyt %N% %NB%',
+      priceCityTax: 'Městský poplatek %A% za dospělou osobu a noc (děti neplatí)',
+      pricePet: 'Pes / domácí mazlíček %P% za pobyt',
+      priceBond: 'Vratná kauce %B% — úklid se z ní odečítá',
+      petFee: 'Pes / domácí mazlíček',
       priceCleaning: 'Úklid (jednorázově)', priceDeposit: 'Záloha %P% % až po potvrzení termínu', priceFxNote: '',
       sending: 'Odesílám…', prevMonths: 'Předchozí měsíce', nextMonths: 'Další měsíce',
       okTitle: 'Žádost přijata',
@@ -239,13 +263,13 @@ const T = {
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
       body: 'Vyberte v kalendáři příjezd a odjezd, uvidíte rozpis ceny a pošlete nám nezávaznou žádost o pobyt. Termín vám osobně potvrdíme.',
-      lblAdults: 'Dospělí', lblChildren: 'Děti',
+      lblAdults: 'Dospělí', lblChildren: 'Děti', lblPets: 'Domácí mazlíčci',
       lblName: 'Jméno', phName: 'Vaše jméno',
       lblEmail: 'E-mail', phEmail: 'vas@email.cz',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (nepovinné)',
       lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
-    mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
+    mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', pets: 'Domácí mazlíčci', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
     footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Ubytovací podmínky a ochrana údajů' },
   },
 
@@ -375,7 +399,16 @@ const T = {
       consent: 'By sending this request you acknowledge our <a href="/podminky/" target="_blank" rel="noopener">booking terms and the processing of your personal data</a>.',
       free: 'Available', booked: 'Booked', chosen: 'Your stay', checkoutOnly: 'checkout only', demo: 'Sample availability — will connect to the booking system',
       availFail: 'Availability could not be loaded.',
-      priceHeading: 'Price guide', pricePerNight: '/ night', priceMin: 'min.',
+      priceHeading: 'Price list', pricePerNight: '/ night', priceMin: 'min.',
+      priceWeekend: 'weekend (2 nights)', weekendRate: 'Weekend rate',
+      priceOffRange: 'April, November and 1–14 December',
+      priceSummerFull: 'Summer %Y% is almost fully booked — only a few dates are left.',
+      priceXmas: 'Christmas & New Year', priceXmasVal: 'individual price, please ask',
+      priceMinStay: 'Minimum stay %N% %NB%',
+      priceCityTax: 'City tax %A% per adult per night (children exempt)',
+      pricePet: 'Dog / pet %P% per stay',
+      priceBond: 'Refundable deposit %B% — the cleaning fee is deducted from it',
+      petFee: 'Dog / pet',
       priceCleaning: 'Cleaning (one-off)', priceDeposit: '%P%% deposit, only after we confirm your dates', priceFxNote: 'approximate, paid in CZK',
       sending: 'Sending…', prevMonths: 'Previous months', nextMonths: 'Next months',
       okTitle: 'Request received',
@@ -395,13 +428,13 @@ const T = {
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
       body: 'Pick arrival and departure in the calendar, see the price breakdown and send us a non-binding stay request. We’ll confirm your dates personally.',
-      lblAdults: 'Adults', lblChildren: 'Children',
+      lblAdults: 'Adults', lblChildren: 'Children', lblPets: 'Pets',
       lblName: 'Name', phName: 'Your name',
       lblEmail: 'Email', phEmail: 'you@email.com',
       lblPhone: 'Phone / WhatsApp', phPhone: '+420… (optional)',
       lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
-    mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
+    mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', pets: 'Pets', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
     footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Booking terms & privacy' },
   },
 
@@ -531,7 +564,16 @@ const T = {
       consent: 'Mit dem Absenden der Anfrage akzeptiert ihr die <a href="/podminky/" target="_blank" rel="noopener">Buchungsbedingungen und die Verarbeitung eurer personenbezogenen Daten</a>.',
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', checkoutOnly: 'nur Abreise', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
       availFail: 'Verfügbarkeit konnte nicht geladen werden.',
-      priceHeading: 'Preisübersicht', pricePerNight: '/ Nacht', priceMin: 'min.',
+      priceHeading: 'Preisliste', pricePerNight: '/ Nacht', priceMin: 'min.',
+      priceWeekend: 'Wochenende (2 Nächte)', weekendRate: 'Wochenendpreis',
+      priceOffRange: 'April, November und 1.–14. Dezember',
+      priceSummerFull: 'Der Sommer %Y% ist fast ausgebucht — es sind nur noch einzelne Termine frei.',
+      priceXmas: 'Weihnachten & Silvester', priceXmasVal: 'individueller Preis, bitte anfragen',
+      priceMinStay: 'Mindestaufenthalt %N% %NB%',
+      priceCityTax: 'Kurtaxe %A% pro Erwachsenem und Nacht (Kinder frei)',
+      pricePet: 'Hund / Haustier %P% pro Aufenthalt',
+      priceBond: 'Rückzahlbare Kaution %B% — die Endreinigung wird davon abgezogen',
+      petFee: 'Hund / Haustier',
       priceCleaning: 'Endreinigung (einmalig)', priceDeposit: '%P%% Anzahlung, erst nach Bestätigung des Termins', priceFxNote: 'ca.-Werte, Zahlung in CZK',
       sending: 'Senden…', prevMonths: 'Vorherige Monate', nextMonths: 'Nächste Monate',
       okTitle: 'Anfrage erhalten',
@@ -551,13 +593,13 @@ const T = {
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
       body: 'Wählt An- und Abreise im Kalender, seht die Preisaufstellung und sendet uns eine unverbindliche Aufenthaltsanfrage. Wir bestätigen euren Termin persönlich.',
-      lblAdults: 'Erwachsene', lblChildren: 'Kinder',
+      lblAdults: 'Erwachsene', lblChildren: 'Kinder', lblPets: 'Haustiere',
       lblName: 'Name', phName: 'Euer Name',
       lblEmail: 'E-Mail', phEmail: 'du@email.de',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (optional)',
       lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
-    mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
+    mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', pets: 'Haustiere', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
     footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Buchungsbedingungen & Datenschutz' },
   },
 
@@ -687,7 +729,16 @@ const T = {
       consent: 'Wysyłając prośbę, akceptujesz <a href="/podminky/" target="_blank" rel="noopener">warunki pobytu i przetwarzanie danych osobowych</a>.',
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', checkoutOnly: 'tylko wyjazd', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
       availFail: 'Nie udało się wczytać dostępności.',
-      priceHeading: 'Orientacyjny cennik', pricePerNight: '/ noc', priceMin: 'min.',
+      priceHeading: 'Cennik', pricePerNight: '/ noc', priceMin: 'min.',
+      priceWeekend: 'weekend (2 noce)', weekendRate: 'Cena weekendowa',
+      priceOffRange: 'kwiecień, listopad i 1–14 grudnia',
+      priceSummerFull: 'Lato %Y% jest prawie w całości zarezerwowane — wolne są już tylko pojedyncze terminy.',
+      priceXmas: 'Boże Narodzenie i Sylwester', priceXmasVal: 'cena indywidualna, zapytaj',
+      priceMinStay: 'Minimalny pobyt %N% %NB%',
+      priceCityTax: 'Opłata miejscowa %A% za osobę dorosłą i noc (dzieci nie płacą)',
+      pricePet: 'Pies / zwierzę %P% za pobyt',
+      priceBond: 'Zwrotna kaucja %B% — sprzątanie jest z niej potrącane',
+      petFee: 'Pies / zwierzę',
       priceCleaning: 'Sprzątanie (jednorazowo)', priceDeposit: 'Zaliczka %P%% dopiero po potwierdzeniu terminu', priceFxNote: 'orientacyjnie, płatność w CZK',
       sending: 'Wysyłam…', prevMonths: 'Poprzednie miesiące', nextMonths: 'Następne miesiące',
       okTitle: 'Prośba przyjęta',
@@ -707,13 +758,13 @@ const T = {
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
       body: 'Wybierz w kalendarzu przyjazd i wyjazd, zobacz rozpiskę ceny i wyślij nam niezobowiązującą prośbę o pobyt. Termin potwierdzimy osobiście.',
-      lblAdults: 'Dorośli', lblChildren: 'Dzieci',
+      lblAdults: 'Dorośli', lblChildren: 'Dzieci', lblPets: 'Zwierzęta',
       lblName: 'Imię', phName: 'Wasze imię',
       lblEmail: 'E-mail', phEmail: 'ty@email.pl',
       lblPhone: 'Telefon / WhatsApp', phPhone: '+420… (opcjonalnie)',
       lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
-    mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
+    mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', pets: 'Zwierzęta', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
     footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki pobytu i prywatność' },
   },
 };
@@ -1333,10 +1384,10 @@ const ADf = {
 };
 /* Lokalizované názvy sezón — pro řádky rozpisu (víc sezón v jednom pobytu). */
 const SEASON_LABEL = {
-  cs: { letni: 'letní sezóna', zimni: 'zimní sezóna', mimo: 'mimo sezónu', short: 'krátký pobyt' },
-  en: { letni: 'summer', zimni: 'winter', mimo: 'off-season', short: 'short stay' },
-  de: { letni: 'Sommer', zimni: 'Winter', mimo: 'Nebensaison', short: 'Kurzaufenthalt' },
-  pl: { letni: 'sezon letni', zimni: 'sezon zimowy', mimo: 'poza sezonem', short: 'krótki pobyt' },
+  cs: { letni: 'letní sezóna', zimni: 'zimní sezóna', mimo: 'mimo sezónu' },
+  en: { letni: 'summer', zimni: 'winter', mimo: 'off-season' },
+  de: { letni: 'Sommer', zimni: 'Winter', mimo: 'Nebensaison' },
+  pl: { letni: 'sezon letni', zimni: 'sezon zimowy', mimo: 'poza sezonem' },
 };
 /* Úvod věty o minimální délce pobytu (vkládá se za %S% v book.minStay). */
 const SEASON_IN = {
@@ -1366,38 +1417,48 @@ function vrEachNight(s0, s1, fn) {
 /* Kompletní rozpis ceny pro rozsah a počet hostů. Cena každé noci se počítá
    dle sezóny té konkrétní noci (pobyt přes rozhraní sezón se sečte správně).
    Krátký (1noční) pobyt je povolen jen mimo sezónu, za sazbu shortStayNightly. */
-function computeQuote(s0, s1, adults, children) {
+function computeQuote(s0, s1, adults, children, pets) {
   const nights = (s0 && s1) ? Math.round((toD(s1) - toD(s0)) / 86400000) : 0;
-  adults = Math.max(0, adults | 0); children = Math.max(0, children | 0);
+  adults = Math.max(0, adults | 0); children = Math.max(0, children | 0); pets = Math.max(0, pets | 0);
   const q = {
-    nights: nights, adults: adults, children: children, groups: [],
-    accommodation: 0, cleaning: 0, cityTax: 0, total: 0, deposit: 0,
-    valid: false, reason: 'no-range', arrival: null, minNights: 0, shortStay: false,
+    nights: nights, adults: adults, children: children, pets: pets, groups: [],
+    accommodation: 0, cleaning: 0, cityTax: 0, petFee: 0, total: 0, deposit: 0,
+    valid: false, reason: 'no-range', arrival: null, minNights: 0, weekend: false,
     guestOver: (adults + children) > VR_PRICING.maxGuests, noAdults: adults < 1,
   };
   if (nights <= 0) return q;
   const arrival = vrSeasonForKey(s0);
-  const isFallback = !arrival.from || !arrival.to;
   q.arrival = arrival; q.minNights = arrival.minNights || 1;
-  const shortStay = nights <= VR_PRICING.shortStayMax && VR_PRICING.shortStayMax >= 1 && isFallback;
-  q.shortStay = shortStay;
-  if (shortStay) {
-    q.groups.push({ name: 'short', nights: nights, rate: VR_PRICING.shortStayNightly, subtotal: nights * VR_PRICING.shortStayNightly });
-  } else {
-    const order = [], map = {};
-    vrEachNight(s0, s1, (k) => {
-      const s = vrSeasonForKey(k);
-      if (!map[s.name]) { map[s.name] = { name: s.name, rate: s.nightly, nights: 0, subtotal: 0 }; order.push(s.name); }
-      map[s.name].nights++; map[s.name].subtotal += s.nightly;
-    });
-    order.forEach((n) => q.groups.push(map[n]));
+
+  // Ceny po nocích podle sezóny KAŽDÉ noci (pobyt přes rozhraní sezón se sečte správně).
+  const order = [], map = {};
+  vrEachNight(s0, s1, (k) => {
+    const s = vrSeasonForKey(k);
+    if (!map[s.name]) { map[s.name] = { name: s.name, rate: s.nightly, nights: 0, subtotal: 0 }; order.push(s.name); }
+    map[s.name].nights++; map[s.name].subtotal += s.nightly;
+  });
+  order.forEach((n) => q.groups.push(map[n]));
+
+  /* Víkendová sazba za 2 noci (příjezd v pátek nebo v sobotu, obě noci v jedné
+     sezóně). V sezóně vyjde stejně jako 2× noc, mimo sezónu je zvýhodněná
+     (22 800 místo 23 800 Kč). Uplatní se jen když je pro hosta výhodnější. */
+  if (nights === 2 && q.groups.length === 1) {
+    const dow = toD(s0).getDay(); // 5 = pátek, 6 = sobota
+    const w = arrival.weekend2;
+    if ((dow === 5 || dow === 6) && w && w < q.groups[0].subtotal) {
+      q.groups[0].subtotal = w; q.groups[0].weekend = true; q.weekend = true;
+    }
   }
+
   q.accommodation = q.groups.reduce((a, g) => a + g.subtotal, 0);
   q.cleaning = VR_PRICING.cleaning;
+  // Městský poplatek platí jen DOSPĚLÍ; děti se nepočítají.
   q.cityTax = Math.round(adults * nights * VR_PRICING.cityTaxAdultNight);
-  q.total = q.accommodation + q.cleaning + q.cityTax;
+  // Pes / domácí mazlíček — jednorázově za pobyt, za každé zvíře.
+  q.petFee = pets * VR_PRICING.petPerStay;
+  q.total = q.accommodation + q.cleaning + q.cityTax + q.petFee;
   q.deposit = Math.round(q.total * VR_PRICING.depositPct / 100);
-  q.valid = shortStay || nights >= q.minNights;
+  q.valid = nights >= q.minNights;
   q.reason = q.valid ? 'ok' : 'min-stay';
   return q;
 }
@@ -1481,19 +1542,33 @@ function readGuests() {
   return {
     adults: parseInt(($('#vr-adults') || {}).value, 10) || 0,
     children: parseInt(($('#vr-children') || {}).value, 10) || 0,
+    pets: parseInt(($('#vr-pets') || {}).value, 10) || 0,
   };
 }
-/* Srovná hodnoty do mezí (dospělí 1..max, děti 0..max-1). Překročení součtu
-   se neupravuje tvrdě — jen se ukáže hláška a odeslání se zablokuje. */
+/* Srovná hodnoty do mezí (dospělí 1..max, děti 0..max-1, mazlíčci 0..maxPets).
+   Překročení součtu dospělí+děti se neupravuje tvrdě — jen se ukáže hláška
+   a odeslání se zablokuje. */
 function clampGuests() {
-  const a = $('#vr-adults'), c = $('#vr-children'); if (!a || !c) return;
-  let av = parseInt(a.value, 10), cv = parseInt(c.value, 10);
-  if (isNaN(av)) av = 1; if (isNaN(cv)) cv = 0;
-  a.value = Math.max(1, Math.min(VR_PRICING.maxGuests, av));
-  c.value = Math.max(0, Math.min(VR_PRICING.maxGuests - 1, cv));
+  const a = $('#vr-adults'), c = $('#vr-children'), p = $('#vr-pets');
+  if (a && c) {
+    let av = parseInt(a.value, 10), cv = parseInt(c.value, 10);
+    if (isNaN(av)) av = 1; if (isNaN(cv)) cv = 0;
+    a.value = Math.max(1, Math.min(VR_PRICING.maxGuests, av));
+    c.value = Math.max(0, Math.min(VR_PRICING.maxGuests - 1, cv));
+  }
+  if (p) {
+    let pv = parseInt(p.value, 10); if (isNaN(pv)) pv = 0;
+    p.value = String(Math.max(0, Math.min(VR_PRICING.maxPets, pv)));
+  }
 }
 /* Statický orientační ceník nad kalendářem. Hodnoty čerpá z VR_PRICING, aby se
    nikdy nerozešly s výpočtem. U cizojazyčných verzí přidá přibližný přepočet €/zł. */
+/* „1. 5. – 31. 10." z MM-DD zápisu sezóny. */
+function fmtSeasonRange(s) {
+  if (!s.from || !s.to) return '';
+  const p = (md) => parseInt(md.slice(3), 10) + '. ' + parseInt(md.slice(0, 2), 10) + '.';
+  return p(s.from) + ' – ' + p(s.to);
+}
 function renderPriceBlock() {
   const host = $('#vr-priceblock'); if (!host) return;
   const t = tt(), lang = state.lang;
@@ -1501,23 +1576,46 @@ function renderPriceBlock() {
   host.innerHTML = '';
   host.appendChild(el('div', { class: 'vr-priceblock-h', text: t.book.priceHeading }));
   const rows = el('div', { class: 'vr-priceblock-rows' });
+  const showNote = new Date() < new Date(VR_SEASON_NOTE.noteUntil);
   VR_PRICING.seasons.forEach((s) => {
-    const nbWord = (NBf[lang] || NBf.cs)(s.minNights);
+    // U letní sezóny ukazujeme rok, který právě prodáváme (majitel: „letní sezóna 2027").
+    let name = SL[s.name] || s.name;
+    if (s.name === 'letni') name += ' ' + VR_SEASON_NOTE.summerYear;
+    const range = s.name === 'mimo' ? (t.book.priceOffRange || '') : fmtSeasonRange(s);
     const fx = fxLine(s.nightly, lang);
-    let meta = t.book.priceMin + ' ' + s.minNights + ' ' + nbWord;
-    if (fx) meta += ' · ' + fx + ' ' + t.book.pricePerNight;
+    let meta = '';
+    if (s.weekend2) meta += (t.book.priceWeekend || '') + ' ' + fmtM(s.weekend2);
+    if (fx) meta += (meta ? ' · ' : '') + fx + ' ' + t.book.pricePerNight;
+    const seasonCell = el('span', { class: 'vr-priceblock-season' }, [
+      el('b', { text: name }),
+      range ? el('span', { class: 'vr-priceblock-range', text: range }) : null,
+      // „Léto 2026 je téměř obsazené" — ověřeno proti reálné obsazenosti.
+      (s.name === 'letni' && showNote && t.book.priceSummerFull)
+        ? el('span', { class: 'vr-priceblock-note', text: (t.book.priceSummerFull || '').replace('%Y%', VR_SEASON_NOTE.almostFullYear) })
+        : null,
+    ].filter(Boolean));
     rows.appendChild(el('div', { class: 'vr-priceblock-row' }, [
-      el('span', { class: 'vr-priceblock-season', text: SL[s.name] || s.name }),
+      seasonCell,
       el('span', { class: 'vr-priceblock-val' }, [
         el('b', { text: fmtM(s.nightly) + ' ' + t.book.pricePerNight }),
-        el('span', { class: 'vr-priceblock-min', text: meta }),
-      ]),
+        meta ? el('span', { class: 'vr-priceblock-min', text: meta }) : null,
+      ].filter(Boolean)),
     ]));
   });
+  // Vánoce a Silvestr — individuální cena, poptejte se.
+  rows.appendChild(el('div', { class: 'vr-priceblock-row' }, [
+    el('span', { class: 'vr-priceblock-season' }, [el('b', { text: t.book.priceXmas })]),
+    el('span', { class: 'vr-priceblock-val' }, [el('span', { class: 'vr-priceblock-min', text: t.book.priceXmasVal })]),
+  ]));
   host.appendChild(rows);
   const foot = el('div', { class: 'vr-priceblock-foot' });
+  const nbWord = (NBf[lang] || NBf.cs)(VR_PRICING.seasons[0].minNights);
   const clFx = fxLine(VR_PRICING.cleaning, lang);
+  foot.appendChild(el('span', { text: (t.book.priceMinStay || '').replace('%N%', VR_PRICING.seasons[0].minNights).replace('%NB%', nbWord) }));
   foot.appendChild(el('span', { text: t.book.priceCleaning + ' ' + fmtM(VR_PRICING.cleaning) + (clFx ? ' (' + clFx + ')' : '') }));
+  foot.appendChild(el('span', { text: (t.book.priceCityTax || '').replace('%A%', fmtM(VR_PRICING.cityTaxAdultNight)) }));
+  foot.appendChild(el('span', { text: (t.book.pricePet || '').replace('%P%', fmtM(VR_PRICING.petPerStay)) }));
+  foot.appendChild(el('span', { text: (t.book.priceBond || '').replace('%B%', fmtM(VR_PRICING.bond)) }));
   foot.appendChild(el('span', { text: (t.book.priceDeposit || '').replace('%P%', VR_PRICING.depositPct) }));
   if (t.book.priceFxNote) foot.appendChild(el('span', { class: 'vr-priceblock-fx', text: t.book.priceFxNote }));
   host.appendChild(foot);
@@ -1531,7 +1629,7 @@ function renderBookingPanel() {
   $('#vr-sel-nights').textContent = nights ? '· ' + nights + ' ' + (NBf[lang] || NBf.cs)(nights) : '';
 
   const g = readGuests();
-  const q = computeQuote(s0, s1, g.adults, g.children);
+  const q = computeQuote(s0, s1, g.adults, g.children, g.pets);
   const brk = $('#vr-breakdown'), note = $('#vr-minstay'), gnote = $('#vr-guestnote'), btn = $('#vr-pay');
   if (!brk) return; // panel ještě není v DOM
 
@@ -1556,13 +1654,20 @@ function renderBookingPanel() {
     const multi = q.groups.length > 1;
     const SL = SEASON_LABEL[lang] || SEASON_LABEL.cs;
     q.groups.forEach((grp) => {
-      let lbl = grp.nights + ' ' + (NBf[lang] || NBf.cs)(grp.nights) + ' × ' + fmtM(grp.rate);
-      if (multi || grp.name === 'short') lbl += ' · ' + (SL[grp.name] || '');
+      // Zvýhodněný víkend se ukáže jako víkendová sazba, ne jako 2× noc.
+      let lbl = grp.weekend
+        ? (t.book.weekendRate || '') + ' (' + grp.nights + ' ' + (NBf[lang] || NBf.cs)(grp.nights) + ')'
+        : grp.nights + ' ' + (NBf[lang] || NBf.cs)(grp.nights) + ' × ' + fmtM(grp.rate);
+      if (multi) lbl += ' · ' + (SL[grp.name] || '');
       brk.appendChild(rowEl(lbl, fmtM(grp.subtotal)));
     });
     brk.appendChild(rowEl(t.book.cleaning, fmtM(q.cleaning)));
     const adWord = (ADf[lang] || ADf.cs)(q.adults), nbWord = (NBf[lang] || NBf.cs)(q.nights);
     brk.appendChild(rowEl(t.book.cityTax + ' (' + q.adults + ' ' + adWord + ' × ' + q.nights + ' ' + nbWord + ')', fmtM(q.cityTax)));
+    // Pes / domácí mazlíček — 500 Kč za pobyt a zvíře, samostatná položka.
+    if (q.pets > 0) {
+      brk.appendChild(rowEl(t.book.petFee + ' (' + q.pets + ' × ' + fmtM(VR_PRICING.petPerStay) + ')', fmtM(q.petFee)));
+    }
     brk.appendChild(rowEl(t.book.total, fmtM(q.total), 'brk-total'));
     const fxTot = fxLine(q.total, lang);
     if (fxTot) brk.appendChild(rowEl(fxTot, t.book.priceFxNote || '', 'brk-fx'));
@@ -1602,7 +1707,8 @@ function showBookSuccess(q, s0, s1) {
     sum.innerHTML = '';
     const nb = (NBf[lang] || NBf.cs)(q.nights);
     sum.appendChild(el('div', { class: 'row' }, [el('span', { class: 'k', text: fmtK(s0) + ' — ' + fmtK(s1) }), el('span', { class: 'v', text: q.nights + ' ' + nb })]));
-    const gl = t.cta.lblAdults + ': ' + q.adults + (q.children ? ' · ' + t.cta.lblChildren + ': ' + q.children : '');
+    let gl = t.cta.lblAdults + ': ' + q.adults + (q.children ? ' · ' + t.cta.lblChildren + ': ' + q.children : '');
+    if (q.pets) gl += ' · ' + t.cta.lblPets + ': ' + q.pets;
     sum.appendChild(el('div', { class: 'row' }, [el('span', { class: 'k', text: gl }), el('span', { class: 'v', text: fmtM(q.total) })]));
   }
   const a = bookAside(); if (a) a.setAttribute('data-state', 'done');
@@ -1621,7 +1727,7 @@ function submitBooking() {
   const email = (($('#vr-email') && $('#vr-email').value) || '').trim();
   const phone = (($('#vr-phone') && $('#vr-phone').value) || '').trim();
   const message = (($('#vr-message') && $('#vr-message').value) || '').trim().slice(0, 2000);
-  const q = computeQuote(s0, s1, g.adults, g.children);
+  const q = computeQuote(s0, s1, g.adults, g.children, g.pets);
   if (!q.valid || q.guestOver || q.noAdults || !name || !email) { setBookMsg(t.book.errRequired); return; }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setBookMsg(t.book.errEmail); return; }
   setBookMsg('');
@@ -1629,12 +1735,12 @@ function submitBooking() {
   const breakdown = {
     nights: q.nights,
     groups: q.groups.map((grp) => ({ name: grp.name, nights: grp.nights, rate: grp.rate, subtotal: grp.subtotal })),
-    cleaning: q.cleaning, cityTax: q.cityTax, total: q.total, deposit: q.deposit, shortStay: q.shortStay,
+    cleaning: q.cleaning, cityTax: q.cityTax, petFee: q.petFee, total: q.total, deposit: q.deposit, weekend: q.weekend,
   };
   const iso = (k) => Math.floor(k / 10000) + '-' + String(Math.floor(k / 100) % 100).padStart(2, '0') + '-' + String(k % 100).padStart(2, '0');
   const payload = {
     p_arrival: iso(s0), p_departure: iso(s1),
-    p_adults: q.adults, p_children: q.children,
+    p_adults: q.adults, p_children: q.children, p_pets: q.pets,
     p_name: name, p_email: email, p_phone: phone,
     p_lang: lang, p_breakdown: breakdown, p_total: q.total,
     p_message: message || null,
@@ -1651,7 +1757,7 @@ function submitBooking() {
     if (code === 'email_invalid') msg = t.book.errEmail;
     else if (code === 'rate_limited') msg = t.book.errRate;
     else if (code === 'dates_invalid' || code === 'adults_invalid' || code === 'children_invalid'
-             || code === 'guests_invalid' || code === 'name_required' || code === 'email_required') msg = t.book.errRequired;
+             || code === 'guests_invalid' || code === 'pets_invalid' || code === 'name_required' || code === 'email_required') msg = t.book.errRequired;
     setBookSending(false);
     setBookMsg(msg);
   }).catch(() => { setBookSending(false); setBookMsg(t.book.errGeneric); });
@@ -2124,7 +2230,7 @@ function init() {
   const again = $('#vr-book-again');
   if (again) again.addEventListener('click', resetBookForm);
   // počty hostů — rozpis se přepočítá živě; na blur se hodnoty srovnají do mezí
-  ['#vr-adults', '#vr-children'].forEach((sel) => {
+  ['#vr-adults', '#vr-children', '#vr-pets'].forEach((sel) => {
     const inp = $(sel); if (!inp) return;
     inp.addEventListener('input', renderBookingPanel);
     inp.addEventListener('change', () => { clampGuests(); renderBookingPanel(); });

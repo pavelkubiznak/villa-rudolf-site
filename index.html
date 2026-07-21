@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=13">
+<link rel="stylesheet" href="assets/site.css?v=14">
 </head>
 <body>
 <noscript>
@@ -452,6 +452,8 @@
             <div class="vr-book-price" id="vr-breakdown" style="display:none"></div>
             <!-- Hláška o minimální délce pobytu (nahradí rozpis, když je termín kratší) -->
             <div class="vr-book-minstay" id="vr-minstay" role="status" aria-live="polite" style="display:none"></div>
+            <!-- Dospělí / děti / mazlíčci. Městský poplatek platí jen dospělí,
+                 pes je 500 Kč za pobyt (majitel: „my si taky bereme peníze za psy"). -->
             <div class="vr-book-guests">
               <label>
                 <span data-t="cta.lblAdults">Dospělí</span>
@@ -460,6 +462,17 @@
               <label>
                 <span data-t="cta.lblChildren">Děti</span>
                 <input id="vr-children" type="number" min="0" max="21" step="1" inputmode="numeric" value="0" autocomplete="off">
+              </label>
+              <label>
+                <span data-t="cta.lblPets">Domácí mazlíčci</span>
+                <select id="vr-pets" autocomplete="off">
+                  <option value="0" selected>0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
               </label>
             </div>
             <div class="vr-book-guestnote" id="vr-guestnote" role="status" aria-live="polite" style="display:none"></div>
@@ -576,7 +589,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=13" defer></script>
+<script src="assets/site.js?v=14" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>
