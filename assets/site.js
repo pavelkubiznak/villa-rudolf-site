@@ -91,6 +91,11 @@ const VR_DISTANCES = [
 const T = {
   cs: {
     photoSoon: 'Fotku doplníme',
+    meta: {
+      title: 'Villa Rudolf – celé horské sídlo jen pro vás | Krkonoše',
+      desc: 'Villa Rudolf – soukromé horské sídlo v Krkonoších. Celý dům i rozlehlý pozemek jen pro vaši skupinu 6–22 lidí: zastřešený bazén, sauna, pergola, ohniště. Léto i zima. Rezervujte celý dům.',
+      locale: 'cs_CZ',
+    },
     nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
       eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
@@ -225,6 +230,11 @@ const T = {
 
   en: {
     photoSoon: 'Photo coming soon',
+    meta: {
+      title: 'Villa Rudolf – the whole mountain estate, just for you | Krkonoše',
+      desc: 'Villa Rudolf – a private mountain estate in the Czech Krkonoše. The whole house and grounds for your group of 6–22: covered pool, sauna, pergola, fire pit. Summer and winter. Book the entire house.',
+      locale: 'en_GB',
+    },
     nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
       eyebrow: 'The whole house, just for your group · Krkonoše',
@@ -359,6 +369,11 @@ const T = {
 
   de: {
     photoSoon: 'Foto folgt',
+    meta: {
+      title: 'Villa Rudolf – das ganze Berganwesen nur für euch | Riesengebirge',
+      desc: 'Villa Rudolf – ein privates Berganwesen im Riesengebirge. Das ganze Haus und Grundstück für eure Gruppe von 6–22 Personen: überdachter Pool, Sauna, Pergola, Feuerstelle. Sommer und Winter. Ganzes Haus buchen.',
+      locale: 'de_DE',
+    },
     nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
       eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
@@ -493,6 +508,11 @@ const T = {
 
   pl: {
     photoSoon: 'Zdjęcie wkrótce',
+    meta: {
+      title: 'Villa Rudolf – cała górska rezydencja tylko dla was | Karkonosze',
+      desc: 'Villa Rudolf – prywatna górska rezydencja w Karkonoszach. Cały dom i posesja dla grupy 6–22 osób: kryty basen, sauna, pergola, palenisko. Lato i zima. Zarezerwuj cały dom.',
+      locale: 'pl_PL',
+    },
     nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
       eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
@@ -1467,6 +1487,50 @@ function applyThemeColor() {
   if (m) m.setAttribute('content', state.season === 'zima' ? '#eef2f6' : '#0E1311');
 }
 
+/* Jazyk: ?lang= → localStorage vrLang → navigator.language (cs/en/de/pl) → cs. */
+function resolveLang(qs) {
+  const q = (qs.get('lang') || '').toLowerCase();
+  if (T[q]) return q;
+  try { const s = localStorage.getItem('vrLang'); if (s && T[s]) return s; } catch (e) {}
+  const nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
+  if (T[nav]) return nav;
+  return 'cs';
+}
+/* Sezóna: ?season= → localStorage vrSeason → leto. */
+function resolveSeason(qs) {
+  const q = (qs.get('season') || '').toLowerCase();
+  if (q === 'leto' || q === 'zima') return q;
+  try { const s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') return s; } catch (e) {}
+  return 'leto';
+}
+/* Přeložený <title> + meta description (+ og) podle aktuálního jazyka. */
+function applyMeta() {
+  const m = tt().meta; if (!m) return;
+  if (m.title) document.title = m.title;
+  const set = (sel, val) => { const n = document.querySelector(sel); if (n && val) n.setAttribute('content', val); };
+  set('meta[name="description"]', m.desc);
+  set('meta[property="og:title"]', m.title);
+  set('meta[property="og:description"]', m.desc);
+  set('meta[property="og:locale"]', m.locale);
+}
+/* Odkazy s data-langlink dostanou ?lang=<aktuální jazyk>, ať jsou sdílitelné
+   (např. odkaz na /pruvodce/ z DE webu otevře DE průvodce). */
+function applyLangLinks() {
+  $all('a[data-langlink]').forEach((a) => {
+    const base = a.getAttribute('data-langlink');
+    a.setAttribute('href', base + (base.indexOf('?') >= 0 ? '&' : '?') + 'lang=' + state.lang);
+  });
+}
+/* Promítni jazyk + sezónu do URL (?lang & ?season), ať jsou odkazy sdílitelné. */
+function syncUrl() {
+  try {
+    const u = new URL(location.href);
+    u.searchParams.set('lang', state.lang);
+    u.searchParams.set('season', state.season);
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  } catch (e) {}
+}
+
 function setLang(lang) {
   if (!T[lang] || state.lang === lang) return;
   state.lang = lang;
@@ -1476,6 +1540,7 @@ function setLang(lang) {
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
   renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
+  applyMeta(); applyLangLinks(); syncUrl();
   // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
   if ($('#vr-pay-label')) $('#vr-pay-label').textContent = bookSending ? tt().book.sending : tt().book.pay;
 }
@@ -1501,6 +1566,7 @@ function setSeason(season) {
   state.galFilter = season === 'zima' ? 'zima' : 'all';
   renderGallery();
   if (state.lb >= 0) lbSet(-1);
+  syncUrl();
 }
 
 /* ============================ Lightbox ============================ */
@@ -1710,9 +1776,12 @@ function toggleMob(open) {
 /* ============================ Wire up ============================ */
 function init() {
   document.documentElement.classList.add('js');
-  // restore saved language + season
-  try { const saved = localStorage.getItem('vrLang'); if (saved && T[saved]) state.lang = saved; } catch (e) {}
-  try { const s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') state.season = s; } catch (e) {}
+  // Jazyk + sezóna: ?param → localStorage → navigator.language → výchozí.
+  const qsInit = new URLSearchParams(location.search);
+  state.lang = resolveLang(qsInit);
+  state.season = resolveSeason(qsInit);
+  try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
+  try { localStorage.setItem('vrSeason', state.season); } catch (e) {}
 
   // language buttons
   $all('.vr-lang').forEach((b) => b.addEventListener('click', () => setLang(b.getAttribute('data-lang'))));
@@ -1762,6 +1831,7 @@ function init() {
   renderSeasonsCards(); renderLokFacts(); renderLokDistances(); renderTrips(); renderGallery();
   renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
+  applyMeta(); applyLangLinks(); syncUrl();
   loadAvailability();
 
   startReveal(); startRaf(); startScrollSpy(); startTeaserRotation();

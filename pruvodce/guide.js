@@ -832,7 +832,12 @@
     var app = document.getElementById('app');
     // jazyk (výběr pinu zůstává — panel se jen přepíše do nového jazyka)
     app.querySelectorAll('.vg-lang').forEach(function (b) {
-      b.addEventListener('click', function () { S.lang = b.dataset.lang; renderApp(true); });
+      b.addEventListener('click', function () {
+        S.lang = b.dataset.lang;
+        try { localStorage.setItem('vrLang', S.lang); } catch (e) { }
+        try { var u = new URL(location.href); u.searchParams.set('lang', S.lang); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch (e) { }
+        renderApp(true);
+      });
     });
     // filtr (vybraný pin se zruší jen když vypadne z filtru — řeší renderCatalogHTML)
     app.querySelectorAll('.vg-chip').forEach(function (b) {
@@ -922,7 +927,12 @@
       DATA.guest = guest; S.mode = 'guest';
       S.lang = (guest.lang && T[guest.lang]) ? guest.lang : (T[S.lang] ? S.lang : 'cs');
     } else {
-      S.mode = 'public'; S.lang = qs.get('lang') && T[qs.get('lang')] ? qs.get('lang') : 'cs';
+      // Veřejný režim: ?lang= → localStorage vrLang → navigator.language → cs.
+      S.mode = 'public';
+      var qLang = (qs.get('lang') || '').toLowerCase();
+      var lsLang = null; try { lsLang = localStorage.getItem('vrLang'); } catch (e) { }
+      var navLang = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
+      S.lang = T[qLang] ? qLang : (lsLang && T[lsLang]) ? lsLang : (T[navLang] ? navLang : 'cs');
     }
     renderApp(false);
   }).catch(function (e) {
