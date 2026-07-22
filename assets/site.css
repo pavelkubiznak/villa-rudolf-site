@@ -244,36 +244,49 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
    kompaktní, měkce vyhasínající světlá opora přesně kolem textového bloku dole.
    Vila zůstává nedotčená (elipsa k ní nedosáhne a nic neztmavuje). */
 .vr-root[data-season="zima"] .vrim-copy::before{
-  width:min(112vw,1520px);height:min(44vh,420px);
-  background:radial-gradient(closest-side,rgba(255,255,255,.74) 0%,rgba(255,255,255,.62) 46%,rgba(255,255,255,.36) 70%,rgba(255,255,255,.13) 87%,transparent 100%)}
-/* Blok držíme v zimě KOMPAKTNÍ a nízko, aby titulek zůstal nad sněhem a nepřekryl
-   vilu (vila má patu ~54 % výšky hera; menší text + těsné mezery + nízké ukotvení
-   drží h1 pod ní i na laptopech). */
-.vr-root[data-season="zima"] .vrim-copy{bottom:clamp(26px,6vh,60px)}
+  width:min(120vw,1720px);height:min(44vh,420px);
+  background:radial-gradient(closest-side,rgba(255,255,255,.76) 0%,rgba(255,255,255,.64) 46%,rgba(255,255,255,.38) 70%,rgba(255,255,255,.14) 87%,transparent 100%)}
+/* PÍSMO JE V ZIMĚ STEJNĚ VELKÉ JAKO V LÉTĚ (majitel: „zkus zvětšit to písmo
+   stejně jako to je v letní verzi"). Zimní blok proto NEMÁ vlastní font-size ani
+   vlastní odsazení h1/podtitulku — obojí dědí letní clamp(). Aby se větší text
+   pořád vešel POD patu vily (~54 % výšky hera), řešíme to jen LAYOUTEM:
+   1) širší max-width → h1 se láme na 2 řádky místo 3 a podtitulek na 1 řádek
+      (stejná velikost písma, jen jiný zlom),
+   2) blok je ukotvený níž nad čistým sněhem (výškově odstupňovaný clamp).
+   Ověřeno měřením ve 4 jazycích na desktopu i mobilu. */
+.vr-root[data-season="zima"] .vrim-copy{bottom:clamp(18px,4vh,64px)}
 /* Vícevrstvý BÍLÝ text-shadow = měkký bílý podklad přímo pod literami: těsný
    neprůhledný lem (obtah do 4 směrů) + tři rozostřené aury. Text tak vystoupí
    ze sněhu i tam, kde je za ním strom nebo stín, a fotka zůstane světlá. */
-.vr-root[data-season="zima"] .vrim-h1{color:#17242e;font-size:clamp(1.85rem,4vw,3rem);margin-top:10px;
+.vr-root[data-season="zima"] .vrim-h1{color:#17242e;max-width:22ch;
   text-shadow:1px 1px 2px rgba(255,255,255,.98),-1px 1px 2px rgba(255,255,255,.98),
     1px -1px 2px rgba(255,255,255,.98),-1px -1px 2px rgba(255,255,255,.98),
     0 0 9px rgba(255,255,255,.96),0 0 20px rgba(255,255,255,.9),
     0 0 38px rgba(255,255,255,.78),0 0 66px rgba(255,255,255,.55)}
-.vr-root[data-season="zima"] .vrim-sub{color:#22303b;margin-top:10px;font-size:clamp(1rem,1.55vw,1.3rem);
+.vr-root[data-season="zima"] .vrim-sub{color:#22303b;max-width:48ch;
   text-shadow:1px 1px 2px rgba(255,255,255,.97),-1px 1px 2px rgba(255,255,255,.97),
     1px -1px 2px rgba(255,255,255,.97),-1px -1px 2px rgba(255,255,255,.97),
     0 0 8px rgba(255,255,255,.94),0 0 18px rgba(255,255,255,.84),0 0 34px rgba(255,255,255,.6)}
 .vr-root[data-season="zima"] .vrim-sub em{color:#0f5c86}
-.vr-root[data-season="zima"] .vrim-eyebrow{color:#2a3742;
+/* Eyebrow je malý text (12 px) → drží stejně tmavou barvu jako h1, aby i na
+   nejtmavší dlaždici sněhu vyšel na AA 4,5:1 (měřeno bez bílé aury). */
+.vr-root[data-season="zima"] .vrim-eyebrow{color:#17242e;
   text-shadow:1px 1px 2px rgba(255,255,255,.97),-1px 1px 2px rgba(255,255,255,.97),
     1px -1px 2px rgba(255,255,255,.97),-1px -1px 2px rgba(255,255,255,.97),
     0 0 10px rgba(255,255,255,.9),0 0 22px rgba(255,255,255,.7)}
+/* Jediná zbylá zimní komprese je mezera NAD TLAČÍTKY (písma se netýká): bez ní
+   by blok na 2:1 laptopech a malých telefonech vylezl na vilu. */
 .vr-root[data-season="zima"] .vrim-actions{margin-top:18px}
-/* Mobil: blok je vysoký → víc ho zkomprimuj, aby titulek jistě zůstal nad
-   sněhem a NEpřekryl vilu. */
+/* Nízké obrazovky (2:1 laptopy): pod patou vily zbývá málo místa → blok ukotvi
+   ještě níž. Velikost písma se NEMĚNÍ. */
+@media(max-height:800px){
+  .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(12px,2.4vh,24px)}
+}
+/* Mobil: h1 se láme podle šířky displeje (max-width se neuplatní), blok je tedy
+   vysoký → ukotvi ho co nejníž nad sněhem a rozšiř bílou oporu pod něj. */
 @media(max-width:640px){
-  .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(16px,4vh,36px)}
-  .vr-root[data-season="zima"] .vrim-copy::before{width:180vw;height:min(40vh,340px)}
-  .vr-root[data-season="zima"] .vrim-h1{font-size:clamp(1.7rem,6.5vw,2.1rem);line-height:1.06}
+  .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(8px,1.6vh,18px)}
+  .vr-root[data-season="zima"] .vrim-copy::before{width:184vw;height:min(46vh,380px)}
 }
 
 /* ---------- Section shells ---------- */
