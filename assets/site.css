@@ -234,9 +234,10 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
    Majitel: „na zimním hero je nápis přímo na baráku, tím písmem zabíjíme vilu."
    Zimní fotka má vilu NAHOŘE uprostřed a dole čistý jasný sníh. Řešení: v zimě
    textový blok sjede DOLŮ nad sníh, přepne na TMAVÝ text (#17242e) se světelnou
-   aurou (čitelný na sněhu BEZ ztmavení) a VŠECHNY ztmavovací vrstvy hera
-   (scrim, vinětace, lokální elipsa) se ruší — titulek tak nesedí na baráku ani
-   ho neztmavuje. Léto (které majitel miluje) zůstává BEZE ZMĚNY. */
+   aurou (čitelný na sněhu BEZ ztmavení) a ztmavovací vrstvy hera (scrim,
+   vinětace) se v zimě RUŠÍ; lokální elipsa se otáčí na bílou (viz níž) —
+   titulek tak nesedí na baráku ani ho neztmavuje. Léto (které majitel miluje)
+   zůstává BEZE ZMĚNY. */
 .vr-root[data-season="zima"] .vrim-scrim,
 .vr-root[data-season="zima"] .vrim-vig{background:none}
 /* Majitel: „zimní nic extra — zkus tomu černému písmu dát bílý podklad (měkký
