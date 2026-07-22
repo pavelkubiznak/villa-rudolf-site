@@ -38,7 +38,8 @@
    * přes tt(v,lang) = v[lang] || v.cs. Tady jsou jen texty rozhraní ve 4 jazycích. */
   var T = {
     cs: {
-      brand: 'Plánovač výletů',
+      brand: 'Plánovač výletů', navVylety: 'Výlety', navInfo: 'Praktické info',
+      footNote: 'Ceny a otevírací doby ověřte před cestou · počasí: yr.no',
       badge: 'Váš plánovač', greet: 'Vítejte', family: 'rodino', heroTitle: 'Váš plán na tenhle týden',
       stayPrefix: 'pobyt', todayTip: 'Dnešní tip', moreArrow: 'detail →',
       planTitle: 'Plán na každý den', planSrc: 'počasí: yr.no · živě',
@@ -77,7 +78,8 @@
       tags: { foot: 'pěšky od vily', rain: 'i za deště', outdoor: 'venku', easy: 'nenáročné', hard: 'náročné', heat: 'do horka', clear: 'za jasna', stairs: 'schody', reservation: 'rezervace', border: 'Polsko · doklady' }
     },
     de: {
-      brand: 'Ausflugsplaner',
+      brand: 'Ausflugsplaner', navVylety: 'Ausflüge', navInfo: 'Gäste-Infos',
+      footNote: 'Preise und Öffnungszeiten vor der Fahrt prüfen · Wetter: yr.no',
       badge: 'Ihr Planer', greet: 'Willkommen', family: 'Familie', heroTitle: 'Ihr Plan für diese Woche',
       stayPrefix: 'Aufenthalt', todayTip: 'Tipp für heute', moreArrow: 'Detail →',
       planTitle: 'Plan für jeden Tag', planSrc: 'Wetter: yr.no · live',
@@ -116,7 +118,8 @@
       tags: { foot: 'zu Fuß', rain: 'auch bei Regen', outdoor: 'draußen', easy: 'leicht', hard: 'anspruchsvoll', heat: 'für heiße Tage', clear: 'bei klarem Wetter', stairs: 'Treppen', reservation: 'Reservierung', border: 'Polen · Ausweis' }
     },
     en: {
-      brand: 'Trip planner',
+      brand: 'Trip planner', navVylety: 'Trips', navInfo: 'Guest info',
+      footNote: 'Check prices and opening hours before you go · weather: yr.no',
       badge: 'Your planner', greet: 'Welcome', family: 'family', heroTitle: 'Your plan for this week',
       stayPrefix: 'stay', todayTip: 'Today’s tip', moreArrow: 'detail →',
       planTitle: 'A plan for every day', planSrc: 'weather: yr.no · live',
@@ -155,7 +158,8 @@
       tags: { foot: 'walkable', rain: 'rainy-day ok', outdoor: 'outdoors', easy: 'easy', hard: 'strenuous', heat: 'for hot days', clear: 'clear weather', stairs: 'stairs', reservation: 'booking', border: 'Poland · ID' }
     },
     pl: {
-      brand: 'Planer wycieczek',
+      brand: 'Planer wycieczek', navVylety: 'Wycieczki', navInfo: 'Informacje praktyczne',
+      footNote: 'Ceny i godziny otwarcia sprawdźcie przed wyjazdem · pogoda: yr.no',
       badge: 'Wasz planer', greet: 'Witajcie', family: 'rodzino', heroTitle: 'Wasz plan na ten tydzień',
       stayPrefix: 'pobyt', todayTip: 'Tip na dziś', moreArrow: 'szczegóły →',
       planTitle: 'Plan na każdy dzień', planSrc: 'pogoda: yr.no · na żywo',
@@ -961,7 +965,11 @@
       DATA.forecast = forecast;
       if (guest) {
         DATA.guest = guest; S.mode = 'guest';
-        S.lang = (guest.lang && T[guest.lang]) ? guest.lang : (T[S.lang] ? S.lang : 'cs');
+        // Reálný host má jazyk z rezervace. U ukázky (?t=demo) rozhoduje ?lang=,
+        // jinak by Čech kliknuvší na „Ukázat na příkladu →" dostal němčinu.
+        var qLang = (qs.get('lang') || '').toLowerCase();
+        S.lang = (token === 'demo' && T[qLang]) ? qLang
+          : ((guest.lang && T[guest.lang]) ? guest.lang : (T[S.lang] ? S.lang : 'cs'));
       } else {
         S.mode = 'public';
       }
@@ -1034,6 +1042,11 @@
       document.querySelectorAll('.vg-lang').forEach(function (b) {
         b.setAttribute('data-active', b.getAttribute('data-lang') === S.lang ? 'true' : 'false');
       });
+      var L = T[S.lang] || T.cs;
+      document.querySelectorAll('[data-shellt]').forEach(function (n) {
+        var v = L[n.getAttribute('data-shellt')];
+        if (typeof v === 'string') n.textContent = v;
+      });
       document.querySelectorAll('a[data-shelllink]').forEach(function (a) {
         try {
           var u = new URL(a.getAttribute('data-shelllink'), location.href);
@@ -1052,7 +1065,8 @@
       });
     });
     syncShell();
-    window.VRPlanner.mount({ el: el, lang: S.lang, season: S.season }).catch(function (e) {
+    // Host má jazyk z rezervace — po načtení srovnej i rám stránky.
+    window.VRPlanner.mount({ el: el, lang: S.lang, season: S.season }).then(syncShell).catch(function (e) {
       el.innerHTML = '<div class="vg-loading">Plánovač se nepodařilo načíst. / The planner could not be loaded.</div>';
       if (window.console) console.error(e);
     });
