@@ -127,8 +127,6 @@ const T = {
       subWinter: 'Lyžování hned za rohem — <em>skibus u domu</em>, Černá hora 4 km.',
       ctaSec: 'Prohlédnout dům', badge: 'Volné termíny 2026', video: 'Přehrát video',
       summer: 'Léto', winter: 'Zima',
-      tipSummer: 'Bazén, pergola a večery u otevřeného ohně.',
-      tipWinter: 'Vyhřívaný krytý bazén, sauna a lyžárna přímo v domě.',
       nightLine: 'Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy — večer tady teprve začíná.',
     },
     ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno', teaserMore: 'Přečíst recenze' },
@@ -147,8 +145,6 @@ const T = {
         { num: '1 skupina', label: 'v areálu je vždycky jen jedna, nikdy dvě najednou' },
         { num: '0', label: 'prostor sdílených s cizími lidmi' },
       ],
-      close: 'Nikoho tu nepotkáte, pokud jste ho sami nepozvali.',
-      cta: 'Projít celý areál ve 360°',
     },
     band: { eyebrow: 'Jeden večer tady' },
     amenities: {
@@ -379,8 +375,6 @@ const T = {
       subWinter: 'Skiing just around the corner — <em>ski bus at the door</em>, Černá hora 4 km.',
       ctaSec: 'Explore the house', badge: 'Open dates 2026', video: 'Play video',
       summer: 'Summer', winter: 'Winter',
-      tipSummer: 'Pool, pergola and evenings around the open fire.',
-      tipWinter: 'Heated indoor pool, sauna and a ski room in the house.',
       nightLine: 'Night has fallen. The fire pit, gabion wall and pool have lit themselves — the evening is just beginning.',
     },
     ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified', teaserMore: 'Read the reviews' },
@@ -399,8 +393,6 @@ const T = {
         { num: '1 group', label: 'there is only ever one on the estate, never two at once' },
         { num: '0', label: 'spaces shared with strangers' },
       ],
-      close: 'You will not meet anyone here you have not invited yourself.',
-      cta: 'Walk the whole estate in 360°',
     },
     band: { eyebrow: 'One evening here' },
     amenities: {
@@ -631,8 +623,6 @@ const T = {
       subWinter: 'Skifahren gleich um die Ecke — <em>Skibus am Haus</em>, Černá hora 4 km.',
       ctaSec: 'Haus ansehen', badge: 'Freie Termine 2026', video: 'Video abspielen',
       summer: 'Sommer', winter: 'Winter',
-      tipSummer: 'Pool, Pergola und Abende am offenen Feuer.',
-      tipWinter: 'Beheizter Hallenpool, Sauna und Skiraum direkt im Haus.',
       nightLine: 'Es ist dunkel geworden. Feuerstelle, Gabionenwand und Pool leuchten von selbst — der Abend fängt gerade erst an.',
     },
     ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft', teaserMore: 'Bewertungen lesen' },
@@ -651,8 +641,6 @@ const T = {
         { num: '1 Gruppe', label: 'auf dem Anwesen ist immer nur eine, nie zwei gleichzeitig' },
         { num: '0', label: 'Räume, die ihr mit Fremden teilt' },
       ],
-      close: 'Ihr trefft hier niemanden, den ihr nicht selbst eingeladen habt.',
-      cta: 'Das ganze Anwesen in 360° durchgehen',
     },
     band: { eyebrow: 'Ein Abend hier' },
     amenities: {
@@ -883,8 +871,6 @@ const T = {
       subWinter: 'Narty tuż za rogiem — <em>skibus przy domu</em>, Černá hora 4 km.',
       ctaSec: 'Zobacz dom', badge: 'Wolne terminy 2026', video: 'Odtwórz wideo',
       summer: 'Lato', winter: 'Zima',
-      tipSummer: 'Basen, pergola i wieczory przy otwartym ogniu.',
-      tipWinter: 'Podgrzewany kryty basen, sauna i narciarnia w domu.',
       nightLine: 'Zapadła noc. Palenisko, ściana gabionowa i basen zapaliły się same — wieczór dopiero się zaczyna.',
     },
     ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano', teaserMore: 'Przeczytaj recenzje' },
@@ -903,8 +889,6 @@ const T = {
         { num: '1 grupa', label: 'na terenie jest zawsze tylko jedna, nigdy dwie naraz' },
         { num: '0', label: 'przestrzeni dzielonych z obcymi' },
       ],
-      close: 'Nie spotkacie tu nikogo, kogo sami nie zaprosicie.',
-      cta: 'Przejść cały teren w 360°',
     },
     band: { eyebrow: 'Jeden wieczór tutaj' },
     amenities: {
@@ -2395,7 +2379,6 @@ function applySeasonButtons() {
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
 }
-function applyTip() { $('#vrim-tip').textContent = state.season === 'zima' ? tt().hero.tipWinter : tt().hero.tipSummer; }
 
 /* Hero eyebrow + sub se v zimě přepnou na lyžování. (setTexts() je nastaví na
    letní znění přes data-t/data-t-html, proto applyHeroSeason voláme až po něm.) */
@@ -2559,7 +2542,7 @@ function setLang(lang) {
   applyLangButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderTrips(); renderGallery();
-  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
+  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
@@ -2580,7 +2563,7 @@ function setSeason(season) {
   eagerLoadSeason(season);
   document.querySelector('.vr-root').setAttribute('data-season', season);
   applyThemeColor();
-  applySeasonButtons(); renderSeasonsCards(); applyTip(); applyHeroSeason();
+  applySeasonButtons(); renderSeasonsCards(); applyHeroSeason();
   applyLokLead();    // lead sekce Lokalita má vlastní zimní znění
   renderAmenities(); // hero amenity card (bazén ↔ lyžování) + 3 cards swap by season
   // 360° prohlídka má vlastní sadu scén pro každou sezónu — přepni ji celou
@@ -2893,7 +2876,7 @@ function init() {
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderTrips(); renderGallery();
-  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyTip(); applyHeroSeason();
+  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   loadAvailability();

@@ -226,12 +226,9 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-root .vr-btn-primary{color:#10150f}
 .vr-root .vr-btn-ghost{color:#F0EBE1}
 .vr-btn-ghost{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;background:rgba(16,21,18,.42);backdrop-filter:blur(6px);border:1px solid rgba(240,235,225,.32);border-radius:2px;padding:14px 24px;cursor:pointer}
-/* Sezónní tip v heru — už BEZ segmentovaného přepínače (ten je jen v hlavičce). */
-.vrim-tipwrap{display:inline-flex;align-items:center;justify-content:center;margin-top:26px;padding:9px 18px;border:1px solid rgba(240,235,225,.16);border-radius:999px;background:rgba(8,12,11,.5);backdrop-filter:blur(6px)}
 .vr-seg{display:inline-flex;background:var(--vr-seg-bg);border:1px solid var(--vr-line);border-radius:999px;padding:3px;transition:background-color .6s ease,border-color .6s ease}
 .vr-segbtn{font-family:'Archivo',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--vr-text-muted);background:transparent;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;transition:background .25s,color .25s}
 .vr-segbtn[data-active="true"]{background:var(--vr-accent);color:var(--vr-on-accent)}
-.vrim-tip{font-family:'Archivo',sans-serif;font-size:12.5px;color:#D5DAD0;max-width:40ch;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 
 /* ---------- Winter hero: text over clean snow, villa stays untouched ----------
    Majitel: „na zimním hero je nápis přímo na baráku, tím písmem zabíjíme vilu."
@@ -241,27 +238,42 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
    (scrim, vinětace, lokální elipsa) se ruší — titulek tak nesedí na baráku ani
    ho neztmavuje. Léto (které majitel miluje) zůstává BEZE ZMĚNY. */
 .vr-root[data-season="zima"] .vrim-scrim,
-.vr-root[data-season="zima"] .vrim-vig,
-.vr-root[data-season="zima"] .vrim-copy::before{background:none}
+.vr-root[data-season="zima"] .vrim-vig{background:none}
+/* Majitel: „zimní nic extra — zkus tomu černému písmu dát bílý podklad (měkký
+   stín)." Ztmavovací elipsu proto v zimě NEVYPÍNÁME, ale OTÁČÍME na BÍLOU:
+   kompaktní, měkce vyhasínající světlá opora přesně kolem textového bloku dole.
+   Vila zůstává nedotčená (elipsa k ní nedosáhne a nic neztmavuje). */
+.vr-root[data-season="zima"] .vrim-copy::before{
+  width:min(112vw,1520px);height:min(44vh,420px);
+  background:radial-gradient(closest-side,rgba(255,255,255,.74) 0%,rgba(255,255,255,.62) 46%,rgba(255,255,255,.36) 70%,rgba(255,255,255,.13) 87%,transparent 100%)}
 /* Blok držíme v zimě KOMPAKTNÍ a nízko, aby titulek zůstal nad sněhem a nepřekryl
    vilu (vila má patu ~54 % výšky hera; menší text + těsné mezery + nízké ukotvení
    drží h1 pod ní i na laptopech). */
 .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(26px,6vh,60px)}
+/* Vícevrstvý BÍLÝ text-shadow = měkký bílý podklad přímo pod literami: těsný
+   neprůhledný lem (obtah do 4 směrů) + tři rozostřené aury. Text tak vystoupí
+   ze sněhu i tam, kde je za ním strom nebo stín, a fotka zůstane světlá. */
 .vr-root[data-season="zima"] .vrim-h1{color:#17242e;font-size:clamp(1.85rem,4vw,3rem);margin-top:10px;
-  text-shadow:0 1px 2px rgba(255,255,255,.92),0 2px 16px rgba(255,255,255,.72)}
+  text-shadow:1px 1px 2px rgba(255,255,255,.98),-1px 1px 2px rgba(255,255,255,.98),
+    1px -1px 2px rgba(255,255,255,.98),-1px -1px 2px rgba(255,255,255,.98),
+    0 0 9px rgba(255,255,255,.96),0 0 20px rgba(255,255,255,.9),
+    0 0 38px rgba(255,255,255,.78),0 0 66px rgba(255,255,255,.55)}
 .vr-root[data-season="zima"] .vrim-sub{color:#22303b;margin-top:10px;font-size:clamp(1rem,1.55vw,1.3rem);
-  text-shadow:0 1px 2px rgba(255,255,255,.88),0 1px 14px rgba(255,255,255,.6)}
+  text-shadow:1px 1px 2px rgba(255,255,255,.97),-1px 1px 2px rgba(255,255,255,.97),
+    1px -1px 2px rgba(255,255,255,.97),-1px -1px 2px rgba(255,255,255,.97),
+    0 0 8px rgba(255,255,255,.94),0 0 18px rgba(255,255,255,.84),0 0 34px rgba(255,255,255,.6)}
 .vr-root[data-season="zima"] .vrim-sub em{color:#0f5c86}
-.vr-root[data-season="zima"] .vrim-eyebrow{color:#2a3742;text-shadow:0 1px 8px rgba(255,255,255,.85)}
+.vr-root[data-season="zima"] .vrim-eyebrow{color:#2a3742;
+  text-shadow:1px 1px 2px rgba(255,255,255,.97),-1px 1px 2px rgba(255,255,255,.97),
+    1px -1px 2px rgba(255,255,255,.97),-1px -1px 2px rgba(255,255,255,.97),
+    0 0 10px rgba(255,255,255,.9),0 0 22px rgba(255,255,255,.7)}
 .vr-root[data-season="zima"] .vrim-actions{margin-top:18px}
-.vr-root[data-season="zima"] .vrim-tipwrap{margin-top:14px;background:rgba(255,255,255,.66);border-color:rgba(23,36,46,.16)}
-.vr-root[data-season="zima"] .vrim-tip{color:#22303b;text-shadow:none}
-/* Mobil: blok je vysoký → víc ho zkomprimuj a schovej tip, aby titulek jistě
-   zůstal nad sněhem a NEpřekryl vilu. */
+/* Mobil: blok je vysoký → víc ho zkomprimuj, aby titulek jistě zůstal nad
+   sněhem a NEpřekryl vilu. */
 @media(max-width:640px){
   .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(16px,4vh,36px)}
+  .vr-root[data-season="zima"] .vrim-copy::before{width:180vw;height:min(40vh,340px)}
   .vr-root[data-season="zima"] .vrim-h1{font-size:clamp(1.7rem,6.5vw,2.1rem);line-height:1.06}
-  .vr-root[data-season="zima"] .vrim-tipwrap{display:none}
 }
 
 /* ---------- Section shells ---------- */
@@ -966,11 +978,6 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   line-height:1.05;color:var(--vr-accent);font-variant-numeric:tabular-nums;transition:color .6s ease}
 .vr-own-stat .l{display:block;margin-top:8px;font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.5;
   color:var(--vr-text-muted);max-width:24ch;transition:color .6s ease}
-/* Zavírací věta + CTA do 360° (rail „Pokoje bez stropu" na přání majitele odstraněn) */
-.vr-own-foot{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
-  margin-top:clamp(34px,4.5vw,60px);padding-top:22px;border-top:1px solid var(--vr-line)}
-.vr-own-close{font-family:'Newsreader',serif;font-style:italic;font-weight:300;font-size:clamp(18px,2vw,24px);
-  color:var(--vr-text-soft);margin:0;max-width:36ch;transition:color .6s ease}
 @media(max-width:760px){
   .vr-own-stats{grid-template-columns:repeat(2,1fr);margin-top:24px}
   .vr-own-stat{border-left:0;padding:16px 0}
@@ -982,10 +989,6 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vr-own-bandimg .vr-seasonimg{object-position:50% 45%}
   .vr-own-h2{font-size:clamp(30px,8vw,40px)}
   .vr-sm-hide{display:none}
-}
-@media(max-width:640px){
-  .vr-own-foot{flex-direction:column;align-items:stretch}
-  .vr-own-foot .vr-btn-ghost{justify-content:center}
 }
 
 /* ================================================================
