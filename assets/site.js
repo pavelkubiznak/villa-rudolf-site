@@ -1715,21 +1715,36 @@ function setupCarousel(track) {
   car.addEventListener('mouseenter', () => { hover = true; });
   car.addEventListener('mouseleave', () => { hover = false; });
 
-  // myš drag (dotyk necháme nativnímu scrollu)
-  track.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'touch') return;
-    dragging = true; moved = 0; startX = e.clientX; startScroll = track.scrollLeft;
-    try { track.setPointerCapture(e.pointerId); } catch (x) {}
-    track.classList.add('dragging');
-  });
-  track.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
-    const dx = e.clientX - startX; moved = Math.max(moved, Math.abs(dx));
+  /* Myš drag (dotyk necháme nativnímu scrollu). ZÁMĚRNĚ BEZ setPointerCapture:
+     pointer capture přesměroval i následný `click` na track, takže v delegované
+     obsluze vyšlo e.target = track a closest('.vr-car-card') = null → klik na
+     kartu se tiše zahodil (majitel: „klikneš a nic"). Drag proto držíme přes
+     window listenery, které si po skončení gesta zase odregistrujeme. */
+  let pid = null, startY = 0;
+  const onDragMove = (e) => {
+    if (!dragging || (pid !== null && e.pointerId !== pid)) return;
+    const dx = e.clientX - startX;
+    moved = Math.max(moved, Math.abs(dx), Math.abs(e.clientY - startY));
     track.scrollLeft = startScroll - dx; wrap(); bump();
+  };
+  const endDrag = (e) => {
+    if (!dragging) return;
+    if (e && pid !== null && e.pointerId != null && e.pointerId !== pid) return;
+    dragging = false; pid = null; track.classList.remove('dragging');
+    window.removeEventListener('pointermove', onDragMove);
+    window.removeEventListener('pointerup', endDrag);
+    window.removeEventListener('pointercancel', endDrag);
+  };
+  track.addEventListener('pointerdown', (e) => {
+    moved = 0;                                  // reset i pro dotyk, ať nezůstane starý drag
+    if (e.pointerType === 'touch') return;
+    if (e.button != null && e.button !== 0) return;
+    dragging = true; pid = e.pointerId; startX = e.clientX; startY = e.clientY; startScroll = track.scrollLeft;
+    track.classList.add('dragging');
+    window.addEventListener('pointermove', onDragMove);
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
   });
-  const endDrag = (e) => { if (!dragging) return; dragging = false; track.classList.remove('dragging'); try { track.releasePointerCapture(e.pointerId); } catch (x) {} };
-  track.addEventListener('pointerup', endDrag);
-  track.addEventListener('pointercancel', endDrag);
   track.addEventListener('touchstart', bump, { passive: true });
   track.addEventListener('touchmove', () => { bump(); wrap(); }, { passive: true });
 
@@ -1751,10 +1766,23 @@ function setupCarousel(track) {
     else if (e.key === 'ArrowRight') { go(1); e.preventDefault(); }
   });
 
-  // klik na kartu → lightbox (potlač, pokud šlo o drag)
+  /* Klik na kartu → lightbox. Kartu resolvujeme třemi cestami, ať nikdy
+     nepropadne: e.target → elementFromPoint (pojistka, kdyby cíl přebral jiný
+     prvek) → aktivní prvek (Enter/Space na <button>, kde clientX/Y jsou 0).
+     Drag potlačíme až od 10 px — myš při běžném kliknutí mikroskopicky ujede. */
   track.addEventListener('click', (e) => {
-    const card = e.target.closest('.vr-car-card'); if (!card) return;
-    if (moved > 6) { e.preventDefault(); return; }
+    let card = (e.target && e.target.closest) ? e.target.closest('.vr-car-card') : null;
+    if (!card && (e.clientX || e.clientY)) {
+      const hit = document.elementFromPoint(e.clientX, e.clientY);
+      card = (hit && hit.closest) ? hit.closest('.vr-car-card') : null;
+    }
+    const kb = !e.detail && !e.clientX && !e.clientY;   // klávesnice: Enter/Space
+    if (!card && kb) {
+      const act = document.activeElement;
+      card = (act && act.closest) ? act.closest('.vr-car-card') : null;
+    }
+    if (!card || !track.contains(card)) return;
+    if (!kb && moved > 10) { e.preventDefault(); return; }
     lbOpen(interiorLbList(), +card.getAttribute('data-idx'));
   });
 }
