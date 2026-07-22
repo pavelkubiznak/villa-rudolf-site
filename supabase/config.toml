@@ -1,0 +1,8 @@
+project_id = "fpknbrzbqpalguajskut"
+
+# Edge Function: album — jediná brána ke Storage bucketu vr-album.
+# verify_jwt = false: autorizace je token pobytu (?t=), ne Supabase JWT
+# (stejný model jako guest průvodce). Přístup ke Storage běží výhradně
+# service_role klíčem uvnitř funkce; prohlížeč žádný klíč na Storage nedrží.
+[functions.album]
+verify_jwt = false
