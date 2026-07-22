@@ -7,7 +7,7 @@
 
   var T = {
     cs: {
-      nav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', vylety: 'Výlety', info: 'Praktické info', book: 'Rezervovat' },
+      nav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', book: 'Rezervovat' },
       badge: 'Ubytovací podmínky',
       title: 'Ubytovací podmínky a ochrana údajů',
       intro: 'Storno podmínky, zpracování osobních údajů a kontakt na provozovatele. Střízlivě a přehledně.',
@@ -43,7 +43,7 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Krkonoše',
     },
     en: {
-      nav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', vylety: 'Trips', info: 'Guest info', book: 'Book' },
+      nav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', book: 'Book' },
       badge: 'Booking terms',
       title: 'Booking terms & privacy',
       intro: 'Cancellation terms, how we handle personal data, and the operator’s contact. Kept short and clear.',
@@ -79,7 +79,7 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Krkonoše',
     },
     de: {
-      nav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', vylety: 'Ausflüge', info: 'Gäste-Infos', book: 'Buchen' },
+      nav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', book: 'Buchen' },
       badge: 'Buchungsbedingungen',
       title: 'Buchungsbedingungen & Datenschutz',
       intro: 'Stornobedingungen, Umgang mit personenbezogenen Daten und Kontakt zum Betreiber. Kurz und klar.',
@@ -115,7 +115,7 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Riesengebirge',
     },
     pl: {
-      nav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', vylety: 'Wycieczki', info: 'Informacje praktyczne', book: 'Rezerwuj' },
+      nav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', book: 'Rezerwuj' },
       badge: 'Warunki pobytu',
       title: 'Warunki pobytu i prywatność',
       intro: 'Warunki anulowania, przetwarzanie danych osobowych i kontakt do operatora. Krótko i jasno.',
@@ -184,15 +184,28 @@
     var q = '?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season);
     return '../' + q + (hash ? '#' + hash : '');
   }
-  /* Stejné sekce jako v hlavičce homepage — odkazují na ../#sekce. */
+  /* 6 hlavních sekcí webu — shodné s hlavičkou homepage. Výlety = samostatná stránka. */
   function siteLinks(L) {
-    var n = L.nav, out = '';
-    [['dum', n.dum], ['vybaveni', n.vybaveni], ['galerie', n.galerie], ['vylety', n.vylety]].forEach(function (x) {
-      out += '<a href="' + hp(x[0]) + '">' + esc(x[1]) + '</a>';
-    });
-    out += '<a href="../info/?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season) + '">' + esc(n.info) + '</a>';
-    out += '<a class="cta" href="' + hp('rezervace') + '">' + esc(n.book) + '</a>';
+    var n = L.nav;
+    var out = [['dum', n.dum], ['vybaveni', n.vybaveni], ['galerie', n.galerie], ['recenze', n.recenze], ['lokalita', n.lokalita]]
+      .map(function (x) { return '<a href="' + hp(x[0]) + '">' + esc(x[1]) + '</a>'; }).join('');
+    out += '<a href="../vylety/?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season) + '">' + esc(n.vylety) + '</a>';
     return out;
+  }
+  /* Sjednocená hlavní navigace — shodná s homepage .vr-nav (plná lišta nad obsahem). */
+  function renderNav(L, langs) {
+    var infoHref = '../info/?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season);
+    return '<header class="vr-nav"><div class="vr-nav-inner">'
+      + '<a class="vr-brand" href="' + hp('') + '"><b>VILLA RUDOLF</b><i>KRKONOŠE</i></a>'
+      + '<nav class="vr-navlinks" aria-label="Sekce webu">' + siteLinks(L) + '</nav>'
+      + '<div class="vr-navright"><div class="vr-langs" role="group" aria-label="Jazyk / Language">' + langs + '</div>'
+      + '<a class="vr-navcta" href="' + hp('rezervace') + '">' + esc(L.nav.book) + '</a>'
+      + '<button class="vr-burger" id="vr-burger" aria-label="Menu" aria-expanded="false" aria-controls="vr-mob"><span></span><span></span><span></span></button>'
+      + '</div></div></header>'
+      + '<div class="vr-mob" id="vr-mob" data-open="false">' + siteLinks(L)
+      + '<a class="vr-mob-cta" href="' + hp('rezervace') + '">' + esc(L.nav.book) + '</a>'
+      + '<a class="vr-mob-2nd" href="' + infoHref + '">' + esc(L.nav.info) + '</a>'
+      + '<div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">' + langs + '</div></div>';
   }
 
   function render() {
@@ -200,7 +213,7 @@
     document.documentElement.lang = state.lang;
     document.title = META[state.lang] || META.cs;
     var langs = ['cs', 'en', 'de', 'pl'].map(function (l) {
-      return '<button type="button" class="pd-lang" data-lang="' + l + '" data-on="' + (l === state.lang) + '">' + l.toUpperCase() + '</button>';
+      return '<button type="button" class="vr-lang" data-lang="' + l + '" data-active="' + (l === state.lang) + '">' + l.toUpperCase() + '</button>';
     }).join('');
     var stornoBody = L.stornoRows.map(function (r, i) {
       return '<tr><td class="when">' + esc(r[0]) + '</td><td class="fee">' + esc(r[1]) + '</td></tr>';
@@ -215,10 +228,8 @@
     var arrowL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg>';
 
     document.getElementById('app').innerHTML =
-      '<div class="pd-wrap">'
-      + '<header class="pd-header"><a class="pd-brand" href="' + hp('') + '"><span class="nm">Villa Rudolf</span><span class="bd">' + esc(L.badge) + '</span></a>'
-      + '<nav class="pd-navlinks" aria-label="Sekce">' + siteLinks(L) + '</nav>'
-      + '<nav class="pd-langs" aria-label="Jazyk / Language">' + langs + '</nav></header>'
+      renderNav(L, langs)
+      + '<div class="pd-wrap">'
       + '<section class="pd-hero"><p class="pd-eyebrow">Villa Rudolf · Krkonoše</p><h1 class="pd-title">' + esc(L.title) + '</h1><p class="pd-intro">' + esc(L.intro) + '</p></section>'
       + '<main class="pd-main">'
       + '<section class="pd-sec"><h2 class="pd-h2">' + esc(L.stornoTitle) + '</h2><p class="pd-lead">' + esc(L.stornoLead) + '</p>'
@@ -230,7 +241,8 @@
       + '<footer class="pd-footer"><a class="pd-back" href="' + hp('') + '">' + arrowL + '<span>' + esc(L.back) + '</span></a><span class="pd-foot-brand">' + esc(L.footBrand) + '</span></footer>'
       + '</div>';
 
-    Array.prototype.forEach.call(document.querySelectorAll('.pd-lang'), function (b) {
+    document.body.style.overflow = ''; // po re-renderu je mobilní menu zavřené
+    Array.prototype.forEach.call(document.querySelectorAll('.vr-lang'), function (b) {
       b.addEventListener('click', function () {
         state.lang = b.dataset.lang;
         try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
@@ -238,6 +250,18 @@
         render();
       });
     });
+    // burger / mobilní menu
+    var burger = document.getElementById('vr-burger'), mob = document.getElementById('vr-mob');
+    if (burger && mob) {
+      var toggleMob = function (open) {
+        var o = open == null ? mob.getAttribute('data-open') !== 'true' : open;
+        mob.setAttribute('data-open', o ? 'true' : 'false');
+        burger.setAttribute('aria-expanded', o ? 'true' : 'false');
+        document.body.style.overflow = o ? 'hidden' : '';
+      };
+      burger.addEventListener('click', function () { toggleMob(); });
+      Array.prototype.forEach.call(mob.querySelectorAll('a'), function (a) { a.addEventListener('click', function () { toggleMob(false); }); });
+    }
   }
 
   state.lang = resolveLang();
