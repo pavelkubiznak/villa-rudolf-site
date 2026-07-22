@@ -507,19 +507,19 @@
             <div class="vr-ring-top"><span class="vr-ring-n">1</span><h3 data-t="lokalita.rings.0.name">Pěšky od brány</h3></div>
             <span class="vr-ring-count" data-tpl="lokalita.rings.0.count" data-count="foot"></span>
             <p data-t="lokalita.rings.0.body"></p>
-            <a class="vr-ring-link" href="pruvodce/?ring=foot" data-langlink="pruvodce/?ring=foot" data-t="lokalita.rings.0.link">Zobrazit v průvodci →</a>
+            <a class="vr-ring-link" href="vylety/?zona=pesky#planovac" data-langlink="vylety/?zona=pesky#planovac"><svg class="vr-ring-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m14.9 9.1-1.9 5.8-5.8 1.9 1.9-5.8z"/></svg><span data-t="lokalita.rings.0.link">Ukázat v plánovači →</span></a>
           </div>
           <div class="vr-ring" data-ring="car">
             <div class="vr-ring-top"><span class="vr-ring-n">2</span><h3 data-t="lokalita.rings.1.name">Do 30 minut autem</h3></div>
             <span class="vr-ring-count" data-tpl="lokalita.rings.1.count" data-count="car"></span>
             <p data-t="lokalita.rings.1.body"></p>
-            <a class="vr-ring-link" href="pruvodce/?ring=car" data-langlink="pruvodce/?ring=car" data-t="lokalita.rings.1.link">Zobrazit v průvodci →</a>
+            <a class="vr-ring-link" href="vylety/?zona=auto#planovac" data-langlink="vylety/?zona=auto#planovac"><svg class="vr-ring-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m14.9 9.1-1.9 5.8-5.8 1.9 1.9-5.8z"/></svg><span data-t="lokalita.rings.1.link">Ukázat v plánovači →</span></a>
           </div>
           <div class="vr-ring" data-ring="day">
             <div class="vr-ring-top"><span class="vr-ring-n">3</span><h3 data-t="lokalita.rings.2.name">Na celý den</h3></div>
             <span class="vr-ring-count" data-tpl="lokalita.rings.2.count" data-count="day"></span>
             <p data-t="lokalita.rings.2.body"></p>
-            <a class="vr-ring-link" href="pruvodce/?ring=day" data-langlink="pruvodce/?ring=day" data-t="lokalita.rings.2.link">Zobrazit v průvodci →</a>
+            <a class="vr-ring-link" href="vylety/?zona=den#planovac" data-langlink="vylety/?zona=den#planovac"><svg class="vr-ring-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m14.9 9.1-1.9 5.8-5.8 1.9 1.9-5.8z"/></svg><span data-t="lokalita.rings.2.link">Ukázat v plánovači →</span></a>
           </div>
           <dl class="vr-lok-arrive" id="vr-lok-arrive"></dl>
         </div>
@@ -532,14 +532,15 @@
     <div class="vr-wrap">
       <div class="vr-reveal vr-sec-head">
         <div style="max-width:700px">
-          <span class="vr-eyebrow" data-t="vylety.eyebrow">Kam na výlet</span>
+          <span class="vr-eyebrow" data-t="vylety.eyebrow">Plánovač výletů</span>
           <h2 class="vr-h2" data-t="vylety.title">Hory začínají za dveřmi</h2>
         </div>
-        <span class="vr-sec-note" data-t="vylety.note">Tipy obměňujeme podle sezóny.</span>
+        <span class="vr-sec-note" data-tpl="vylety.note" data-count="total">Vybíráme podle sezóny · 39 ověřených cílů do hodiny od domu.</span>
       </div>
       <div class="vr-vyl vr-reveal" id="vr-vyl"></div>
       <div class="vr-reveal">
-        <a href="vylety/" data-langlink="vylety/" class="vr-vyl-cta"><span data-t="vylety.cta">Prohlédnout tipy na výlety</span> <span aria-hidden="true">&#8594;</span></a>
+        <a href="vylety/" data-langlink="vylety/" class="vr-vyl-cta"><span data-t="vylety.cta">Otevřít plánovač výletů</span> <span aria-hidden="true">&#8594;</span></a>
+        <p class="vr-vyl-ctasub" data-t="vylety.ctaSub">Bez registrace. Mapa, filtry i tip na konkrétní den.</p>
       </div>
     </div>
   </section>
@@ -719,7 +720,7 @@
         <span data-t="footer.rights">© 2026 Villa Rudolf</span>
         <span class="vr-foot-botlinks">
           <a class="vr-foot-terms" href="info/" data-langlink="info/" data-t="nav.info">Praktické info</a>
-          <a class="vr-foot-terms" href="pruvodce/" data-langlink="pruvodce/" data-t="footer.guide">Průvodce výlety</a>
+          <a class="vr-foot-terms" href="vylety/#planovac" data-langlink="vylety/#planovac" data-t="footer.guide">Plánovač výletů</a>
           <a class="vr-foot-terms" href="podminky/" data-langlink="podminky/" data-t="footer.terms">Ubytovací podmínky a ochrana údajů</a>
         </span>
       </div>

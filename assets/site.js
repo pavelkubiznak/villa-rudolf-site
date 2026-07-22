@@ -104,9 +104,13 @@ const VR_CONTACT = {
      villa = pěšky od brány · near = do 30 minut autem · far = na celý den.
    Načítá se za běhu (a kešuje na 6 h); hodnoty níže jsou POUZE fallback,
    když se fetch nepovede nebo běží web bez sítě. */
-const VR_TRIP_COUNTS = { foot: 7, car: 27, day: 4, total: 38 };
+/* Katalog plánovače = trips.json + lokální doplňky z assets/planner.js
+   (dnes jeden: RK masáže, zóna villa). Aby počty na homepage souhlasily
+   s tím, co plánovač reálně ukáže, přičítáme je i tady. */
+const VR_LOCAL_EXTRA = { foot: 1, car: 0, day: 0 };
+const VR_TRIP_COUNTS = { foot: 8, car: 27, day: 4, total: 39 };
 const TRIPS_URL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/trips.json';
-const TRIPS_CACHE_KEY = 'vr_tripcounts_v1';
+const TRIPS_CACHE_KEY = 'vr_tripcounts_v2';   // v2 = počty včetně lokálních doplňků
 const TRIPS_TTL = 21600000; // 6 h
 
 /* ============================ Translations (verbatim from prototype) ============================ */
@@ -227,13 +231,13 @@ const T = {
       rings: [
         { name: 'Pěšky od brány', count: ['{n} cíl', '{n} cíle', '{n} cílů'],
           body: 'Janské Lázně a Stezka korunami stromů, krytý bazén Aquacentrum, lamatreking na rodinné farmě, farmapark Muchomůrka, pohádkové Do Krakonošova, adventure minigolf i střelnice. Na žádný z nich nepotřebujete auto.',
-          link: 'Zobrazit v průvodci →' },
+          link: 'Ukázat v plánovači →' },
         { name: 'Do 30 minut autem', count: ['{n} cíl', '{n} cíle', '{n} cílů'],
           body: 'Sněžka lanovkou nebo pěšky, Černá hora kabinkou, Obří důl i s kočárkem, bobová dráha v Peci, rozhledny, bukový prales Rýchory, koupaliště i lezecká stěna v Trutnově.',
-          link: 'Zobrazit v průvodci →' },
+          link: 'Ukázat v plánovači →' },
         { name: 'Na celý den', count: ['{n} cíl', '{n} cíle', '{n} cílů'],
           body: 'Adršpašské skály, Safari Park Dvůr Králové, sklárna Harrachov s Mumlavskými vodopády a aquapark Tropikana v polském Karpaczi — na ten si vezměte doklady i dětem.',
-          link: 'Zobrazit v průvodci →' },
+          link: 'Ukázat v plánovači →' },
       ],
       arrive: [
         { k: 'Praha', v: 'přibližně 2 hodiny autem' },
@@ -291,7 +295,7 @@ const T = {
     },
     gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
     vylety: {
-      eyebrow: 'Kam na výlet', title: 'Hory začínají za dveřmi', note: 'Tipy obměňujeme podle sezóny.', drop: 'Sem přijde fotka z výletu', cta: 'Prohlédnout tipy na výlety',
+      eyebrow: 'Plánovač výletů', title: 'Hory začínají za dveřmi', note: 'Vybíráme podle sezóny · {n} ověřených cílů do hodiny od domu.', drop: 'Sem přijde fotka z výletu', cta: 'Otevřít plánovač výletů', ctaSub: 'Bez registrace. Mapa, filtry i tip na konkrétní den.',
       items: [
         { tag: 'Celoročně', name: 'Sněžka', desc: 'Nejvyšší hora Česka — pěšky po hřebenech, nebo lanovkou z Pece pod Sněžkou.' },
         { tag: 'Léto', name: 'Hřebenovky a vodopády', desc: 'Značené trasy od pohodových okruhů po celodenní přechody. Mumlavský vodopád zvládnou i děti.' },
@@ -345,7 +349,7 @@ const T = {
       lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', pets: 'Domácí mazlíčci', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Průvodce výlety' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Plánovač výletů' },
     prebook: {
       title: 'Co potřebujete vědět před rezervací', link: 'Vše praktické →',
       facts: [
@@ -475,13 +479,13 @@ const T = {
       rings: [
         { name: 'On foot from the gate', count: ['{n} destination', '{n} destinations'],
           body: 'Janské Lázně and the Treetop Walk, the Aquacentrum indoor pool, llama trekking at a family farm, the Muchomůrka farm park, the Do Krakonošova fairy-tale exhibition, adventure minigolf and a shooting range. Not one of them needs a car.',
-          link: 'See them in the guide →' },
+          link: 'See it in the planner →' },
         { name: 'Within a 30-minute drive', count: ['{n} destination', '{n} destinations'],
           body: 'Sněžka by cable car or on foot, Černá hora by gondola, Obří důl even with a pushchair, the bobsled track in Pec, lookout towers, the Rýchory beech forest, the lido and the climbing wall in Trutnov.',
-          link: 'See them in the guide →' },
+          link: 'See it in the planner →' },
         { name: 'A full day out', count: ['{n} destination', '{n} destinations'],
           body: 'The Adršpach rock town, Safari Park Dvůr Králové, the Harrachov glassworks with the Mumlava waterfalls, and the Tropikana aquapark in Karpacz, Poland — take everyone\'s ID for that one, children included.',
-          link: 'See them in the guide →' },
+          link: 'See it in the planner →' },
       ],
       arrive: [
         { k: 'Prague', v: 'roughly 2 hours by car' },
@@ -539,7 +543,7 @@ const T = {
     },
     gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge', all: 'All', leto: 'Summer', zima: 'Winter', vecer: 'Evening', interier: 'Interior' },
     vylety: {
-      eyebrow: 'Day trips', title: 'The mountains start at the door', note: 'Tips rotate with the season.', drop: 'A trip photo goes here', cta: 'See our trip highlights',
+      eyebrow: 'Trip planner', title: 'The mountains start at the door', note: 'We pick by season · {n} verified places within an hour of the house.', drop: 'A trip photo goes here', cta: 'Open the trip planner', ctaSub: 'No sign-up. Map, filters and a tip for a specific day.',
       items: [
         { tag: 'Year-round', name: 'Sněžka', desc: 'The highest peak in Czechia — hike the ridges, or take the cable car from Pec pod Sněžkou.' },
         { tag: 'Summer', name: 'Ridge trails & waterfalls', desc: 'Marked routes from easy loops to full-day traverses. The Mumlava waterfall works with kids too.' },
@@ -593,7 +597,7 @@ const T = {
       lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', pets: 'Pets', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Booking terms & privacy', guide: 'Trip guide' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Booking terms & privacy', guide: 'Trip planner' },
     prebook: {
       title: 'What to know before you book', link: 'All the practical info →',
       facts: [
@@ -723,13 +727,13 @@ const T = {
       rings: [
         { name: 'Zu Fuß vom Tor', count: ['{n} Ziel', '{n} Ziele'],
           body: 'Janské Lázně und der Baumwipfelpfad, das Hallenbad Aquacentrum, Lamatrekking auf einer Familienfarm, der Farmapark Muchomůrka, die Märchenausstellung Do Krakonošova, Adventure-Minigolf und ein Schießstand. Für keines davon braucht ihr das Auto.',
-          link: 'Im Reiseführer ansehen →' },
+          link: 'Im Planer ansehen →' },
         { name: 'Bis 30 Autominuten', count: ['{n} Ziel', '{n} Ziele'],
           body: 'Die Schneekoppe per Seilbahn oder zu Fuß, die Černá hora per Gondel, der Obří důl auch mit Kinderwagen, die Sommerrodelbahn in Pec, Aussichtstürme, der Buchenurwald Rýchory, Freibad und Kletterwand in Trutnov.',
-          link: 'Im Reiseführer ansehen →' },
+          link: 'Im Planer ansehen →' },
         { name: 'Für einen ganzen Tag', count: ['{n} Ziel', '{n} Ziele'],
           body: 'Die Adersbacher Felsenstadt, der Safari-Park Dvůr Králové, die Glashütte Harrachov mit den Mumlava-Wasserfällen und der Aquapark Tropikana im polnischen Karpacz — dorthin die Ausweise mitnehmen, auch für die Kinder.',
-          link: 'Im Reiseführer ansehen →' },
+          link: 'Im Planer ansehen →' },
       ],
       arrive: [
         { k: 'Prag', v: 'rund 2 Stunden mit dem Auto' },
@@ -787,7 +791,7 @@ const T = {
     },
     gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern', all: 'Alle', leto: 'Sommer', zima: 'Winter', vecer: 'Abend', interier: 'Innen' },
     vylety: {
-      eyebrow: 'Ausflüge', title: 'Die Berge beginnen vor der Tür', note: 'Tipps je nach Saison.', drop: 'Hier kommt ein Ausflugsfoto', cta: 'Ausflugstipps ansehen',
+      eyebrow: 'Ausflugsplaner', title: 'Die Berge beginnen vor der Tür', note: 'Wir wählen nach Saison · {n} geprüfte Ziele bis zu einer Stunde vom Haus.', drop: 'Hier kommt ein Ausflugsfoto', cta: 'Ausflugsplaner öffnen', ctaSub: 'Ohne Registrierung. Karte, Filter und ein Tipp für einen konkreten Tag.',
       items: [
         { tag: 'Ganzjährig', name: 'Schneekoppe', desc: 'Der höchste Gipfel Tschechiens — zu Fuß über die Kämme oder mit der Seilbahn ab Pec pod Sněžkou.' },
         { tag: 'Sommer', name: 'Kammwege & Wasserfälle', desc: 'Markierte Routen von leichten Runden bis zu Tagestouren. Der Mumlava-Wasserfall klappt auch mit Kindern.' },
@@ -841,7 +845,7 @@ const T = {
       lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', pets: 'Haustiere', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsführer' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsplaner' },
     prebook: {
       title: 'Was Sie vor der Buchung wissen sollten', link: 'Alle Praxis-Infos →',
       facts: [
@@ -971,13 +975,13 @@ const T = {
       rings: [
         { name: 'Pieszo od bramy', count: ['{n} cel', '{n} cele', '{n} celów'],
           body: 'Janské Lázně i Ścieżka w koronach drzew, kryty basen Aquacentrum, trekking z lamami na rodzinnej farmie, farmapark Muchomůrka, bajkowa ekspozycja Do Krakonošova, adventure minigolf i strzelnica. Do żadnego z nich nie potrzebujecie auta.',
-          link: 'Zobacz w przewodniku →' },
+          link: 'Pokaż w planerze →' },
         { name: 'Do 30 minut samochodem', count: ['{n} cel', '{n} cele', '{n} celów'],
           body: 'Śnieżka kolejką lub pieszo, Černá hora gondolą, Obří důl nawet z wózkiem, tor saneczkowy w Pecu, wieże widokowe, bukowa puszcza Rýchory, kąpielisko i ścianka wspinaczkowa w Trutnovie.',
-          link: 'Zobacz w przewodniku →' },
+          link: 'Pokaż w planerze →' },
         { name: 'Na cały dzień', count: ['{n} cel', '{n} cele', '{n} celów'],
           body: 'Adršpašské skały, Safari Park Dvůr Králové, huta szkła Harrachov z wodospadami Mumlavy i aquapark Tropikana w Karpaczu — tam weźcie dokumenty także dla dzieci.',
-          link: 'Zobacz w przewodniku →' },
+          link: 'Pokaż w planerze →' },
       ],
       arrive: [
         { k: 'Praga', v: 'około 2 godziny samochodem' },
@@ -1035,7 +1039,7 @@ const T = {
     },
     gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć', all: 'Wszystko', leto: 'Lato', zima: 'Zima', vecer: 'Wieczór', interier: 'Wnętrze' },
     vylety: {
-      eyebrow: 'Wycieczki', title: 'Góry zaczynają się za drzwiami', note: 'Wskazówki zmieniamy według sezonu.', drop: 'Tu trafi zdjęcie z wycieczki', cta: 'Zobacz propozycje wycieczek',
+      eyebrow: 'Planer wycieczek', title: 'Góry zaczynają się za drzwiami', note: 'Wybieramy według sezonu · {n} sprawdzonych celów do godziny od domu.', drop: 'Tu trafi zdjęcie z wycieczki', cta: 'Otwórz planer wycieczek', ctaSub: 'Bez rejestracji. Mapa, filtry i tip na konkretny dzień.',
       items: [
         { tag: 'Cały rok', name: 'Śnieżka', desc: 'Najwyższy szczyt Czech — pieszo graniami albo kolejką z Pecu pod Śnieżką.' },
         { tag: 'Lato', name: 'Szlaki grzbietowe i wodospady', desc: 'Znakowane trasy od spokojnych pętli po całodniowe przejścia. Wodospad Mumlawy da się przejść z dziećmi.' },
@@ -1089,7 +1093,7 @@ const T = {
       lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', pets: 'Zwierzęta', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki pobytu i prywatność', guide: 'Przewodnik po wycieczkach' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki pobytu i prywatność', guide: 'Planer wycieczek' },
     prebook: {
       title: 'Co warto wiedzieć przed rezerwacją', link: 'Wszystkie informacje praktyczne →',
       facts: [
@@ -1524,12 +1528,14 @@ function loadTripCounts() {
     .then((d) => {
       const trips = d && (Array.isArray(d) ? d : d.trips);
       if (!Array.isArray(trips) || !trips.length) return;
-      const c = { foot: 0, car: 0, day: 0, total: trips.length, at: Date.now() };
+      const c = { foot: 0, car: 0, day: 0, total: 0, at: Date.now() };
       trips.forEach((tr) => {
         if (tr.zone === 'villa') c.foot++;
         else if (tr.zone === 'near') c.car++;
         else if (tr.zone === 'far') c.day++;
       });
+      c.foot += VR_LOCAL_EXTRA.foot; c.car += VR_LOCAL_EXTRA.car; c.day += VR_LOCAL_EXTRA.day;
+      c.total = c.foot + c.car + c.day;
       if (!c.foot && !c.car && !c.day) return; // neznámý formát → ponech fallback
       try { localStorage.setItem(TRIPS_CACHE_KEY, JSON.stringify(c)); } catch (e) {}
       apply(c);

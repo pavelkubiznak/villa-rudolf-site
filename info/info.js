@@ -51,8 +51,8 @@
 
       hEurobit: 'Denně přibližně 5:00–21:00 (není nonstop)',
       cTripsTitle: 'Výlety v okolí',
-      vTrips: 'Tipy na výlety, hory a atrakce jsme připravili v samostatném průvodci.',
-      tripsLink: 'Otevřít průvodce výlety',
+      vTrips: 'Tipy na výlety, hory a atrakce najdete v plánovači výletů — mapa, filtry i doporučení na konkrétní den.',
+      tripsLink: 'Otevřít plánovač výletů',
 
       disclaimer: 'Údaje jsme pečlivě ověřovali. Otevírací doby se ale mohou měnit — u obchodů a služeb je před cestou raději ověřte.'
     },
@@ -103,8 +103,8 @@
 
       hEurobit: 'Approx. 5:00–21:00 daily (not 24/7)',
       cTripsTitle: 'Trips nearby',
-      vTrips: 'We have put trip ideas, mountains and attractions together in a separate guide.',
-      tripsLink: 'Open the trip guide',
+      vTrips: 'Trip ideas, mountains and attractions live in the trip planner — map, filters and a pick for a specific day.',
+      tripsLink: 'Open the trip planner',
 
       disclaimer: 'We checked these details carefully. Opening hours can change, though — please verify shops and services before you set off.'
     },
@@ -155,8 +155,8 @@
 
       hEurobit: 'Ca. 5:00–21:00 täglich (nicht rund um die Uhr)',
       cTripsTitle: 'Ausflüge in der Umgebung',
-      vTrips: 'Ausflugstipps, Berge und Attraktionen haben wir in einem eigenen Reiseführer zusammengestellt.',
-      tripsLink: 'Zum Ausflugsführer',
+      vTrips: 'Ausflugstipps, Berge und Attraktionen finden Sie im Ausflugsplaner — Karte, Filter und ein Tipp für einen konkreten Tag.',
+      tripsLink: 'Ausflugsplaner öffnen',
 
       disclaimer: 'Wir haben die Angaben sorgfältig geprüft. Öffnungszeiten können sich jedoch ändern — bitte prüfen Sie Geschäfte und Services vor der Fahrt.'
     },
@@ -207,8 +207,8 @@
 
       hEurobit: 'Codziennie ok. 5:00–21:00 (nie całodobowo)',
       cTripsTitle: 'Wycieczki w okolicy',
-      vTrips: 'Pomysły na wycieczki, góry i atrakcje zebraliśmy w osobnym przewodniku.',
-      tripsLink: 'Otwórz przewodnik po wycieczkach',
+      vTrips: 'Pomysły na wycieczki, góry i atrakcje znajdziecie w planerze wycieczek — mapa, filtry i tip na konkretny dzień.',
+      tripsLink: 'Otwórz planer wycieczek',
 
       disclaimer: 'Dane sprawdziliśmy starannie. Godziny otwarcia mogą się jednak zmieniać — sklepy i usługi lepiej sprawdzić przed wyjazdem.'
     }
