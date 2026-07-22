@@ -2544,9 +2544,18 @@ function applyMeta() {
 function applyLangLinks() {
   $all('a[data-langlink]').forEach((a) => {
     const base = a.getAttribute('data-langlink');
-    const sep = base.indexOf('?') >= 0 ? '&' : '?';
-    // carry BOTH language and season so subpages (průvodce, podmínky) inherit the theme
-    a.setAttribute('href', base + sep + 'lang=' + state.lang + '&season=' + state.season);
+    // carry BOTH language and season so subpages (výlety, podmínky) inherit the theme.
+    // Musí jít přes URL(), jinak by u odkazů s fragmentem (vylety/?zona=pesky#planovac)
+    // parametry spadly dovnitř hashe → ...#planovac&lang=cs.
+    try {
+      const u = new URL(base, location.href);
+      u.searchParams.set('lang', state.lang);
+      u.searchParams.set('season', state.season);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    } catch (e) {
+      const sep = base.indexOf('?') >= 0 ? '&' : '?';
+      a.setAttribute('href', base + sep + 'lang=' + state.lang + '&season=' + state.season);
+    }
   });
 }
 /* Promítni jazyk + sezónu do URL (?lang & ?season), ať jsou odkazy sdílitelné. */
