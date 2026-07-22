@@ -243,21 +243,24 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-root[data-season="zima"] .vrim-scrim,
 .vr-root[data-season="zima"] .vrim-vig,
 .vr-root[data-season="zima"] .vrim-copy::before{background:none}
-.vr-root[data-season="zima"] .vrim-copy{bottom:clamp(30px,7vh,72px)}
-.vr-root[data-season="zima"] .vrim-h1{color:#17242e;font-size:clamp(2rem,4.7vw,3.5rem);margin-top:12px;
+/* Blok držíme v zimě KOMPAKTNÍ a nízko, aby titulek zůstal nad sněhem a nepřekryl
+   vilu (vila má patu ~54 % výšky hera; menší text + těsné mezery + nízké ukotvení
+   drží h1 pod ní i na laptopech). */
+.vr-root[data-season="zima"] .vrim-copy{bottom:clamp(26px,6vh,60px)}
+.vr-root[data-season="zima"] .vrim-h1{color:#17242e;font-size:clamp(1.85rem,4vw,3rem);margin-top:10px;
   text-shadow:0 1px 2px rgba(255,255,255,.92),0 2px 16px rgba(255,255,255,.72)}
-.vr-root[data-season="zima"] .vrim-sub{color:#22303b;margin-top:12px;font-size:clamp(1.05rem,1.7vw,1.4rem);
+.vr-root[data-season="zima"] .vrim-sub{color:#22303b;margin-top:10px;font-size:clamp(1rem,1.55vw,1.3rem);
   text-shadow:0 1px 2px rgba(255,255,255,.88),0 1px 14px rgba(255,255,255,.6)}
 .vr-root[data-season="zima"] .vrim-sub em{color:#0f5c86}
 .vr-root[data-season="zima"] .vrim-eyebrow{color:#2a3742;text-shadow:0 1px 8px rgba(255,255,255,.85)}
-.vr-root[data-season="zima"] .vrim-actions{margin-top:22px}
-.vr-root[data-season="zima"] .vrim-tipwrap{margin-top:18px;background:rgba(255,255,255,.66);border-color:rgba(23,36,46,.16)}
+.vr-root[data-season="zima"] .vrim-actions{margin-top:18px}
+.vr-root[data-season="zima"] .vrim-tipwrap{margin-top:14px;background:rgba(255,255,255,.66);border-color:rgba(23,36,46,.16)}
 .vr-root[data-season="zima"] .vrim-tip{color:#22303b;text-shadow:none}
 /* Mobil: blok je vysoký → víc ho zkomprimuj a schovej tip, aby titulek jistě
    zůstal nad sněhem a NEpřekryl vilu. */
 @media(max-width:640px){
-  .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(18px,4vh,40px)}
-  .vr-root[data-season="zima"] .vrim-h1{font-size:clamp(1.75rem,7vw,2.2rem);line-height:1.05}
+  .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(16px,4vh,36px)}
+  .vr-root[data-season="zima"] .vrim-h1{font-size:clamp(1.7rem,6.5vw,2.1rem);line-height:1.06}
   .vr-root[data-season="zima"] .vrim-tipwrap{display:none}
 }
 
