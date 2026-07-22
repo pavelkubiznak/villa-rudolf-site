@@ -218,7 +218,6 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vrim-sub{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.4;color:#E4E0D6;max-width:40ch;margin:20px auto 0;text-shadow:0 1px 3px rgba(0,0,0,.55),0 1px 20px rgba(0,0,0,.55)}
 .vrim-sub em{font-style:italic;color:var(--vr-accent-photo)}
 .vrim-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:15px;margin-top:32px}
-.vrim-cta-hint{display:block;margin-top:14px;font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em;color:#E4E0D6;text-shadow:0 1px 12px rgba(0,0,0,.55)}
 .vr-btn-primary{display:inline-flex;align-items:center;gap:9px;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;color:#10150f;background:var(--vr-ember);border-radius:2px;padding:15px 26px;cursor:pointer;box-shadow:0 10px 34px rgba(214,138,76,.4)}
 .vr-btn-primary span{font-size:15px}
 /* Obě hero tlačítka leží NAD fotkou v obou sezónách, takže si barvu písma drží
@@ -233,6 +232,34 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-segbtn{font-family:'Archivo',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--vr-text-muted);background:transparent;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;transition:background .25s,color .25s}
 .vr-segbtn[data-active="true"]{background:var(--vr-accent);color:var(--vr-on-accent)}
 .vrim-tip{font-family:'Archivo',sans-serif;font-size:12.5px;color:#D5DAD0;max-width:40ch;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+
+/* ---------- Winter hero: text over clean snow, villa stays untouched ----------
+   Majitel: „na zimním hero je nápis přímo na baráku, tím písmem zabíjíme vilu."
+   Zimní fotka má vilu NAHOŘE uprostřed a dole čistý jasný sníh. Řešení: v zimě
+   textový blok sjede DOLŮ nad sníh, přepne na TMAVÝ text (#17242e) se světelnou
+   aurou (čitelný na sněhu BEZ ztmavení) a VŠECHNY ztmavovací vrstvy hera
+   (scrim, vinětace, lokální elipsa) se ruší — titulek tak nesedí na baráku ani
+   ho neztmavuje. Léto (které majitel miluje) zůstává BEZE ZMĚNY. */
+.vr-root[data-season="zima"] .vrim-scrim,
+.vr-root[data-season="zima"] .vrim-vig,
+.vr-root[data-season="zima"] .vrim-copy::before{background:none}
+.vr-root[data-season="zima"] .vrim-copy{bottom:clamp(30px,7vh,72px)}
+.vr-root[data-season="zima"] .vrim-h1{color:#17242e;font-size:clamp(2rem,4.7vw,3.5rem);margin-top:12px;
+  text-shadow:0 1px 2px rgba(255,255,255,.92),0 2px 16px rgba(255,255,255,.72)}
+.vr-root[data-season="zima"] .vrim-sub{color:#22303b;margin-top:12px;font-size:clamp(1.05rem,1.7vw,1.4rem);
+  text-shadow:0 1px 2px rgba(255,255,255,.88),0 1px 14px rgba(255,255,255,.6)}
+.vr-root[data-season="zima"] .vrim-sub em{color:#0f5c86}
+.vr-root[data-season="zima"] .vrim-eyebrow{color:#2a3742;text-shadow:0 1px 8px rgba(255,255,255,.85)}
+.vr-root[data-season="zima"] .vrim-actions{margin-top:22px}
+.vr-root[data-season="zima"] .vrim-tipwrap{margin-top:18px;background:rgba(255,255,255,.66);border-color:rgba(23,36,46,.16)}
+.vr-root[data-season="zima"] .vrim-tip{color:#22303b;text-shadow:none}
+/* Mobil: blok je vysoký → víc ho zkomprimuj a schovej tip, aby titulek jistě
+   zůstal nad sněhem a NEpřekryl vilu. */
+@media(max-width:640px){
+  .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(18px,4vh,40px)}
+  .vr-root[data-season="zima"] .vrim-h1{font-size:clamp(1.75rem,7vw,2.2rem);line-height:1.05}
+  .vr-root[data-season="zima"] .vrim-tipwrap{display:none}
+}
 
 /* ---------- Section shells ---------- */
 .vr-wrap{max-width:1340px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
@@ -263,10 +290,13 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
    nezakrývá titulek scény ani nápovědu „chyť a otáčej". Pruh náhledů níže do
    spodního fadeu zajíždí (negativní margin). */
 .vrp-stage::before,.vrp-stage::after{content:'';position:absolute;left:0;right:0;z-index:2;pointer-events:none}
-/* Fade nahoře i dole ~3× větší (majitel: „ať to plynule prošlo"). Blend do
+/* Jen JEMNÝ měkký okraj (majitel: „fade moc ztmavil zbytek — uprav jen okraje").
+   Malá výška + nelineární křivka (interpolační hint za první barvou) → alfa spadne
+   rychle hned u kraje a pak dlouhý jemný ohon do nuly, takže STŘED 360 scény
+   zůstane jasný a nestmavený, jen hrana měkce „vyleze ze stránky". Blend do
    var(--vr-bg) → drží v obou sezónách. Titulek/ovládání (z-index:3) zůstávají nad. */
-.vrp-stage::before{top:0;height:44%;background:linear-gradient(180deg,var(--vr-bg),transparent)}
-.vrp-stage::after{bottom:0;height:58%;background:linear-gradient(0deg,var(--vr-bg),transparent)}
+.vrp-stage::before{top:0;height:18%;background:linear-gradient(180deg,var(--vr-bg) 0%,34%,transparent 100%)}
+.vrp-stage::after{bottom:0;height:26%;background:linear-gradient(0deg,var(--vr-bg) 0%,38%,transparent 100%)}
 .vrp-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity 1s ease}
 .vrp-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(6,9,8,.32),transparent 22%,transparent 60%,rgba(6,9,8,.8))}
 .vrp-vig{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(125% 100% at 50% 44%,transparent 56%,rgba(3,6,9,.36) 84%,rgba(3,6,9,.62) 100%)}
@@ -596,7 +626,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-slot span{font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em;color:var(--vr-text-faint);position:relative}
 
 /* ---------- Lightbox — always dark (photo viewer), both seasons ---------- */
-.vr-lb{position:fixed;inset:0;z-index:120;background:rgba(4,7,6,.93);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;animation:vrLbIn .28s ease;cursor:zoom-out}
+/* Otevřený stav je VŽDY viditelný: opacity:1 je pevné, nezávislé na animaci.
+   Animace vrLbIn/vrLbImg jsou jen ozdoba (blur-in / scale) a NEsahají na opacity,
+   takže i když se webview animace zamrzne na 0 % nebo běží prefers-reduced-motion,
+   lightbox i fotka zůstávají plně vidět (majitel: „klik a nic" = tohle byla příčina). */
+.vr-lb{position:fixed;inset:0;z-index:120;background:rgba(4,7,6,.93);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:1;animation:vrLbIn .28s ease;cursor:zoom-out}
 .vr-lb img{max-width:min(93vw,1500px);max-height:82vh;object-fit:contain;border-radius:3px;box-shadow:0 30px 90px rgba(0,0,0,.6);cursor:default;animation:vrLbImg .38s cubic-bezier(.2,.7,.15,1)}
 .vr-lb-btn{position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;border:1px solid rgba(240,235,225,.22);background:rgba(10,14,12,.55);color:#F0EBE1;font-size:22px;cursor:pointer;transition:background .25s,border-color .25s;-webkit-tap-highlight-color:transparent}
 .vr-lb-btn:hover{background:rgba(214,138,76,.25);border-color:var(--vr-ember)}
@@ -614,8 +648,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 @keyframes vrNavIn{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
 @keyframes vrFlicker{0%,100%{opacity:.82;transform:translateX(-50%) scale(1)}30%{opacity:1;transform:translateX(-50%) scale(1.03)}55%{opacity:.74}78%{opacity:.94;transform:translateX(-50%) scale(1.01)}}
 @keyframes vrpRot{to{transform:rotate(360deg)}}
-@keyframes vrLbIn{from{opacity:0}}
-@keyframes vrLbImg{from{opacity:0;transform:scale(.96)}}
+/* Ozdobné animace lightboxu — NIKDY neanimují opacity (jinak by zamrzlý webview
+   nechal lightbox/fotku neviditelnou). Backdrop se jen rozostří, fotka jen dosedne. */
+@keyframes vrLbIn{from{backdrop-filter:blur(0)}}
+@keyframes vrLbImg{from{transform:scale(.96)}}
+@media (prefers-reduced-motion:reduce){.vr-lb,.vr-lb img{animation:none}}
 
 /* ---------- Seasonal crossfade images ---------- */
 /* Two stacked photos (summer / winter) that crossfade on season toggle.
