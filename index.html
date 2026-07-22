@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=31">
+<link rel="stylesheet" href="assets/site.css?v=32">
 </head>
 <body>
 <noscript>
@@ -741,7 +741,12 @@
 
   <!-- ===================== Lightbox ===================== -->
   <div class="vr-lb" id="vr-lb" role="dialog" aria-modal="true" aria-label="Galerie" style="display:none" aria-hidden="true">
-    <img id="vr-lb-img" src="" alt="Villa Rudolf">
+    <!-- .vr-lb-stage obepíná přesně fotku (shrink-wrap), aby šel štítek místnosti
+         ukotvit k jejímu levému dolnímu rohu, ne k okraji obrazovky. -->
+    <div class="vr-lb-stage">
+      <img id="vr-lb-img" src="" alt="Villa Rudolf">
+      <span class="vr-lb-tag" id="vr-lb-tag" aria-hidden="true" style="display:none"></span>
+    </div>
     <button class="vr-lb-btn vr-lb-prev" id="vr-lb-prev" type="button" aria-label="Předchozí">&#8249;</button>
     <button class="vr-lb-btn vr-lb-next" id="vr-lb-next" type="button" aria-label="Další">&#8250;</button>
     <button class="vr-lb-btn vr-lb-close" id="vr-lb-close" type="button" aria-label="Zavřít">&#10005;</button>
@@ -750,7 +755,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=31" defer></script>
+<script src="assets/site.js?v=32" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

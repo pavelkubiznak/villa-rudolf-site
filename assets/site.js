@@ -1631,10 +1631,31 @@ const INTERIOR = [
   { k: 'wellness', img: 'media/sections/int-wellness.jpg', pano: 2 },
   { k: 'bath',     img: 'media/sections/int-bath.jpg' },
 ];
+/* Štítek místnosti přímo NA fotce (karta i lightbox). Majitel: „bylo by dobrý,
+   kdyby u každý na každý fotce bylo přímo označení, co to je za pokoj. Asi by to
+   stačilo anglicky pro všechny verze." → JEDEN anglický řetězec pro všechny
+   jazykové mutace (schváleno majitelem), takže se NEpřekládá přes i18n. */
+const ROOM_EN = {
+  kitchen: 'Kitchen & dining', lounge: 'Attic lounge', suite: 'Suite',
+  room1: 'Room 1', room2: 'Room 2', room3: 'Room 3', room4: 'Room 4',
+  bath2: 'Bathroom — Room 2', bath3: 'Bathroom — Room 3', bath4: 'Bathroom — Room 4',
+  sauna: 'Sauna', wellness: 'Wellness', bath: 'Bathroom & shower',
+};
+/* Mapa fotka → štítek. Nejdřív fotky z karet (ty určují jméno prostoru), teprve
+   pak fotky z malých galerií — díky tomu má koupelna schovaná v galerii pokoje
+   svůj vlastní štítek („Bathroom — Room 3"), ne jméno pokoje. */
+const ROOM_LABEL_BY_SRC = (() => {
+  const m = {};
+  INTERIOR.forEach((it) => { if (it.img && ROOM_EN[it.k]) m[it.img] = ROOM_EN[it.k]; });
+  INTERIOR.forEach((it) => (it.gal || []).forEach((s) => { if (!m[s] && ROOM_EN[it.k]) m[s] = ROOM_EN[it.k]; }));
+  return m;
+})();
+const roomTag = (src, k) => ROOM_LABEL_BY_SRC[src] || ROOM_EN[k] || '';
+
 const zoomIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20.5 20.5 16 16M11 8v6M8 11h6"></path></svg>';
 const spinIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="10" ry="4.6"></ellipse><path d="M6.5 13.5A6 6 0 0 0 17.5 13.5"></path><path d="M16 10.4 17.7 13l-2.9.5"></path></svg>';
 
-function interiorLbList() { return INTERIOR.map((it) => ({ src: it.img, pano: it.pano })); }
+function interiorLbList() { return INTERIOR.map((it) => ({ src: it.img, pano: it.pano, tag: roomTag(it.img, it.k) })); }
 /* Klik na kartu: má-li prostor víc fotek, otevře se jeho MALÁ GALERIE (šipky
    i Esc jedou jen po ní). Tlačítko „Prohlédnout ve 360°" visí u všech fotek
    pokoje, ať nezmizí při prolistování. Karta s jednou fotkou se chová jako dřív
@@ -1643,7 +1664,7 @@ function interiorLbFor(idx) {
   const it = INTERIOR[idx];
   if (it && it.gal && it.gal.length > 1) {
     const name = (tt().interior && tt().interior.items && tt().interior.items[it.k]) || '';
-    return { list: it.gal.map((src) => ({ src: src, pano: it.pano, name: name })), start: 0 };
+    return { list: it.gal.map((src) => ({ src: src, pano: it.pano, name: name, tag: roomTag(src, it.k) })), start: 0 };
   }
   return { list: interiorLbList(), start: idx };
 }
@@ -1653,6 +1674,8 @@ function buildInteriorCard(it, idx) {
   const name = (t.interior && t.interior.items && t.interior.items[it.k]) || '';
   return el('button', { type: 'button', class: 'vr-car-card', 'data-idx': String(idx), 'aria-label': name }, [
     el('img', { src: it.img, alt: name + ' — Villa Rudolf', loading: 'lazy', decoding: 'async', width: '900', height: '1200' }),
+    // anglický štítek místnosti přímo na fotce (aria-hidden: čtečka už má aria-label karty)
+    el('span', { class: 'vr-car-tag', 'aria-hidden': 'true', text: roomTag(it.img, it.k) }),
     el('span', { class: 'vr-car-badge' + (it.pano != null ? ' is360' : ''), 'aria-hidden': 'true', html: it.pano != null ? spinIcon() : zoomIcon() }),
     el('span', { class: 'vr-car-cap' }, [el('span', { 'data-t': 'interior.items.' + it.k, text: name })]),
   ]);
@@ -2615,16 +2638,19 @@ function setSeason(season) {
 }
 
 /* ============================ Lightbox ============================ */
-/* list = pole { src, pano? } (galerie i interiérový karusel sdílí jeden lightbox).
-   pano != null → zobraz tlačítko „Prohlédnout ve 360°". */
+/* list = pole { src, pano?, tag? } (galerie i interiérový karusel sdílí jeden
+   lightbox). pano != null → zobraz tlačítko „Prohlédnout ve 360°".
+   tag = anglický štítek místnosti přímo na fotce (jen interiérové fotky). */
 function lbOpen(list, i) { state.lbList = list || []; lbSet(i); }
 function lbSet(i) {
   const lb = $('#vr-lb');
   const list = state.lbList || [];
   const b360 = $('#vr-lb-360');
+  const tag = $('#vr-lb-tag');
   if (i < 0 || !list.length) {
     state.lb = -1; lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = '';
     if (b360) { b360.style.display = 'none'; b360.onclick = null; }
+    if (tag) { tag.textContent = ''; tag.style.display = 'none'; }
     return;
   }
   state.lb = i;
@@ -2632,6 +2658,7 @@ function lbSet(i) {
   const im = $('#vr-lb-img');
   im.src = it.src || '';
   im.alt = (it.name ? it.name + ' — ' : '') + 'Villa Rudolf';
+  if (tag) { tag.textContent = it.tag || ''; tag.style.display = it.tag ? 'block' : 'none'; }
   $('#vr-lb-count').textContent = (i + 1) + ' / ' + list.length;
   if (b360) {
     if (it.pano != null) {
