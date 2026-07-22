@@ -1225,8 +1225,8 @@ const PANO_YAWF = {
   courtyard: 0.72, hall: 0.75, shoerack: 0.50, dining: 0.12, room1: 0.25, bath1: 0.88,
   room2: 0.50, bath2: 0.68, room3: 0.50, room3b: 0.56, bath3: 0.62,
   corridor: 0.00, room4: 0.50, bath4: 0.22, 'apt-living': 0.50, 'apt-kitchen': 0.75,
-  'apt-bed-a': 0.50, 'apt-bed-b': 0.33, 'apt-bed-c': 0.62,
-  wellness: 0.50, sauna: 0.25, skiroom: 0.81, garden: 0.25, gazebo: 0.29,
+  'apt-bed-a': 0.50, 'apt-bed-b': 0.50, 'apt-bed-c': 0.62,
+  wellness: 0.50, sauna: 0.25, skiroom: 0.86, garden: 0.25, gazebo: 0.29,
   s_arrival: 0.5, s_garden: 0.75, s_pool: 0.32, s_terrace: 0.12, s_pergola: 0.5, s_playground: 0.72, s_firepit: 0.25,
 };
 /* Interiérový karusel odkazuje na scény ID-čkem, ne pořadím — jinak by každé
