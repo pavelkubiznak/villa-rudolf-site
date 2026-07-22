@@ -7,7 +7,7 @@
   var T = {
     cs: {
       htmlLang: 'cs',
-      navDum: 'Dům', navVybaveni: 'Vybavení', navGalerie: 'Galerie', navVylety: 'Výlety', navBook: 'Rezervovat',
+      navDum: 'Dům', navVybaveni: 'Vybavení', navGalerie: 'Galerie', navRecenze: 'Recenze', navLokalita: 'Lokalita', navVylety: 'Výlety', navBook: 'Rezervovat',
       brandBadge: 'Praktické info',
       eyebrow: 'Villa Rudolf · Krkonoše',
       title: 'Praktické informace',
@@ -59,7 +59,7 @@
 
     en: {
       htmlLang: 'en',
-      navDum: 'The House', navVybaveni: 'Amenities', navGalerie: 'Gallery', navVylety: 'Trips', navBook: 'Book',
+      navDum: 'The House', navVybaveni: 'Amenities', navGalerie: 'Gallery', navRecenze: 'Reviews', navLokalita: 'Location', navVylety: 'Trips', navBook: 'Book',
       brandBadge: 'Guest info',
       eyebrow: 'Villa Rudolf · Giant Mountains',
       title: 'Practical information',
@@ -111,7 +111,7 @@
 
     de: {
       htmlLang: 'de',
-      navDum: 'Das Haus', navVybaveni: 'Ausstattung', navGalerie: 'Galerie', navVylety: 'Ausflüge', navBook: 'Buchen',
+      navDum: 'Das Haus', navVybaveni: 'Ausstattung', navGalerie: 'Galerie', navRecenze: 'Bewertungen', navLokalita: 'Lage', navVylety: 'Ausflüge', navBook: 'Buchen',
       brandBadge: 'Gäste-Info',
       eyebrow: 'Villa Rudolf · Riesengebirge',
       title: 'Praktische Informationen',
@@ -163,7 +163,7 @@
 
     pl: {
       htmlLang: 'pl',
-      navDum: 'Dom', navVybaveni: 'Udogodnienia', navGalerie: 'Galeria', navVylety: 'Wycieczki', navBook: 'Rezerwuj',
+      navDum: 'Dom', navVybaveni: 'Udogodnienia', navGalerie: 'Galeria', navRecenze: 'Recenzje', navLokalita: 'Lokalizacja', navVylety: 'Wycieczki', navBook: 'Rezerwuj',
       brandBadge: 'Info dla gości',
       eyebrow: 'Villa Rudolf · Karkonosze',
       title: 'Informacje praktyczne',
@@ -235,25 +235,42 @@
       var k = el.getAttribute('data-i18n');
       if (L[k] != null) el.textContent = L[k];
     });
-    document.querySelectorAll('.pi-lang').forEach(function (b) {
-      b.setAttribute('data-on', String(b.getAttribute('data-lang') === lang));
+    document.querySelectorAll('.vr-lang').forEach(function (b) {
+      b.setAttribute('data-active', String(b.getAttribute('data-lang') === lang));
     });
     try { localStorage.setItem(LS_KEY, lang); } catch (e) {}
     syncSiteLinks();
   }
 
-  /* Odkazy zpět na hlavní web nesou jazyk i sezónu, ať se dědičnost nerozbije. */
+  /* Odkazy zpět na hlavní web nesou jazyk i sezónu, ať se dědičnost nerozbije.
+     Výlety míří na samostatnou stránku ../vylety/, ostatní na kotvy homepage. */
   function syncSiteLinks() {
     var q = '?lang=' + encodeURIComponent(lang) + '&season=' + encodeURIComponent(season);
-    document.querySelectorAll('.pi-navlinks a[data-site]').forEach(function (a) {
-      a.setAttribute('href', '../' + q + '#' + a.getAttribute('data-site'));
+    document.querySelectorAll('[data-site]').forEach(function (a) {
+      var s = a.getAttribute('data-site');
+      a.setAttribute('href', s === 'vylety' ? '../vylety/' + q : '../' + q + '#' + s);
     });
-    var b = document.querySelector('.pi-brand'); if (b) b.setAttribute('href', '../' + q);
+    document.querySelectorAll('.vr-brand').forEach(function (b) { b.setAttribute('href', '../' + q); });
   }
 
-  document.querySelectorAll('.pi-lang').forEach(function (b) {
+  document.querySelectorAll('.vr-lang').forEach(function (b) {
     b.addEventListener('click', function () { applyLang(b.getAttribute('data-lang')); });
   });
+
+  /* Mobilní menu (burger) */
+  (function () {
+    var burger = document.getElementById('vr-burger');
+    var mob = document.getElementById('vr-mob');
+    if (!burger || !mob) return;
+    function toggleMob(open) {
+      var o = open == null ? mob.getAttribute('data-open') !== 'true' : open;
+      mob.setAttribute('data-open', o ? 'true' : 'false');
+      burger.setAttribute('aria-expanded', o ? 'true' : 'false');
+      document.body.style.overflow = o ? 'hidden' : '';
+    }
+    burger.addEventListener('click', function () { toggleMob(); });
+    mob.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { toggleMob(false); }); });
+  })();
 
   /* Sezóna dědí z webu — ?season → localStorage vrSeason → léto (stejná logika jako index/site.js). */
   var season = 'leto';

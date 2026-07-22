@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="info.css?v=15">
+<link rel="stylesheet" href="info.css?v=23">
 </head>
 <body>
 
@@ -43,30 +43,51 @@
 </svg>
 
 <div class="pi-root" data-season="leto">
-  <div class="pi-wrap">
 
-    <!-- Header -->
-    <header class="pi-header">
-      <a class="pi-brand" href="../">
-        <span class="nm">Villa Rudolf</span>
-        <span class="bd" data-i18n="brandBadge">Praktické info</span>
-      </a>
-      <!-- Sekce hlavního webu i na podstránce (majitel: na podstránce zmizí menu).
-           Hrefy doplní o ?lang&season syncSiteLinks() v info.js. -->
-      <nav class="pi-navlinks" aria-label="Sekce">
+  <!-- ===== Sjednocená hlavní navigace (shodná s homepage .vr-nav) ===== -->
+  <header class="vr-nav">
+    <div class="vr-nav-inner">
+      <a class="vr-brand" href="../"><b>VILLA RUDOLF</b><i>KRKONOŠE</i></a>
+      <nav class="vr-navlinks" aria-label="Sekce webu">
         <a data-site="dum" href="../#dum" data-i18n="navDum">Dům</a>
         <a data-site="vybaveni" href="../#vybaveni" data-i18n="navVybaveni">Vybavení</a>
         <a data-site="galerie" href="../#galerie" data-i18n="navGalerie">Galerie</a>
-        <a data-site="vylety" href="../#vylety" data-i18n="navVylety">Výlety</a>
-        <a class="cta" data-site="rezervace" href="../#rezervace" data-i18n="navBook">Rezervovat</a>
+        <a data-site="recenze" href="../#recenze" data-i18n="navRecenze">Recenze</a>
+        <a data-site="lokalita" href="../#lokalita" data-i18n="navLokalita">Lokalita</a>
+        <a data-site="vylety" href="../vylety/" data-i18n="navVylety">Výlety</a>
       </nav>
-      <nav class="pi-langs" id="langs" aria-label="Jazyk / Language">
-        <button type="button" class="pi-lang" data-lang="cs">CS</button>
-        <button type="button" class="pi-lang" data-lang="en">EN</button>
-        <button type="button" class="pi-lang" data-lang="de">DE</button>
-        <button type="button" class="pi-lang" data-lang="pl">PL</button>
-      </nav>
-    </header>
+      <div class="vr-navright">
+        <div class="vr-langs" id="langs" role="group" aria-label="Jazyk / Language">
+          <button type="button" class="vr-lang" data-lang="cs">CS</button>
+          <button type="button" class="vr-lang" data-lang="en">EN</button>
+          <button type="button" class="vr-lang" data-lang="de">DE</button>
+          <button type="button" class="vr-lang" data-lang="pl">PL</button>
+        </div>
+        <a class="vr-navcta" data-site="rezervace" href="../#rezervace" data-i18n="navBook">Rezervovat</a>
+        <button class="vr-burger" id="vr-burger" aria-label="Menu" aria-expanded="false" aria-controls="vr-mob"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobilní menu -->
+  <div class="vr-mob" id="vr-mob" data-open="false">
+    <a data-site="dum" href="../#dum" data-i18n="navDum">Dům</a>
+    <a data-site="vybaveni" href="../#vybaveni" data-i18n="navVybaveni">Vybavení</a>
+    <a data-site="galerie" href="../#galerie" data-i18n="navGalerie">Galerie</a>
+    <a data-site="recenze" href="../#recenze" data-i18n="navRecenze">Recenze</a>
+    <a data-site="lokalita" href="../#lokalita" data-i18n="navLokalita">Lokalita</a>
+    <a data-site="vylety" href="../vylety/" data-i18n="navVylety">Výlety</a>
+    <a class="vr-mob-cta" data-site="rezervace" href="../#rezervace" data-i18n="navBook">Rezervovat</a>
+    <a class="vr-mob-2nd" href="./" aria-current="page" data-i18n="brandBadge">Praktické info</a>
+    <div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">
+      <button type="button" class="vr-lang" data-lang="cs">CS</button>
+      <button type="button" class="vr-lang" data-lang="en">EN</button>
+      <button type="button" class="vr-lang" data-lang="de">DE</button>
+      <button type="button" class="vr-lang" data-lang="pl">PL</button>
+    </div>
+  </div>
+
+  <div class="pi-wrap">
 
     <!-- Hero -->
     <section class="pi-hero">
@@ -321,6 +342,6 @@
   </div>
 </div>
 
-<script src="info.js?v=15" defer></script>
+<script src="info.js?v=23" defer></script>
 </body>
 </html>
