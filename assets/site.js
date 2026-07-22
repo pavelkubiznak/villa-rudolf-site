@@ -2639,7 +2639,19 @@ function initPano() {
 
   try {
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(72, mount.clientWidth / mount.clientHeight, 0.1, 1100);
+  /* Svislý FOV se DOPOČÍTÁVÁ z poměru stran, aby vodorovný záběr zůstal
+     velkorysý (~112°, jak byl doteď) a svisle se ukázalo co nejvíc — majitel
+     chce „vidět víc stropu a podlahy", ne jiný soubor. Zdroj panoramat proto
+     zůstává 2:1 equirect; roztažení na čtverec by obraz jen zdeformovalo.
+     Mantinely 72–94° drží rektilineární projekci mimo rybí oko na krajích. */
+  const HFOV = 112, FOV_MIN = 72, FOV_MAX = 94;
+  const D = Math.PI / 180;
+  const fovFor = (aspect) => {
+    if (!aspect || !isFinite(aspect)) return FOV_MIN;
+    const v = 2 * Math.atan(Math.tan(HFOV * D / 2) / aspect) / D;
+    return Math.max(FOV_MIN, Math.min(FOV_MAX, v));
+  };
+  const camera = new THREE.PerspectiveCamera(fovFor(mount.clientWidth / mount.clientHeight), mount.clientWidth / mount.clientHeight, 0.1, 1100);
   camera.rotation.order = 'YXZ';
   const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: mount, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -2665,7 +2677,14 @@ function initPano() {
     userYaw = iy; swayBase = iy; yaw = iy; pitch = 0; idle = 0;
     loader.load('media/pano/' + f + '.jpg', (tex) => {
       if ('colorSpace' in tex) tex.colorSpace = THREE.SRGBColorSpace;
-      tex.minFilter = THREE.LinearFilter;
+      /* Vyšší svislý záběr ukazuje víc stropu a podlahy, kde je equirect u pólů
+         silně stlačený → bez mipmap by to jiskřilo. Textury jsou 4096×2048
+         (mocnina dvou), takže mipmapy i anizotropní filtrace fungují i na
+         WebGL1. Horizont zůstává ostrý — mipmapa se vybírá až při zmenšení. */
+      tex.generateMipmaps = true;
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+      try { tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy() || 1); } catch (x) {}
       const old = mat.map; mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true; if (old) old.dispose();
       if (spin) spin.style.opacity = '0'; mount.style.opacity = '1';
     }, undefined, () => { if (spin) spin.style.opacity = '0'; mount.style.opacity = '1'; });
@@ -2690,7 +2709,9 @@ function initPano() {
     const w = stage.clientWidth, h = stage.clientHeight;
     if (!w || !h) return;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    camera.aspect = w / h; camera.updateProjectionMatrix();
+    camera.aspect = w / h;
+    camera.fov = fovFor(camera.aspect);   // vyšší/nižší výřez → přepočítaný svislý záběr
+    camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
   };
   onR(); // srovnej hned po initu (stage už má finální full-bleed šířku)

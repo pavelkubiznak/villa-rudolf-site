@@ -295,8 +295,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-tour-hint{font-family:'Archivo',sans-serif;font-size:12.5px;line-height:1.5;color:var(--vr-text-dim);max-width:32ch;text-align:right;transition:color .6s ease}
 /* Pano stage is a FULL-BLEED 3D viewer (edge-to-edge like the hero) — keep its
    internals dark in both seasons. Výška vyplní podstatnou část obrazovky. */
+/* Majitel: „chci vidět víc svisle — ať se výřez blíží čtverci, ne proužku."
+   Výška výrazně nahoru (z min(78vh,820px)); svislý záběr kamery se dopočítává
+   v JS z poměru stran, takže vyšší stage = víc stropu i podlahy naráz. */
 .vrp-stage{position:relative;overflow:hidden;background:#0b0f0d;cursor:grab;touch-action:pan-y;
-  width:100%;height:min(78vh,820px);margin-top:clamp(26px,3.4vw,42px);
+  width:100%;height:min(96vh,1100px);margin-top:clamp(26px,3.4vw,42px);
   box-shadow:inset 0 0 90px rgba(0,0,0,.4)}
 .vrp-stage:active{cursor:grabbing}
 /* Měkké okraje (majitel: „ne ostrá hrana, ale fade away nahoře i dole"). Fade
@@ -305,15 +308,18 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
    nezakrývá titulek scény ani nápovědu „chyť a otáčej". Pruh náhledů níže do
    spodního fadeu zajíždí (negativní margin). */
 .vrp-stage::before,.vrp-stage::after{content:'';position:absolute;left:0;right:0;z-index:2;pointer-events:none}
-/* Jen JEMNÝ měkký okraj (majitel: „fade moc ztmavil zbytek — uprav jen okraje").
-   Malá výška + nelineární křivka (interpolační hint za první barvou) → alfa spadne
-   rychle hned u kraje a pak dlouhý jemný ohon do nuly, takže STŘED 360 scény
-   zůstane jasný a nestmavený, jen hrana měkce „vyleze ze stránky". Blend do
-   var(--vr-bg) → drží v obou sezónách. Titulek/ovládání (z-index:3) zůstávají nad. */
-.vrp-stage::before{top:0;height:18%;background:linear-gradient(180deg,var(--vr-bg) 0%,34%,transparent 100%)}
-.vrp-stage::after{bottom:0;height:26%;background:linear-gradient(0deg,var(--vr-bg) 0%,38%,transparent 100%)}
+/* Majitel: „splývání ať jde z fotky ven, ne z pozadí dovnitř." Fade proto jen
+   v KRAJNÍCH pásech (malá %) + nelineární křivka (interpolační hint za první
+   barvou) → alfa spadne rychle hned u kraje a pak dlouhý jemný ohon do nuly.
+   Naprostá většina scény je tak plná a ostrá, splývá až úplně nahoře a dole.
+   Blend do var(--vr-bg) → drží v obou sezónách. Spodní pás je o něco vyšší,
+   protože do něj zajíždí pruh náhledů. Ovládání (z-index:3) zůstává nad. */
+.vrp-stage::before{top:0;height:8%;background:linear-gradient(180deg,var(--vr-bg) 0%,30%,transparent 100%)}
+.vrp-stage::after{bottom:0;height:13%;background:linear-gradient(0deg,var(--vr-bg) 0%,34%,transparent 100%)}
 .vrp-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity 1s ease}
-.vrp-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(6,9,8,.32),transparent 22%,transparent 60%,rgba(6,9,8,.8))}
+/* Vnitřní scrim jen kvůli čitelnosti titulku a nápovědy — držíme ho co nejužší,
+   ať vyšší výřez zůstane obrazem, ne přechodem. */
+.vrp-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(6,9,8,.28),transparent 14%,transparent 72%,rgba(6,9,8,.78))}
 .vrp-vig{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(125% 100% at 50% 44%,transparent 56%,rgba(3,6,9,.36) 84%,rgba(3,6,9,.62) 100%)}
 .vrp-drag{position:absolute;z-index:3;left:50%;top:16px;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:8px 15px;border:1px solid rgba(240,235,225,.18);border-radius:999px;background:rgba(8,11,14,.5);backdrop-filter:blur(10px);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#D5DAD0;pointer-events:none;transition:opacity .5s ease}
 .vrp-drag svg{width:15px;height:15px;opacity:.85}
@@ -895,7 +901,7 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vr-reviews{grid-template-columns:1fr}
   .vr-qfacts{grid-template-columns:1fr 1fr;gap:20px 16px}
   .vr-rating{flex:1 1 100%;justify-content:space-between}
-  .vrp-stage{height:62vh}
+  .vrp-stage{height:min(82vh,760px)}
 }
 /* Sticky spodní CTA na mobilu (nav CTA je ≤960px skryté). Skryté by default;
    zobrazí se jen ≤960px a až po odscrollování za hero (JS přepíná data-show). */
