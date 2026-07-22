@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=33">
+<link rel="stylesheet" href="assets/site.css?v=34">
 </head>
 <body>
 <noscript>
@@ -170,6 +170,10 @@
         </div>
         <span class="vr-tour-hint" data-t="tour.hint">Chyťte a táhněte myší nebo prstem.</span>
       </div>
+      <!-- Menu skupin (pater) — plní JS z PANO_GROUPS. Je to ovládání TÉTO
+           sekce (filtr pruhu náhledů), ne druhá úroveň záložek. V sezóně, kde
+           je jen jedna skupina (léto = exteriéry), zůstává skryté. -->
+      <div class="vrp-groups" id="vr-pano-groups" role="group" hidden></div>
     </div>
 
     <!-- Scéna je FULL-BLEED přes celou šířku viewportu (přání majitele: „ty 360
@@ -756,7 +760,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=33" defer></script>
+<script src="assets/site.js?v=34" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

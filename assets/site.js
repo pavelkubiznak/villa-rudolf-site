@@ -268,29 +268,36 @@ const T = {
       hint: 'Chyťte a táhněte myší nebo prstem. Dole přepínate místnosti, scény se i samy střídají.',
       drag: 'Chyť a otáčej',
       scenes: [
-        { name: 'Apartmá — obývací část', desc: 'Vlastní obývací a jídelní část apartmá Suite — dlouhá sedačka pod trámy, velký stůl a schody do podkrovních ložnic.' },
-        { name: 'Kuchyně a jídelna', desc: 'Plně vybavená kuchyně s velkým stolem pro společné snídaně i večeře celé skupiny.' },
-        { name: 'Sauna a odpočinek', desc: 'Finská sauna s prosklenými dveřmi a odpočinková lávka hned vedle — privátně jen pro vaši skupinu.' },
-        { name: 'Ve finské sauně', desc: 'Uvnitř vyhřáté sauny — teplé dřevo a klid po dni na horách.' },
-        { name: 'Ložnice – Pokoj 4', desc: 'Jedna z ložnic s kamennou stěnou za čelním panelem — pohodlné spaní pro celou partu.' },
-        { name: 'Zastřešený bazén', desc: 'Vyhřívaný bazén pod zastřešením — tady se koupete i uprostřed zimy.' },
-        { name: 'Pergola', desc: 'Mohutná dřevěná pergola s posezením pro celou skupinu — večer se tu sedí, i když venku leží sníh.' },
-        { name: 'Zimní pozemek', desc: 'Rozlehlý zasněžený pozemek jen pro vás — od domu k bazénu, hřišti a dál.' },
-        { name: 'Ložnice se zlatou tapetou', desc: 'Ložnice se zlatou listovou tapetou za podsvíceným čelem postele — manželská postel a samostatné lůžko.' },
-        { name: 'Ložnice – Pokoj 2', desc: 'Rohová ložnice se dvěma okny a tónovanou tapetou za čelem postele — až čtyři lůžka.' },
-        { name: 'Koupelna – Pokoj 4', desc: 'Koupelna Pokoje 4 — zaoblený sprchový kout, umyvadlo a toaleta.' },
-        { name: 'Koupelna – Pokoj 3', desc: 'Koupelna Pokoje 3 — zaoblený sprchový kout, umyvadlo a toaleta.' },
+        { name: 'Zasněžený dvůr', desc: 'Dvůr po vydatném sněžení — projetá cesta mezi zapadanými smrky, rampouchy na střeše a místo, kam zaparkuje celá skupina.' },
+        { name: 'Vstupní hala', desc: 'Vstupní hala s botníkem a schodištěm do patra — odtud se jde do jídelny i do pokojů v přízemí.' },
+        { name: 'Hlavní jídelna s kuchyní', desc: 'Společná kuchyně s dlouhým dřevěným stolem pro celou skupinu, linkou podél stěny a velkými okny do zahrady — hlavní společenský prostor domu.' },
+        { name: 'Pokoj 1 (2 lůžka)', desc: 'Manželská postel s podsvíceným čelem, kropenatá tapeta a arkýř se třemi okny do zahrady. Vlastní koupelna.' },
+        { name: 'Pokoj 1 — koupelna', desc: 'Koupelna Pokoje 1 — sprchový kout, umyvadlo se zrcadlovou skříňkou a toaleta.' },
+        { name: 'Pokoj 2 (3+1 lůžko)', desc: 'Manželská postel a samostatné lůžko, šedá tkaná tapeta za podsvíceným čelem, stůl s lavicemi a dvě okna. Vlastní koupelna hned vedle.' },
+        { name: 'Pokoj 3 (3+1 lůžko)', desc: 'Manželská postel a samostatné lůžko pod šikmým stropem, zlatá listová tapeta za podsvíceným čelem. Vlastní koupelna přímo z pokoje.' },
+        { name: 'Pokoj 3 — koupelna', desc: 'Koupelna Pokoje 3 — sprchový kout, umyvadlo a okno do zahrady.' },
+        { name: 'Chodba v 1. patře', desc: 'Podesta hlavního schodiště s vestavěnými skříněmi a trojicí oken — odtud vedou dveře do pokoje i do apartmá.' },
+        { name: 'Pokoj 4 (2 lůžka)', desc: 'Manželská postel v klenuté nice mezi dřevěnými sloupy, arkýřové okno s dřevěným parapetem. Vlastní koupelna.' },
+        { name: 'Pokoj 4 — koupelna', desc: 'Koupelna Pokoje 4 — sprchový kout, umyvadlo, toaleta a pračka.' },
+        { name: 'Apartmá — obývací část', desc: 'Vlastní obývák apartmá Suite: dlouhá sedací souprava pod trámy, velký stůl, televize a schody do podkrovních ložnic.' },
+        { name: 'Apartmá — kuchyňský kout', desc: 'Kuchyňská linka apartmá s troubou a varnou deskou — apartmá má vlastní zázemí a nemusí se dělit o hlavní kuchyni.' },
+        { name: 'Apartmá — ložnice', desc: 'Ložnice apartmá s manželskou postelí a geometrickou tapetou za podsvíceným čelem.' },
+        { name: 'Apartmá — podkrovní ložnice', desc: 'Podkrovní ložnice apartmá: manželská postel a dvě samostatná lůžka pod šikmým stropem, vikýř s trojicí oken.' },
+        { name: 'Wellness u sauny', desc: 'Předsálí sauny — lavice na vychladnutí, sprcha a vstup do finské sauny. Celé jen pro vaši skupinu.' },
+        { name: 'Finská sauna', desc: 'Uvnitř vyhřáté finské sauny — lavice ze světlého dřeva a kamna.' },
+        { name: 'Zahrada v zimě', desc: 'Zasněžená zahrada od altánu k domu — vzrostlé smrky, prošlapané cestičky a zastřešený bazén.' },
       ],
       scenesSummer: [
         { name: 'Příjezd k vile', desc: 'Plocha za bránou, kam zaparkuje celá skupina, a dům na konci příjezdovky mezi vzrostlými stromy.' },
-        { name: 'Zahrada s dětským hřištěm', desc: 'Lanový most, prolézačka a malá lezecká stěna na dohled od domu — děti mají svůj kout uvnitř pozemku.' },
-        { name: 'Bazén u vily', desc: 'Zastřešený vyhřívaný bazén s řadou lehátek hned u domu, kolem dokola vlastní trávník.' },
-        { name: 'Louka s houpačkou a ping-pongem', desc: 'Horní část pozemku: houpačka se skluzavkou, ping-pongový stůl a místo na běhání i na míč.' },
-        { name: 'Dřevěná terasa s posezením', desc: 'Terasa z dubových fošen nad gabionovou zdí — stůl pro celou partu a výhled na pergolu a hory.' },
-        { name: 'Pergola a ohniště', desc: 'Střed pozemku: krytá pergola s grilem vlevo, zapuštěné ohniště s gabionovou stěnou vpravo.' },
-        { name: 'Uvnitř pergoly', desc: 'Pod krovem z masivního dřeva: dlouhý stůl, zděný grilovací pult a otevřené strany do zahrady.' },
-        { name: 'Večerní terasa', desc: 'Po setmění se gabiony i schody nasvítí samy — křesílka u ohniště a v pozadí svítící bazén.' },
+        { name: 'Zahrada s bazénem', desc: 'Pohled přes trávník na dům, zastřešený bazén s řadou lehátek a gabionové ohniště pod svahem.' },
+        { name: 'Zahrada s krytým bazénem', desc: 'Zastřešený vyhřívaný bazén s řadou lehátek hned u domu, kolem dokola vlastní trávník.' },
+        { name: 'Terasa s posezením', desc: 'Terasa z dubových fošen nad gabionovou zdí — stůl pro celou partu a výhled na pergolu a hory.' },
+        { name: 'Pergola s grily', desc: 'Pod krovem z masivního dřeva: dlouhý stůl, zděný grilovací pult a otevřené strany do zahrady.' },
+        { name: 'Dětské hřiště', desc: 'Lanový most, prolézačka a malá lezecká stěna na dohled od domu — děti mají svůj kout uvnitř pozemku.' },
+        { name: 'Terasa s ohništěm večer', desc: 'Po setmění se gabiony i schody nasvítí samy — křesílka u ohniště a v pozadí svítící bazén.' },
       ],
+      groupsLabel: 'Skupiny scén', groupAll: 'Vše',
+      groups: { ground: 'Přízemí', floor1: '1. patro', floor2: '2. patro', basement: 'Suterén', extSummer: 'Exteriér léto', extWinter: 'Exteriér zima' },
     },
     gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
     vylety: {
@@ -515,29 +522,36 @@ const T = {
       hint: 'Grab and drag with mouse or finger. Switch rooms below; the scenes also drift on their own.',
       drag: 'Grab to look',
       scenes: [
-        { name: 'Suite — living area', desc: 'The Suite apartment’s own living and dining area — a long sofa under the beams, a big table and the stairs up to the attic bedrooms.' },
-        { name: 'Kitchen & dining', desc: 'A fully equipped kitchen with a large table for the whole group’s breakfasts and dinners.' },
-        { name: 'Sauna & relaxation', desc: 'A Finnish sauna with a glass door and a relaxation bench beside it — privately, just for your group.' },
-        { name: 'Inside the sauna', desc: 'Inside the heated sauna — warm wood and quiet after a day in the mountains.' },
-        { name: 'Bedroom – Room 4', desc: 'One of the bedrooms with a stone accent wall behind the headboard — comfortable sleeping for the whole party.' },
-        { name: 'Covered pool', desc: 'A heated pool under cover — you swim here even in midwinter.' },
-        { name: 'Pergola', desc: 'A massive timber pergola with seating for the whole group — evenings happen here even with snow on the ground.' },
-        { name: 'Winter grounds', desc: 'Sweeping snowbound grounds, all yours — from the house to the pool, the playground and beyond.' },
-        { name: 'Bedroom with the gold wallpaper', desc: 'A bedroom with gold-leaf wallpaper behind the backlit headboard — a double bed and a single.' },
-        { name: 'Bedroom – Room 2', desc: 'A corner bedroom with two windows and a toned wallpaper behind the headboard — up to four beds.' },
-        { name: 'Bathroom – Room 4', desc: 'Room 4’s bathroom — rounded corner shower, basin and toilet.' },
-        { name: 'Bathroom – Room 3', desc: 'Room 3’s bathroom — rounded corner shower, basin and toilet.' },
+        { name: 'Snowy courtyard', desc: 'The courtyard after heavy snowfall — a cleared track between laden spruces, icicles along the roof and room for the whole group to park.' },
+        { name: 'Entrance hall', desc: 'The entrance hall with the boot rack and the staircase up — the dining room and the ground-floor bedrooms both open from here.' },
+        { name: 'Main kitchen & dining room', desc: 'The shared kitchen with a long wooden table for the whole group, a run of units along the wall and big windows to the garden — the social heart of the house.' },
+        { name: 'Room 1 (2 beds)', desc: 'A double bed with a backlit headboard, mottled wallpaper and a bay of three windows onto the garden. Its own bathroom.' },
+        { name: 'Room 1 — bathroom', desc: 'Room 1’s bathroom — shower enclosure, basin with a mirror cabinet and a toilet.' },
+        { name: 'Room 2 (3+1 beds)', desc: 'A double bed and a single, grey woven wallpaper behind the backlit headboard, a table with benches and two windows. Its own bathroom next door.' },
+        { name: 'Room 3 (3+1 beds)', desc: 'A double bed and a single under the sloping ceiling, gold-leaf wallpaper behind the backlit headboard. Its own bathroom straight off the room.' },
+        { name: 'Room 3 — bathroom', desc: 'Room 3’s bathroom — shower enclosure, basin and a window to the garden.' },
+        { name: 'First-floor landing', desc: 'The main staircase landing with fitted wardrobes and three windows — doors lead on to a bedroom and to the Suite.' },
+        { name: 'Room 4 (2 beds)', desc: 'A double bed in a vaulted alcove between timber posts, a bay window with a wooden sill. Its own bathroom.' },
+        { name: 'Room 4 — bathroom', desc: 'Room 4’s bathroom — shower enclosure, basin, toilet and a washing machine.' },
+        { name: 'Suite — living area', desc: 'The Suite apartment’s own lounge: a long sofa under the beams, a big table, a TV and the stairs up to the attic bedrooms.' },
+        { name: 'Suite — kitchenette', desc: 'The Suite’s own kitchen units with an oven and hob — the apartment is self-contained and doesn’t share the main kitchen.' },
+        { name: 'Suite — bedroom', desc: 'The Suite’s bedroom with a double bed and geometric wallpaper behind the backlit headboard.' },
+        { name: 'Suite — attic bedroom', desc: 'The Suite’s attic bedroom: a double bed and two singles under the sloping ceiling, a dormer with three windows.' },
+        { name: 'Wellness by the sauna', desc: 'The room in front of the sauna — a bench to cool down on, a shower and the door into the Finnish sauna. All yours alone.' },
+        { name: 'Inside the sauna', desc: 'Inside the heated Finnish sauna — pale timber benches and the stove.' },
+        { name: 'The garden in winter', desc: 'The snowbound garden from the gazebo back to the house — tall spruces, trodden paths and the covered pool.' },
       ],
       scenesSummer: [
         { name: 'Arriving at the villa', desc: 'The parking area behind the gate with room for the whole group, and the house at the end of the drive among tall trees.' },
-        { name: 'Garden with the playground', desc: 'A rope bridge, a climbing frame and a small climbing wall in sight of the house — the children have their own corner inside the grounds.' },
-        { name: 'The pool beside the house', desc: 'The covered heated pool and its row of sun loungers, right by the house and ringed by your own lawn.' },
-        { name: 'Meadow with swing and table tennis', desc: 'The upper part of the grounds: a swing with a slide, a table-tennis table and room to run around.' },
+        { name: 'Garden and pool', desc: 'Across the lawn to the house, the covered pool with its row of loungers and the gabion fire pit below the slope.' },
+        { name: 'The covered pool', desc: 'The covered heated pool and its row of sun loungers, right by the house and ringed by your own lawn.' },
         { name: 'The wooden deck', desc: 'An oak deck above the gabion wall — a table for the whole group, looking out to the pergola and the hills.' },
-        { name: 'Pergola and fire pit', desc: 'The centre of the grounds: the covered pergola with its grill on the left, the sunken fire pit with its gabion wall on the right.' },
-        { name: 'Inside the pergola', desc: 'Under a solid timber roof: the long table, a built-in grill counter and open sides onto the garden.' },
-        { name: 'The terrace after dark', desc: 'Once the sun is down the gabions and steps light themselves — chairs around the fire pit, the glowing pool behind.' },
+        { name: 'Pergola with the grills', desc: 'Under a solid timber roof: the long table, a built-in grill counter and open sides onto the garden.' },
+        { name: 'The playground', desc: 'A rope bridge, a climbing frame and a small climbing wall in sight of the house — the children have their own corner inside the grounds.' },
+        { name: 'The fire pit after dark', desc: 'Once the sun is down the gabions and steps light themselves — chairs around the fire pit, the glowing pool behind.' },
       ],
+      groupsLabel: 'Scene groups', groupAll: 'All',
+      groups: { ground: 'Ground floor', floor1: 'First floor', floor2: 'Second floor', basement: 'Basement', extSummer: 'Outside — summer', extWinter: 'Outside — winter' },
     },
     gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge', all: 'All', leto: 'Summer', zima: 'Winter', vecer: 'Evening', interier: 'Interior' },
     vylety: {
@@ -762,29 +776,36 @@ const T = {
       hint: 'Mit Maus oder Finger greifen und ziehen. Räume unten wechseln; die Szenen wechseln auch von selbst.',
       drag: 'Greifen & umsehen',
       scenes: [
-        { name: 'Apartment — Wohnbereich', desc: 'Der eigene Wohn- und Essbereich der Suite — eine lange Sitzgruppe unter den Balken, ein großer Tisch und die Treppe zu den Dachzimmern.' },
-        { name: 'Küche & Essbereich', desc: 'Eine voll ausgestattete Küche mit großem Tisch für Frühstück und Abendessen der ganzen Gruppe.' },
-        { name: 'Sauna & Ruhe', desc: 'Eine finnische Sauna mit Glastür und Ruhebank daneben — privat, nur für eure Gruppe.' },
-        { name: 'In der Sauna', desc: 'Im Inneren der geheizten Sauna — warmes Holz und Ruhe nach einem Tag in den Bergen.' },
-        { name: 'Schlafzimmer – Zimmer 4', desc: 'Eines der Schlafzimmer mit Steinwand hinter dem Kopfteil — bequemes Schlafen für die ganze Runde.' },
-        { name: 'Überdachter Pool', desc: 'Ein beheizter Pool unter Überdachung — hier badet ihr selbst mitten im Winter.' },
-        { name: 'Pergola', desc: 'Eine massive Holzpergola mit Sitzplätzen für die ganze Gruppe — Abende finden hier statt, auch wenn Schnee liegt.' },
-        { name: 'Wintergrundstück', desc: 'Ein weitläufiges verschneites Grundstück, nur für euch — vom Haus zum Pool, zum Spielplatz und weiter.' },
-        { name: 'Zimmer mit goldener Tapete', desc: 'Ein Zimmer mit goldener Blättertapete hinter dem beleuchteten Kopfteil — Doppelbett und ein Einzelbett.' },
-        { name: 'Schlafzimmer – Zimmer 2', desc: 'Ein Eckschlafzimmer mit zwei Fenstern und getönter Tapete hinter dem Kopfteil — bis zu vier Betten.' },
-        { name: 'Bad – Zimmer 4', desc: 'Das Bad von Zimmer 4 — abgerundete Eckdusche, Waschbecken und WC.' },
-        { name: 'Bad – Zimmer 3', desc: 'Das Bad von Zimmer 3 — abgerundete Eckdusche, Waschbecken und WC.' },
+        { name: 'Verschneiter Hof', desc: 'Der Hof nach starkem Schneefall — eine freigefahrene Spur zwischen verschneiten Fichten, Eiszapfen am Dach und Platz für die Autos der ganzen Gruppe.' },
+        { name: 'Eingangshalle', desc: 'Die Eingangshalle mit Schuhregal und Treppe nach oben — von hier geht es in den Essbereich und zu den Zimmern im Erdgeschoss.' },
+        { name: 'Hauptküche mit Essbereich', desc: 'Die gemeinsame Küche mit langem Holztisch für die ganze Gruppe, Küchenzeile entlang der Wand und großen Fenstern zum Garten — das gesellige Herz des Hauses.' },
+        { name: 'Zimmer 1 (2 Betten)', desc: 'Doppelbett mit beleuchtetem Kopfteil, gesprenkelte Tapete und ein Erker mit drei Fenstern zum Garten. Eigenes Bad.' },
+        { name: 'Zimmer 1 — Bad', desc: 'Das Bad von Zimmer 1 — Duschkabine, Waschbecken mit Spiegelschrank und WC.' },
+        { name: 'Zimmer 2 (3+1 Betten)', desc: 'Doppelbett und Einzelbett, graue Webtapete hinter dem beleuchteten Kopfteil, Tisch mit Bänken und zwei Fenster. Eigenes Bad nebenan.' },
+        { name: 'Zimmer 3 (3+1 Betten)', desc: 'Doppelbett und Einzelbett unter der Dachschräge, goldene Blättertapete hinter dem beleuchteten Kopfteil. Eigenes Bad direkt vom Zimmer.' },
+        { name: 'Zimmer 3 — Bad', desc: 'Das Bad von Zimmer 3 — Duschkabine, Waschbecken und ein Fenster zum Garten.' },
+        { name: 'Flur im 1. Obergeschoss', desc: 'Der Treppenabsatz mit Einbauschränken und drei Fenstern — von hier führen Türen ins Zimmer und ins Apartment.' },
+        { name: 'Zimmer 4 (2 Betten)', desc: 'Doppelbett in einer gewölbten Nische zwischen Holzsäulen, Erkerfenster mit Holzbank. Eigenes Bad.' },
+        { name: 'Zimmer 4 — Bad', desc: 'Das Bad von Zimmer 4 — Duschkabine, Waschbecken, WC und Waschmaschine.' },
+        { name: 'Apartment — Wohnbereich', desc: 'Der eigene Wohnbereich der Suite: eine lange Sitzgruppe unter den Balken, ein großer Tisch, TV und die Treppe zu den Dachzimmern.' },
+        { name: 'Apartment — Küchenzeile', desc: 'Die eigene Küchenzeile der Suite mit Backofen und Kochfeld — das Apartment versorgt sich selbst und teilt die Hauptküche nicht.' },
+        { name: 'Apartment — Schlafzimmer', desc: 'Das Schlafzimmer der Suite mit Doppelbett und geometrischer Tapete hinter dem beleuchteten Kopfteil.' },
+        { name: 'Apartment — Schlafzimmer im Dach', desc: 'Das Dachzimmer der Suite: Doppelbett und zwei Einzelbetten unter der Schräge, Gaube mit drei Fenstern.' },
+        { name: 'Wellness an der Sauna', desc: 'Der Raum vor der Sauna — Bank zum Abkühlen, Dusche und die Tür in die finnische Sauna. Ganz allein für eure Gruppe.' },
+        { name: 'In der Sauna', desc: 'Im Inneren der geheizten finnischen Sauna — helle Holzbänke und der Ofen.' },
+        { name: 'Garten im Winter', desc: 'Der verschneite Garten vom Pavillon zurück zum Haus — hohe Fichten, ausgetretene Pfade und der überdachte Pool.' },
       ],
       scenesSummer: [
         { name: 'Ankunft an der Villa', desc: 'Der Stellplatz hinter dem Tor, auf dem die ganze Gruppe parkt, und das Haus am Ende der Zufahrt zwischen hohen Bäumen.' },
-        { name: 'Garten mit Spielplatz', desc: 'Hängebrücke, Klettergerüst und eine kleine Kletterwand in Sichtweite des Hauses — die Kinder haben ihre eigene Ecke auf dem Grundstück.' },
-        { name: 'Pool am Haus', desc: 'Der überdachte beheizte Pool mit seiner Liegenreihe direkt am Haus, ringsum die eigene Wiese.' },
-        { name: 'Wiese mit Schaukel und Tischtennis', desc: 'Der obere Teil des Grundstücks: Schaukel mit Rutsche, Tischtennisplatte und Platz zum Herumtoben.' },
-        { name: 'Holzterrasse mit Sitzplatz', desc: 'Eine Eichenterrasse über der Gabionenwand — ein Tisch für die ganze Gruppe, Blick auf Pergola und Berge.' },
-        { name: 'Pergola und Feuerstelle', desc: 'Die Mitte des Grundstücks: links die überdachte Pergola mit Grill, rechts die abgesenkte Feuerstelle mit Gabionenwand.' },
-        { name: 'In der Pergola', desc: 'Unter massivem Holzdach: der lange Tisch, ein gemauerter Grilltresen und offene Seiten zum Garten.' },
-        { name: 'Terrasse am Abend', desc: 'Nach Einbruch der Dunkelheit leuchten Gabionen und Stufen von selbst — Sessel an der Feuerstelle, dahinter der beleuchtete Pool.' },
+        { name: 'Garten mit Pool', desc: 'Über den Rasen zum Haus, der überdachte Pool mit seiner Liegenreihe und die Feuerstelle aus Gabionen unter dem Hang.' },
+        { name: 'Überdachter Pool', desc: 'Der überdachte beheizte Pool mit Liegenreihe direkt am Haus, ringsum euer eigener Rasen.' },
+        { name: 'Holzterrasse', desc: 'Eine Eichenterrasse über der Gabionenwand — ein Tisch für die ganze Gruppe mit Blick auf Pergola und Berge.' },
+        { name: 'Pergola mit Grills', desc: 'Unter massivem Holzdach: der lange Tisch, ein gemauerter Grilltresen und offene Seiten in den Garten.' },
+        { name: 'Spielplatz', desc: 'Hängebrücke, Klettergerüst und eine kleine Kletterwand in Sichtweite des Hauses — die Kinder haben ihre eigene Ecke auf dem Grundstück.' },
+        { name: 'Feuerstelle am Abend', desc: 'Nach Sonnenuntergang leuchten Gabionen und Stufen von selbst — Sessel um die Feuerstelle, dahinter der beleuchtete Pool.' },
       ],
+      groupsLabel: 'Szenengruppen', groupAll: 'Alle',
+      groups: { ground: 'Erdgeschoss', floor1: '1. Obergeschoss', floor2: '2. Obergeschoss', basement: 'Untergeschoss', extSummer: 'Außen — Sommer', extWinter: 'Außen — Winter' },
     },
     gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern', all: 'Alle', leto: 'Sommer', zima: 'Winter', vecer: 'Abend', interier: 'Innen' },
     vylety: {
@@ -1009,29 +1030,36 @@ const T = {
       hint: 'Chwyć i przeciągnij myszą lub palcem. Pokoje przełączasz poniżej; sceny zmieniają się też same.',
       drag: 'Chwyć i obracaj',
       scenes: [
-        { name: 'Apartament — część dzienna', desc: 'Własna część dzienna i jadalna apartamentu Suite — długa sofa pod belkami, duży stół i schody do sypialni na poddaszu.' },
-        { name: 'Kuchnia i jadalnia', desc: 'W pełni wyposażona kuchnia z dużym stołem na wspólne śniadania i kolacje całej grupy.' },
-        { name: 'Sauna i relaks', desc: 'Fińska sauna ze szklanymi drzwiami i ławką do relaksu obok — prywatnie, tylko dla waszej grupy.' },
-        { name: 'We wnętrzu sauny', desc: 'W środku nagrzanej sauny — ciepłe drewno i spokój po dniu w górach.' },
-        { name: 'Sypialnia – Pokój 4', desc: 'Jedna z sypialni z kamienną ścianą za zagłówkiem — wygodny sen dla całej ekipy.' },
-        { name: 'Zadaszony basen', desc: 'Podgrzewany basen pod zadaszeniem — kąpiel nawet w środku zimy.' },
-        { name: 'Pergola', desc: 'Masywna drewniana pergola z miejscem dla całej grupy — wieczory trwają tu nawet przy śniegu.' },
-        { name: 'Zimowa posesja', desc: 'Rozległa zaśnieżona posesja tylko dla was — od domu po basen, plac zabaw i dalej.' },
-        { name: 'Sypialnia ze złotą tapetą', desc: 'Sypialnia ze złotą tapetą w liście za podświetlanym zagłówkiem — łóżko podwójne i pojedyncze.' },
-        { name: 'Sypialnia – Pokój 2', desc: 'Narożna sypialnia z dwoma oknami i stonowaną tapetą za zagłówkiem — do czterech łóżek.' },
-        { name: 'Łazienka – Pokój 4', desc: 'Łazienka Pokoju 4 — zaokrąglona kabina prysznicowa, umywalka i toaleta.' },
-        { name: 'Łazienka – Pokój 3', desc: 'Łazienka Pokoju 3 — zaokrąglona kabina prysznicowa, umywalka i toaleta.' },
+        { name: 'Zaśnieżony dziedziniec', desc: 'Dziedziniec po obfitych opadach — przejezdna droga wśród ośnieżonych świerków, sople na dachu i miejsce dla samochodów całej grupy.' },
+        { name: 'Hol wejściowy', desc: 'Hol wejściowy z półkami na buty i schodami na piętro — stąd wchodzi się do jadalni i do pokoi na parterze.' },
+        { name: 'Główna kuchnia z jadalnią', desc: 'Wspólna kuchnia z długim drewnianym stołem dla całej grupy, zabudową wzdłuż ściany i dużymi oknami do ogrodu — towarzyskie serce domu.' },
+        { name: 'Pokój 1 (2 łóżka)', desc: 'Łóżko podwójne z podświetlanym zagłówkiem, cętkowana tapeta i wykusz z trzema oknami do ogrodu. Własna łazienka.' },
+        { name: 'Pokój 1 — łazienka', desc: 'Łazienka Pokoju 1 — kabina prysznicowa, umywalka z szafką lustrzaną i toaleta.' },
+        { name: 'Pokój 2 (3+1 łóżka)', desc: 'Łóżko podwójne i pojedyncze, szara tkana tapeta za podświetlanym zagłówkiem, stół z ławami i dwa okna. Własna łazienka obok.' },
+        { name: 'Pokój 3 (3+1 łóżka)', desc: 'Łóżko podwójne i pojedyncze pod skosem, złota tapeta w liście za podświetlanym zagłówkiem. Własna łazienka prosto z pokoju.' },
+        { name: 'Pokój 3 — łazienka', desc: 'Łazienka Pokoju 3 — kabina prysznicowa, umywalka i okno do ogrodu.' },
+        { name: 'Korytarz na 1. piętrze', desc: 'Spocznik głównych schodów z zabudowanymi szafami i trzema oknami — stąd drzwi do pokoju i do apartamentu.' },
+        { name: 'Pokój 4 (2 łóżka)', desc: 'Łóżko podwójne w sklepionej wnęce między drewnianymi słupami, okno wykuszowe z drewnianym parapetem. Własna łazienka.' },
+        { name: 'Pokój 4 — łazienka', desc: 'Łazienka Pokoju 4 — kabina prysznicowa, umywalka, toaleta i pralka.' },
+        { name: 'Apartament — część dzienna', desc: 'Własny salon apartamentu Suite: długa sofa pod belkami, duży stół, telewizor i schody do sypialni na poddaszu.' },
+        { name: 'Apartament — aneks kuchenny', desc: 'Własna zabudowa kuchenna apartamentu z piekarnikiem i płytą — apartament jest samodzielny i nie dzieli głównej kuchni.' },
+        { name: 'Apartament — sypialnia', desc: 'Sypialnia apartamentu z łóżkiem podwójnym i geometryczną tapetą za podświetlanym zagłówkiem.' },
+        { name: 'Apartament — sypialnia na poddaszu', desc: 'Sypialnia apartamentu na poddaszu: łóżko podwójne i dwa pojedyncze pod skosem, lukarna z trzema oknami.' },
+        { name: 'Wellness przy saunie', desc: 'Przedsionek sauny — ława do ochłonięcia, prysznic i wejście do sauny fińskiej. Tylko dla waszej grupy.' },
+        { name: 'We wnętrzu sauny', desc: 'W środku nagrzanej sauny fińskiej — jasne drewniane ławy i piec.' },
+        { name: 'Ogród zimą', desc: 'Zaśnieżony ogród od altany po dom — wysokie świerki, wydeptane ścieżki i zadaszony basen.' },
       ],
       scenesSummer: [
         { name: 'Podjazd do willi', desc: 'Plac za bramą, na którym zaparkuje cała grupa, i dom na końcu podjazdu wśród wysokich drzew.' },
-        { name: 'Ogród z placem zabaw', desc: 'Most linowy, drabinki i mała ścianka wspinaczkowa w zasięgu wzroku od domu — dzieci mają swój kąt na posesji.' },
-        { name: 'Basen przy willi', desc: 'Zadaszony podgrzewany basen z rzędem leżaków tuż przy domu, dookoła własny trawnik.' },
-        { name: 'Łąka z huśtawką i ping-pongiem', desc: 'Górna część posesji: huśtawka ze zjeżdżalnią, stół do ping-ponga i miejsce do biegania.' },
-        { name: 'Drewniany taras z siedziskami', desc: 'Dębowy taras nad ścianą gabionową — stół dla całej ekipy i widok na pergolę oraz góry.' },
-        { name: 'Pergola i palenisko', desc: 'Środek posesji: po lewej zadaszona pergola z grillem, po prawej wpuszczone palenisko ze ścianą gabionową.' },
-        { name: 'We wnętrzu pergoli', desc: 'Pod masywną drewnianą więźbą: długi stół, murowany blat grillowy i otwarte boki na ogród.' },
-        { name: 'Wieczorny taras', desc: 'Po zmroku gabiony i schody podświetlają się same — fotele przy palenisku, w tle rozświetlony basen.' },
+        { name: 'Ogród z basenem', desc: 'Przez trawnik na dom, zadaszony basen z rzędem leżaków i palenisko z gabionów pod skarpą.' },
+        { name: 'Zadaszony basen', desc: 'Podgrzewany basen pod zadaszeniem z rzędem leżaków tuż przy domu, dookoła własny trawnik.' },
+        { name: 'Drewniany taras', desc: 'Taras z dębowych desek nad ścianą z gabionów — stół dla całej ekipy i widok na pergolę oraz góry.' },
+        { name: 'Pergola z grillami', desc: 'Pod masywnym drewnianym dachem: długi stół, murowany blat grillowy i otwarte boki na ogród.' },
+        { name: 'Plac zabaw', desc: 'Most linowy, drabinki i mała ścianka wspinaczkowa w zasięgu wzroku od domu — dzieci mają swój kąt na terenie posesji.' },
+        { name: 'Palenisko wieczorem', desc: 'Po zmroku gabiony i schody podświetlają się same — fotele przy palenisku, a w tle rozświetlony basen.' },
       ],
+      groupsLabel: 'Grupy scen', groupAll: 'Wszystko',
+      groups: { ground: 'Parter', floor1: '1. piętro', floor2: '2. piętro', basement: 'Piwnica', extSummer: 'Na zewnątrz — lato', extWinter: 'Na zewnątrz — zima' },
     },
     gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć', all: 'Wszystko', leto: 'Lato', zima: 'Zima', vecer: 'Wieczór', interier: 'Wnętrze' },
     vylety: {
@@ -1105,24 +1133,54 @@ const T = {
 };
 
 /* ============================ State + helpers ============================ */
-const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, lb: -1, lbList: [], galFilter: 'all', selStart: 0, selEnd: 0, mob: false, calOffset: 0 };
+const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, panoGroup: 'all', lb: -1, lbList: [], galFilter: 'all', selStart: 0, selEnd: 0, mob: false, calOffset: 0 };
 /* Kalendář: okno 2 měsíců lze posouvat 0 .. CAL_MAX_OFFSET (dnešek .. +18 měsíců). */
 const CAL_MAX_OFFSET = 17;
 /* Ceny řídí VR_PRICING (nahoře v souboru). */
 const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
-/* 360° scény jsou SEZÓNNÍ. Zima = původní sada (interiéry + zasněžený pozemek),
-   léto = letní panoramata z Insta360 (celý pozemek za letního podvečera).
-   Pořadí musí přesně odpovídat T[lang].tour.scenes / tour.scenesSummer. */
-/* POZOR: `living` je ve skutečnosti OBÝVACÍ ČÁST APARTMÁ (out_344/IMG…438), ne
-   společná místnost domu; `bed2` je ložnice se zlatou tapetou BEZ potvrzeného
-   čísla pokoje; scéna `bath2` (IMG…421) byla vyřazena — je to táž koupelna
-   Pokoje 3 jako `bath3`, ne koupelna Pokoje 2 (tu ve 360° nemáme).
-   Ověřeno proti majitelově keypano prohlídce (vr-pano-mapovani.md). */
+/* ===================== 360° scény =====================
+   Scény jsou SEZÓNNÍ: zima = celý dům + zasněžený pozemek, léto = pozemek za
+   letního podvečera. Pořadí musí přesně odpovídat T[lang].tour.scenes /
+   tour.scenesSummer a PANO_GROUPS.
+
+   IDENTITA MÍSTNOSTÍ JE OVĚŘENÁ, ne odhadnutá: každé panorama je spárované
+   s majitelovou vlastní keypano prohlídkou (stažené cube-face dlaždice →
+   stejná projekce → shoda tapet, oken, dveří i dekorací), zápis v
+   vr-pano-mapovani.md. Odtud i zařazení do pater (PANO_GROUPS) — je to
+   majitelovo vlastní rozdělení z jeho prohlídky, ne naše domněnka.
+
+   NENASAZENO ZÁMĚRNĚ: ložnice se zlatou tapetou (out_371 / IMG…422) — v
+   majitelově prohlídce nemá protějšek a rozpis „7 ložnic" (4 pokoje + 3 ložnice
+   apartmá) ji nezná; dokud majitel nepotvrdí, co to je, na web nepatří.
+   Panorama pořizujeme 4096×2048 (2:1) — 4096 je strop MAX_TEXTURE_SIZE pro
+   WebGL1 na starších mobilech, výš nejít. */
 const PANO_SETS = {
-  zima: ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds', 'bed2', 'bedr2', 'bath4', 'bath3'],
-  leto: ['s_drive', 's_playground', 's_pool', 's_meadow', 's_deck', 's_firepit', 's_pergola', 's_evening'],
+  zima: ['courtyard', 'hall', 'dining', 'room1', 'bath1', 'room2', 'room3', 'bath3',
+         'corridor', 'room4', 'bath4', 'apt-living', 'apt-kitchen', 'apt-bed', 'apt-attic',
+         'wellness', 'sauna', 'garden'],
+  leto: ['s_arrival', 's_garden', 's_pool', 's_terrace', 's_pergola', 's_playground', 's_firepit'],
 };
+/* Skupina (patro) každé scény — stejné pořadí jako PANO_SETS. Klíče → popisky
+   v T[lang].tour.groups. Menu skupin se skryje, když má sezóna jen jednu. */
+const PANO_GROUPS = {
+  zima: ['extWinter', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
+         'floor1', 'floor1', 'floor1', 'floor1', 'floor1', 'floor1', 'floor2',
+         'basement', 'basement', 'extWinter'],
+  leto: ['extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer'],
+};
+const GROUP_ORDER = ['ground', 'floor1', 'floor2', 'basement', 'extSummer', 'extWinter'];
 function panoFiles() { return PANO_SETS[state.season] || PANO_SETS.leto; }
+function panoGroups() { return PANO_GROUPS[state.season] || PANO_GROUPS.leto; }
+/* Skupiny, které v aktuální sezóně skutečně mají scény (v pořadí GROUP_ORDER). */
+function seasonGroups() { const g = panoGroups(); return GROUP_ORDER.filter((k) => g.indexOf(k) >= 0); }
+/* Indexy scén viditelných v pruhu náhledů podle zvolené skupiny. */
+function visibleScenes() {
+  const g = panoGroups();
+  const all = g.map((_, i) => i);
+  if (state.panoGroup === 'all') return all;
+  const sel = all.filter((i) => g[i] === state.panoGroup);
+  return sel.length ? sel : all;
+}
 function tourScenes() {
   const t = tt();
   const s = state.season === 'zima' ? t.tour.scenes : (t.tour.scenesSummer || t.tour.scenes);
@@ -1130,12 +1188,13 @@ function tourScenes() {
 }
 
 /* Per-pano horizontal start point (fraction 0–1 across the equirect image; 0.5 =
-   image centre). Vision-scored "most attractive view" per scene. Mapped to camera
-   yaw in loadPano() so the viewer first faces the described subject. */
+   image centre). Mapped to camera yaw in loadPano() so the viewer first faces
+   the described subject. */
 const PANO_YAWF = {
-  living: 0.76, kitchen: 0.4, sauna: 0.5, saunahot: 0.9, bed1: 0.48, bed2: 0.72, pool: 0.42, pergola: 0.49, grounds: 0.65,
-  bedr2: 0.5, bath4: 0.5, bath3: 0.55,
-  s_drive: 0.5, s_playground: 0.72, s_pool: 0.32, s_meadow: 0.62, s_deck: 0.12, s_firepit: 0.55, s_pergola: 0.5, s_evening: 0.25,
+  courtyard: 0.72, hall: 0.75, dining: 0.12, room1: 0.25, bath1: 0.88, room2: 0.50, room3: 0.50, bath3: 0.62,
+  corridor: 0.00, room4: 0.50, bath4: 0.22, 'apt-living': 0.50, 'apt-kitchen': 0.75, 'apt-bed': 0.50,
+  'apt-attic': 0.62, wellness: 0.50, sauna: 0.25, garden: 0.25,
+  s_arrival: 0.5, s_garden: 0.75, s_pool: 0.32, s_terrace: 0.12, s_pergola: 0.5, s_playground: 0.72, s_firepit: 0.25,
 };
 
 /* Gallery: curated real photos. c = filter category (leto/zima/vecer/interier).
@@ -1615,35 +1674,35 @@ const guestsIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentCo
    majitelova vlastní keypano prohlídka (vr-pano-mapovani.md), a s majitelovými
    per-pokoj složkami fotek (Villa Rudolf_web size/3_VR_Room 1 … 1_VR_Suite):
      Pokoj 1  = kropenatá tapeta, arkýř se třemi okny     → pano IMG…406
-     Pokoj 2  = šedá tkaná tapeta, stůl s lavicemi        → pano IMG…424 (`bedr2`)
-     Pokoj 3  = zlaté palmové listy, vlastní koupelna     → pano IMG…415 (zatím nenasazeno)
-     Pokoj 4  = mramorová nika mezi dřevěnými sloupy      → pano IMG…432 (`bed1`)
-     Apartmá  = obývák se „stromovými" sloupy + ložnice   → pano out_344 (`living`)
+     Pokoj 2  = šedá tkaná tapeta, stůl s lavicemi        → pano IMG…424 (`room2`)
+     Pokoj 3  = zlaté palmové listy, vlastní koupelna     → pano IMG…415 (`room3`)
+     Pokoj 4  = mramorová nika mezi dřevěnými sloupy      → pano IMG…431 (`room4`)
+     Apartmá  = obývák se „stromovými" sloupy + ložnice   → pano out_344 (`apt-living`)
    Fotky dřív vedené jako „Pokoj 2" jsou ve skutečnosti Pokoj 1 a fotky vedené
    jako „Apartmá" jsou Pokoj 2 — obě sady jsou proto přeznačené.
    Koupelnu Pokoje 2 máme jen jako FOTKU; scéna 421 je koupelna Pokoje 3, takže
    u koupelny Pokoje 2 tlačítko do 360° nesvítí. */
 /* gal = MALÁ GALERIE daného pokoje (majitel: „u každého pokoje máme víc fotek,
    které bysme tam mohli dodat"). První položka je vždy fotka z karty. */
-const IV = '?v=33';   // fotky pokojů změnily obsah při stejných názvech → cache-buster
+const IV = '?v=34';   // fotky pokojů změnily obsah při stejných názvech → cache-buster
 const INTERIOR = [
-  { k: 'kitchen',  img: 'media/sections/int-kitchen.jpg',  pano: 1 },
-  { k: 'suite',    img: 'media/sections/room-suite.jpg' + IV,  pano: 0,   // living = obývací část apartmá
+  { k: 'kitchen',  img: 'media/sections/int-kitchen.jpg',  pano: 2 },   // dining
+  { k: 'suite',    img: 'media/sections/room-suite.jpg' + IV,  pano: 11,  // apt-living
     gal: ['media/sections/room-suite.jpg' + IV, 'media/sections/room-suite-b.jpg' + IV, 'media/sections/room-suite-c.jpg' + IV, 'media/sections/room-suite-d.jpg' + IV] },
-  { k: 'room1',    img: 'media/sections/room-1.jpg' + IV,
+  { k: 'room1',    img: 'media/sections/room-1.jpg' + IV,      pano: 3,
     gal: ['media/sections/room-1.jpg' + IV, 'media/sections/room-1b.jpg' + IV, 'media/sections/room-1c.jpg' + IV] },
-  { k: 'room2',    img: 'media/sections/room-2.jpg' + IV,      pano: 9,   // bedr2 = 424 = Pokoj 2
+  { k: 'room2',    img: 'media/sections/room-2.jpg' + IV,      pano: 5,
     gal: ['media/sections/room-2.jpg' + IV, 'media/sections/room-2b.jpg' + IV, 'media/sections/room-2c.jpg' + IV, 'media/sections/room-2d.jpg' + IV, 'media/sections/bath-room2.jpg'] },
   { k: 'bath2',    img: 'media/sections/bath-room2.jpg' },                // koupelna Pokoje 2 — jen fotka, 360° pro ni nemáme
-  { k: 'room3',    img: 'media/sections/room-3.jpg' + IV,
+  { k: 'room3',    img: 'media/sections/room-3.jpg' + IV,      pano: 6,
     gal: ['media/sections/room-3.jpg' + IV, 'media/sections/room-3b.jpg' + IV, 'media/sections/room-3c.jpg' + IV, 'media/sections/bath-room3.jpg'] },
-  { k: 'bath3',    img: 'media/sections/bath-room3.jpg',   pano: 11 },    // koupelna Pokoje 3
-  { k: 'room4',    img: 'media/sections/room-4.jpg' + IV,      pano: 4,   // bed1 = 432 = Pokoj 4
+  { k: 'bath3',    img: 'media/sections/bath-room3.jpg',   pano: 7 },     // koupelna Pokoje 3
+  { k: 'room4',    img: 'media/sections/room-4.jpg' + IV,      pano: 9,
     gal: ['media/sections/room-4.jpg' + IV, 'media/sections/room-4b.jpg' + IV, 'media/sections/room-4c.jpg' + IV, 'media/sections/bath-room4.jpg'] },
   { k: 'bath4',    img: 'media/sections/bath-room4.jpg',   pano: 10 },    // koupelna Pokoje 4
-  { k: 'sauna',    img: 'media/sections/int-sauna.jpg',    pano: 3 },
-  { k: 'wellness', img: 'media/sections/int-wellness.jpg', pano: 2 },
-  { k: 'bath',     img: 'media/sections/int-bath.jpg' },
+  { k: 'sauna',    img: 'media/sections/int-sauna.jpg',    pano: 16 },
+  { k: 'wellness', img: 'media/sections/int-wellness.jpg', pano: 15 },
+  { k: 'bath',     img: 'media/sections/int-bath.jpg',     pano: 15 },   // sprcha je součástí scény wellness
 ];
 /* Štítek místnosti přímo NA fotce (karta i lightbox). Majitel: „bylo by dobrý,
    kdyby u každý na každý fotce bylo přímo označení, co to je za pokoj. Asi by to
@@ -1833,11 +1892,14 @@ function setupCarousel(track) {
 }
 
 /* Skok z lightboxu do 360°: interiérové scény žijí jen v ZIMNÍ sadě, takže
-   přepneme na zimu, nastavíme scénu, doskrolujeme k prohlídce a načteme pano. */
+   přepneme na zimu, zrušíme filtr skupin (ať je scéna vidět i v pruhu),
+   nastavíme scénu, doskrolujeme k prohlídce a načteme pano. */
 function openTourScene(idx) {
+  panoSkipIntro = true;      // cílený skok na scénu → žádný nájezd
   if (state.season !== 'zima') setSeason('zima');
+  state.panoGroup = 'all';
   state.scene = idx;
-  renderScene(); renderThumbs();
+  renderPanoGroups(); renderScene(); renderThumbs();
   ensureThree(initPano);
   const jump = () => { if (loadPano) loadPano(idx); };
   jump(); setTimeout(jump, 380);
@@ -1845,14 +1907,82 @@ function openTourScene(idx) {
   if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+/* Přepnutí scény z pruhu náhledů i z menu skupin. */
+function goScene(i) {
+  panoLastInteract = Date.now();
+  if (state.scene === i) return;
+  state.scene = i; renderScene();
+  if (loadPano) loadPano(i);
+}
+
+/* ===================== Menu skupin (pater) =====================
+   Majitel chtěl „malý menu jako na keypanu — exteriéry, interiéry, první patro,
+   druhý patro". Skupiny jsou majitelovo VLASTNÍ rozdělení z jeho prohlídky
+   (PANO_GROUPS). Je to ovládání JEDNÉ sekce, ne druhá úroveň záložek: chipy
+   jen filtrují pruh náhledů a skočí na první scénu skupiny. Skupiny bez scén
+   v aktuální sezóně se nezobrazí; když sezóna vystačí s jednou skupinou
+   (léto = jen exteriéry), menu se skryje celé. */
+function renderPanoGroups() {
+  const host = $('#vr-pano-groups'); if (!host) return;
+  const t = tt();
+  const keys = seasonGroups();
+  host.innerHTML = '';
+  if (keys.length < 2) { host.hidden = true; return; }
+  host.hidden = false;
+  host.setAttribute('aria-label', (t.tour && t.tour.groupsLabel) || '');
+  const mk = (key, label) => el('button', {
+    class: 'vrp-group', type: 'button', 'data-group': key,
+    'data-active': state.panoGroup === key ? 'true' : 'false',
+    'aria-pressed': state.panoGroup === key ? 'true' : 'false',
+    text: label,
+    onclick: () => setPanoGroup(key),
+  });
+  host.appendChild(mk('all', (t.tour && t.tour.groupAll) || 'Vše'));
+  keys.forEach((k) => host.appendChild(mk(k, (t.tour && t.tour.groups && t.tour.groups[k]) || k)));
+}
+
+function setPanoGroup(key) {
+  panoLastInteract = Date.now();
+  state.panoGroup = key;
+  $all('#vr-pano-groups .vrp-group').forEach((b) => {
+    const on = b.getAttribute('data-group') === key;
+    b.setAttribute('data-active', on ? 'true' : 'false');
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  const vis = visibleScenes();
+  renderThumbs();
+  if (vis.indexOf(state.scene) < 0) goScene(vis[0]);
+  else renderScene();
+  const strip = $('#vr-thumbs'); if (strip) strip.scrollLeft = 0;
+}
+
+/* Klávesnice v menu skupin: šipky posouvají fokus po chipech (Enter/Space
+   aktivuje nativně, chip je <button>). */
+function setupPanoGroupKeys() {
+  const host = $('#vr-pano-groups'); if (!host) return;
+  host.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Home' && e.key !== 'End') return;
+    const bs = $all('.vrp-group', host); if (!bs.length) return;
+    let i = bs.indexOf(document.activeElement); if (i < 0) i = 0;
+    if (e.key === 'ArrowLeft') i = (i - 1 + bs.length) % bs.length;
+    else if (e.key === 'ArrowRight') i = (i + 1) % bs.length;
+    else if (e.key === 'Home') i = 0;
+    else i = bs.length - 1;
+    bs[i].focus(); e.preventDefault();
+  });
+}
+
 function renderThumbs() {
   const host = $('#vr-thumbs'); if (!host) return; host.innerHTML = '';
   const files = panoFiles();
-  tourScenes().forEach((s, i) => {
+  const list = tourScenes();
+  visibleScenes().forEach((i) => {
+    const s = list[i]; if (!s) return;
     const b = el('button', {
-      class: 'vrp-thumb', type: 'button', 'data-active': i === state.scene ? 'true' : 'false',
-      onclick: () => { panoLastInteract = Date.now(); if (state.scene !== i) { state.scene = i; renderScene(); if (loadPano) loadPano(i); } },
-    }, [el('img', { src: 'media/pano/' + files[i] + '_t.jpg', alt: s.name, loading: 'lazy', decoding: 'async', width: '320', height: '160' }), el('span', { text: s.name })]);
+      class: 'vrp-thumb', type: 'button', 'data-idx': String(i),
+      'data-active': i === state.scene ? 'true' : 'false',
+      onclick: () => goScene(i),
+    }, [el('img', { src: 'media/pano/' + files[i] + '_t.jpg', alt: s.name, loading: 'lazy', decoding: 'async', width: '512', height: '256' }), el('span', { text: s.name })]);
     host.appendChild(b);
   });
 }
@@ -1865,9 +1995,12 @@ function renderScene() {
   $('#vr-scene-name').textContent = s.name;
   $('#vr-scene-desc').textContent = s.desc;
   const pad = (n) => (n < 10 ? '0' + n : '' + n);
-  $('#vr-scene-idx').textContent = pad(sc + 1);
-  $('#vr-scene-count').textContent = pad(panoFiles().length);
-  $all('#vr-thumbs .vrp-thumb').forEach((b, i) => b.setAttribute('data-active', i === sc ? 'true' : 'false'));
+  /* Číslování odpovídá tomu, co je vidět v pruhu (tj. i zvolené skupině). */
+  const vis = visibleScenes();
+  const at = vis.indexOf(sc);
+  $('#vr-scene-idx').textContent = pad((at < 0 ? 0 : at) + 1);
+  $('#vr-scene-count').textContent = pad(vis.length);
+  $all('#vr-thumbs .vrp-thumb').forEach((b) => b.setAttribute('data-active', +b.getAttribute('data-idx') === sc ? 'true' : 'false'));
 }
 
 /* Sekce Sezóny je teď „Léto vs. Zima" srovnání — obě karty vždy plně viditelné,
@@ -2610,7 +2743,7 @@ function setLang(lang) {
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); setTexts();
-  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
+  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   renderSeasonsCards(); renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
@@ -2640,7 +2773,8 @@ function setSeason(season) {
   // (náhledy, popisky, čítač) a nahraj první scénu; stará textura se uvolní
   // uvnitř loadPano() přes tex.dispose().
   state.scene = 0;
-  renderThumbs(); renderScene();
+  state.panoGroup = 'all';   // filtr skupin patří k sadě scén, se sezónou se resetuje
+  renderPanoGroups(); renderThumbs(); renderScene();
   if (loadPano) loadPano(0);
   // Season → default gallery filter (Zima preselects the winter set; user can
   // still switch). If the lightbox is open, keep it in sync with the new filter.
@@ -2688,6 +2822,9 @@ function lbNav(dir) { const n = (state.lbList || []).length; if (!n) return; lbS
 
 /* ============================ 360 panorama (three.js, lazy) ============================ */
 let panoInited = false, loadPano = null, panoLastInteract = 0, threeInjected = false;
+/* Když host skočí do prohlídky přes „Prohlédnout ve 360°" z lightboxu, chce
+   vidět konkrétní pokoj — nájezd „malé planety" se v tom případě přeskočí. */
+let panoSkipIntro = false;
 function ensureThree(cb) {
   if (typeof THREE !== 'undefined') { cb(); return; }
   if (!threeInjected) {
@@ -2738,6 +2875,47 @@ function initPano() {
   scene.add(new THREE.Mesh(geo, mat));
 
   let yaw = 0, userYaw = 0, pitch = 0, idle = 0, dragging = false, swayBase = 0;
+
+  /* ---- „Little planet" nájezd při prvním zobrazení prohlídky ----
+     Majitel: „docela dobře vypadá ten nájezd shora do toho prvního, jako že tě
+     to do toho vtáhne." Kamera startuje s velmi širokým svislým FOV a míří
+     kolmo dolů (efekt malé planety) a během ~1,8 s se srovná k horizontu na
+     provozní FOV. Pozn.: krpano používá skutečnou stereografickou projekci,
+     tohle je aproximace přes vysoké FOV rektilineární kamery — na 2 s intro
+     stačí, pravá „malá planeta" by chtěla vlastní shader.
+     Hraje se JEN JEDNOU, při prvním skutečném zobrazení sekce (ne při přepínání
+     scén ani při skoku z lightboxu — tam by to otravovalo). prefers-reduced-
+     motion ho vypíná úplně. */
+  const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const INTRO_MS = 1800, INTRO_FOV = 160, INTRO_PITCH = -1.45;   // rad ≈ -83° (skoro kolmo dolů)
+  let introDone = REDUCED, introArmed = false, texReady = false, introT0 = 0;
+  const introRunning = () => !introDone && !panoSkipIntro && introArmed && texReady;
+  const endIntro = () => {
+    if (introDone) return;
+    introDone = true; introT0 = 0;
+    camera.fov = fovFor(camera.aspect); camera.updateProjectionMatrix();
+    pitch = 0;   // camera.rotation.x dojede plynule ve smyčce (žádný skok)
+  };
+  /* Sáhne-li host na scénu během nájezdu, nájezd se nezasekne ani neskočí —
+     jen se doběhne zkráceně (~260 ms) a ovládání převezme host. */
+  const cancelIntro = () => {
+    if (introDone) return;
+    if (!introT0) { endIntro(); return; }
+    const now = performance.now();
+    const rem = INTRO_MS - (now - introT0);
+    if (rem > 260) introT0 = now - (INTRO_MS - 260);
+  };
+  /* Sekce se inicializuje s předstihem (rootMargin), takže animaci odpálíme až
+     když je scéna opravdu v obraze — jinak by proběhla mimo výřez. */
+  if (!introDone && 'IntersectionObserver' in window) {
+    try {
+      const io2 = new IntersectionObserver((ents) => {
+        ents.forEach((en) => { if (en.isIntersecting) { introArmed = true; io2.disconnect(); } });
+      }, { threshold: 0.35 });
+      io2.observe(stage);
+    } catch (e) { introArmed = true; }
+  } else { introArmed = true; }
+
   const loader = new THREE.TextureLoader();
   loadPano = (i) => {
     const files = panoFiles();
@@ -2763,12 +2941,13 @@ function initPano() {
       try { tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy() || 1); } catch (x) {}
       const old = mat.map; mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true; if (old) old.dispose();
       if (spin) spin.style.opacity = '0'; mount.style.opacity = '1';
+      texReady = true;      // nájezd „malé planety" má na čem proběhnout
     }, undefined, () => { if (spin) spin.style.opacity = '0'; mount.style.opacity = '1'; });
   };
   loadPano(state.scene || 0);
 
   let dx = 0, dy = 0, bY = 0, bP = 0;
-  const press = (e) => { dragging = true; idle = 0; panoLastInteract = Date.now(); const p = e.touches ? e.touches[0] : e; dx = p.clientX; dy = p.clientY; bY = userYaw; bP = pitch; const d = $('#vrpDrag'); if (d) d.style.opacity = '0'; };
+  const press = (e) => { cancelIntro(); dragging = true; idle = 0; panoLastInteract = Date.now(); const p = e.touches ? e.touches[0] : e; dx = p.clientX; dy = p.clientY; bY = userYaw; bP = pitch; const d = $('#vrpDrag'); if (d) d.style.opacity = '0'; };
   const moveE = (e) => { if (!dragging) return; const p = e.touches ? e.touches[0] : e; userYaw = bY + (p.clientX - dx) * 0.005; pitch = Math.max(-0.55, Math.min(0.55, bP + (p.clientY - dy) * 0.004)); };
   const release = () => { dragging = false; idle = 0; swayBase = userYaw; };
   mount.addEventListener('mousedown', press);
@@ -2786,7 +2965,7 @@ function initPano() {
     if (!w || !h) return;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     camera.aspect = w / h;
-    camera.fov = fovFor(camera.aspect);   // vyšší/nižší výřez → přepočítaný svislý záběr
+    if (!introRunning()) camera.fov = fovFor(camera.aspect);   // během nájezdu FOV řídí animace
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
   };
@@ -2799,13 +2978,30 @@ function initPano() {
   setInterval(() => {
     if (dragging) return;
     if (Date.now() - panoLastInteract < 12000) return;
-    const n = ((state.scene || 0) + 1) % panoFiles().length;
+    const vis = visibleScenes();                       // střídají se jen scény vybrané skupiny
+    const at = vis.indexOf(state.scene || 0);
+    const n = vis[(at < 0 ? 0 : at + 1) % vis.length];
     state.scene = n; renderScene(); loadPano(n);
   }, 9500);
 
+  const easeInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const loop = () => {
     requestAnimationFrame(loop);
     try {
+      if (introRunning()) {
+        if (!introT0) introT0 = performance.now();
+        const k = Math.min(1, (performance.now() - introT0) / INTRO_MS);
+        const e = easeInOut(k);
+        const fovEnd = fovFor(camera.aspect);
+        camera.fov = INTRO_FOV + (fovEnd - INTRO_FOV) * e;
+        camera.updateProjectionMatrix();
+        yaw = userYaw;                       // vodorovně už na cílovém pohledu
+        camera.rotation.y = yaw;
+        camera.rotation.x = INTRO_PITCH * (1 - e);
+        renderer.render(scene, camera);
+        if (k >= 1) endIntro();              // dál pokračuje běžné ovládání, bez skoku
+        return;
+      }
       if (!dragging) { idle++; if (idle > 150) { const tt2 = performance.now() / 1000; const target = swayBase + Math.sin(tt2 * 0.12) * 0.3; userYaw += (target - userYaw) * 0.008; } }
       yaw += (userYaw - yaw) * 0.08;
       camera.rotation.y = yaw;
@@ -2971,7 +3167,8 @@ function init() {
   applyThemeColor();
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); setTexts();
-  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderThumbs(); renderScene();
+  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  setupPanoGroupKeys();
   renderSeasonsCards(); renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyHeroSeason();
   renderDirectBook(); renderTeaser(); renderFooterContact();
