@@ -10,6 +10,7 @@
   var T = {
     cs: {
       nav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
+      map: { eyebrow: 'Kde nás najdete', title: 'Jak blízko to všechno máme', lead: 'Villa Rudolf leží ve Svobodě nad Úpou, kousek od Janských Lázní. Nejlepší cíle Krkonoš i skalní města máte na dosah — a velká města jsou jen pár hodin cesty.', polsko: 'POLSKO', cesko: 'ČESKO', compass: 'S', villaSub: 'Svoboda n. Úpou', praha: 'Praha', wroclaw: 'Vratislav', dresden: 'Drážďany', dresdenT: '~2,5 h', factSnezka: '20 min autem', factSkibus: '200 m od brány' },
       hero: {
         eyebrow: 'Výlety · Krkonoše',
         h1: 'Výlety z Villa Rudolf: co podniknete v Krkonoších',
@@ -44,6 +45,7 @@
 
     en: {
       nav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
+      map: { eyebrow: 'Where we are', title: 'How close everything really is', lead: 'Villa Rudolf sits in Svoboda nad Úpou, just below Janské Lázně. The best of the Krkonoše mountains and the sandstone rock towns are within easy reach — and the big cities just a couple of hours away.', polsko: 'POLAND', cesko: 'CZECHIA', compass: 'N', villaSub: 'Svoboda n. Úpou', praha: 'Prague', wroclaw: 'Wrocław', dresden: 'Dresden', dresdenT: '~2.5 h', factSnezka: '20 min by car', factSkibus: '200 m from the gate' },
       hero: {
         eyebrow: 'Trips · Krkonoše',
         h1: 'Trips from Villa Rudolf: what to do in the Krkonoše mountains',
@@ -78,6 +80,7 @@
 
     de: {
       nav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
+      map: { eyebrow: 'Wo Sie uns finden', title: 'Wie nah alles liegt', lead: 'Villa Rudolf liegt in Svoboda nad Úpou, gleich bei Janské Lázně. Die schönsten Ziele des Riesengebirges und die Felsenstädte sind schnell erreichbar — und die großen Städte nur ein paar Stunden entfernt.', polsko: 'POLEN', cesko: 'TSCHECHIEN', compass: 'N', villaSub: 'Svoboda n. Úpou', praha: 'Prag', wroclaw: 'Breslau', dresden: 'Dresden', dresdenT: '~2,5 h', factSnezka: '20 Min. mit dem Auto', factSkibus: '200 m vom Tor' },
       hero: {
         eyebrow: 'Ausflüge · Riesengebirge',
         h1: 'Ausflüge ab Villa Rudolf: was Sie im Riesengebirge unternehmen',
@@ -112,6 +115,7 @@
 
     pl: {
       nav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
+      map: { eyebrow: 'Gdzie nas znajdziecie', title: 'Jak blisko jest wszystko', lead: 'Villa Rudolf leży w Svobodzie nad Úpou, tuż obok Janských Lázní. Najlepsze cele Karkonoszy i skalne miasta macie w zasięgu ręki — a duże miasta tylko kilka godzin drogi.', polsko: 'POLSKA', cesko: 'CZECHY', compass: 'Pn', villaSub: 'Svoboda n. Úpou', praha: 'Praga', wroclaw: 'Wrocław', dresden: 'Drezno', dresdenT: '~2,5 h', factSnezka: '20 min autem', factSkibus: '200 m od bramy' },
       hero: {
         eyebrow: 'Wycieczki · Karkonosze',
         h1: 'Wycieczki z Villa Rudolf: co robić w Karkonoszach',

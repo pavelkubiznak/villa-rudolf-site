@@ -27,7 +27,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="../media/trips/snezka-cablecar.jpg">
 <link rel="stylesheet" href="../assets/site.css?v=22">
-<link rel="stylesheet" href="vylety.css?v=22">
+<link rel="stylesheet" href="vylety.css?v=23">
 </head>
 <body>
 
@@ -131,6 +131,142 @@
   </section>
 
   <main class="vyl-main">
+
+    <!-- ===================== MAPA — kde nás najdete ===================== -->
+    <!-- Statická inline SVG mapa (žádné mapové API, funguje bez JS). Body jsou
+         promítnuté z reálných coords (equirektangulární projekce se škálou
+         cos(lat), vila ≈ 50.6255 N / 15.8136 E) — sedí geograficky. Barvy dědí
+         sezónní --vr-map-* z site.css (léto = tmavý papír, zima = zasněžený). -->
+    <section class="vyl-mapsec" aria-labelledby="vyl-map-title">
+      <div class="vr-wrap">
+        <div class="vyl-head vr-reveal">
+          <span class="vr-eyebrow" data-t="map.eyebrow">Kde nás najdete</span>
+          <h2 class="vr-h2" id="vyl-map-title" data-t="map.title">Jak blízko to všechno máme</h2>
+          <p class="vyl-note" data-t="map.lead">Villa Rudolf leží ve Svobodě nad Úpou, kousek od Janských Lázní. Nejlepší cíle Krkonoš i skalní města máte na dosah — a velká města jsou jen pár hodin cesty.</p>
+        </div>
+
+        <figure class="vyl-mapfig vr-reveal">
+          <div class="vyl-mapscroll">
+            <svg class="vyl-map" viewBox="0 0 760 560" role="img" aria-labelledby="vyl-map-title" preserveAspectRatio="xMidYMid meet">
+              <rect class="m-paper" x="6" y="6" width="748" height="548" rx="14"/>
+              <rect class="m-frame" x="6.5" y="6.5" width="747" height="547" rx="13.5"/>
+
+              <!-- jemné hřebeny (Krkonoše) -->
+              <polyline class="m-ridge" points="150,178 214,150 262,170 312,142 356,166 404,150"/>
+              <polyline class="m-ridge" points="180,196 232,176 286,192 330,172 386,190"/>
+
+              <!-- Hranice s Polskem (běží po hřebeni Krkonoš) -->
+              <polyline class="m-border" points="180.7,120 247.1,135 313.6,153.7 340.5,182.9 389.5,202.3 446.4,217.2 498.6,235.9 579.3,262.1"/>
+              <text class="m-country" x="470" y="112" text-anchor="middle" data-t="map.polsko">POLSKO</text>
+              <text class="m-country" x="212" y="360" text-anchor="middle" data-t="map.cesko">ČESKO</text>
+
+              <!-- Spojnice vila → cíle (jak daleko) -->
+              <g class="m-links">
+                <line x1="377" y1="265.5" x2="342" y2="182.9"/>
+                <line x1="377" y1="265.5" x2="347.9" y2="247.9"/>
+                <line x1="377" y1="265.5" x2="194.7" y2="156.7"/>
+                <line x1="377" y1="265.5" x2="280.1" y2="264.8"/>
+                <line x1="377" y1="265.5" x2="424" y2="310.4"/>
+                <line x1="377" y1="265.5" x2="522.8" y2="273.9"/>
+                <line x1="377" y1="265.5" x2="374.3" y2="410"/>
+                <line x1="377" y1="265.5" x2="349" y2="152.5"/>
+              </g>
+
+              <!-- Cíle -->
+              <g class="m-target">
+                <circle cx="349" cy="152.5" r="4.2"/>
+                <text class="m-place" x="360" y="150" text-anchor="start">Karpacz (PL)</text>
+                <text class="m-detail" x="360" y="164" text-anchor="start">45 min</text>
+              </g>
+              <g class="m-target">
+                <circle cx="342" cy="182.9" r="4.6"/>
+                <text class="m-place" x="331" y="180" text-anchor="end">Sněžka</text>
+                <text class="m-detail" x="331" y="194" text-anchor="end">20 min</text>
+              </g>
+              <g class="m-target">
+                <circle cx="347.9" cy="247.9" r="4.2"/>
+                <text class="m-place" x="337" y="245" text-anchor="end">Černá hora</text>
+                <text class="m-detail" x="337" y="259" text-anchor="end">15 min · skibus</text>
+              </g>
+              <g class="m-target">
+                <circle cx="194.7" cy="156.7" r="4.2"/>
+                <text class="m-place" x="206" y="154" text-anchor="start">Harrachov</text>
+                <text class="m-detail" x="206" y="168" text-anchor="start">50 min</text>
+              </g>
+              <g class="m-target">
+                <circle cx="280.1" cy="264.8" r="4.2"/>
+                <text class="m-place" x="280" y="284" text-anchor="middle">Vrchlabí</text>
+                <text class="m-detail" x="280" y="298" text-anchor="middle">25 min</text>
+              </g>
+              <g class="m-target">
+                <circle cx="424" cy="310.4" r="4.2"/>
+                <text class="m-place" x="435" y="308" text-anchor="start">Trutnov</text>
+                <text class="m-detail" x="435" y="322" text-anchor="start">12 min</text>
+              </g>
+              <g class="m-target">
+                <circle cx="522.8" cy="273.9" r="4.2"/>
+                <text class="m-place" x="534" y="271" text-anchor="start">Adršpach</text>
+                <text class="m-detail" x="534" y="285" text-anchor="start">45 min</text>
+              </g>
+              <g class="m-target">
+                <circle cx="374.3" cy="410" r="4.2"/>
+                <text class="m-place" x="374" y="429" text-anchor="middle">Safari Dvůr Králové</text>
+                <text class="m-detail" x="374" y="443" text-anchor="middle">30 min</text>
+              </g>
+
+              <!-- Vila -->
+              <g class="m-villa">
+                <circle class="m-villa-pulse" cx="377" cy="265.5" r="10"/>
+                <circle class="m-villa-ring" cx="377" cy="265.5" r="9"/>
+                <circle class="m-villa-dot" cx="377" cy="265.5" r="5"/>
+                <text class="m-villa-name" x="392" y="262" text-anchor="start">Villa Rudolf</text>
+                <text class="m-villa-sub" x="392" y="277" text-anchor="start" data-t="map.villaSub">Svoboda n. Úpou</text>
+              </g>
+
+              <!-- Směry na velká města (orientačně, ne v měřítku) -->
+              <g class="m-dir">
+                <g class="m-arrow" transform="translate(60,96) rotate(-135)"><path d="M-2,-6 L11,0 L-2,6 Z"/></g>
+                <text class="m-city" x="78" y="92" text-anchor="start" data-t="map.dresden">Drážďany</text>
+                <text class="m-cityT" x="78" y="107" text-anchor="start" data-t="map.dresdenT">~2,5 h</text>
+              </g>
+              <g class="m-dir">
+                <g class="m-arrow" transform="translate(700,98) rotate(-45)"><path d="M-2,-6 L11,0 L-2,6 Z"/></g>
+                <text class="m-city" x="682" y="94" text-anchor="end" data-t="map.wroclaw">Vratislav</text>
+                <text class="m-cityT" x="682" y="109" text-anchor="end">~2 h</text>
+              </g>
+              <g class="m-dir">
+                <g class="m-arrow" transform="translate(60,470) rotate(135)"><path d="M-2,-6 L11,0 L-2,6 Z"/></g>
+                <text class="m-city" x="78" y="464" text-anchor="start" data-t="map.praha">Praha</text>
+                <text class="m-cityT" x="78" y="479" text-anchor="start">~2 h</text>
+              </g>
+
+              <!-- Měřítko -->
+              <g class="m-scale" transform="translate(150,516)">
+                <line x1="0" y1="0" x2="134.5" y2="0"/>
+                <line x1="0" y1="-4" x2="0" y2="4"/>
+                <line x1="67.25" y1="-3" x2="67.25" y2="3"/>
+                <line x1="134.5" y1="-4" x2="134.5" y2="4"/>
+                <text x="67.25" y="-8" text-anchor="middle">20 km</text>
+              </g>
+
+              <!-- Kompas -->
+              <g class="m-compass" transform="translate(700,502)">
+                <circle r="18" fill="none"/>
+                <path class="m-needle" d="M0,-13 L4.5,3 L0,-1.5 L-4.5,3 Z"/>
+                <text class="m-north" y="-22" text-anchor="middle" data-t="map.compass">S</text>
+              </g>
+            </svg>
+          </div>
+
+          <figcaption class="vyl-mapfacts">
+            <span class="vyl-mapfact"><b data-t="map.praha">Praha</b><i>~2 h</i></span>
+            <span class="vyl-mapfact"><b data-t="map.wroclaw">Vratislav</b><i>~2 h</i></span>
+            <span class="vyl-mapfact"><b>Sněžka</b><i data-t="map.factSnezka">20 min autem</i></span>
+            <span class="vyl-mapfact"><b>Skibus</b><i data-t="map.factSkibus">200 m od brány</i></span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
 
     <!-- ===================== LÉTO ===================== -->
     <section class="vyl-sec vyl-season leto" aria-label="Letní výlety">
@@ -388,7 +524,7 @@
   <a class="vr-stickycta" id="vr-stickycta" href="../#rezervace" data-langlink="../#rezervace" data-t="nav.cta">Rezervovat termín</a>
 
 </div>
-<script src="vylety.js?v=22" defer></script>
+<script src="vylety.js?v=23" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>
