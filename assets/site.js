@@ -170,7 +170,7 @@ const T = {
         { name: 'Kuchyně a stůl pro celou skupinu', desc: 'Plně vybavená kuchyně a velký dřevěný stůl, u kterého se sejdete všichni najednou.' },
         { name: 'Společenská místnost v podkroví', desc: 'Dlouhá sedací souprava pod starým trámem a velký stůl u okna — místo pro večery uvnitř.' },
         { name: 'Kulečník', desc: 'Kulečníkový stůl v apartmá Suite — na deštivé odpoledne i na turnaj po večeři.' },
-        { name: 'Lyžárna a botník', desc: 'Vestavěná lyžárna s policemi na boty — vybavení nemusí do pokojů.' },
+        { name: 'Lyžárna', desc: 'Samostatná místnost jen na lyže a boty — stojany na vybavení a omyvatelná podlaha. Nic se netahá do pokojů.' },
       ],
     },
     bedrooms: {
@@ -418,7 +418,7 @@ const T = {
         { name: 'Kitchen and a table for everyone', desc: 'A fully equipped kitchen and a large wooden table that seats the whole group at once.' },
         { name: 'Attic lounge', desc: 'A long sofa under an old beam and a big table by the window — the place for evenings indoors.' },
         { name: 'Billiards', desc: 'A billiard table in the Suite apartment — for a rainy afternoon or a tournament after dinner.' },
-        { name: 'Ski and boot room', desc: 'A built-in ski room with shelves for boots — gear never has to go up to the bedrooms.' },
+        { name: 'Ski room', desc: 'A separate room just for skis and boots — racks for your gear and a washable floor. Nothing has to go up to the bedrooms.' },
       ],
     },
     bedrooms: {
@@ -666,7 +666,7 @@ const T = {
         { name: 'Küche und ein Tisch für alle', desc: 'Eine voll ausgestattete Küche und ein großer Holztisch, an dem die ganze Gruppe auf einmal Platz findet.' },
         { name: 'Aufenthaltsraum im Dachgeschoss', desc: 'Eine lange Sitzgruppe unter einem alten Balken und ein großer Tisch am Fenster — der Ort für Abende drinnen.' },
         { name: 'Billard', desc: 'Ein Billardtisch im Suite-Apartment — für einen Regennachmittag oder ein Turnier nach dem Essen.' },
-        { name: 'Ski- und Schuhraum', desc: 'Ein eingebauter Skiraum mit Regalen für die Schuhe — die Ausrüstung muss nicht in die Zimmer.' },
+        { name: 'Skiraum', desc: 'Ein eigener Raum nur für Ski und Schuhe — Ständer für die Ausrüstung und abwaschbarer Boden. Nichts muss in die Zimmer.' },
       ],
     },
     bedrooms: {
@@ -914,7 +914,7 @@ const T = {
         { name: 'Kuchnia i stół dla całej grupy', desc: 'W pełni wyposażona kuchnia i duży drewniany stół, przy którym siądziecie wszyscy naraz.' },
         { name: 'Salon na poddaszu', desc: 'Długa sofa pod starą belką i duży stół przy oknie — miejsce na wieczory w środku.' },
         { name: 'Bilard', desc: 'Stół bilardowy w apartamencie Suite — na deszczowe popołudnie albo turniej po kolacji.' },
-        { name: 'Narciarnia i szafa na buty', desc: 'Wbudowana narciarnia z półkami na buty — sprzęt nie musi wędrować do pokoi.' },
+        { name: 'Narciarnia', desc: 'Osobne pomieszczenie tylko na narty i buty — stojaki na sprzęt i zmywalna podłoga. Nic nie wędruje do pokoi.' },
       ],
     },
     bedrooms: {
@@ -1572,7 +1572,7 @@ const AMEN_EXTRA_IMAGES = [
   { src: 'media/sections/am-kitchen.jpg', w: 1200, h: 900 },
   { src: 'media/sections/am-lounge.jpg', w: 1600, h: 1000 },
   { src: 'media/sections/am-billiard.jpg', w: 1200, h: 900 },
-  { src: 'media/sections/am-skiroom.jpg', w: 1200, h: 900 },
+  { src: 'media/sections/am-skiroom.jpg', w: 1600, h: 1068 },
 ];
 function renderAmenityExtras() {
   const t = tt();
@@ -1605,16 +1605,27 @@ const guestsIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentCo
    Ložnice/koupelny přiřazené k číslům pokojů ověřeny proti zimním kartám téhož
    náletu (room-2 = tkaná tapeta, room-3 = paví tapeta, room-4 = mramor). Pokoj 1
    a Apartmá nemají v zimní sadě 360° → jen lightbox s fotkou (nikdy „klik a nic"). */
+/* gal = MALÁ GALERIE daného pokoje (majitel: „u každého pokoje máme víc fotek,
+   které bysme tam mohli dodat"). První položka je vždy fotka z karty. Přiřazeno
+   okem proti nasazeným kartám: shodná tapeta, postel, dveře i noční stolek —
+   VÝHRADNĚ z lednové sady 2026, generace interiérů se nemíchá.
+   Pokoj 2 zůstává s jednou fotkou + vlastní koupelnou: jeho ložnice (rohová se
+   třemi okny) je v lednové sadě nafocená jen jednou. */
 const INTERIOR = [
   { k: 'kitchen',  img: 'media/sections/int-kitchen.jpg',  pano: 1 },
   { k: 'lounge',   img: 'media/sections/int-lounge.jpg',   pano: 0 },
-  { k: 'suite',    img: 'media/sections/room-suite.jpg' },
-  { k: 'room1',    img: 'media/sections/room-1.jpg' },
-  { k: 'room2',    img: 'media/sections/room-2.jpg',       pano: 9 },   // bedr2 = ložnice Pokoj 2 (tkaná tapeta, 2 okna)
+  { k: 'suite',    img: 'media/sections/room-suite.jpg',
+    gal: ['media/sections/room-suite.jpg', 'media/sections/room-suite-b.jpg', 'media/sections/room-suite-c.jpg', 'media/sections/room-suite-d.jpg'] },
+  { k: 'room1',    img: 'media/sections/room-1.jpg',
+    gal: ['media/sections/room-1.jpg', 'media/sections/room-1b.jpg'] },
+  { k: 'room2',    img: 'media/sections/room-2.jpg',       pano: 9,    // bedr2 = ložnice Pokoj 2 (tkaná tapeta, 2 okna)
+    gal: ['media/sections/room-2.jpg', 'media/sections/bath-room2.jpg'] },
   { k: 'bath2',    img: 'media/sections/bath-room2.jpg',   pano: 12 },  // koupelna Pokoj 2
-  { k: 'room3',    img: 'media/sections/room-3.jpg',       pano: 8 },   // bed2 = ložnice Pokoj 3 (paví tapeta)
+  { k: 'room3',    img: 'media/sections/room-3.jpg',       pano: 8,    // bed2 = ložnice Pokoj 3 (paví tapeta)
+    gal: ['media/sections/room-3.jpg', 'media/sections/room-3b.jpg', 'media/sections/bath-room3.jpg'] },
   { k: 'bath3',    img: 'media/sections/bath-room3.jpg',   pano: 11 },  // koupelna Pokoj 3
-  { k: 'room4',    img: 'media/sections/room-4.jpg',       pano: 4 },   // bed1 = ložnice Pokoj 4 (mramor, podkroví)
+  { k: 'room4',    img: 'media/sections/room-4.jpg',       pano: 4,    // bed1 = ložnice Pokoj 4 (mramor, podkroví)
+    gal: ['media/sections/room-4.jpg', 'media/sections/room-4b.jpg', 'media/sections/room-4c.jpg', 'media/sections/bath-room4.jpg'] },
   { k: 'bath4',    img: 'media/sections/bath-room4.jpg',   pano: 10 },  // koupelna Pokoj 4
   { k: 'sauna',    img: 'media/sections/int-sauna.jpg',    pano: 3 },
   { k: 'wellness', img: 'media/sections/int-wellness.jpg', pano: 2 },
@@ -1624,6 +1635,18 @@ const zoomIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColo
 const spinIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="10" ry="4.6"></ellipse><path d="M6.5 13.5A6 6 0 0 0 17.5 13.5"></path><path d="M16 10.4 17.7 13l-2.9.5"></path></svg>';
 
 function interiorLbList() { return INTERIOR.map((it) => ({ src: it.img, pano: it.pano })); }
+/* Klik na kartu: má-li prostor víc fotek, otevře se jeho MALÁ GALERIE (šipky
+   i Esc jedou jen po ní). Tlačítko „Prohlédnout ve 360°" visí u všech fotek
+   pokoje, ať nezmizí při prolistování. Karta s jednou fotkou se chová jako dřív
+   — otevře celý interiér, aby šlo listovat dál. */
+function interiorLbFor(idx) {
+  const it = INTERIOR[idx];
+  if (it && it.gal && it.gal.length > 1) {
+    const name = (tt().interior && tt().interior.items && tt().interior.items[it.k]) || '';
+    return { list: it.gal.map((src) => ({ src: src, pano: it.pano, name: name })), start: 0 };
+  }
+  return { list: interiorLbList(), start: idx };
+}
 
 function buildInteriorCard(it, idx) {
   const t = tt();
@@ -1767,7 +1790,8 @@ function setupCarousel(track) {
     }
     if (!card || !track.contains(card)) return;
     if (!kb && moved > 10) { e.preventDefault(); return; }
-    lbOpen(interiorLbList(), +card.getAttribute('data-idx'));
+    const g = interiorLbFor(+card.getAttribute('data-idx'));
+    lbOpen(g.list, g.start);
   });
 }
 
@@ -2596,7 +2620,9 @@ function lbSet(i) {
   }
   state.lb = i;
   const it = list[i] || {};
-  $('#vr-lb-img').src = it.src || '';
+  const im = $('#vr-lb-img');
+  im.src = it.src || '';
+  im.alt = (it.name ? it.name + ' — ' : '') + 'Villa Rudolf';
   $('#vr-lb-count').textContent = (i + 1) + ' / ' + list.length;
   if (b360) {
     if (it.pano != null) {
