@@ -263,8 +263,10 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
    nezakrývá titulek scény ani nápovědu „chyť a otáčej". Pruh náhledů níže do
    spodního fadeu zajíždí (negativní margin). */
 .vrp-stage::before,.vrp-stage::after{content:'';position:absolute;left:0;right:0;z-index:2;pointer-events:none}
-.vrp-stage::before{top:0;height:15%;background:linear-gradient(180deg,var(--vr-bg),transparent)}
-.vrp-stage::after{bottom:0;height:24%;background:linear-gradient(0deg,var(--vr-bg),transparent)}
+/* Fade nahoře i dole ~3× větší (majitel: „ať to plynule prošlo"). Blend do
+   var(--vr-bg) → drží v obou sezónách. Titulek/ovládání (z-index:3) zůstávají nad. */
+.vrp-stage::before{top:0;height:44%;background:linear-gradient(180deg,var(--vr-bg),transparent)}
+.vrp-stage::after{bottom:0;height:58%;background:linear-gradient(0deg,var(--vr-bg),transparent)}
 .vrp-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;transition:opacity 1s ease}
 .vrp-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(6,9,8,.32),transparent 22%,transparent 60%,rgba(6,9,8,.8))}
 .vrp-vig{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(125% 100% at 50% 44%,transparent 56%,rgba(3,6,9,.36) 84%,rgba(3,6,9,.62) 100%)}
@@ -272,8 +274,8 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vrp-drag svg{width:15px;height:15px;opacity:.85}
 /* Titulek scény posunut výš, aby seděl NAD pruhem náhledů (ten teď zajíždí do
    spodního fadeu) a zůstal nad tmavou částí panoramatu i v zimě (světlé pozadí). */
-.vrp-cap{position:absolute;z-index:3;left:clamp(20px,3vw,32px);bottom:clamp(80px,9vh,116px);pointer-events:none}
-.vrp-cap h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.5rem,2.6vw,2.3rem);color:#F7F1E8;margin:0;line-height:1.05;text-shadow:0 2px 24px rgba(0,0,0,.6)}
+.vrp-cap{position:absolute;z-index:3;left:clamp(20px,3vw,32px);bottom:clamp(112px,13vh,168px);pointer-events:none}
+.vrp-cap h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.5rem,2.6vw,2.3rem);color:#F7F1E8;margin:0;line-height:1.05;text-shadow:0 1px 2px rgba(0,0,0,.9),0 2px 26px rgba(0,0,0,.6)}
 .vrp-spin{position:absolute;z-index:4;left:50%;top:50%;width:32px;height:32px;margin:-16px 0 0 -16px;border:2px solid rgba(240,235,225,.22);border-top-color:var(--vr-accent);border-radius:50%;opacity:0;pointer-events:none;transition:opacity .25s;animation:vrpRot .9s linear infinite}
 /* Pruh náhledů „sedí ve fadeu" — negativní margin ho vytáhne do spodního okraje
    stage, z-index ho drží nad panoramatem. */
@@ -924,35 +926,11 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   line-height:1.05;color:var(--vr-accent);font-variant-numeric:tabular-nums;transition:color .6s ease}
 .vr-own-stat .l{display:block;margin-top:8px;font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.5;
   color:var(--vr-text-muted);max-width:24ch;transition:color .6s ease}
-/* rail „Pokoje, které nemají strop" */
-.vr-own-railtitle{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(22px,2vw,28px);
-  color:var(--vr-text-soft);margin:clamp(44px,5vw,68px) 0 18px;transition:color .6s ease}
-.vr-own-rail{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-.vr-own-tile{position:relative;margin:0;aspect-ratio:3/4;border-radius:3px;overflow:hidden;background:#0b0f0d}
-.vr-own-tile img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-.vr-own-tile::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(to top,rgba(6,9,8,.90),rgba(6,9,8,.15) 55%,transparent)}
-.vr-own-tile figcaption{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px}
-.vr-own-tile figcaption b{display:block;font-family:'Archivo',sans-serif;font-weight:600;font-size:15px;color:#F0EBE1}
-.vr-own-tile figcaption span{display:block;margin-top:6px;font-family:'Archivo',sans-serif;font-size:13px;line-height:1.45;
-  color:#C9CEC3;opacity:0;transform:translateY(6px);transition:opacity .25s ease,transform .25s ease}
-.vr-own-tile:hover img{transform:scale(1.05)}
-.vr-own-tile:hover figcaption span,.vr-own-tile:focus-within figcaption span{opacity:1;transform:none}
-@media (hover:none){.vr-own-tile figcaption span{opacity:1;transform:none}}
-.io-ok .vr-own-rail .vr-own-tile{opacity:0;transform:translateY(14px);
-  transition:opacity .35s ease,transform .35s ease;transition-delay:calc(var(--i) * 60ms)}
-.io-ok .vr-own-rail.vr-in .vr-own-tile{opacity:1;transform:none}
+/* Zavírací věta + CTA do 360° (rail „Pokoje bez stropu" na přání majitele odstraněn) */
 .vr-own-foot{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
-  margin-top:clamp(28px,3.5vw,44px);padding-top:22px;border-top:1px solid var(--vr-line)}
+  margin-top:clamp(34px,4.5vw,60px);padding-top:22px;border-top:1px solid var(--vr-line)}
 .vr-own-close{font-family:'Newsreader',serif;font-style:italic;font-weight:300;font-size:clamp(18px,2vw,24px);
   color:var(--vr-text-soft);margin:0;max-width:36ch;transition:color .6s ease}
-@media(max-width:1000px){
-  .vr-own-rail{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;
-    scroll-padding-left:clamp(20px,5vw,64px);-webkit-overflow-scrolling:touch;scrollbar-width:none;
-    -webkit-mask-image:linear-gradient(to right,#000 88%,transparent);mask-image:linear-gradient(to right,#000 88%,transparent)}
-  .vr-own-rail::-webkit-scrollbar{display:none}
-  .vr-own-tile{flex:0 0 min(68vw,260px);scroll-snap-align:start;aspect-ratio:4/5}
-}
 @media(max-width:760px){
   .vr-own-stats{grid-template-columns:repeat(2,1fr);margin-top:24px}
   .vr-own-stat{border-left:0;padding:16px 0}
@@ -1048,7 +1026,6 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
 @media (prefers-reduced-motion:reduce){
   .vr-own-bandimg .vr-seasonimg{transform:none!important;transition:opacity .8s ease}
   .vr-own-rule{width:84px!important;transition:none}
-  .io-ok .vr-own-rail .vr-own-tile{opacity:1!important;transform:none!important;transition:none;transition-delay:0s}
   .vr-map-glow{animation:none;opacity:1}
   .vr-lokmap.vr-in .vr-map-wave{animation:none}
 }

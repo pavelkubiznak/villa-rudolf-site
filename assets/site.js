@@ -147,13 +147,6 @@ const T = {
         { num: '1 skupina', label: 'v areálu je vždycky jen jedna, nikdy dvě najednou' },
         { num: '0', label: 'prostor sdílených s cizími lidmi' },
       ],
-      railTitle: 'Pokoje, které nemají strop',
-      rooms: [
-        { name: 'Bazén pod širým nebem', micro: 'V létě se střecha odsune — plavete pod otevřeným nebem, vyhřívané i za chladných večerů.' },
-        { name: 'Pergola', micro: 'Kryté posezení pro celou partu najednou. Večeře venku, i když prší.' },
-        { name: 'Ohniště s gabionovou stěnou', micro: 'Po setmění se nasvítí samo. Vy jen přiložíte.' },
-        { name: 'Dětské hřiště', micro: 'Na dohled od pergoly, uvnitř plotu. Děti běhají, vy sedíte.' },
-      ],
       close: 'Nikoho tu nepotkáte, pokud jste ho sami nepozvali.',
       cta: 'Projít celý areál ve 360°',
     },
@@ -190,18 +183,18 @@ const T = {
       note: '7 ložnic a 22 lůžek — pohodlné spaní pro celou skupinu i pro rodiny.',
       noBunk: 'Žádné patrové postele — klidnější spaní i pro rodiče s malými dětmi.',
       rooms: [
-        { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi, 2 samostatná lůžka a 1 lůžko s výsuvným druhým lůžkem · vlastní kuchyňka a kulečník' },
-        { name: 'Pokoj 1', cap: '2 hosté', beds: 'Manželská postel' },
-        { name: 'Pokoj 2', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka)' },
-        { name: 'Pokoj 3', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka)' },
-        { name: 'Pokoj 4', cap: '2 hosté', beds: 'Manželská postel' },
+        { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi, 2 samostatná lůžka a 1 lůžko s výsuvným druhým lůžkem · vlastní kuchyňka a kulečník · koupelna' },
+        { name: 'Pokoj 1', cap: '2 hosté', beds: 'Manželská postel · koupelna' },
+        { name: 'Pokoj 2', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka) · koupelna' },
+        { name: 'Pokoj 3', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka) · koupelna' },
+        { name: 'Pokoj 4', cap: '2 hosté', beds: 'Manželská postel · koupelna' },
       ],
     },
     interior: {
       hint: 'Táhněte myší nebo prstem · klepnutím zvětšíte',
       open360: 'Prohlédnout ve 360°',
       rosterTitle: 'Rozpis lůžek',
-      items: { kitchen: 'Kuchyně a jídelna', lounge: 'Společenská místnost v podkroví', suite: 'Apartmá Suite', room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4', sauna: 'Finská sauna', wellness: 'Wellness a sprcha', bath: 'Koupelna se sprchou' },
+      items: { kitchen: 'Kuchyně a jídelna', lounge: 'Společenská místnost v podkroví', suite: 'Apartmá Suite', room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4', sauna: 'Finská sauna', wellness: 'Wellness a sprcha', bath: 'Koupelna se sprchou', bath2: 'Koupelna – Pokoj 2', bath3: 'Koupelna – Pokoj 3', bath4: 'Koupelna – Pokoj 4' },
     },
     ohniste: {
       eyebrow: 'Nová dominanta', caption: 'Detail ohniště a gabionové stěny',
@@ -279,10 +272,15 @@ const T = {
         { name: 'Kuchyně a jídelna', desc: 'Plně vybavená kuchyně s velkým stolem pro společné snídaně i večeře celé skupiny.' },
         { name: 'Sauna a odpočinek', desc: 'Finská sauna s prosklenými dveřmi a odpočinková lávka hned vedle — privátně jen pro vaši skupinu.' },
         { name: 'Ve finské sauně', desc: 'Uvnitř vyhřáté sauny — teplé dřevo a klid po dni na horách.' },
-        { name: 'Ložnice', desc: 'Jedna z ložnic s kamennou stěnou za čelním panelem — pohodlné spaní pro celou partu.' },
+        { name: 'Ložnice – Pokoj 4', desc: 'Jedna z ložnic s kamennou stěnou za čelním panelem — pohodlné spaní pro celou partu.' },
         { name: 'Zastřešený bazén', desc: 'Vyhřívaný bazén pod zastřešením — tady se koupete i uprostřed zimy.' },
         { name: 'Pergola', desc: 'Mohutná dřevěná pergola s posezením pro celou skupinu — večer se tu sedí, i když venku leží sníh.' },
         { name: 'Zimní pozemek', desc: 'Rozlehlý zasněžený pozemek jen pro vás — od domu k bazénu, hřišti a dál.' },
+        { name: 'Ložnice – Pokoj 3', desc: 'Ložnice s výraznou grafickou tapetou za podsvíceným čelem postele — až čtyři lůžka.' },
+        { name: 'Ložnice – Pokoj 2', desc: 'Rohová ložnice se dvěma okny a tónovanou tapetou za čelem postele — až čtyři lůžka.' },
+        { name: 'Koupelna – Pokoj 4', desc: 'Koupelna Pokoje 4 — zaoblený sprchový kout, umyvadlo a toaleta.' },
+        { name: 'Koupelna – Pokoj 3', desc: 'Koupelna Pokoje 3 — zaoblený sprchový kout, umyvadlo a toaleta.' },
+        { name: 'Koupelna – Pokoj 2', desc: 'Koupelna Pokoje 2 — zaoblený sprchový kout, umyvadlo a toaleta.' },
       ],
       scenesSummer: [
         { name: 'Příjezd k vile', desc: 'Plocha za bránou, kam zaparkuje celá skupina, a dům na konci příjezdovky mezi vzrostlými stromy.' },
@@ -401,13 +399,6 @@ const T = {
         { num: '1 group', label: 'there is only ever one on the estate, never two at once' },
         { num: '0', label: 'spaces shared with strangers' },
       ],
-      railTitle: 'Rooms without a ceiling',
-      rooms: [
-        { name: 'Pool under the open sky', micro: 'In summer the roof slides away — swim under the open sky, heated even on cool evenings.' },
-        { name: 'The pergola', micro: 'Covered seating for the whole group at once. Dinner outdoors, even in the rain.' },
-        { name: 'Fire pit with a gabion wall', micro: 'It lights itself after dark. You only add the wood.' },
-        { name: 'The playground', micro: 'In sight of the pergola, inside the fence. The children run, you sit.' },
-      ],
       close: 'You will not meet anyone here you have not invited yourself.',
       cta: 'Walk the whole estate in 360°',
     },
@@ -444,18 +435,18 @@ const T = {
       note: '7 bedrooms and 22 beds — comfortable sleeping for the whole group and for families.',
       noBunk: 'No bunk beds — a calmer night, ideal for parents with small children too.',
       rooms: [
-        { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds, 2 single beds and 1 bed with a pull-out second bed · own kitchenette and billiard table' },
-        { name: 'Room 1', cap: '2 guests', beds: 'Double bed' },
-        { name: 'Room 2', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed)' },
-        { name: 'Room 3', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed)' },
-        { name: 'Room 4', cap: '2 guests', beds: 'Double bed' },
+        { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds, 2 single beds and 1 bed with a pull-out second bed · own kitchenette and billiard table · bathroom' },
+        { name: 'Room 1', cap: '2 guests', beds: 'Double bed · bathroom' },
+        { name: 'Room 2', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed) · bathroom' },
+        { name: 'Room 3', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed) · bathroom' },
+        { name: 'Room 4', cap: '2 guests', beds: 'Double bed · bathroom' },
       ],
     },
     interior: {
       hint: 'Drag with mouse or finger · tap to enlarge',
       open360: 'View in 360°',
       rosterTitle: 'Bed layout',
-      items: { kitchen: 'Kitchen & dining', lounge: 'Attic lounge', suite: 'Apartment Suite', room1: 'Bedroom 1', room2: 'Bedroom 2', room3: 'Bedroom 3', room4: 'Bedroom 4', sauna: 'Finnish sauna', wellness: 'Wellness & shower', bath: 'Bathroom with shower' },
+      items: { kitchen: 'Kitchen & dining', lounge: 'Attic lounge', suite: 'Apartment Suite', room1: 'Bedroom 1', room2: 'Bedroom 2', room3: 'Bedroom 3', room4: 'Bedroom 4', sauna: 'Finnish sauna', wellness: 'Wellness & shower', bath: 'Bathroom with shower', bath2: 'Bathroom – Room 2', bath3: 'Bathroom – Room 3', bath4: 'Bathroom – Room 4' },
     },
     ohniste: {
       eyebrow: 'New centrepiece', caption: 'Detail of the fire pit and gabion wall',
@@ -533,10 +524,15 @@ const T = {
         { name: 'Kitchen & dining', desc: 'A fully equipped kitchen with a large table for the whole group’s breakfasts and dinners.' },
         { name: 'Sauna & relaxation', desc: 'A Finnish sauna with a glass door and a relaxation bench beside it — privately, just for your group.' },
         { name: 'Inside the sauna', desc: 'Inside the heated sauna — warm wood and quiet after a day in the mountains.' },
-        { name: 'Bedroom', desc: 'One of the bedrooms with a stone accent wall behind the headboard — comfortable sleeping for the whole party.' },
+        { name: 'Bedroom – Room 4', desc: 'One of the bedrooms with a stone accent wall behind the headboard — comfortable sleeping for the whole party.' },
         { name: 'Covered pool', desc: 'A heated pool under cover — you swim here even in midwinter.' },
         { name: 'Pergola', desc: 'A massive timber pergola with seating for the whole group — evenings happen here even with snow on the ground.' },
         { name: 'Winter grounds', desc: 'Sweeping snowbound grounds, all yours — from the house to the pool, the playground and beyond.' },
+        { name: 'Bedroom – Room 3', desc: 'A bedroom with a bold graphic wallpaper behind the backlit headboard — up to four beds.' },
+        { name: 'Bedroom – Room 2', desc: 'A corner bedroom with two windows and a toned wallpaper behind the headboard — up to four beds.' },
+        { name: 'Bathroom – Room 4', desc: 'Room 4’s bathroom — rounded corner shower, basin and toilet.' },
+        { name: 'Bathroom – Room 3', desc: 'Room 3’s bathroom — rounded corner shower, basin and toilet.' },
+        { name: 'Bathroom – Room 2', desc: 'Room 2’s bathroom — rounded corner shower, basin and toilet.' },
       ],
       scenesSummer: [
         { name: 'Arriving at the villa', desc: 'The parking area behind the gate with room for the whole group, and the house at the end of the drive among tall trees.' },
@@ -655,13 +651,6 @@ const T = {
         { num: '1 Gruppe', label: 'auf dem Anwesen ist immer nur eine, nie zwei gleichzeitig' },
         { num: '0', label: 'Räume, die ihr mit Fremden teilt' },
       ],
-      railTitle: 'Räume ohne Decke',
-      rooms: [
-        { name: 'Pool unter freiem Himmel', micro: 'Im Sommer gleitet das Dach weg — Schwimmen unter freiem Himmel, beheizt auch an kühlen Abenden.' },
-        { name: 'Pergola', micro: 'Überdachte Sitzplätze für die ganze Gruppe. Abendessen draußen, auch bei Regen.' },
-        { name: 'Feuerstelle mit Gabionenwand', micro: 'Nach Einbruch der Dunkelheit leuchtet sie von selbst. Ihr legt nur nach.' },
-        { name: 'Spielplatz', micro: 'In Sichtweite der Pergola, innerhalb des Zauns. Die Kinder rennen, ihr sitzt.' },
-      ],
       close: 'Ihr trefft hier niemanden, den ihr nicht selbst eingeladen habt.',
       cta: 'Das ganze Anwesen in 360° durchgehen',
     },
@@ -698,18 +687,18 @@ const T = {
       note: '7 Schlafzimmer und 22 Betten — bequemer Schlaf für die ganze Gruppe und für Familien.',
       noBunk: 'Keine Etagenbetten — ruhigerer Schlaf, auch ideal für Eltern mit kleinen Kindern.',
       rooms: [
-        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küchenzeile und Billardtisch' },
-        { name: 'Zimmer 1', cap: '2 Gäste', beds: 'Doppelbett' },
-        { name: 'Zimmer 2', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett)' },
-        { name: 'Zimmer 3', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett)' },
-        { name: 'Zimmer 4', cap: '2 Gäste', beds: 'Doppelbett' },
+        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küchenzeile und Billardtisch · Bad' },
+        { name: 'Zimmer 1', cap: '2 Gäste', beds: 'Doppelbett · Bad' },
+        { name: 'Zimmer 2', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett) · Bad' },
+        { name: 'Zimmer 3', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett) · Bad' },
+        { name: 'Zimmer 4', cap: '2 Gäste', beds: 'Doppelbett · Bad' },
       ],
     },
     interior: {
       hint: 'Mit Maus oder Finger ziehen · zum Vergrößern tippen',
       open360: 'In 360° ansehen',
       rosterTitle: 'Bettenaufteilung',
-      items: { kitchen: 'Küche & Essbereich', lounge: 'Aufenthaltsraum im Dachgeschoss', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Bad mit Dusche' },
+      items: { kitchen: 'Küche & Essbereich', lounge: 'Aufenthaltsraum im Dachgeschoss', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Bad mit Dusche', bath2: 'Bad – Zimmer 2', bath3: 'Bad – Zimmer 3', bath4: 'Bad – Zimmer 4' },
     },
     ohniste: {
       eyebrow: 'Neues Herzstück', caption: 'Detail der Feuerstelle und Gabionenwand',
@@ -787,10 +776,15 @@ const T = {
         { name: 'Küche & Essbereich', desc: 'Eine voll ausgestattete Küche mit großem Tisch für Frühstück und Abendessen der ganzen Gruppe.' },
         { name: 'Sauna & Ruhe', desc: 'Eine finnische Sauna mit Glastür und Ruhebank daneben — privat, nur für eure Gruppe.' },
         { name: 'In der Sauna', desc: 'Im Inneren der geheizten Sauna — warmes Holz und Ruhe nach einem Tag in den Bergen.' },
-        { name: 'Schlafzimmer', desc: 'Eines der Schlafzimmer mit Steinwand hinter dem Kopfteil — bequemes Schlafen für die ganze Runde.' },
+        { name: 'Schlafzimmer – Zimmer 4', desc: 'Eines der Schlafzimmer mit Steinwand hinter dem Kopfteil — bequemes Schlafen für die ganze Runde.' },
         { name: 'Überdachter Pool', desc: 'Ein beheizter Pool unter Überdachung — hier badet ihr selbst mitten im Winter.' },
         { name: 'Pergola', desc: 'Eine massive Holzpergola mit Sitzplätzen für die ganze Gruppe — Abende finden hier statt, auch wenn Schnee liegt.' },
         { name: 'Wintergrundstück', desc: 'Ein weitläufiges verschneites Grundstück, nur für euch — vom Haus zum Pool, zum Spielplatz und weiter.' },
+        { name: 'Schlafzimmer – Zimmer 3', desc: 'Ein Schlafzimmer mit markanter grafischer Tapete hinter dem beleuchteten Kopfteil — bis zu vier Betten.' },
+        { name: 'Schlafzimmer – Zimmer 2', desc: 'Ein Eckschlafzimmer mit zwei Fenstern und getönter Tapete hinter dem Kopfteil — bis zu vier Betten.' },
+        { name: 'Bad – Zimmer 4', desc: 'Das Bad von Zimmer 4 — abgerundete Eckdusche, Waschbecken und WC.' },
+        { name: 'Bad – Zimmer 3', desc: 'Das Bad von Zimmer 3 — abgerundete Eckdusche, Waschbecken und WC.' },
+        { name: 'Bad – Zimmer 2', desc: 'Das Bad von Zimmer 2 — abgerundete Eckdusche, Waschbecken und WC.' },
       ],
       scenesSummer: [
         { name: 'Ankunft an der Villa', desc: 'Der Stellplatz hinter dem Tor, auf dem die ganze Gruppe parkt, und das Haus am Ende der Zufahrt zwischen hohen Bäumen.' },
@@ -909,13 +903,6 @@ const T = {
         { num: '1 grupa', label: 'na terenie jest zawsze tylko jedna, nigdy dwie naraz' },
         { num: '0', label: 'przestrzeni dzielonych z obcymi' },
       ],
-      railTitle: 'Pokoje bez sufitu',
-      rooms: [
-        { name: 'Basen pod gołym niebem', micro: 'Latem dach się rozsuwa — pływacie pod otwartym niebem, podgrzewany nawet w chłodne wieczory.' },
-        { name: 'Pergola', micro: 'Zadaszone miejsce dla całej ekipy naraz. Kolacja na zewnątrz, nawet gdy pada.' },
-        { name: 'Palenisko ze ścianą gabionową', micro: 'Po zmroku podświetla się samo. Wy tylko dokładacie drewno.' },
-        { name: 'Plac zabaw', micro: 'W zasięgu wzroku od pergoli, wewnątrz ogrodzenia. Dzieci biegają, wy siedzicie.' },
-      ],
       close: 'Nie spotkacie tu nikogo, kogo sami nie zaprosicie.',
       cta: 'Przejść cały teren w 360°',
     },
@@ -952,18 +939,18 @@ const T = {
       note: '7 sypialni i 22 miejsca do spania — wygodny sen dla całej grupy i dla rodzin.',
       noBunk: 'Bez łóżek piętrowych — spokojniejszy sen, także dla rodziców z małymi dziećmi.',
       rooms: [
-        { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi, 2 pojedyncze łóżka i 1 łóżko z wysuwanym drugim · własny aneks kuchenny i stół bilardowy' },
-        { name: 'Pokój 1', cap: '2 gości', beds: 'Łóżko małżeńskie' },
-        { name: 'Pokój 2', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka)' },
-        { name: 'Pokój 3', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka)' },
-        { name: 'Pokój 4', cap: '2 gości', beds: 'Łóżko małżeńskie' },
+        { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi, 2 pojedyncze łóżka i 1 łóżko z wysuwanym drugim · własny aneks kuchenny i stół bilardowy · łazienka' },
+        { name: 'Pokój 1', cap: '2 gości', beds: 'Łóżko małżeńskie · łazienka' },
+        { name: 'Pokój 2', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka) · łazienka' },
+        { name: 'Pokój 3', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka) · łazienka' },
+        { name: 'Pokój 4', cap: '2 gości', beds: 'Łóżko małżeńskie · łazienka' },
       ],
     },
     interior: {
       hint: 'Przeciągnij myszą lub palcem · dotknij, aby powiększyć',
       open360: 'Zobacz w 360°',
       rosterTitle: 'Rozkład łóżek',
-      items: { kitchen: 'Kuchnia i jadalnia', lounge: 'Salon na poddaszu', suite: 'Apartament Suite', room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4', sauna: 'Sauna fińska', wellness: 'Wellness i prysznic', bath: 'Łazienka z prysznicem' },
+      items: { kitchen: 'Kuchnia i jadalnia', lounge: 'Salon na poddaszu', suite: 'Apartament Suite', room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4', sauna: 'Sauna fińska', wellness: 'Wellness i prysznic', bath: 'Łazienka z prysznicem', bath2: 'Łazienka – Pokój 2', bath3: 'Łazienka – Pokój 3', bath4: 'Łazienka – Pokój 4' },
     },
     ohniste: {
       eyebrow: 'Nowy element', caption: 'Detal paleniska i ściany gabionowej',
@@ -1041,10 +1028,15 @@ const T = {
         { name: 'Kuchnia i jadalnia', desc: 'W pełni wyposażona kuchnia z dużym stołem na wspólne śniadania i kolacje całej grupy.' },
         { name: 'Sauna i relaks', desc: 'Fińska sauna ze szklanymi drzwiami i ławką do relaksu obok — prywatnie, tylko dla waszej grupy.' },
         { name: 'We wnętrzu sauny', desc: 'W środku nagrzanej sauny — ciepłe drewno i spokój po dniu w górach.' },
-        { name: 'Sypialnia', desc: 'Jedna z sypialni z kamienną ścianą za zagłówkiem — wygodny sen dla całej ekipy.' },
+        { name: 'Sypialnia – Pokój 4', desc: 'Jedna z sypialni z kamienną ścianą za zagłówkiem — wygodny sen dla całej ekipy.' },
         { name: 'Zadaszony basen', desc: 'Podgrzewany basen pod zadaszeniem — kąpiel nawet w środku zimy.' },
         { name: 'Pergola', desc: 'Masywna drewniana pergola z miejscem dla całej grupy — wieczory trwają tu nawet przy śniegu.' },
         { name: 'Zimowa posesja', desc: 'Rozległa zaśnieżona posesja tylko dla was — od domu po basen, plac zabaw i dalej.' },
+        { name: 'Sypialnia – Pokój 3', desc: 'Sypialnia z wyrazistą graficzną tapetą za podświetlanym zagłówkiem — do czterech łóżek.' },
+        { name: 'Sypialnia – Pokój 2', desc: 'Narożna sypialnia z dwoma oknami i stonowaną tapetą za zagłówkiem — do czterech łóżek.' },
+        { name: 'Łazienka – Pokój 4', desc: 'Łazienka Pokoju 4 — zaokrąglona kabina prysznicowa, umywalka i toaleta.' },
+        { name: 'Łazienka – Pokój 3', desc: 'Łazienka Pokoju 3 — zaokrąglona kabina prysznicowa, umywalka i toaleta.' },
+        { name: 'Łazienka – Pokój 2', desc: 'Łazienka Pokoju 2 — zaokrąglona kabina prysznicowa, umywalka i toaleta.' },
       ],
       scenesSummer: [
         { name: 'Podjazd do willi', desc: 'Plac za bramą, na którym zaparkuje cała grupa, i dom na końcu podjazdu wśród wysokich drzew.' },
@@ -1138,7 +1130,7 @@ const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
    léto = letní panoramata z Insta360 (celý pozemek za letního podvečera).
    Pořadí musí přesně odpovídat T[lang].tour.scenes / tour.scenesSummer. */
 const PANO_SETS = {
-  zima: ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds'],
+  zima: ['living', 'kitchen', 'sauna', 'saunahot', 'bed1', 'pool', 'pergola', 'grounds', 'bed2', 'bedr2', 'bath4', 'bath3', 'bath2'],
   leto: ['s_drive', 's_playground', 's_pool', 's_meadow', 's_deck', 's_firepit', 's_pergola', 's_evening'],
 };
 function panoFiles() { return PANO_SETS[state.season] || PANO_SETS.leto; }
@@ -1152,7 +1144,8 @@ function tourScenes() {
    image centre). Vision-scored "most attractive view" per scene. Mapped to camera
    yaw in loadPano() so the viewer first faces the described subject. */
 const PANO_YAWF = {
-  living: 0.76, kitchen: 0.4, sauna: 0.5, saunahot: 0.9, bed1: 0.48, bed2: 0.15, pool: 0.42, pergola: 0.49, grounds: 0.65,
+  living: 0.76, kitchen: 0.4, sauna: 0.5, saunahot: 0.9, bed1: 0.48, bed2: 0.72, pool: 0.42, pergola: 0.49, grounds: 0.65,
+  bedr2: 0.5, bath4: 0.5, bath3: 0.55, bath2: 0.5,
   s_drive: 0.5, s_playground: 0.72, s_pool: 0.32, s_meadow: 0.62, s_deck: 0.12, s_firepit: 0.55, s_pergola: 0.5, s_evening: 0.25,
 };
 
@@ -1444,18 +1437,27 @@ function wireVideoLoops() {
   if (!vids.length) return;
   if (!loopsAllowed()) return;                    // jen poster, žádné stahování
   if (!('IntersectionObserver' in window) || !window.innerHeight) return;
+  // Majitel: „ať video jede od začátku svého úseku a spustí se teprve, když k němu
+  // doskroluješ." Proto se přehrávání spouští až při vstupu do viewportu, VŽDY se
+  // převine na currentTime = 0 a jede zpomaleně (0,6×). Při opuštění se pauzuje.
+  const startFromZero = (v) => {
+    v.playbackRate = 0.6;                          // 60 % rychlost (klidná podkladní smyčka)
+    try { v.currentTime = 0; } catch (e) {}        // vždy od začátku klipu
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});           // autoplay blokován → zůstane poster
+  };
   const io = new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       const v = en.target;
       if (en.isIntersecting) {
         if (!v.src) { v.src = v.getAttribute('data-loop-src'); v.load(); }
-        const p = v.play();
-        if (p && p.catch) p.catch(() => {});      // autoplay blokován → zůstane poster
+        if (v.readyState >= 1) startFromZero(v);
+        else v.addEventListener('loadedmetadata', () => startFromZero(v), { once: true });
       } else if (!v.paused) {
         try { v.pause(); } catch (e) {}
       }
     });
-  }, { rootMargin: '150px 0px', threshold: 0.15 });
+  }, { rootMargin: '0px', threshold: 0.25 });      // spustí se teprve po doscrollování k videu
   vids.forEach((v) => { v.muted = true; io.observe(v); });
 }
 function wireVideos() {
@@ -1615,15 +1617,21 @@ const guestsIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentCo
    myš (drag), trackpad/kolečko, dotyk, šipky i klávesnice; při prefers-reduced-
    motion žádné auto-posouvání. Rozpis lůžek zůstává jako textový blok pod ním.
    Fotky VÝHRADNĚ z lednové sady 2026 (generace interiérů se nemíchá).
-   pano = index scény v ZIMNÍ 360° sadě (PANO_SETS.zima), kde daný prostor existuje. */
+   pano = index scény v ZIMNÍ 360° sadě (PANO_SETS.zima), kde daný prostor existuje.
+   Ložnice/koupelny přiřazené k číslům pokojů ověřeny proti zimním kartám téhož
+   náletu (room-2 = tkaná tapeta, room-3 = paví tapeta, room-4 = mramor). Pokoj 1
+   a Apartmá nemají v zimní sadě 360° → jen lightbox s fotkou (nikdy „klik a nic"). */
 const INTERIOR = [
   { k: 'kitchen',  img: 'media/sections/int-kitchen.jpg',  pano: 1 },
   { k: 'lounge',   img: 'media/sections/int-lounge.jpg',   pano: 0 },
   { k: 'suite',    img: 'media/sections/room-suite.jpg' },
   { k: 'room1',    img: 'media/sections/room-1.jpg' },
-  { k: 'room2',    img: 'media/sections/room-2.jpg' },
-  { k: 'room3',    img: 'media/sections/room-3.jpg' },
-  { k: 'room4',    img: 'media/sections/room-4.jpg' },
+  { k: 'room2',    img: 'media/sections/room-2.jpg',       pano: 9 },   // bedr2 = ložnice Pokoj 2 (tkaná tapeta, 2 okna)
+  { k: 'bath2',    img: 'media/sections/bath-room2.jpg',   pano: 12 },  // koupelna Pokoj 2
+  { k: 'room3',    img: 'media/sections/room-3.jpg',       pano: 8 },   // bed2 = ložnice Pokoj 3 (paví tapeta)
+  { k: 'bath3',    img: 'media/sections/bath-room3.jpg',   pano: 11 },  // koupelna Pokoj 3
+  { k: 'room4',    img: 'media/sections/room-4.jpg',       pano: 4 },   // bed1 = ložnice Pokoj 4 (mramor, podkroví)
+  { k: 'bath4',    img: 'media/sections/bath-room4.jpg',   pano: 10 },  // koupelna Pokoj 4
   { k: 'sauna',    img: 'media/sections/int-sauna.jpg',    pano: 3 },
   { k: 'wellness', img: 'media/sections/int-wellness.jpg', pano: 2 },
   { k: 'bath',     img: 'media/sections/int-bath.jpg' },
