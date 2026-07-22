@@ -45,6 +45,7 @@
       byUnknown: '', by: 'nahrál/a ',
       errGuard: 'Nejdřív prosím potvrďte souhlas zákonných zástupců.',
       errType: 'Tohle není obrázek: ', errBig: 'Soubor je příliš velký (max 15 MB): ',
+      errDecode: 'Tuto fotku neumíme bezpečně zpracovat v prohlížeči (např. formát HEIC z iPhonu), tak jsme ji kvůli ochraně soukromí nenahráli. Uložte ji prosím jako JPEG nebo pořiďte snímek obrazovky: ',
       errUpload: 'Nahrání selhalo. Zkuste to prosím znovu.',
       confirmDel: 'Opravdu smazat tuto fotku?',
       uploading: 'Nahrávám', of: 'z'
@@ -68,6 +69,7 @@
       byUnknown: '', by: 'by ',
       errGuard: 'Please confirm the guardians’ consent first.',
       errType: 'This is not an image: ', errBig: 'File too large (max 15 MB): ',
+      errDecode: 'We can’t safely process this photo in the browser (e.g. iPhone HEIC format), so we didn’t upload it, to protect your privacy. Please save it as JPEG or take a screenshot: ',
       errUpload: 'Upload failed. Please try again.',
       confirmDel: 'Really delete this photo?',
       uploading: 'Uploading', of: 'of'
@@ -91,6 +93,7 @@
       byUnknown: '', by: 'von ',
       errGuard: 'Bitte bestätigen Sie zuerst die Zustimmung der Erziehungsberechtigten.',
       errType: 'Das ist kein Bild: ', errBig: 'Datei zu groß (max 15 MB): ',
+      errDecode: 'Dieses Foto können wir im Browser nicht sicher verarbeiten (z. B. HEIC-Format vom iPhone), deshalb haben wir es zum Schutz Ihrer Privatsphäre nicht hochgeladen. Bitte speichern Sie es als JPEG oder machen Sie einen Screenshot: ',
       errUpload: 'Upload fehlgeschlagen. Bitte erneut versuchen.',
       confirmDel: 'Dieses Foto wirklich löschen?',
       uploading: 'Lade hoch', of: 'von'
@@ -114,6 +117,7 @@
       byUnknown: '', by: 'dodał(a) ',
       errGuard: 'Najpierw potwierdź zgodę opiekunów prawnych.',
       errType: 'To nie jest obraz: ', errBig: 'Plik za duży (maks 15 MB): ',
+      errDecode: 'Nie możemy bezpiecznie przetworzyć tego zdjęcia w przeglądarce (np. format HEIC z iPhone’a), więc dla ochrony prywatności nie zostało wysłane. Zapisz je jako JPEG lub zrób zrzut ekranu: ',
       errUpload: 'Wysyłanie nie powiodło się. Spróbuj ponownie.',
       confirmDel: 'Na pewno usunąć to zdjęcie?',
       uploading: 'Wysyłam', of: 'z'
@@ -158,30 +162,57 @@
     }).then(function (r) { return r.json(); });
   }
 
-  /* ---------- Komprese ---------- */
-  function extOf(file, fallback) {
-    var m = /\.([a-z0-9]{2,5})$/i.exec(file.name || '');
-    if (m) return m[1].toLowerCase();
-    var mt = (file.type || '').split('/')[1];
-    return (mt || fallback || 'jpg').toLowerCase();
-  }
+  /* ---------- Komprese + strip metadat ----------
+   * BEZPEČNOST (ochrana soukromí / polohy domova dítěte): každá fotka se PŘED
+   * nahráním překreslí přes canvas do nového JPEGu. Tím se ZTRÁCEJÍ veškerá
+   * EXIF/GPS metadata originálu. Nahráváme VÝHRADNĚ výstup canvasu (Blob z toBlob).
+   * Když se obrázek nepodaří dekódovat do canvasu (typicky HEIC z iPhonu, který
+   * prohlížeč neumí vykreslit), NEEXISTUJE žádný fallback na originál — vrátíme
+   * resolve(null) a volající tuto jednu fotku přeskočí. Originál s neošetřeným
+   * EXIF/GPS se tak nikdy nenahraje. Neblokujeme podle přípony, ale podle toho,
+   * jestli dekód do canvasu uspěl (HEIC, které Safari umí, normálně projde).
+   */
   function compress(file) {
     return new Promise(function (resolve) {
       if (!/^image\//.test(file.type || '')) { resolve(null); return; }
-      var done = function (blob, ext, type) { resolve({ blob: blob, ext: ext, type: type }); };
-      var fallback = function () { done(file, extOf(file, 'jpg'), file.type || 'application/octet-stream'); };
-      if (!('createImageBitmap' in window)) { fallback(); return; }
-      createImageBitmap(file).then(function (bmp) {
-        var w = bmp.width, h = bmp.height, max = CFG.MAX_EDGE;
+      var settled = false;
+      var fail = function () { if (!settled) { settled = true; resolve(null); } };
+      var ok = function (blob) {
+        if (settled) return;
+        // Přijmi VÝHRADNĚ skutečný výstup canvasu (Blob z toBlob) — nikdy původní File.
+        if (blob && blob.size > 0) { settled = true; resolve({ blob: blob, ext: 'jpg', type: 'image/jpeg' }); }
+        else fail();
+      };
+      // Nakresli dekódovaný zdroj do canvasu (zmenšený na MAX_EDGE) a vyexportuj čistý JPEG.
+      var encode = function (srcW, srcH, draw) {
+        var max = CFG.MAX_EDGE, w = srcW, h = srcH;
+        if (!w || !h) { fail(); return; }
         if (Math.max(w, h) > max) { var s = max / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
         var c = document.createElement('canvas'); c.width = w; c.height = h;
-        c.getContext('2d').drawImage(bmp, 0, 0, w, h);
-        if (bmp.close) bmp.close();
-        c.toBlob(function (blob) {
-          if (blob && blob.size < file.size) done(blob, 'jpg', 'image/jpeg');
-          else fallback();
-        }, 'image/jpeg', CFG.JPEG_Q);
-      }).catch(fallback);
+        var ctx = c.getContext('2d');
+        if (!ctx) { fail(); return; }
+        try { draw(ctx, w, h); } catch (e) { fail(); return; }
+        try { c.toBlob(ok, 'image/jpeg', CFG.JPEG_Q); } catch (e) { fail(); }
+      };
+      // Cesta B (fallback): dekódování přes HTMLImageElement, když createImageBitmap chybí/selže.
+      var viaImg = function () {
+        var url = URL.createObjectURL(file);
+        var img = new Image();
+        img.onload = function () {
+          encode(img.naturalWidth || img.width, img.naturalHeight || img.height, function (ctx, w, h) { ctx.drawImage(img, 0, 0, w, h); });
+          URL.revokeObjectURL(url);
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); fail(); };
+        img.src = url;
+      };
+      // Cesta A: createImageBitmap (rychlé). Když selže (nedekódovatelný HEIC), zkus cestu B.
+      if ('createImageBitmap' in window) {
+        createImageBitmap(file).then(function (bmp) {
+          encode(bmp.width, bmp.height, function (ctx, w, h) { ctx.drawImage(bmp, 0, 0, w, h); if (bmp.close) bmp.close(); });
+        }).catch(viaImg);
+      } else {
+        viaImg();
+      }
     });
   }
 
@@ -314,7 +345,11 @@
       if (file.size > CFG.MAX_BYTES) { showErr(t('errBig') + (file.name || '')); done++; bar.style.width = Math.round(done / total * 100) + '%'; step(i + 1); return; }
 
       compress(file).then(function (out) {
-        if (!out) throw new Error('type');
+        // Nepodařilo se dekódovat do canvasu (typicky HEIC z iPhonu) → originál
+        // s neošetřeným EXIF/GPS NIKDY nenahráváme. Přeskočíme jen tuto fotku,
+        // dávka pokračuje dál (jedna vadná nesmí shodit celý upload).
+        if (!out) return { skipped: true };
+        // Nahráváme VÝHRADNĚ výstup canvasu (out.blob) — bez EXIF/GPS metadat.
         // 1) vyžádej signed upload URL scopnutou na cestu tohoto alba
         return fn('upload', { content_type: out.type, size: out.blob.size }).then(function (up) {
           if (!up || up.ok !== true || !up.upload_url) throw new Error('sign');
@@ -328,6 +363,8 @@
             });
           });
         });
+      }).then(function (r) {
+        if (r && r.skipped) showErr(t('errDecode') + (file.name || ''));
       }).catch(function () { showErr(t('errUpload')); })
         .then(function () { done++; bar.style.width = Math.round(done / total * 100) + '%'; step(i + 1); });
     }
