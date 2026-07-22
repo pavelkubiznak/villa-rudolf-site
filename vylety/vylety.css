@@ -63,6 +63,21 @@
   color:var(--vr-text-faint);transition:color .2s ease}
 .vyl-link:hover{color:var(--vr-accent-2)}
 .vyl-link svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* Sekundární odkaz do plánovače — otevře stejný bottom-sheet jako karta katalogu.
+   Bez JS nemá smysl, proto se ukáže až s html.js. */
+.vyl-detail{display:none}
+html.js .vyl-detail{display:inline-flex;align-items:center;align-self:flex-start;margin-top:8px;
+  font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;letter-spacing:.02em;
+  color:var(--vr-text-faint);background:transparent;border:0;border-bottom:1px solid var(--vr-line-2);
+  padding:0 0 3px;cursor:pointer;transition:color .2s ease,border-color .2s ease}
+html.js .vyl-detail:hover{color:var(--vr-accent-2);border-color:var(--vr-accent)}
+html.js .vyl-card[data-trip]{cursor:pointer}
+
+/* Ghost odkaz vedle sezónního přepínače v hero */
+.vyl-skip{font-family:'Archivo',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.02em;
+  color:#E7E2D8;text-decoration:none;border-bottom:1px solid rgba(240,235,225,.35);padding-bottom:2px;
+  text-shadow:0 1px 10px rgba(0,0,0,.5);transition:color .2s ease,border-color .2s ease}
+.vyl-skip:hover{color:#fff;border-color:var(--vr-ember)}
 
 /* ---------- CTA band ---------- */
 .vyl-ctaband{position:relative;background:var(--vr-bg-deep);border-top:1px solid var(--vr-line);
@@ -73,11 +88,9 @@
   letter-spacing:-.015em;color:var(--vr-text);margin:14px 0 0;text-wrap:balance;transition:color .6s ease}
 .vyl-cta-body{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(1.05rem,1.7vw,1.35rem);line-height:1.5;
   color:var(--vr-text-muted);margin:16px auto 0;max-width:52ch;transition:color .6s ease}
+/* Jediné tlačítko — odkaz „Zobrazit všech 38 výletů s filtry" zrušen,
+   katalog se přestěhoval nahoru do pásu #planovac. */
 .vyl-cta-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:16px;margin-top:32px}
-.vyl-cta-all{display:inline-flex;align-items:center;gap:8px;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;
-  letter-spacing:.01em;color:var(--vr-text-soft);border:1px solid var(--vr-line-2);border-radius:2px;padding:14px 22px;
-  transition:border-color .25s ease,color .25s ease}
-.vyl-cta-all:hover{border-color:var(--vr-accent);color:var(--vr-accent-2)}
 
 /* ---------- Footer additions (link column + secondary labels) ---------- */
 .vr-foot-links{display:flex;flex-direction:column;gap:9px;margin-top:16px}

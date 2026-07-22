@@ -14,11 +14,11 @@
       hero: {
         eyebrow: 'Výlety · Krkonoše',
         h1: 'Výlety z Villa Rudolf: co podniknete v Krkonoších',
-        intro: 'Od procházek pěšky od brány po celodenní výpravy autem. Vybrali jsme nejlepší cíle na každou sezónu — přepínačem přepnete mezi létem a zimou.',
-        summer: 'Léto', winter: 'Zima', seasonHint: 'Vyberte sezónu:',
+        intro: 'Od procházek pěšky od brány po celodenní výpravy autem. Vybrali jsme nejlepší cíle na každou sezónu — přepínačem přepnete mezi létem a zimou. Níž je plánovač — vyberete čas, dopravu a s kým jedete, a my doporučíme cíl.',
+        summer: 'Léto', winter: 'Zima', seasonHint: 'Vyberte sezónu:', skip: 'Přeskočit na plánovač ↓',
       },
-      summerHead: { eyebrow: 'Léto', title: 'Kam v létě', note: 'Devět tipů, které stojí za výlet — od procházky pěšky od brány po celodenní výpravy.' },
-      winterHead: { eyebrow: 'Zima', title: 'Kam v zimě', note: 'Lyžování za rohem, teplé bazény po lyžích a výlety, které dají smysl i pod sněhem.' },
+      summerHead: { eyebrow: 'Léto', title: 'Kam v létě', note: 'Devět tipů, které hostům doporučujeme nejčastěji. Všech {total} cílů s filtry najdete v plánovači níž.' },
+      winterHead: { eyebrow: 'Zima', title: 'Kam v zimě', note: 'Šest jistot pro zimní týden. Všech {total} cílů s filtry najdete v plánovači níž.' },
       s: {
         snezka: { name: 'Sněžka (1603 m)', meta: 'Autem 20 min do Pece · lanovkou nebo pěšky', pitch: 'Nejvyšší hora Česka na dosah. Vyjeďte kabinovou lanovkou z Pece na vrchol za čtvrt hodiny, nebo si vyšlápněte hřebeny — nahoře stojíte jednou nohou v Česku a druhou v Polsku, s výhledem přes celé Krkonoše.' },
         adrspach: { name: 'Adršpašské skály', meta: 'Autem 45 min · nutná online rezervace', pitch: 'Největší pískovcové skalní město ve střední Evropě — bludiště věží a soutěsek, dva vodopády a jezírko s vyhlídkovými pramicemi. Výlet na půl dne; v sezóně si vstup i parkování rezervujte online předem.' },
@@ -38,9 +38,18 @@
         karpacz: { name: 'Aquapark Tropikana — Karpacz (PL)', meta: 'Autem 45 min · velký krytý aquapark', pitch: 'Za sychravého dne se hodí velký krytý aquapark hned za polskou hranicí: vlny, skluzavky, osm vířivek a solná i ledová jeskyně. Vezměte doklady i dětem.' },
         sklarna: { name: 'Sklárna Harrachov & Mumlavské vodopády', meta: 'Autem 50 min · prohlídka v teple', pitch: 'Nejstarší fungující sklárna v Čechách — 45minutová prohlídka tavení a foukání skla v příjemném teple. Kousek dál se dá zajít k zamrzajícím Mumlavským vodopádům.' },
       },
-      cta: { eyebrow: 'Rezervace', title: 'Líbí se vám okolí? Zarezervujte si termín.', body: 'Celý dům i pozemek jen pro vaši skupinu 6–22 lidí — a všechny tyhle výlety kousek za bránou.', all: 'Zobrazit všech 38 výletů s filtry' },
-      footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', host: 'Pavel — váš hostitel', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', terms: 'Ubytovací podmínky a ochrana údajů', forGuests: 'Pro hosty', guide: 'Průvodce výlety' },
-      meta: { title: 'Výlety v Krkonoších z Villa Rudolf — tipy na léto i zimu', desc: 'Nejlepší výlety kousek od Villa Rudolf ve Svobodě nad Úpou: Sněžka, Adršpašské skály, Stezka korunami stromů, Safari Dvůr Králové, lyžování na Černé hoře i aquaparky. Kurátorované tipy na léto i zimu.', locale: 'cs_CZ' },
+      planner: {
+        eyebrow: 'Plánovač výletů',
+        title: 'Řekněte nám, kolik máte času — výlet vybereme za vás.',
+        lead: 'Prošli jsme {total} cílů v okolí a u každého víme, jestli se dá zvládnout pěšky, jestli funguje za deště a od kolika let dává smysl. Vyberte tři věci a plánovač doporučí ten, který vám sedne — a dva náhradní, kdyby první nevyšel.',
+        f1: '{total} ověřených cílů', f2: '{foot} pěšky od brány', f3: '20 minut na Sněžku',
+        open: 'Otevřít plánovač',
+        idleline: '{foot} cílů pěšky od brány · {car} do 30 minut autem · {day} na celý den',
+      },
+      card: { detail: 'Detail, ceny a otevírací doba \u2192' },
+      cta: { eyebrow: 'Rezervace', title: 'Líbí se vám okolí? Zarezervujte si termín.', body: 'Celý dům i pozemek jen pro vaši skupinu 6–22 lidí — a všechny tyhle výlety kousek za bránou.' },
+      footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', host: 'Pavel — váš hostitel', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', terms: 'Ubytovací podmínky a ochrana údajů', forGuests: 'Pro hosty', guide: 'Plánovač výletů' },
+      meta: { title: 'Výlety v Krkonoších z Villa Rudolf — 38 tipů a plánovač na léto i zimu', desc: 'Nejlepší výlety kousek od Villa Rudolf ve Svobodě nad Úpou: Sněžka, Adršpašské skály, Stezka korunami stromů, Safari Dvůr Králové, lyžování na Černé hoře i aquaparky. Kurátorované tipy na léto i zimu.', locale: 'cs_CZ' },
     },
 
     en: {
@@ -49,11 +58,11 @@
       hero: {
         eyebrow: 'Trips · Krkonoše',
         h1: 'Trips from Villa Rudolf: what to do in the Krkonoše mountains',
-        intro: 'From walks that start at the gate to full-day drives. We picked the best places for each season — use the switch to flip between summer and winter.',
-        summer: 'Summer', winter: 'Winter', seasonHint: 'Choose a season:',
+        intro: 'From walks that start at the gate to full-day drives. We picked the best places for each season — use the switch to flip between summer and winter. Below is the planner — pick your time, transport and who’s coming, and we’ll suggest a place.',
+        summer: 'Summer', winter: 'Winter', seasonHint: 'Choose a season:', skip: 'Skip to the planner ↓',
       },
-      summerHead: { eyebrow: 'Summer', title: 'Where to go in summer', note: 'Nine trips worth the drive — from a walk that starts at the gate to full-day outings.' },
-      winterHead: { eyebrow: 'Winter', title: 'Where to go in winter', note: 'Skiing around the corner, warm pools after the slopes and trips that make sense under snow.' },
+      summerHead: { eyebrow: 'Summer', title: 'Where to go in summer', note: 'Nine trips we recommend to guests most often. All {total} places with filters are in the planner below.' },
+      winterHead: { eyebrow: 'Winter', title: 'Where to go in winter', note: 'Six safe bets for a winter week. All {total} places with filters are in the planner below.' },
       s: {
         snezka: { name: 'Sněžka (1,603 m)', meta: '20 min drive to Pec · cable car or on foot', pitch: 'The highest peak in Czechia within reach. Ride the cable car up from Pec in fifteen minutes, or hike the ridges — at the top you stand with one foot in Czechia and one in Poland, the whole of Krkonoše at your feet.' },
         adrspach: { name: 'Adršpach Rocks', meta: '45 min drive · online booking required', pitch: 'The largest sandstone rock town in Central Europe — a maze of towers and gorges, two waterfalls and a lake with sightseeing punts. A half-day trip; in season, book entry and parking online ahead.' },
@@ -73,9 +82,18 @@
         karpacz: { name: 'Tropikana Water Park — Karpacz (PL)', meta: '45 min drive · big indoor water park', pitch: 'On a raw day, the big indoor water park just across the Polish border is just the thing: waves, slides, eight whirlpools and a salt and ice cave. Bring ID for the children too.' },
         sklarna: { name: 'Harrachov Glassworks & Mumlava Falls', meta: '50 min drive · a tour in the warm', pitch: 'The oldest working glassworks in Bohemia — a 45-minute tour of glass melting and blowing in pleasant warmth. A short walk away, the freezing Mumlava Falls.' },
       },
-      cta: { eyebrow: 'Booking', title: 'Like the area? Reserve your dates.', body: 'The whole house and grounds just for your group of 6–22 — with all these trips right beyond the gate.', all: 'See all 38 trips with filters' },
-      footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', host: 'Pavel — your host', rights: '© 2026 Villa Rudolf', social: 'Follow us', terms: 'Booking terms & privacy', forGuests: 'For guests', guide: 'Trip guide' },
-      meta: { title: 'Trips in the Krkonoše from Villa Rudolf — summer & winter ideas', desc: 'The best trips near Villa Rudolf in Svoboda nad Úpou: Sněžka, the Adršpach rocks, the Treetop Walk, Dvůr Králové Safari, skiing on Černá hora and water parks. Curated ideas for summer and winter.', locale: 'en_US' },
+      planner: {
+        eyebrow: 'Trip planner',
+        title: 'Tell us how much time you have — we’ll pick the trip.',
+        lead: 'We went through {total} places nearby and for each one we know whether you can walk there, whether it works in the rain and from what age it makes sense. Choose three things and the planner suggests the one that fits — plus two fallbacks in case the first doesn’t work out.',
+        f1: '{total} verified places', f2: '{foot} on foot from the gate', f3: '20 minutes to Sněžka',
+        open: 'Open the planner',
+        idleline: '{foot} places on foot from the gate · {car} within 30 minutes by car · {day} for a full day',
+      },
+      card: { detail: 'Details, prices and opening hours \u2192' },
+      cta: { eyebrow: 'Booking', title: 'Like the area? Reserve your dates.', body: 'The whole house and grounds just for your group of 6–22 — with all these trips right beyond the gate.' },
+      footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', host: 'Pavel — your host', rights: '© 2026 Villa Rudolf', social: 'Follow us', terms: 'Booking terms & privacy', forGuests: 'For guests', guide: 'Trip planner' },
+      meta: { title: 'Trips in the Krkonoše from Villa Rudolf — 38 ideas and a trip planner', desc: 'The best trips near Villa Rudolf in Svoboda nad Úpou: Sněžka, the Adršpach rocks, the Treetop Walk, Dvůr Králové Safari, skiing on Černá hora and water parks. Curated ideas for summer and winter.', locale: 'en_US' },
     },
 
     de: {
@@ -84,11 +102,11 @@
       hero: {
         eyebrow: 'Ausflüge · Riesengebirge',
         h1: 'Ausflüge ab Villa Rudolf: was Sie im Riesengebirge unternehmen',
-        intro: 'Von Spaziergängen ab dem Tor bis zu Tagesausflügen mit dem Auto. Wir haben die besten Ziele für jede Jahreszeit ausgewählt — mit dem Schalter wechseln Sie zwischen Sommer und Winter.',
-        summer: 'Sommer', winter: 'Winter', seasonHint: 'Jahreszeit wählen:',
+        intro: 'Von Spaziergängen ab dem Tor bis zu Tagesausflügen mit dem Auto. Wir haben die besten Ziele für jede Jahreszeit ausgewählt — mit dem Schalter wechseln Sie zwischen Sommer und Winter. Unten steht der Planer — wählen Sie Zeit, Anfahrt und wer mitkommt, und wir empfehlen ein Ziel.',
+        summer: 'Sommer', winter: 'Winter', seasonHint: 'Jahreszeit wählen:', skip: 'Zum Planer springen ↓',
       },
-      summerHead: { eyebrow: 'Sommer', title: 'Wohin im Sommer', note: 'Neun Ausflüge, die sich lohnen — vom Spaziergang ab dem Tor bis zum Tagesausflug.' },
-      winterHead: { eyebrow: 'Winter', title: 'Wohin im Winter', note: 'Skifahren um die Ecke, warme Bäder nach der Piste und Ausflüge, die auch im Schnee Sinn ergeben.' },
+      summerHead: { eyebrow: 'Sommer', title: 'Wohin im Sommer', note: 'Neun Ausflüge, die wir Gästen am häufigsten empfehlen. Alle {total} Ziele mit Filtern finden Sie im Planer unten.' },
+      winterHead: { eyebrow: 'Winter', title: 'Wohin im Winter', note: 'Sechs sichere Tipps für eine Winterwoche. Alle {total} Ziele mit Filtern finden Sie im Planer unten.' },
       s: {
         snezka: { name: 'Sněžka (1603 m)', meta: '20 Min. Fahrt nach Pec · Seilbahn oder zu Fuß', pitch: 'Der höchste Berg Tschechiens zum Greifen nah. Mit der Kabinenbahn von Pec in einer Viertelstunde hinauf oder über die Kämme wandern — oben stehen Sie mit einem Fuß in Tschechien, mit dem anderen in Polen, das ganze Riesengebirge zu Füßen.' },
         adrspach: { name: 'Adersbacher Felsen', meta: '45 Min. Fahrt · Online-Reservierung nötig', pitch: 'Die größte Sandstein-Felsenstadt Mitteleuropas — ein Labyrinth aus Türmen und Schluchten, zwei Wasserfälle und ein See mit Ausflugskähnen. Ein Halbtagesausflug; in der Saison Eintritt und Parkplatz vorab online buchen.' },
@@ -108,9 +126,18 @@
         karpacz: { name: 'Aquapark Tropikana — Karpacz (PL)', meta: '45 Min. Fahrt · großer Hallen-Aquapark', pitch: 'An einem rauen Tag ist der große Hallen-Aquapark gleich hinter der polnischen Grenze genau richtig: Wellen, Rutschen, acht Whirlpools sowie Salz- und Eishöhle. Auch für Kinder Ausweise mitnehmen.' },
         sklarna: { name: 'Glashütte Harrachov & Mumlava-Wasserfälle', meta: '50 Min. Fahrt · Führung im Warmen', pitch: 'Die älteste noch arbeitende Glashütte Böhmens — eine 45-minütige Führung durch Schmelzen und Glasblasen in angenehmer Wärme. Ein kurzer Weg weiter die zufrierenden Mumlava-Wasserfälle.' },
       },
-      cta: { eyebrow: 'Buchung', title: 'Gefällt Ihnen die Gegend? Sichern Sie sich Ihren Termin.', body: 'Das ganze Haus und Grundstück nur für Ihre Gruppe von 6–22 — mit all diesen Ausflügen gleich hinter dem Tor.', all: 'Alle 38 Ausflüge mit Filtern anzeigen' },
-      footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', host: 'Pavel — euer Gastgeber', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', terms: 'Buchungsbedingungen & Datenschutz', forGuests: 'Für Gäste', guide: 'Ausflugsführer' },
-      meta: { title: 'Ausflüge im Riesengebirge ab Villa Rudolf — Sommer & Winter', desc: 'Die besten Ausflüge nahe Villa Rudolf in Svoboda nad Úpou: Sněžka, die Adersbacher Felsen, der Baumwipfelpfad, Safari Dvůr Králové, Skifahren auf der Černá hora und Aquaparks. Kuratierte Tipps für Sommer und Winter.', locale: 'de_DE' },
+      planner: {
+        eyebrow: 'Ausflugsplaner',
+        title: 'Sagen Sie uns, wie viel Zeit Sie haben — den Ausflug wählen wir.',
+        lead: 'Wir haben {total} Ziele in der Umgebung geprüft und wissen bei jedem, ob es zu Fuß erreichbar ist, ob es bei Regen funktioniert und ab welchem Alter es Sinn ergibt. Wählen Sie drei Dinge und der Planer empfiehlt das passende Ziel — plus zwei Alternativen, falls das erste nicht klappt.',
+        f1: '{total} geprüfte Ziele', f2: '{foot} zu Fuß vom Tor', f3: '20 Minuten zur Schneekoppe',
+        open: 'Planer öffnen',
+        idleline: '{foot} Ziele zu Fuß vom Tor · {car} bis 30 Minuten mit dem Auto · {day} für den ganzen Tag',
+      },
+      card: { detail: 'Details, Preise und Öffnungszeiten \u2192' },
+      cta: { eyebrow: 'Buchung', title: 'Gefällt Ihnen die Gegend? Sichern Sie sich Ihren Termin.', body: 'Das ganze Haus und Grundstück nur für Ihre Gruppe von 6–22 — mit all diesen Ausflügen gleich hinter dem Tor.' },
+      footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', host: 'Pavel — euer Gastgeber', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', terms: 'Buchungsbedingungen & Datenschutz', forGuests: 'Für Gäste', guide: 'Ausflugsplaner' },
+      meta: { title: 'Ausflüge im Riesengebirge ab Villa Rudolf — 38 Tipps und Ausflugsplaner', desc: 'Die besten Ausflüge nahe Villa Rudolf in Svoboda nad Úpou: Sněžka, die Adersbacher Felsen, der Baumwipfelpfad, Safari Dvůr Králové, Skifahren auf der Černá hora und Aquaparks. Kuratierte Tipps für Sommer und Winter.', locale: 'de_DE' },
     },
 
     pl: {
@@ -119,11 +146,11 @@
       hero: {
         eyebrow: 'Wycieczki · Karkonosze',
         h1: 'Wycieczki z Villa Rudolf: co robić w Karkonoszach',
-        intro: 'Od spacerów zaczynających się przy bramie po całodniowe wyprawy autem. Wybraliśmy najlepsze cele na każdą porę roku — przełącznikiem zmienisz lato na zimę.',
-        summer: 'Lato', winter: 'Zima', seasonHint: 'Wybierz porę roku:',
+        intro: 'Od spacerów zaczynających się przy bramie po całodniowe wyprawy autem. Wybraliśmy najlepsze cele na każdą porę roku — przełącznikiem zmienisz lato na zimę. Niżej jest planer — wybierzecie czas, dojazd i kto jedzie, a my polecimy cel.',
+        summer: 'Lato', winter: 'Zima', seasonHint: 'Wybierz porę roku:', skip: 'Przejdź do planera ↓',
       },
-      summerHead: { eyebrow: 'Lato', title: 'Dokąd latem', note: 'Dziewięć wycieczek wartych wyjazdu — od spaceru przy bramie po całodniowe wyprawy.' },
-      winterHead: { eyebrow: 'Zima', title: 'Dokąd zimą', note: 'Narty za rogiem, ciepłe baseny po stoku i wycieczki, które mają sens także pod śniegiem.' },
+      summerHead: { eyebrow: 'Lato', title: 'Dokąd latem', note: 'Dziewięć wycieczek, które polecamy gościom najczęściej. Wszystkie {total} celów z filtrami znajdziecie w planerze niżej.' },
+      winterHead: { eyebrow: 'Zima', title: 'Dokąd zimą', note: 'Sześć pewniaków na zimowy tydzień. Wszystkie {total} celów z filtrami znajdziecie w planerze niżej.' },
       s: {
         snezka: { name: 'Śnieżka (1603 m)', meta: 'Autem 20 min do Pecu · kolejką lub pieszo', pitch: 'Najwyższy szczyt Czech w zasięgu ręki. Wjedź kolejką z Pecu w kwadrans albo wejdź graniami — na szczycie stoisz jedną nogą w Czechach, drugą w Polsce, a całe Karkonosze masz u stóp.' },
         adrspach: { name: 'Skały Adršpach', meta: 'Autem 45 min · wymagana rezerwacja online', pitch: 'Największe piaskowcowe skalne miasto w Europie Środkowej — labirynt wież i wąwozów, dwa wodospady i jeziorko z łódkami widokowymi. Wycieczka na pół dnia; w sezonie zarezerwuj wejście i parking online z wyprzedzeniem.' },
@@ -143,9 +170,18 @@
         karpacz: { name: 'Aquapark Tropikana — Karpacz (PL)', meta: 'Autem 45 min · duży kryty aquapark', pitch: 'W ponury dzień świetnie sprawdzi się duży kryty aquapark tuż za polską granicą: fale, zjeżdżalnie, osiem jacuzzi oraz grota solna i lodowa. Zabierz dokumenty także dla dzieci.' },
         sklarna: { name: 'Huta szkła Harrachov & Wodospady Mumlawy', meta: 'Autem 50 min · zwiedzanie w cieple', pitch: 'Najstarsza czynna huta szkła w Czechach — 45-minutowe zwiedzanie topienia i wydmuchiwania szkła w przyjemnym cieple. Kawałek dalej zamarzające Wodospady Mumlawy.' },
       },
-      cta: { eyebrow: 'Rezerwacja', title: 'Podoba się okolica? Zarezerwuj termin.', body: 'Cały dom i teren tylko dla Waszej grupy 6–22 osób — a wszystkie te wycieczki tuż za bramą.', all: 'Zobacz wszystkie 38 wycieczek z filtrami' },
-      footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', host: 'Pavel — wasz gospodarz', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', terms: 'Warunki pobytu i prywatność', forGuests: 'Dla gości', guide: 'Przewodnik po wycieczkach' },
-      meta: { title: 'Wycieczki w Karkonoszach z Villa Rudolf — pomysły na lato i zimę', desc: 'Najlepsze wycieczki blisko Villa Rudolf w Svoboda nad Úpou: Śnieżka, Skały Adršpach, Ścieżka w koronach drzew, Safari Dvůr Králové, narty na Czarnej Górze i aquaparki. Wyselekcjonowane pomysły na lato i zimę.', locale: 'pl_PL' },
+      planner: {
+        eyebrow: 'Planer wycieczek',
+        title: 'Powiedzcie, ile macie czasu — wycieczkę wybierzemy my.',
+        lead: 'Przeszliśmy {total} celów w okolicy i przy każdym wiemy, czy da się dojść pieszo, czy działa w deszcz i od ilu lat ma sens. Wybierzcie trzy rzeczy, a planer poleci ten właściwy — plus dwa zapasowe, gdyby pierwszy nie wypalił.',
+        f1: '{total} sprawdzonych celów', f2: '{foot} pieszo od bramy', f3: '20 minut na Śnieżkę',
+        open: 'Otwórz planer',
+        idleline: '{foot} celów pieszo od bramy · {car} do 30 minut autem · {day} na cały dzień',
+      },
+      card: { detail: 'Szczegóły, ceny i godziny otwarcia \u2192' },
+      cta: { eyebrow: 'Rezerwacja', title: 'Podoba się okolica? Zarezerwuj termin.', body: 'Cały dom i teren tylko dla Waszej grupy 6–22 osób — a wszystkie te wycieczki tuż za bramą.' },
+      footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', host: 'Pavel — wasz gospodarz', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', terms: 'Warunki pobytu i prywatność', forGuests: 'Dla gości', guide: 'Planer wycieczek' },
+      meta: { title: 'Wycieczki w Karkonoszach z Villa Rudolf — 38 pomysłów i planer wycieczek', desc: 'Najlepsze wycieczki blisko Villa Rudolf w Svoboda nad Úpou: Śnieżka, Skały Adršpach, Ścieżka w koronach drzew, Safari Dvůr Králové, narty na Czarnej Górze i aquaparki. Wyselekcjonowane pomysły na lato i zimę.', locale: 'pl_PL' },
     },
   };
 
@@ -173,11 +209,18 @@
     return 'leto';
   }
 
+  /* Počty cílů — dokud plánovač nenačte katalog, platí fallback; pak se
+     přepíšou živými čísly (viz VRPlanner.counts()). Homepage má stejná čísla
+     přes VR_TRIP_COUNTS v site.js. */
+  var COUNTS = { total: 39, foot: 8, car: 27, day: 4 };
+  function fillCounts(s) {
+    return s.replace(/\{(total|foot|car|day)\}/g, function (m, k) { return COUNTS[k]; });
+  }
   function setTexts() {
     var t = tt();
     $all('[data-t]').forEach(function (n) {
       var v = resolve(t, n.getAttribute('data-t'));
-      if (typeof v === 'string') n.textContent = v;
+      if (typeof v === 'string') n.textContent = fillCounts(v);
     });
     document.documentElement.lang = state.lang;
   }
@@ -230,6 +273,7 @@
     state.lang = lang;
     try { localStorage.setItem('vrLang', lang); } catch (e) {}
     applyLangButtons(); setTexts(); applyMeta(); applyLangLinks(); syncUrl();
+    if (window.VRPlanner) window.VRPlanner.setLang(lang);
   }
   function eagerLoadSeason(season) {
     var cls = season === 'zima' ? 'winter' : 'summer';
@@ -242,6 +286,71 @@
     eagerLoadSeason(season);
     $('.vr-root').setAttribute('data-season', season);
     applyThemeColor(); applySeasonButtons(); applyLangLinks(); syncUrl();
+    // Pás plánovače sezónu jen DĚDÍ — vlastní přepínač nemá (pravidlo 4 v planner.css).
+    var pl = $('#vr-planner'); if (pl) pl.setAttribute('data-season', season);
+    if (window.VRPlanner) window.VRPlanner.setSeason(season);
+  }
+
+  /* ===================== PLÁNOVAČ — líný mount =====================
+     Plánovač se montuje, až (a) se pás blíží do viewportu, (b) uživatel klikne
+     na „Otevřít plánovač", nebo (c) přišel deep link (#planovac / ?zona= / ?filtr=).
+     Do té doby je na stránce jen statický skeleton — LCP zůstává hero obrázek. */
+  var ZONES = { pesky: 1, auto: 1, den: 1 };
+  var plannerReq = null;
+
+  function mountPlanner(opts) {
+    if (plannerReq) return plannerReq;
+    var host = $('#vr-planner'); if (!host || !window.VRPlanner) return null;
+    var idle = $('#vyl-plan-idle');
+    if (idle) idle.setAttribute('data-loading', 'true');
+    opts = opts || {};
+    plannerReq = window.VRPlanner.mount({
+      el: host, lang: state.lang, season: state.season,
+      filter: opts.filter, zona: opts.zona
+    }).then(function (ok) {
+      try {
+        var c = window.VRPlanner.counts();
+        if (c && c.total) { COUNTS = c; setTexts(); }
+      } catch (e) { }
+      return ok;
+    });
+    return plannerReq;
+  }
+
+  function initPlanner() {
+    var host = $('#vr-planner'); if (!host) return;
+    var qs2 = new URLSearchParams(location.search);
+    var zona = (qs2.get('zona') || '').toLowerCase(); if (!ZONES[zona]) zona = '';
+    var filtr = (qs2.get('filtr') || '').toLowerCase();
+    var deep = zona || filtr || location.hash === '#planovac';
+
+    var openBtn = $('#vyl-plan-open');
+    if (openBtn) openBtn.addEventListener('click', function () {
+      var p = mountPlanner({});
+      if (p) p.then(function () { host.scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+    });
+
+    // Kurátorovaná karta i katalogová karta otevírají TENTÝŽ bottom-sheet.
+    $all('.vyl-card[data-trip]').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('a')) return;      // odkaz na oficiální web nechat projít
+        var id = card.getAttribute('data-trip'); if (!id) return;
+        e.preventDefault();
+        mountPlanner({});
+        if (window.VRPlanner) window.VRPlanner.openDetail(id);
+      });
+    });
+
+    if (deep) { mountPlanner({ zona: zona, filter: filtr }); return; }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { io.disconnect(); mountPlanner({}); } });
+      }, { rootMargin: '600px 0px' });
+      io.observe(host);
+    } else {
+      mountPlanner({});
+    }
   }
 
   /* Mobile menu */
@@ -298,6 +407,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     startReveal();
+    initPlanner();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
