@@ -281,6 +281,7 @@ const T = {
         { name: 'Pokoj 3 — koupelna', desc: 'Koupelna Pokoje 3 — sprchový kout, umyvadlo a okno do zahrady.' },
         { name: 'Chodba v 1. patře', desc: 'Podesta hlavního schodiště s vestavěnými skříněmi a trojicí oken — odtud vedou dveře do pokoje i do apartmá.' },
         { name: 'Pokoj 4 (2 lůžka)', desc: 'Manželská postel v klenuté nice mezi dřevěnými sloupy, arkýřové okno s dřevěným parapetem. Vlastní koupelna.' },
+        { name: 'Pokoj 4 — pohled od postele', desc: 'Týž Pokoj 4 od hlavy postele: klenutá nika s mramorovanou tapetou a podsvícené laťkové čelo zblízka, přes celý pokoj pak okno se závěsy, obrázek hory, okénko v hrázděné stěně a otevřené dveře do vlastní koupelny.' },
         { name: 'Pokoj 4 — koupelna', desc: 'Koupelna Pokoje 4 — sprchový kout, umyvadlo, toaleta a pračka.' },
         { name: 'Apartmá — obývací část', desc: 'Vlastní obývák apartmá Suite: dlouhá sedací souprava pod trámy, velký stůl, televize a schody do podkrovních ložnic.' },
         { name: 'Apartmá — kuchyňský kout', desc: 'Kuchyňská linka apartmá s troubou a varnou deskou — apartmá má vlastní zázemí a nemusí se dělit o hlavní kuchyni.' },
@@ -541,6 +542,7 @@ const T = {
         { name: 'Room 3 — bathroom', desc: 'Room 3’s bathroom — shower enclosure, basin and a window to the garden.' },
         { name: 'First-floor landing', desc: 'The main staircase landing with fitted wardrobes and three windows — doors lead on to a bedroom and to the Suite.' },
         { name: 'Room 4 (2 beds)', desc: 'A double bed in a vaulted alcove between timber posts, a bay window with a wooden sill. Its own bathroom.' },
+        { name: 'Room 4 — the view from the bed', desc: 'The same Room 4 from the head of the bed: the vaulted alcove with its marbled wallpaper and the backlit slatted headboard up close, then the length of the room to the curtained window, the mountain print, the little window in the timbered wall and the open door to the en-suite bathroom.' },
         { name: 'Room 4 — bathroom', desc: 'Room 4’s bathroom — shower enclosure, basin, toilet and a washing machine.' },
         { name: 'Suite — living area', desc: 'The Suite apartment’s own lounge: a long sofa under the beams, a big table, a TV and the stairs up to the attic bedrooms.' },
         { name: 'Suite — kitchenette', desc: 'The Suite’s own kitchen units with an oven and hob — the apartment is self-contained and doesn’t share the main kitchen.' },
@@ -801,6 +803,7 @@ const T = {
         { name: 'Zimmer 3 — Bad', desc: 'Das Bad von Zimmer 3 — Duschkabine, Waschbecken und ein Fenster zum Garten.' },
         { name: 'Flur im 1. Obergeschoss', desc: 'Der Treppenabsatz mit Einbauschränken und drei Fenstern — von hier führen Türen ins Zimmer und ins Apartment.' },
         { name: 'Zimmer 4 (2 Betten)', desc: 'Doppelbett in einer gewölbten Nische zwischen Holzsäulen, Erkerfenster mit Holzbank. Eigenes Bad.' },
+        { name: 'Zimmer 4 — Blick vom Bett', desc: 'Dasselbe Zimmer 4 vom Kopfende des Bettes: die gewölbte Nische mit marmorierter Tapete und das beleuchtete Lattenkopfteil aus der Nähe, dahinter das ganze Zimmer bis zum Fenster mit Vorhängen, dem Bergbild, dem kleinen Fenster in der Fachwerkwand und der offenen Tür ins eigene Bad.' },
         { name: 'Zimmer 4 — Bad', desc: 'Das Bad von Zimmer 4 — Duschkabine, Waschbecken, WC und Waschmaschine.' },
         { name: 'Apartment — Wohnbereich', desc: 'Der eigene Wohnbereich der Suite: eine lange Sitzgruppe unter den Balken, ein großer Tisch, TV und die Treppe zu den Dachzimmern.' },
         { name: 'Apartment — Küchenzeile', desc: 'Die eigene Küchenzeile der Suite mit Backofen und Kochfeld — das Apartment versorgt sich selbst und teilt die Hauptküche nicht.' },
@@ -1061,6 +1064,7 @@ const T = {
         { name: 'Pokój 3 — łazienka', desc: 'Łazienka Pokoju 3 — kabina prysznicowa, umywalka i okno do ogrodu.' },
         { name: 'Korytarz na 1. piętrze', desc: 'Spocznik głównych schodów z zabudowanymi szafami i trzema oknami — stąd drzwi do pokoju i do apartamentu.' },
         { name: 'Pokój 4 (2 łóżka)', desc: 'Łóżko podwójne w sklepionej wnęce między drewnianymi słupami, okno wykuszowe z drewnianym parapetem. Własna łazienka.' },
+        { name: 'Pokój 4 — widok od łóżka', desc: 'Ten sam Pokój 4 od strony wezgłowia: sklepiona wnęka z marmurkową tapetą i podświetlany listwowy zagłówek z bliska, a przez cały pokój okno z zasłonami, obraz z górami, małe okienko w ścianie szachulcowej i otwarte drzwi do własnej łazienki.' },
         { name: 'Pokój 4 — łazienka', desc: 'Łazienka Pokoju 4 — kabina prysznicowa, umywalka, toaleta i pralka.' },
         { name: 'Apartament — część dzienna', desc: 'Własny salon apartamentu Suite: długa sofa pod belkami, duży stół, telewizor i schody do sypialni na poddaszu.' },
         { name: 'Apartament — aneks kuchenny', desc: 'Własna zabudowa kuchenna apartamentu z piekarnikiem i płytą — apartament jest samodzielny i nie dzieli głównej kuchni.' },
@@ -1179,12 +1183,19 @@ const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
    v přízemí."); sedí i s fotkami: otevřenými dveřmi je odtud vidět vstupní hala
    s dřevěným botníkem — týž prostor jako scény `hall` a `shoerack`. Popisky obou
    scén proto začínají „Pokoj 3", aby v pruhu náhledů nevypadaly jako dva pokoje.
+
+   Stejný vzor má `room4` a `room4b` (out_355) — TÝŽ Pokoj 4 ze dvou stanovišť:
+   `room4` je pohled z prostředka pokoje na postel v klenuté nice, `room4b` stojí
+   u hlavy postele a dívá se přes pokoj k arkýřovému oknu a otevřeným dveřím do
+   vlastní koupelny. Identitu potvrzuje shoda pevných znaků (mramorovaná tapeta
+   v nice, podsvícené laťkové čelo, dřevěné sloupy, obrázek hory, okénko
+   v hrázděné stěně) — viz vr-pano-mapovani.md, sekce 4.6.
    Panorama pořizujeme 4096×2048 (2:1) — 4096 je strop MAX_TEXTURE_SIZE pro
    WebGL1 na starších mobilech, výš nejít. */
 const PANO_SETS = {
   zima: ['courtyard', 'hall', 'shoerack', 'dining', 'room1', 'bath1', 'room2', 'bath2',
          'room3', 'room3b', 'bath3',
-         'corridor', 'room4', 'bath4', 'apt-living', 'apt-kitchen', 'apt-bed-a',
+         'corridor', 'room4', 'room4b', 'bath4', 'apt-living', 'apt-kitchen', 'apt-bed-a',
          'apt-bed-b', 'apt-bed-c',
          'wellness', 'sauna', 'skiroom', 'garden', 'gazebo'],
   leto: ['s_arrival', 's_garden', 's_pool', 's_terrace', 's_pergola', 's_playground', 's_firepit'],
@@ -1194,7 +1205,7 @@ const PANO_SETS = {
 const PANO_GROUPS = {
   zima: ['extWinter', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
          'ground', 'ground', 'ground',
-         'floor1', 'floor1', 'floor1', 'floor1', 'floor1', 'floor1',
+         'floor1', 'floor1', 'floor1', 'floor1', 'floor1', 'floor1', 'floor1',
          'floor2', 'floor2',
          'basement', 'basement', 'basement', 'extWinter', 'extWinter'],
   leto: ['extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer'],
@@ -1224,7 +1235,7 @@ function tourScenes() {
 const PANO_YAWF = {
   courtyard: 0.72, hall: 0.75, shoerack: 0.50, dining: 0.12, room1: 0.25, bath1: 0.88,
   room2: 0.50, bath2: 0.68, room3: 0.50, room3b: 0.56, bath3: 0.62,
-  corridor: 0.00, room4: 0.50, bath4: 0.22, 'apt-living': 0.50, 'apt-kitchen': 0.75,
+  corridor: 0.00, room4: 0.50, room4b: 0.54, bath4: 0.22, 'apt-living': 0.50, 'apt-kitchen': 0.75,
   'apt-bed-a': 0.50, 'apt-bed-b': 0.50, 'apt-bed-c': 0.62,
   wellness: 0.50, sauna: 0.25, skiroom: 0.86, garden: 0.25, gazebo: 0.29,
   s_arrival: 0.5, s_garden: 0.75, s_pool: 0.32, s_terrace: 0.12, s_pergola: 0.5, s_playground: 0.72, s_firepit: 0.25,
