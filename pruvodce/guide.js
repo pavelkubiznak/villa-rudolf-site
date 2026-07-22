@@ -27,7 +27,7 @@
    * přes tt(v,lang) = v[lang] || v.cs. Tady jsou jen texty rozhraní ve 4 jazycích. */
   var T = {
     cs: {
-      siteNav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', info: 'Praktické info', book: 'Rezervovat' },
+      siteNav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', book: 'Rezervovat' },
       badge: 'Průvodce', greet: 'Vítejte', family: 'rodino', heroTitle: 'Váš plán na tenhle týden',
       stayPrefix: 'pobyt', todayTip: 'Dnešní tip', moreArrow: 'detail →',
       planTitle: 'Plán na každý den', planSrc: 'počasí: yr.no · živě',
@@ -61,7 +61,7 @@
       tags: { foot: 'pěšky od vily', rain: 'i za deště', outdoor: 'venku', easy: 'nenáročné', hard: 'náročné', heat: 'do horka', clear: 'za jasna', stairs: 'schody', reservation: 'rezervace', border: 'Polsko · doklady' }
     },
     de: {
-      siteNav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', info: 'Gäste-Infos', book: 'Buchen' },
+      siteNav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', book: 'Buchen' },
       badge: 'Guide', greet: 'Willkommen', family: 'Familie', heroTitle: 'Ihr Plan für diese Woche',
       stayPrefix: 'Aufenthalt', todayTip: 'Tipp für heute', moreArrow: 'Detail →',
       planTitle: 'Plan für jeden Tag', planSrc: 'Wetter: yr.no · live',
@@ -95,7 +95,7 @@
       tags: { foot: 'zu Fuß', rain: 'auch bei Regen', outdoor: 'draußen', easy: 'leicht', hard: 'anspruchsvoll', heat: 'für heiße Tage', clear: 'bei klarem Wetter', stairs: 'Treppen', reservation: 'Reservierung', border: 'Polen · Ausweis' }
     },
     en: {
-      siteNav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', info: 'Guest info', book: 'Book' },
+      siteNav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', book: 'Book' },
       badge: 'Guide', greet: 'Welcome', family: 'family', heroTitle: 'Your plan for this week',
       stayPrefix: 'stay', todayTip: 'Today’s tip', moreArrow: 'detail →',
       planTitle: 'A plan for every day', planSrc: 'weather: yr.no · live',
@@ -129,7 +129,7 @@
       tags: { foot: 'walkable', rain: 'rainy-day ok', outdoor: 'outdoors', easy: 'easy', hard: 'strenuous', heat: 'for hot days', clear: 'clear weather', stairs: 'stairs', reservation: 'booking', border: 'Poland · ID' }
     },
     pl: {
-      siteNav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', info: 'Informacje praktyczne', book: 'Rezerwuj' },
+      siteNav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', book: 'Rezerwuj' },
       badge: 'Przewodnik', greet: 'Witajcie', family: 'rodzino', heroTitle: 'Wasz plan na ten tydzień',
       stayPrefix: 'pobyt', todayTip: 'Tip na dziś', moreArrow: 'szczegóły →',
       planTitle: 'Plan na każdy dzień', planSrc: 'pogoda: yr.no · na żywo',
@@ -562,20 +562,38 @@
       + '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="3.5" fill="none" stroke="' + t.accent + '" stroke-width="1.5"/></svg>';
   }
 
+  /* Sjednocená hlavní navigace — shodná s homepage .vr-nav. Odkazy vedou na
+     všechny hlavní sekce webu (řeší majitelovu výtku „jiný menu než na hlavní
+     stránce"). Filtry průvodce zůstávají jako podřízená druhá lišta níž. */
   function renderHeaderHTML(L) {
-    var langs = ['cs', 'en', 'de', 'pl'].map(function (l) {
-      return '<button class="vg-lang" data-lang="' + l + '" data-on="' + (l === S.lang) + '">' + l.toUpperCase() + '</button>';
-    }).join('');
     var q = '?lang=' + encodeURIComponent(S.lang) + '&season=' + encodeURIComponent(S.season);
-    var n = L.siteNav || {}, links = '';
-    [['dum', n.dum], ['vybaveni', n.vybaveni], ['galerie', n.galerie]].forEach(function (x) {
-      if (x[1]) links += '<a href="../' + q + '#' + x[0] + '">' + esc(x[1]) + '</a>';
-    });
-    if (n.info) links += '<a href="../info/' + q + '">' + esc(n.info) + '</a>';
-    if (n.book) links += '<a class="cta" href="../' + q + '#rezervace">' + esc(n.book) + '</a>';
-    return '<header class="vg-header"><a class="vg-brand" href="../' + q + '"><span class="nm">Villa Rudolf</span><span class="bd">' + esc(L.badge) + '</span></a>'
-      + '<nav class="vg-navlinks" aria-label="Sekce">' + links + '</nav>'
-      + '<div class="vg-langs" role="group" aria-label="Jazyk / Language">' + langs + '</div></header>';
+    var n = L.siteNav || {};
+    var items = [
+      [n.dum, '../' + q + '#dum'],
+      [n.vybaveni, '../' + q + '#vybaveni'],
+      [n.galerie, '../' + q + '#galerie'],
+      [n.recenze, '../' + q + '#recenze'],
+      [n.lokalita, '../' + q + '#lokalita'],
+      [n.vylety, '../vylety/' + q]
+    ];
+    var linkHTML = function () { return items.map(function (x) { return x[0] ? '<a href="' + x[1] + '">' + esc(x[0]) + '</a>' : ''; }).join(''); };
+    var langBtns = function () {
+      return ['cs', 'en', 'de', 'pl'].map(function (l) {
+        return '<button class="vr-lang" data-lang="' + l + '" data-active="' + (l === S.lang) + '">' + l.toUpperCase() + '</button>';
+      }).join('');
+    };
+    var cta = n.book ? '<a class="vr-navcta" href="../' + q + '#rezervace">' + esc(n.book) + '</a>' : '';
+    var mobCta = n.book ? '<a class="vr-mob-cta" href="../' + q + '#rezervace">' + esc(n.book) + '</a>' : '';
+    return '<header class="vr-nav"><div class="vr-nav-inner">'
+      + '<a class="vr-brand" href="../' + q + '"><b>VILLA RUDOLF</b><i>KRKONOŠE</i></a>'
+      + '<nav class="vr-navlinks" aria-label="Sekce webu">' + linkHTML() + '</nav>'
+      + '<div class="vr-navright"><div class="vr-langs" role="group" aria-label="Jazyk / Language">' + langBtns() + '</div>'
+      + cta
+      + '<button class="vr-burger" id="vr-burger" aria-label="Menu" aria-expanded="false" aria-controls="vr-mob"><span></span><span></span><span></span></button>'
+      + '</div></div></header>'
+      + '<div class="vr-mob" id="vr-mob" data-open="false">' + linkHTML() + mobCta
+      + '<a class="vr-mob-2nd" href="./" aria-current="page">' + esc(L.badge) + '</a>'
+      + '<div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">' + langBtns() + '</div></div>';
   }
 
   function renderHeroHTML(L, plan, tripById) {
@@ -806,8 +824,8 @@
     document.documentElement.lang = S.lang;
     var plan = computePlan();
     var tripById = {}; DATA.trips.forEach(function (t) { tripById[t.id] = t; });
-    var html = '<div class="vg-wrap">';
-    html += renderHeaderHTML(L);
+    var html = renderHeaderHTML(L);
+    html += '<div class="vg-wrap">';
     if (S.mode === 'guest') { html += renderHeroHTML(L, plan, tripById); html += renderPlanHTML(L, plan); }
     else { html += renderPublicHTML(L); }
     html += renderWizardHTML(L);
@@ -958,8 +976,9 @@
   /* ===================== Wiring ===================== */
   function wire() {
     var app = document.getElementById('app');
+    document.body.style.overflow = ''; // po re-renderu je mobilní menu zavřené → odemkni scroll
     // jazyk (výběr pinu zůstává — panel se jen přepíše do nového jazyka)
-    app.querySelectorAll('.vg-lang').forEach(function (b) {
+    app.querySelectorAll('.vr-lang').forEach(function (b) {
       b.addEventListener('click', function () {
         S.lang = b.dataset.lang;
         try { localStorage.setItem('vrLang', S.lang); } catch (e) { }
@@ -967,6 +986,18 @@
         renderApp(true);
       });
     });
+    // burger / mobilní menu (hlavní navigace)
+    var burger = app.querySelector('#vr-burger'), mob = app.querySelector('#vr-mob');
+    if (burger && mob) {
+      var toggleMob = function (open) {
+        var o = open == null ? mob.getAttribute('data-open') !== 'true' : open;
+        mob.setAttribute('data-open', o ? 'true' : 'false');
+        burger.setAttribute('aria-expanded', o ? 'true' : 'false');
+        document.body.style.overflow = o ? 'hidden' : '';
+      };
+      burger.addEventListener('click', function () { toggleMob(); });
+      mob.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { toggleMob(false); }); });
+    }
     // filtr (vybraný pin se zruší jen když vypadne z filtru — řeší renderCatalogHTML)
     app.querySelectorAll('.vg-chip').forEach(function (b) {
       b.addEventListener('click', function () { S.filter = b.dataset.filter; renderApp(true); });
