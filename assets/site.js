@@ -119,7 +119,7 @@ const T = {
     photoSoon: 'Fotku doplníme',
     meta: {
       title: 'Villa Rudolf – celé horské sídlo jen pro vás | Krkonoše',
-      desc: 'Villa Rudolf – soukromé horské sídlo v Krkonoších. Celý dům i rozlehlý pozemek jen pro vaši skupinu 6–22 lidí: zastřešený bazén, sauna, pergola, ohniště. Léto i zima. Rezervujte celý dům.',
+      desc: 'Villa Rudolf – soukromé horské sídlo v Krkonoších. Celý dům i rozlehlý pozemek jen pro vaši skupinu 6–22 lidí: zastřešený bazén, sauna, altán, ohniště. Léto i zima. Rezervujte celý dům.',
       locale: 'cs_CZ',
     },
     nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
@@ -142,7 +142,7 @@ const T = {
     statement: {
       eyebrow: 'Celý areál jen pro vás',
       title: 'Za bránou už jste jen vy.',
-      lead: 'Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, 4 500 m² oploceného parku, bazén, saunu, pergolu i ohniště. <span class="vr-sm-hide">Žádná recepce, žádní cizí lidé u snídaně, žádné čekání, až se uvolní sauna.</span>',
+      lead: 'Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, 4 500 m² oploceného parku, bazén, saunu, altán i ohniště. <span class="vr-sm-hide">Žádná recepce, žádní cizí lidé u snídaně, žádné čekání, až se uvolní sauna.</span>',
       stats: [
         { num: '4 500 m²', label: 'oploceného parku jen pro vaši skupinu' },
         { num: '22 lůžek', label: 'v sedmi ložnicích — a jeden stůl, u kterého sedí celá parta' },
@@ -157,8 +157,8 @@ const T = {
         hero: { tag: 'Wellness', name: 'Zastřešený vyhřívaný bazén', desc: 'Bazén pod střechou s ohřevem vody — v provozu za každého počasí, od letního odpoledne po mrazivý zimní večer. Po koupeli rovnou do sauny.' },
         cards: [
           { tag: 'Wellness', name: 'Privátní sauna', desc: 'Finská sauna jen pro vaši skupinu. Žádné sdílení, žádné časové sloty.' },
-          { tag: 'Venkovní život', name: 'Velká pergola', desc: 'Kryté posezení, kam se vejde celá skupina najednou. Společné večeře venku i za deště.' },
-          { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od pergoly.' },
+          { tag: 'Venkovní život', name: 'Velký altán', desc: 'Kryté posezení, kam se vejde celá skupina najednou. Společné večeře venku i za deště.' },
+          { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od altánu.' },
         ],
       },
       winter: {
@@ -208,8 +208,8 @@ const T = {
     },
     sezony: {
       eyebrow: 'Léto vs. Zima', title: 'Co vás čeká v každé sezóně', note: 'Přepněte sezónu nahoře a celý web se promění.',
-      summer: { tag: 'Léto', title: 'Dlouhé večery venku', desc: 'Bazén, pergola, ohniště a velký pozemek pro děti i dospělé. Turistika a výlety přímo od domu.',
-        list: ['Vyhřívaný bazén, sauna a pergola', 'Ohniště a dlouhé večery na pozemku', 'Turistika a výlety přímo od domu'] },
+      summer: { tag: 'Léto', title: 'Dlouhé večery venku', desc: 'Bazén, altán, ohniště a velký pozemek pro děti i dospělé. Turistika a výlety přímo od domu.',
+        list: ['Vyhřívaný bazén, sauna a altán', 'Ohniště a dlouhé večery na pozemku', 'Turistika a výlety přímo od domu'] },
       winter: { tag: 'Zima', title: 'Lyžovačka bez starostí', desc: 'Ski Resort Černá hora jen 4 km, lyžárna na vybavení přímo v domě a vyhřívaný krytý bazén se saunou na zahřátí po dni na sjezdovce.',
         list: ['Ski Resort Černá hora 4 km, skibus zdarma 200 m', 'Vyhřívaný krytý bazén a sauna', 'Lyžárna na uskladnění vybavení'] },
     },
@@ -297,7 +297,7 @@ const T = {
         { name: 'Příjezd k vile', desc: 'Plocha za bránou, kam zaparkuje celá skupina, a dům na konci příjezdovky mezi vzrostlými stromy.' },
         { name: 'Zahrada s bazénem', desc: 'Pohled přes trávník na dům, zastřešený bazén s řadou lehátek a gabionové ohniště pod svahem.' },
         { name: 'Zahrada s krytým bazénem', desc: 'Zastřešený vyhřívaný bazén s řadou lehátek hned u domu, kolem dokola vlastní trávník.' },
-        { name: 'Terasa s posezením', desc: 'Terasa z dubových fošen nad gabionovou zdí — stůl pro celou partu a výhled na pergolu a hory.' },
+        { name: 'Terasa s posezením', desc: 'Terasa z dubových fošen nad gabionovou zdí — stůl pro celou partu a výhled na altán a hory.' },
         { name: 'Altán s grily', desc: 'Pod krovem z masivního dřeva: dlouhý stůl, zděný grilovací pult a otevřené strany do zahrady.' },
         { name: 'Dětské hřiště', desc: 'Lanový most, prolézačka a malá lezecká stěna na dohled od domu — děti mají svůj kout uvnitř pozemku.' },
         { name: 'Terasa s ohništěm večer', desc: 'Po setmění se gabiony i schody nasvítí samy — křesílka u ohniště a v pozadí svítící bazén.' },
@@ -379,7 +379,7 @@ const T = {
     photoSoon: 'Photo coming soon',
     meta: {
       title: 'Villa Rudolf – the whole mountain estate, just for you | Krkonoše',
-      desc: 'Villa Rudolf – a private mountain estate in the Czech Krkonoše. The whole house and grounds for your group of 6–22: covered pool, sauna, pergola, fire pit. Summer and winter. Book the entire house.',
+      desc: 'Villa Rudolf – a private mountain estate in the Czech Krkonoše. The whole house and grounds for your group of 6–22: covered pool, sauna, gazebo, fire pit. Summer and winter. Book the entire house.',
       locale: 'en_GB',
     },
     nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
@@ -402,7 +402,7 @@ const T = {
     statement: {
       eyebrow: 'The whole estate, only yours',
       title: 'Past the gate, it\'s just you.',
-      lead: 'You are not booking rooms in a house where somebody else is staying too. You take the whole place — the house, 4,500 m² of fenced grounds, the pool, the sauna, the pergola and the fire pit. <span class="vr-sm-hide">No reception desk, no strangers at breakfast, no waiting for the sauna to free up.</span>',
+      lead: 'You are not booking rooms in a house where somebody else is staying too. You take the whole place — the house, 4,500 m² of fenced grounds, the pool, the sauna, the gazebo and the fire pit. <span class="vr-sm-hide">No reception desk, no strangers at breakfast, no waiting for the sauna to free up.</span>',
       stats: [
         { num: '4,500 m²', label: 'of fenced grounds for your group alone' },
         { num: '22 beds', label: 'in seven bedrooms — and one table the whole party sits at' },
@@ -417,8 +417,8 @@ const T = {
         hero: { tag: 'Wellness', name: 'Covered heated pool', desc: 'An indoor pool with heated water — open in any weather, from summer afternoons to frozen winter nights. Straight from the water into the sauna.' },
         cards: [
           { tag: 'Wellness', name: 'Private sauna', desc: 'A Finnish sauna for your group only. No sharing, no time slots.' },
-          { tag: 'Outdoor living', name: 'Large pergola', desc: 'Covered seating big enough for the whole group at once. Shared dinners outside, even in the rain.' },
-          { tag: 'For families', name: 'Children’s playground', desc: 'Climbing frames, a small climbing wall and a rope wall. The kids get their own space in sight of the pergola.' },
+          { tag: 'Outdoor living', name: 'Large gazebo', desc: 'Covered seating big enough for the whole group at once. Shared dinners outside, even in the rain.' },
+          { tag: 'For families', name: 'Children’s playground', desc: 'Climbing frames, a small climbing wall and a rope wall. The kids get their own space in sight of the gazebo.' },
         ],
       },
       winter: {
@@ -468,8 +468,8 @@ const T = {
     },
     sezony: {
       eyebrow: 'Summer vs. Winter', title: 'What each season brings', note: 'Switch season above and the whole site transforms.',
-      summer: { tag: 'Summer', title: 'Long evenings outside', desc: 'Pool, pergola, fire pit and a large grounds for kids and adults alike. Hiking and trips straight from the house.',
-        list: ['Heated pool, sauna and pergola', 'Fire pit and long evenings on the grounds', 'Hiking and trips straight from the house'] },
+      summer: { tag: 'Summer', title: 'Long evenings outside', desc: 'Pool, gazebo, fire pit and a large grounds for kids and adults alike. Hiking and trips straight from the house.',
+        list: ['Heated pool, sauna and gazebo', 'Fire pit and long evenings on the grounds', 'Hiking and trips straight from the house'] },
       winter: { tag: 'Winter', title: 'Skiing without the hassle', desc: 'Ski Resort Černá hora just 4 km away, a ski room for your gear in the house, and a heated indoor pool with sauna to warm up after a day on the slopes.',
         list: ['Ski Resort Černá hora 4 km, free ski bus 200 m', 'Heated covered pool and sauna', 'Ski room for your gear'] },
     },
@@ -557,7 +557,7 @@ const T = {
         { name: 'Arriving at the villa', desc: 'The parking area behind the gate with room for the whole group, and the house at the end of the drive among tall trees.' },
         { name: 'Garden and pool', desc: 'Across the lawn to the house, the covered pool with its row of loungers and the gabion fire pit below the slope.' },
         { name: 'The covered pool', desc: 'The covered heated pool and its row of sun loungers, right by the house and ringed by your own lawn.' },
-        { name: 'The wooden deck', desc: 'An oak deck above the gabion wall — a table for the whole group, looking out to the pergola and the hills.' },
+        { name: 'The wooden deck', desc: 'An oak deck above the gabion wall — a table for the whole group, looking out to the gazebo and the hills.' },
         { name: 'The gazebo with the grills', desc: 'Under a solid timber roof: the long table, a built-in grill counter and open sides onto the garden.' },
         { name: 'The playground', desc: 'A rope bridge, a climbing frame and a small climbing wall in sight of the house — the children have their own corner inside the grounds.' },
         { name: 'The fire pit after dark', desc: 'Once the sun is down the gabions and steps light themselves — chairs around the fire pit, the glowing pool behind.' },
@@ -639,7 +639,7 @@ const T = {
     photoSoon: 'Foto folgt',
     meta: {
       title: 'Villa Rudolf – das ganze Berganwesen nur für euch | Riesengebirge',
-      desc: 'Villa Rudolf – ein privates Berganwesen im Riesengebirge. Das ganze Haus und Grundstück für eure Gruppe von 6–22 Personen: überdachter Pool, Sauna, Pergola, Feuerstelle. Sommer und Winter. Ganzes Haus buchen.',
+      desc: 'Villa Rudolf – ein privates Berganwesen im Riesengebirge. Das ganze Haus und Grundstück für eure Gruppe von 6–22 Personen: überdachter Pool, Sauna, Pavillon, Feuerstelle. Sommer und Winter. Ganzes Haus buchen.',
       locale: 'de_DE',
     },
     nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
@@ -662,7 +662,7 @@ const T = {
     statement: {
       eyebrow: 'Das ganze Anwesen nur für euch',
       title: 'Hinter dem Tor seid ihr unter euch.',
-      lead: 'Ihr bucht keine Zimmer in einem Haus, in dem noch jemand anderes wohnt. Ihr nehmt das ganze Grundstück — das Haus, 4.500 m² eingezäunten Park, Pool, Sauna, Pergola und Feuerstelle. <span class="vr-sm-hide">Keine Rezeption, keine Fremden beim Frühstück, kein Warten, bis die Sauna frei wird.</span>',
+      lead: 'Ihr bucht keine Zimmer in einem Haus, in dem noch jemand anderes wohnt. Ihr nehmt das ganze Grundstück — das Haus, 4.500 m² eingezäunten Park, Pool, Sauna, Pavillon und Feuerstelle. <span class="vr-sm-hide">Keine Rezeption, keine Fremden beim Frühstück, kein Warten, bis die Sauna frei wird.</span>',
       stats: [
         { num: '4.500 m²', label: 'eingezäunter Park nur für eure Gruppe' },
         { num: '22 Betten', label: 'in sieben Schlafzimmern — und ein Tisch für die ganze Runde' },
@@ -677,8 +677,8 @@ const T = {
         hero: { tag: 'Wellness', name: 'Überdachter beheizter Pool', desc: 'Ein Innenpool mit beheiztem Wasser — bei jedem Wetter nutzbar, vom Sommernachmittag bis zur frostigen Winternacht. Aus dem Wasser direkt in die Sauna.' },
         cards: [
           { tag: 'Wellness', name: 'Private Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe. Kein Teilen, keine Zeitfenster.' },
-          { tag: 'Draußen leben', name: 'Große Pergola', desc: 'Überdachte Sitzplätze für die ganze Gruppe auf einmal. Gemeinsame Abendessen draußen, auch bei Regen.' },
-          { tag: 'Für Familien', name: 'Kinderspielplatz', desc: 'Klettergerüste, eine kleine Kletterwand und eine Seilwand. Die Kinder haben ihren eigenen Bereich in Sichtweite der Pergola.' },
+          { tag: 'Draußen leben', name: 'Großer Pavillon', desc: 'Überdachte Sitzplätze für die ganze Gruppe auf einmal. Gemeinsame Abendessen draußen, auch bei Regen.' },
+          { tag: 'Für Familien', name: 'Kinderspielplatz', desc: 'Klettergerüste, eine kleine Kletterwand und eine Seilwand. Die Kinder haben ihren eigenen Bereich in Sichtweite des Pavillons.' },
         ],
       },
       winter: {
@@ -728,8 +728,8 @@ const T = {
     },
     sezony: {
       eyebrow: 'Sommer vs. Winter', title: 'Was jede Jahreszeit bietet', note: 'Wechselt oben die Jahreszeit — die ganze Seite verwandelt sich.',
-      summer: { tag: 'Sommer', title: 'Lange Abende draußen', desc: 'Pool, Pergola, Feuerstelle und ein großes Grundstück für Kinder wie Erwachsene. Wandern und Ausflüge direkt vom Haus.',
-        list: ['Beheizter Pool, Sauna und Pergola', 'Feuerstelle und lange Abende auf dem Grundstück', 'Wandern und Ausflüge direkt vom Haus'] },
+      summer: { tag: 'Sommer', title: 'Lange Abende draußen', desc: 'Pool, Pavillon, Feuerstelle und ein großes Grundstück für Kinder wie Erwachsene. Wandern und Ausflüge direkt vom Haus.',
+        list: ['Beheizter Pool, Sauna und Pavillon', 'Feuerstelle und lange Abende auf dem Grundstück', 'Wandern und Ausflüge direkt vom Haus'] },
       winter: { tag: 'Winter', title: 'Skifahren ohne Stress', desc: 'Skigebiet Černá hora nur 4 km entfernt, ein Skiraum für die Ausrüstung im Haus und ein beheizter Hallenpool mit Sauna zum Aufwärmen nach einem Tag auf der Piste.',
         list: ['Skigebiet Černá hora 4 km, Skibus gratis 200 m', 'Beheizter überdachter Pool und Sauna', 'Skiraum für die Ausrüstung'] },
     },
@@ -817,7 +817,7 @@ const T = {
         { name: 'Ankunft an der Villa', desc: 'Der Stellplatz hinter dem Tor, auf dem die ganze Gruppe parkt, und das Haus am Ende der Zufahrt zwischen hohen Bäumen.' },
         { name: 'Garten mit Pool', desc: 'Über den Rasen zum Haus, der überdachte Pool mit seiner Liegenreihe und die Feuerstelle aus Gabionen unter dem Hang.' },
         { name: 'Überdachter Pool', desc: 'Der überdachte beheizte Pool mit Liegenreihe direkt am Haus, ringsum euer eigener Rasen.' },
-        { name: 'Holzterrasse', desc: 'Eine Eichenterrasse über der Gabionenwand — ein Tisch für die ganze Gruppe mit Blick auf Pergola und Berge.' },
+        { name: 'Holzterrasse', desc: 'Eine Eichenterrasse über der Gabionenwand — ein Tisch für die ganze Gruppe mit Blick auf Pavillon und Berge.' },
         { name: 'Pavillon mit Grills', desc: 'Unter massivem Holzdach: der lange Tisch, ein gemauerter Grilltresen und offene Seiten in den Garten.' },
         { name: 'Spielplatz', desc: 'Hängebrücke, Klettergerüst und eine kleine Kletterwand in Sichtweite des Hauses — die Kinder haben ihre eigene Ecke auf dem Grundstück.' },
         { name: 'Feuerstelle am Abend', desc: 'Nach Sonnenuntergang leuchten Gabionen und Stufen von selbst — Sessel um die Feuerstelle, dahinter der beleuchtete Pool.' },
@@ -899,7 +899,7 @@ const T = {
     photoSoon: 'Zdjęcie wkrótce',
     meta: {
       title: 'Villa Rudolf – cała górska rezydencja tylko dla was | Karkonosze',
-      desc: 'Villa Rudolf – prywatna górska rezydencja w Karkonoszach. Cały dom i posesja dla grupy 6–22 osób: kryty basen, sauna, pergola, palenisko. Lato i zima. Zarezerwuj cały dom.',
+      desc: 'Villa Rudolf – prywatna górska rezydencja w Karkonoszach. Cały dom i posesja dla grupy 6–22 osób: kryty basen, sauna, altana, palenisko. Lato i zima. Zarezerwuj cały dom.',
       locale: 'pl_PL',
     },
     nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
@@ -922,7 +922,7 @@ const T = {
     statement: {
       eyebrow: 'Cały teren tylko dla was',
       title: 'Za bramą jesteście tylko wy.',
-      lead: 'Nie rezerwujecie pokoi w domu, w którym mieszka jeszcze ktoś inny. Bierzecie całą posesję — dom, 4500 m² ogrodzonego parku, basen, saunę, pergolę i palenisko. <span class="vr-sm-hide">Żadnej recepcji, żadnych obcych przy śniadaniu, żadnego czekania, aż zwolni się sauna.</span>',
+      lead: 'Nie rezerwujecie pokoi w domu, w którym mieszka jeszcze ktoś inny. Bierzecie całą posesję — dom, 4500 m² ogrodzonego parku, basen, saunę, altanę i palenisko. <span class="vr-sm-hide">Żadnej recepcji, żadnych obcych przy śniadaniu, żadnego czekania, aż zwolni się sauna.</span>',
       stats: [
         { num: '4500 m²', label: 'ogrodzonego parku tylko dla waszej grupy' },
         { num: '22 łóżka', label: 'w siedmiu sypialniach — i jeden stół dla całej ekipy' },
@@ -937,8 +937,8 @@ const T = {
         hero: { tag: 'Wellness', name: 'Zadaszony podgrzewany basen', desc: 'Kryty basen z podgrzewaną wodą — czynny w każdą pogodę, od letniego popołudnia po mroźny zimowy wieczór. Prosto z wody do sauny.' },
         cards: [
           { tag: 'Wellness', name: 'Prywatna sauna', desc: 'Fińska sauna tylko dla waszej grupy. Bez dzielenia, bez okienek czasowych.' },
-          { tag: 'Życie na zewnątrz', name: 'Duża pergola', desc: 'Zadaszone miejsce dla całej grupy naraz. Wspólne kolacje na świeżym powietrzu, nawet w deszcz.' },
-          { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, mała ścianka wspinaczkowa i ścianka linowa. Dzieci mają własną przestrzeń w zasięgu wzroku od pergoli.' },
+          { tag: 'Życie na zewnątrz', name: 'Duża altana', desc: 'Zadaszone miejsce dla całej grupy naraz. Wspólne kolacje na świeżym powietrzu, nawet w deszcz.' },
+          { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, mała ścianka wspinaczkowa i ścianka linowa. Dzieci mają własną przestrzeń w zasięgu wzroku od altany.' },
         ],
       },
       winter: {
@@ -988,8 +988,8 @@ const T = {
     },
     sezony: {
       eyebrow: 'Lato vs. Zima', title: 'Co czeka w każdym sezonie', note: 'Przełącz sezon u góry, a cała strona się zmieni.',
-      summer: { tag: 'Lato', title: 'Długie wieczory na zewnątrz', desc: 'Basen, pergola, palenisko i duża posesja dla dzieci i dorosłych. Wędrówki i wycieczki prosto z domu.',
-        list: ['Podgrzewany basen, sauna i pergola', 'Palenisko i długie wieczory na posesji', 'Wędrówki i wycieczki prosto z domu'] },
+      summer: { tag: 'Lato', title: 'Długie wieczory na zewnątrz', desc: 'Basen, altana, palenisko i duża posesja dla dzieci i dorosłych. Wędrówki i wycieczki prosto z domu.',
+        list: ['Podgrzewany basen, sauna i altana', 'Palenisko i długie wieczory na posesji', 'Wędrówki i wycieczki prosto z domu'] },
       winter: { tag: 'Zima', title: 'Narty bez kłopotów', desc: 'Ośrodek Černá hora zaledwie 4 km, narciarnia na sprzęt w domu i podgrzewany kryty basen z sauną na rozgrzewkę po dniu na stoku.',
         list: ['Ośrodek Černá hora 4 km, darmowy skibus 200 m', 'Podgrzewany kryty basen i sauna', 'Narciarnia na sprzęt'] },
     },
@@ -1077,7 +1077,7 @@ const T = {
         { name: 'Podjazd do willi', desc: 'Plac za bramą, na którym zaparkuje cała grupa, i dom na końcu podjazdu wśród wysokich drzew.' },
         { name: 'Ogród z basenem', desc: 'Przez trawnik na dom, zadaszony basen z rzędem leżaków i palenisko z gabionów pod skarpą.' },
         { name: 'Zadaszony basen', desc: 'Podgrzewany basen pod zadaszeniem z rzędem leżaków tuż przy domu, dookoła własny trawnik.' },
-        { name: 'Drewniany taras', desc: 'Taras z dębowych desek nad ścianą z gabionów — stół dla całej ekipy i widok na pergolę oraz góry.' },
+        { name: 'Drewniany taras', desc: 'Taras z dębowych desek nad ścianą z gabionów — stół dla całej ekipy i widok na altanę oraz góry.' },
         { name: 'Altana z grillami', desc: 'Pod masywnym drewnianym dachem: długi stół, murowany blat grillowy i otwarte boki na ogród.' },
         { name: 'Plac zabaw', desc: 'Most linowy, drabinki i mała ścianka wspinaczkowa w zasięgu wzroku od domu — dzieci mają swój kąt na terenie posesji.' },
         { name: 'Palenisko wieczorem', desc: 'Po zmroku gabiony i schody podświetlają się same — fotele przy palenisku, a w tle rozświetlony basen.' },
@@ -1238,7 +1238,7 @@ function panoIdx(id) { return PANO_SETS.zima.indexOf(id); }
    media/gallery/{slug}.jpg (1600px) and media/gallery/t/{slug}.jpg (640px thumb). */
 const GALLERY = [
   { s: '01-house-summer', c: 'leto', alt: 'Villa Rudolf z rozlehlé zahrady — hrázděný štít, veranda a terasa' },
-  { s: '09-estate-blue-hour', c: 'vecer', alt: 'Celý pozemek z patra za modré hodiny — bazén, ohniště, pergola a stodola' },
+  { s: '09-estate-blue-hour', c: 'vecer', alt: 'Celý pozemek z patra za modré hodiny — bazén, ohniště, altán a stodola' },
   { s: '10-winter-night-framed', c: 'zima', alt: 'Vila v noci rámovaná zasněženými větvemi, teplé světlo na sněhu' },
   { s: '17-pool-hall-interior', c: 'interier', alt: 'Zastřešený bazén — symetrický pohled prosklenou halou' },
   { s: '03-pool-hall-exterior', c: 'leto', alt: 'Prosklená hala bazénu zvenčí a řada lehátek na trávníku' },
@@ -1246,11 +1246,11 @@ const GALLERY = [
   { s: '11-winter-day', c: 'zima', alt: 'Villa Rudolf v plném zimním slunci pod zasněženými stromy' },
   { s: '14-table-for-ten', c: 'interier', alt: 'Dlouhý jídelní stůl pro deset s károvaným ubrusem' },
   { s: '02-playground-house', c: 'leto', alt: 'Dům z boku s lanovým mostem a prolézačkou dětského hřiště' },
-  { s: '06-pergola-night', c: 'vecer', alt: 'Pergola v noci — nasvícený vnitřek svítí teple do tmy' },
+  { s: '06-pergola-night', c: 'vecer', alt: 'Altán v noci — nasvícený vnitřek svítí teple do tmy' },
   { s: '12-winter-garden', c: 'zima', alt: 'Pohled přes zasněženou zahradu na vilu mezi vysokými smrky' },
   { s: '18-sauna-inside', c: 'interier', alt: 'Uvnitř finské sauny — lavice ze světlého dřeva a kamna' },
   { s: '07-gabion-pool-day', c: 'leto', alt: 'Gabionová opěrná zeď, trávník a zastřešený bazén ve dne' },
-  { s: '05-pergola-autumn', c: 'leto', alt: 'Pergola z boku na podzim proti žluto-oranžovému listí' },
+  { s: '05-pergola-autumn', c: 'leto', alt: 'Altán z boku na podzim proti žluto-oranžovému listí' },
   { s: '13-frozen-apples', c: 'zima', alt: 'Jabloň se zmrzlými jablky ve sněhu v protisvětle' },
   { s: '16-dining-room', c: 'interier', alt: 'Jídelna s kuchyňskou linkou a dubovým stolem pro osm' },
   { s: '04-terrace-loungers', c: 'leto', alt: 'Terasa u bazénu s perspektivní řadou lehátek' },
@@ -1639,7 +1639,7 @@ function loadTripCounts() {
     .catch(() => {});
 }
 
-/* Vybavení je sezónní. Léto: hero = krytý bazén + sauna / pergola / hřiště.
+/* Vybavení je sezónní. Léto: hero = krytý bazén + sauna / altán / hřiště.
    Zima: hero = „Lyžování za rohem" + sauna po lyžích / ohniště / krytý bazén.
    Všechny fotky jsou naše skutečné (žádné AI/fake ski fotky) — hero zimy používá
    vr-crossfade obrázek winter-forest.jpg definovaný v HTML. */
