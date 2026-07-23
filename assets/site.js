@@ -1322,7 +1322,9 @@ function setTexts() {
 /* ============================ Dynamic list renders ============================ */
 /* Rychlá fakta pod heroem. Ověřeno z platform listingu Villa Rudolf — needitovat
    mimo skutečné hodnoty (7 ložnic, 5 koupelen a WC, 22 lůžek = 19+3 přistýlky,
-   257 m², krytý bazén a sauna, soukromý pozemek s parkováním). */
+   257 m², soukromý pozemek s parkováním).
+   Dlaždice wellness je SEZÓNNÍ: v létě bazén+sauna, v zimě sauna+lyžárna —
+   bazén přes zimu není vyhřívaný a nesmí vzbudit dojem, že bude v provozu. */
 function renderFacts() {
   const F = ({
     cs: [
@@ -1330,7 +1332,9 @@ function renderFacts() {
       { k: '5', v: 'koupelen a WC' },
       { k: '22', v: 'lůžek — 19 + 3 přistýlky' },
       { k: '257 m²', v: 'obytná plocha' },
-      { k: 'Bazén + sauna', v: 'krytý; bazén vyhřívaný v létě', wide: true },
+      state.season === 'zima'
+        ? { k: 'Sauna + lyžárna', v: 'privátní sauna, lyžárna přímo v domě', wide: true }
+        : { k: 'Bazén + sauna', v: 'krytý vyhřívaný bazén a privátní sauna', wide: true },
       { k: 'Vlastní pozemek', v: 's parkováním u domu', wide: true },
     ],
     en: [
@@ -1338,7 +1342,9 @@ function renderFacts() {
       { k: '5', v: 'bathrooms & WCs' },
       { k: '22', v: 'beds — 19 + 3 extra' },
       { k: '257 m²', v: 'living area' },
-      { k: 'Pool + sauna', v: 'covered; pool heated in summer', wide: true },
+      state.season === 'zima'
+        ? { k: 'Sauna + ski room', v: 'private sauna, ski room inside the house', wide: true }
+        : { k: 'Pool + sauna', v: 'covered heated pool and private sauna', wide: true },
       { k: 'Private grounds', v: 'with parking at the house', wide: true },
     ],
     de: [
@@ -1346,7 +1352,9 @@ function renderFacts() {
       { k: '5', v: 'Bäder & WCs' },
       { k: '22', v: 'Betten — 19 + 3 Zusatz' },
       { k: '257 m²', v: 'Wohnfläche' },
-      { k: 'Pool + Sauna', v: 'überdacht; Pool im Sommer beheizt', wide: true },
+      state.season === 'zima'
+        ? { k: 'Sauna + Skiraum', v: 'private Sauna, Skiraum direkt im Haus', wide: true }
+        : { k: 'Pool + Sauna', v: 'überdachter beheizter Pool und private Sauna', wide: true },
       { k: 'Eigenes Grundstück', v: 'mit Parkplatz am Haus', wide: true },
     ],
     pl: [
@@ -1354,7 +1362,9 @@ function renderFacts() {
       { k: '5', v: 'łazienek i WC' },
       { k: '22', v: 'miejsc — 19 + 3 dostawki' },
       { k: '257 m²', v: 'powierzchnia' },
-      { k: 'Basen + sauna', v: 'kryty; basen ogrzewany latem', wide: true },
+      state.season === 'zima'
+        ? { k: 'Sauna + narciarnia', v: 'prywatna sauna, narciarnia w domu', wide: true }
+        : { k: 'Basen + sauna', v: 'kryty ogrzewany basen i prywatna sauna', wide: true },
       { k: 'Własna posesja', v: 'z parkingiem przy domu', wide: true },
     ],
   })[state.lang] || null;
@@ -2824,6 +2834,7 @@ function setSeason(season) {
   applySeasonButtons(); renderSeasonsCards(); applyHeroSeason();
   applyLokLead();    // lead sekce Lokalita má vlastní zimní znění
   renderAmenities(); // hero amenity card (bazén ↔ lyžování) + 3 cards swap by season
+  renderFacts();     // rychlá fakta: v zimě sauna+lyžárna místo bazénu (bazén v zimě nejede)
   // 360° prohlídka má vlastní sadu scén pro každou sezónu — přepni ji celou
   // (náhledy, popisky, čítač) a nahraj první scénu; stará textura se uvolní
   // uvnitř loadPano() přes tex.dispose().
