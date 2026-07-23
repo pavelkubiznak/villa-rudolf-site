@@ -426,6 +426,7 @@ const T = {
         { name: 'Terasa s ohništěm večer', desc: 'Po setmění se gabiony i schody nasvítí samy — křesílka u ohniště a v pozadí svítící bazén.' },
       ],
       groupsLabel: 'Skupiny scén', groupAll: 'Vše',
+      stripLabel: 'Scény 360° prohlídky', stripPrev: 'Předchozí náhledy', stripNext: 'Další náhledy',
       groups: { ground: 'Přízemí', floor1: '1. patro', floor2: 'Podkroví', basement: 'Suterén', extSummer: 'Exteriér léto', extWinter: 'Exteriér zima' },
     },
     gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
@@ -751,6 +752,7 @@ const T = {
         { name: 'The fire pit after dark', desc: 'Once the sun is down the gabions and steps light themselves — chairs around the fire pit, the glowing pool behind.' },
       ],
       groupsLabel: 'Scene groups', groupAll: 'All',
+      stripLabel: '360° tour scenes', stripPrev: 'Previous thumbnails', stripNext: 'Next thumbnails',
       groups: { ground: 'Ground floor', floor1: 'First floor', floor2: 'Attic', basement: 'Basement', extSummer: 'Outside — summer', extWinter: 'Outside — winter' },
     },
     gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge', all: 'All', leto: 'Summer', zima: 'Winter', vecer: 'Evening', interier: 'Interior' },
@@ -1076,6 +1078,7 @@ const T = {
         { name: 'Feuerstelle am Abend', desc: 'Nach Sonnenuntergang leuchten Gabionen und Stufen von selbst — Sessel um die Feuerstelle, dahinter der beleuchtete Pool.' },
       ],
       groupsLabel: 'Szenengruppen', groupAll: 'Alle',
+      stripLabel: 'Szenen der 360°-Tour', stripPrev: 'Vorherige Vorschaubilder', stripNext: 'Nächste Vorschaubilder',
       groups: { ground: 'Erdgeschoss', floor1: '1. Obergeschoss', floor2: 'Dachgeschoss', basement: 'Untergeschoss', extSummer: 'Außen — Sommer', extWinter: 'Außen — Winter' },
     },
     gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern', all: 'Alle', leto: 'Sommer', zima: 'Winter', vecer: 'Abend', interier: 'Innen' },
@@ -1401,6 +1404,7 @@ const T = {
         { name: 'Palenisko wieczorem', desc: 'Po zmroku gabiony i schody podświetlają się same — fotele przy palenisku, a w tle rozświetlony basen.' },
       ],
       groupsLabel: 'Grupy scen', groupAll: 'Wszystko',
+      stripLabel: 'Sceny spaceru 360°', stripPrev: 'Poprzednie miniatury', stripNext: 'Następne miniatury',
       groups: { ground: 'Parter', floor1: '1. piętro', floor2: 'Poddasze', basement: 'Piwnica', extSummer: 'Na zewnątrz — lato', extWinter: 'Na zewnątrz — zima' },
     },
     gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć', all: 'Wszystko', leto: 'Lato', zima: 'Zima', vecer: 'Wieczór', interier: 'Wnętrze' },
@@ -2334,6 +2338,67 @@ function renderThumbs() {
     }, [el('img', { src: 'media/pano/' + files[i] + '_t.jpg', alt: s.name, loading: 'lazy', decoding: 'async', width: '512', height: '256' }), el('span', { text: s.name })]);
     host.appendChild(b);
   });
+  syncStripArrows();
+}
+
+/* ===================== ŠIPKY U PRUHU NÁHLEDŮ =====================
+   Majitel žádal podruhé: „u sekce ‚Rozhlédněte se uvnitř i venku celých 360°',
+   dole, jak je ta nabídka se sliderem — bylo by dobrý, kdyby tam byly šipky
+   doleva a doprava, aby si to mohli posunout." Chová se to stejně jako šipky
+   u karuselu ložnic: posun o ~jednu obrazovku náhledů, na krajích šipka zhasne
+   (a nedá se na ni kliknout), klávesnice jede přes ArrowLeft/ArrowRight, dotyk
+   a tažení zůstávají nativní. Když se do pruhu vejde všechno, obě šipky zmizí.
+   Stav drží data-atributy na .vrp-striprail, takže CSS řeší i okrajový fade —
+   z pruhu je na první pohled vidět, že pokračuje. */
+function stripStep() {
+  const strip = $('#vr-thumbs'); if (!strip) return 240;
+  return Math.max(200, Math.round(strip.clientWidth * 0.85));
+}
+function syncStripArrows() {
+  const rail = $('.vrp-striprail'), strip = $('#vr-thumbs');
+  if (!rail || !strip) return;
+  const max = strip.scrollWidth - strip.clientWidth;
+  rail.setAttribute('data-scrollable', max > 4 ? 'true' : 'false');
+  rail.setAttribute('data-start', strip.scrollLeft <= 2 ? 'true' : 'false');
+  rail.setAttribute('data-end', strip.scrollLeft >= max - 2 ? 'true' : 'false');
+}
+function setupThumbStrip() {
+  const rail = $('.vrp-striprail'), strip = $('#vr-thumbs');
+  if (!rail || !strip || rail.dataset.wired) return;
+  rail.dataset.wired = '1';
+  const go = (dir) => strip.scrollBy({ left: dir * stripStep(), behavior: prefersReduced() ? 'auto' : 'smooth' });
+  const pv = $('#vr-strip-prev'), nx = $('#vr-strip-next');
+  if (pv) pv.addEventListener('click', () => go(-1));
+  if (nx) nx.addEventListener('click', () => go(1));
+  strip.addEventListener('scroll', syncStripArrows, { passive: true });
+  window.addEventListener('resize', syncStripArrows);
+  // Klávesnice: šipky posouvají pruh, když je fokus na některém náhledu.
+  // (Náhledy jsou <button>, takže vlastní tab-stop pruh nepotřebuje.)
+  rail.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { go(-1); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { go(1); e.preventDefault(); }
+  });
+  syncStripArrows();
+}
+/* Lokalizované popisky pruhu a jeho šipek. */
+function applyStripAria() {
+  const t = tt().tour || {};
+  const set = (sel, v) => { const n = $(sel); if (n && v) n.setAttribute('aria-label', v); };
+  set('#vr-thumbs', t.stripLabel);
+  set('#vr-strip-prev', t.stripPrev);
+  set('#vr-strip-next', t.stripNext);
+}
+/* Aktivní náhled dorolujeme do pruhu vodorovně (ne scrollIntoView — ten by
+   škubl i svisle). Důležité při skoku z lightboxu ložnice: scéna se má
+   v pruhu ukázat, ne zůstat schovaná za okrajem. */
+function scrollThumbIntoView(smooth) {
+  const strip = $('#vr-thumbs'); if (!strip) return;
+  const b = strip.querySelector('.vrp-thumb[data-active="true"]'); if (!b) return;
+  const l = b.offsetLeft, r = l + b.offsetWidth;
+  const vs = strip.scrollLeft, ve = vs + strip.clientWidth;
+  const beh = (smooth && !prefersReduced()) ? 'smooth' : 'auto';
+  if (l < vs + 8) strip.scrollTo({ left: Math.max(0, l - 16), behavior: beh });
+  else if (r > ve - 8) strip.scrollTo({ left: r - strip.clientWidth + 16, behavior: beh });
 }
 
 function renderScene() {
@@ -2350,6 +2415,7 @@ function renderScene() {
   $('#vr-scene-idx').textContent = pad((at < 0 ? 0 : at) + 1);
   $('#vr-scene-count').textContent = pad(vis.length);
   $all('#vr-thumbs .vrp-thumb').forEach((b) => b.setAttribute('data-active', +b.getAttribute('data-idx') === sc ? 'true' : 'false'));
+  scrollThumbIntoView(true);
 }
 
 /* Sekce Sezóny je teď „Léto vs. Zima" srovnání — obě karty vždy plně viditelné,
@@ -3175,6 +3241,7 @@ function setLang(lang) {
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderRatings(); renderReviews(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  applyStripAria();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
   renderDirectBook(); renderTrustBand(); renderFooterContact();
@@ -3275,7 +3342,7 @@ function ensureThree(cb) {
    kontextu), skryjeme jen prvky prohlídky, aby nezůstal prázdný rám s nadpisem.
    Videa pod prohlídkou zůstávají viditelná. */
 function hide360() {
-  ['.vr-exphead', '#vrpStage', '#vr-thumbs', '.vr-expdetail'].forEach((sel) => {
+  ['.vr-exphead', '#vrpStage', '.vrp-striprail', '.vr-expdetail'].forEach((sel) => {
     const n = $(sel); if (n) n.style.display = 'none';
   });
 }
@@ -3609,7 +3676,7 @@ function init() {
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); applySeasonBranches(); setTexts();
   renderRatings(); renderReviews(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
-  setupPanoGroupKeys();
+  setupPanoGroupKeys(); setupThumbStrip(); applyStripAria();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
   renderDirectBook(); renderTrustBand(); renderFooterContact();

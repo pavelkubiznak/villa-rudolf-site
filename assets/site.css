@@ -362,8 +362,48 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 @media(max-width:600px){.vrp-group{font-size:11px;padding:6px 13px}}
 
 /* Pruh náhledů „sedí ve fadeu" — negativní margin ho vytáhne do spodního okraje
-   stage, z-index ho drží nad panoramatem. */
-.vrp-strip{display:flex;gap:10px;margin-top:clamp(-64px,-6vh,-46px);position:relative;z-index:3;overflow-x:auto;padding-bottom:6px}
+   stage, z-index ho drží nad panoramatem. Negativní margin nese RAIL (obal se
+   šipkami), aby se šipky svisle vystředily přesně na náhledy. */
+.vrp-striprail{position:relative;z-index:3;margin-top:clamp(-64px,-6vh,-46px)}
+.vrp-strip{display:flex;gap:10px;position:relative;overflow-x:auto;padding-bottom:6px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.vrp-strip::-webkit-scrollbar{display:none}
+/* ŠIPKY U PRUHU NÁHLEDŮ — stejný jazyk jako u karuselu ložnic (.vr-car-arrow),
+   jen menší, protože pruh je nižší. Na krajích se ztlumí a vypnou. */
+.vrp-strip-arrow{position:absolute;top:calc(50% - 3px);transform:translateY(-50%);z-index:4;
+  display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:999px;
+  border:1px solid var(--vr-line-2);background:var(--vr-panel-strong);color:var(--vr-text-soft);
+  font-size:21px;line-height:1;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.28);
+  backdrop-filter:blur(10px);   /* pruh leží zpola na panoramatu — ať šipka drží i na světlém záběru */
+  transition:background .25s,color .25s,border-color .25s,opacity .25s}
+.vrp-strip-arrow:hover{background:var(--vr-accent);color:var(--vr-on-accent);border-color:var(--vr-accent)}
+.vrp-strip-arrow:focus-visible{outline:2px solid var(--vr-accent);outline-offset:2px}
+.vrp-strip-arrow.prev{left:-6px}
+.vrp-strip-arrow.next{right:-6px}
+/* Krajní stavy: na začátku zhasne levá, na konci pravá, a když se pruh vejde
+   celý, zmizí obě. */
+.vrp-striprail[data-scrollable="false"] .vrp-strip-arrow,
+.vrp-striprail[data-start="true"] .vrp-strip-arrow.prev,
+.vrp-striprail[data-end="true"] .vrp-strip-arrow.next{opacity:0;pointer-events:none}
+/* Okrajový fade = druhý signál, že pruh pokračuje (drží i na dotyku, kde se
+   se šipkami nepracuje). Maskuje se jen ta strana, kam se dá posunout. */
+.vrp-striprail[data-scrollable="true"] .vrp-strip{
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 34px,#000 calc(100% - 34px),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 34px,#000 calc(100% - 34px),transparent 100%)}
+.vrp-striprail[data-scrollable="true"][data-start="true"] .vrp-strip{
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent 100%);
+  mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent 100%)}
+.vrp-striprail[data-scrollable="true"][data-end="true"] .vrp-strip{
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 34px);
+  mask-image:linear-gradient(90deg,transparent 0,#000 34px)}
+.vrp-striprail[data-scrollable="true"][data-start="true"][data-end="true"] .vrp-strip{
+  -webkit-mask-image:none;mask-image:none}
+@media(max-width:600px){
+  .vrp-strip-arrow{width:32px;height:32px;font-size:18px}
+  .vrp-strip-arrow.prev{left:-4px}
+  .vrp-strip-arrow.next{right:-4px}
+}
+@media(prefers-reduced-motion:reduce){.vrp-strip-arrow{transition:none}}
 .vrp-thumb{position:relative;flex:0 0 auto;width:132px;height:80px;border-radius:3px;border:1.5px solid transparent;cursor:pointer;opacity:.5;transition:opacity .25s,border-color .25s;padding:0;overflow:hidden;background:#11160f}
 .vrp-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .vrp-thumb span{position:absolute;left:0;right:0;bottom:0;z-index:2;font-family:'Archivo',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.08em;line-height:1.2;text-transform:uppercase;color:#fff;background:linear-gradient(180deg,transparent,rgba(4,7,6,.88));padding:16px 7px 5px;text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
