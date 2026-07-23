@@ -240,10 +240,17 @@ const T = {
         lounge:   { tag: 'Uvnitř', name: 'Obývací část apartmá', desc: 'Dlouhá sedací souprava pod trámy a velký stůl — vlastní společenský prostor apartmá Suite.' },
       },
     },
+    /* Sekce se od 7/2026 jmenuje podle toho, co v ní OPRAVDU je. Majitel:
+       „Nám to vlastně přerostlo ve fotky veškerých interiérů, a když tam máš
+       kuchyni a to, tak už to úplně nesedí." Karusel dnes veze pokoje,
+       koupelny, kuchyň, podkroví, saunu i wellness — název „Ložnice a lůžka"
+       sliboval míň, než sekce ukazuje. Rozpis lůžek pod karuselem si vzal
+       podnadpis „Kde se u nás vyspíte" (interior.rosterTitle) — je to
+       rozhodovací tabulka pro organizátora skupiny a musí být k nalezení. */
     bedrooms: {
-      eyebrow: 'Ložnice a lůžka',
-      title: 'Kde se u nás vyspíte',
-      note: '{loznice} ložnic a {luzka} lůžek — pohodlné spaní pro celou skupinu i pro rodiny.',
+      eyebrow: 'Interiéry',
+      title: 'Dům zevnitř',
+      note: '{loznice} ložnic, {koupelny} koupelen, velká kuchyň, sauna i wellness — projděte si celý dům na fotkách.',
       noBunk: 'Žádné patrové postele — klidnější spaní i pro rodiče s malými dětmi.',
       rooms: [
         { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi, 2 samostatná lůžka a 1 lůžko s výsuvným druhým lůžkem · vlastní kuchyňka a kulečník · koupelna' },
@@ -256,7 +263,8 @@ const T = {
     interior: {
       hint: 'Táhněte myší nebo prstem · klepnutím zvětšíte',
       open360: 'Otevřít ve 360° prohlídce domu',
-      rosterTitle: 'Rozpis lůžek',
+      rosterTitle: 'Kde se u nás vyspíte',
+      rosterNote: '{luzka} lůžek — {luzkaDetail} přistýlky. Rozpis, podle kterého rozdělíte partu do pokojů.',
       items: { kitchen: 'Kuchyně a jídelna', suite: 'Apartmá Suite', room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4', sauna: 'Finská sauna', wellness: 'Wellness a sprcha', bath: 'Sprcha u sauny', bath2: 'Koupelna – Pokoj 2', bath3: 'Koupelna – Pokoj 3', bath4: 'Koupelna – Pokoj 4' },
     },
     ohniste: {
@@ -559,9 +567,9 @@ const T = {
       },
     },
     bedrooms: {
-      eyebrow: 'Bedrooms & beds',
-      title: 'Where you’ll sleep',
-      note: '{loznice} bedrooms and {luzka} beds — comfortable sleeping for the whole group and for families.',
+      eyebrow: 'Interiors',
+      title: 'Inside the house',
+      note: '{loznice} bedrooms, {koupelny} bathrooms, a large kitchen, sauna and wellness — walk through the whole house in photos.',
       noBunk: 'No bunk beds — a calmer night, ideal for parents with small children too.',
       rooms: [
         { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds, 2 single beds and 1 bed with a pull-out second bed · own kitchenette and billiard table · bathroom' },
@@ -574,7 +582,8 @@ const T = {
     interior: {
       hint: 'Drag with mouse or finger · tap to enlarge',
       open360: 'Open in the 360° house tour',
-      rosterTitle: 'Bed layout',
+      rosterTitle: 'Where you’ll sleep',
+      rosterNote: '{luzka} beds — {luzkaDetail} extra beds. The layout you’ll split the group by.',
       items: { kitchen: 'Kitchen & dining', suite: 'Apartment Suite', room1: 'Bedroom 1', room2: 'Bedroom 2', room3: 'Bedroom 3', room4: 'Bedroom 4', sauna: 'Finnish sauna', wellness: 'Wellness & shower', bath: 'Shower by the sauna', bath2: 'Bathroom – Room 2', bath3: 'Bathroom – Room 3', bath4: 'Bathroom – Room 4' },
     },
     ohniste: {
@@ -875,9 +884,9 @@ const T = {
       },
     },
     bedrooms: {
-      eyebrow: 'Schlafzimmer & Betten',
-      title: 'Wo ihr schlaft',
-      note: '{loznice} Schlafzimmer und {luzka} Betten — bequemer Schlaf für die ganze Gruppe und für Familien.',
+      eyebrow: 'Innenräume',
+      title: 'Das Haus von innen',
+      note: '{loznice} Schlafzimmer, {koupelny} Bäder, große Küche, Sauna und Wellness — das ganze Haus in Fotos.',
       noBunk: 'Keine Etagenbetten — ruhigerer Schlaf, auch ideal für Eltern mit kleinen Kindern.',
       rooms: [
         { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küchenzeile und Billardtisch · Bad' },
@@ -890,7 +899,8 @@ const T = {
     interior: {
       hint: 'Mit Maus oder Finger ziehen · zum Vergrößern tippen',
       open360: 'In der 360°-Haustour öffnen',
-      rosterTitle: 'Bettenaufteilung',
+      rosterTitle: 'Wo ihr schlaft',
+      rosterNote: '{luzka} Betten — {luzkaDetail} Zustellbetten. Die Aufteilung, nach der ihr die Gruppe verteilt.',
       items: { kitchen: 'Küche & Essbereich', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Dusche an der Sauna', bath2: 'Bad – Zimmer 2', bath3: 'Bad – Zimmer 3', bath4: 'Bad – Zimmer 4' },
     },
     ohniste: {
@@ -1191,9 +1201,9 @@ const T = {
       },
     },
     bedrooms: {
-      eyebrow: 'Sypialnie i łóżka',
-      title: 'Gdzie będziecie spać',
-      note: '{loznice} sypialni i {luzka} miejsca do spania — wygodny sen dla całej grupy i dla rodzin.',
+      eyebrow: 'Wnętrza',
+      title: 'Dom od środka',
+      note: '{loznice} sypialni, {koupelny} łazienek, duża kuchnia, sauna i wellness — cały dom na zdjęciach.',
       noBunk: 'Bez łóżek piętrowych — spokojniejszy sen, także dla rodziców z małymi dziećmi.',
       rooms: [
         { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi, 2 pojedyncze łóżka i 1 łóżko z wysuwanym drugim · własny aneks kuchenny i stół bilardowy · łazienka' },
@@ -1206,7 +1216,8 @@ const T = {
     interior: {
       hint: 'Przeciągnij myszą lub palcem · dotknij, aby powiększyć',
       open360: 'Otwórz w spacerze 360° po domu',
-      rosterTitle: 'Rozkład łóżek',
+      rosterTitle: 'Gdzie będziecie spać',
+      rosterNote: '{luzka} miejsc do spania — {luzkaDetail} dostawki. Rozkład, według którego podzielicie grupę.',
       items: { kitchen: 'Kuchnia i jadalnia', suite: 'Apartament Suite', room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4', sauna: 'Sauna fińska', wellness: 'Wellness i prysznic', bath: 'Prysznic przy saunie', bath2: 'Łazienka – Pokój 2', bath3: 'Łazienka – Pokój 3', bath4: 'Łazienka – Pokój 4' },
     },
     ohniste: {
@@ -2070,11 +2081,17 @@ function renderBedrooms() {
    Organizátor podle něj dělí lidi do pokojů a kopíruje ho do skupinového chatu,
    takže musí zůstat zřetelně označeným blokem s VLASTNÍ KOTVOU (#rozpis)
    a položkou v menu (nav.loznice → #loznice). Nikdy ho nerozpouštěj mezi
-   dlaždice vybavení — pak přijde e-mail místo rezervace. */
+   dlaždice vybavení — pak přijde e-mail místo rezervace.
+
+   Od 7/2026 nese vlastní podnadpis „Kde se u nás vyspíte" — nadpis celé sekce
+   se přejmenoval na „Dům zevnitř" (karusel dávno veze i kuchyň, saunu
+   a koupelny), takže slib o spaní se přesunul přesně sem, kde ho web plní. */
 function buildRoster(host) {
   if (!host) return;
   const t = tt(); host.innerHTML = '';
   host.appendChild(el('h3', { id: 'rozpis', class: 'vr-roster-title', 'data-t': 'interior.rosterTitle', text: (t.interior && t.interior.rosterTitle) || '' }));
+  const note = t.interior && t.interior.rosterNote;
+  if (note) host.appendChild(el('p', { class: 'vr-roster-note', 'data-t': 'interior.rosterNote', text: fillFacts(note) }));
   const list = el('dl', { class: 'vr-roster-list' });
   (t.bedrooms.rooms || []).forEach((r, i) => {
     list.appendChild(el('div', { class: 'vr-roster-row' }, [
