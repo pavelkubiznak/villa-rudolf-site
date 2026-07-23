@@ -455,7 +455,7 @@ const T = {
       stripLabel: 'Scény 360° prohlídky', stripPrev: 'Předchozí náhledy', stripNext: 'Další náhledy',
       groups: { ground: 'Přízemí', floor1: '1. patro', floor2: 'Podkroví', basement: 'Suterén', extSummer: 'Exteriér léto', extWinter: 'Exteriér zima' },
     },
-    gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
+    gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Všechny fotky ({n}) · klepnutím zvětšíte' },
     vylety: {
       eyebrow: 'Plánovač výletů', title: 'Hory začínají za dveřmi', note: 'Vybíráme podle sezóny · {n} ověřených cílů do hodiny od domu.', drop: 'Sem přijde fotka z výletu', cta: 'Otevřít plánovač výletů', ctaSub: 'Bez registrace. Mapa, filtry i tip na konkrétní den.',
       /* SEKCE #vylety JE JEN LETNÍ — a od 7/2026 to platí i pro obsah karet.
@@ -503,7 +503,7 @@ const T = {
       errRate: 'Přijali jsme příliš mnoho žádostí. Zkuste to prosím později nebo nám napište e-mail.',
       errGeneric: 'Odeslání se nezdařilo. Zkuste to prosím znovu, nebo nám napište na rezervace@villarudolf.com.',
     },
-    video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', play: 'Přehrát video', playFull: 'Přehrát celé video se zvukem' },
+    video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', note: 'Video běží samo a bez zvuku. Titulky jsou přímo v obraze; zvuk zapnete tlačítkem a posunout se můžete na časové ose.', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', start: 'Přehrát video', soundOn: 'Zapnout zvuk', soundOff: 'Vypnout zvuk', onYoutube: 'Přehrát na YouTube' },
     share: { eyebrow: 'Ze života vily', title: 'Jak to u nás vypadá', body: 'Nakoukněte do každodenního života vily na našem Instagramu — proměny ročních období, večery u ohně i momenty našich hostů. A jestli jste u nás byli, označte @villarudolfretreat a #villarudolf, ať vaše fotky uvidí i další.', ig: 'Sledovat na Instagramu' },
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
@@ -788,7 +788,7 @@ const T = {
       stripLabel: '360° tour scenes', stripPrev: 'Previous thumbnails', stripNext: 'Next thumbnails',
       groups: { ground: 'Ground floor', floor1: 'First floor', floor2: 'Attic', basement: 'Basement', extSummer: 'Outside — summer', extWinter: 'Outside — winter' },
     },
-    gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'Click to enlarge', all: 'All', leto: 'Summer', zima: 'Winter', vecer: 'Evening', interier: 'Interior' },
+    gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'All photos ({n}) · click to enlarge' },
     vylety: {
       eyebrow: 'Trip planner', title: 'The mountains start at the door', note: 'We pick by season · {n} verified places within an hour of the house.', drop: 'A trip photo goes here', cta: 'Open the trip planner', ctaSub: 'No sign-up. Map, filters and a tip for a specific day.',
       items: [
@@ -829,7 +829,7 @@ const T = {
       errRate: 'We received too many requests. Please try again later or email us.',
       errGeneric: 'Sending failed. Please try again, or email us at rezervace@villarudolf.com.',
     },
-    video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', play: 'Play video', playFull: 'Play the full video with sound' },
+    video: { eyebrow: 'Video', title: 'See the villa on video', note: 'The video plays on its own, without sound. Subtitles are part of the picture; switch the sound on with the button and use the timeline to skip around.', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', start: 'Play video', soundOn: 'Sound on', soundOff: 'Mute', onYoutube: 'Watch on YouTube' },
     share: { eyebrow: 'Life at the villa', title: 'See what it’s really like', body: 'Take a look at everyday life at the villa on our Instagram — the change of seasons, evenings by the fire and moments from our guests. And if you’ve stayed with us, tag @villarudolfretreat and #villarudolf so others can see your photos too.', ig: 'Follow on Instagram' },
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
@@ -1114,7 +1114,7 @@ const T = {
       stripLabel: 'Szenen der 360°-Tour', stripPrev: 'Vorherige Vorschaubilder', stripNext: 'Nächste Vorschaubilder',
       groups: { ground: 'Erdgeschoss', floor1: '1. Obergeschoss', floor2: 'Dachgeschoss', basement: 'Untergeschoss', extSummer: 'Außen — Sommer', extWinter: 'Außen — Winter' },
     },
-    gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Klicken zum Vergrößern', all: 'Alle', leto: 'Sommer', zima: 'Winter', vecer: 'Abend', interier: 'Innen' },
+    gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Alle Fotos ({n}) · zum Vergrößern klicken' },
     vylety: {
       eyebrow: 'Ausflugsplaner', title: 'Die Berge beginnen vor der Tür', note: 'Wir wählen nach Saison · {n} geprüfte Ziele bis zu einer Stunde vom Haus.', drop: 'Hier kommt ein Ausflugsfoto', cta: 'Ausflugsplaner öffnen', ctaSub: 'Ohne Registrierung. Karte, Filter und ein Tipp für einen konkreten Tag.',
       items: [
@@ -1155,7 +1155,7 @@ const T = {
       errRate: 'Wir haben zu viele Anfragen erhalten. Bitte versucht es später erneut oder schreibt uns eine E-Mail.',
       errGeneric: 'Senden fehlgeschlagen. Bitte versucht es erneut oder schreibt an rezervace@villarudolf.com.',
     },
-    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', play: 'Video abspielen', playFull: 'Ganzes Video mit Ton abspielen' },
+    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', note: 'Das Video läuft von selbst und ohne Ton. Die Untertitel sind fest im Bild; den Ton schalten Sie per Taste ein, springen können Sie über die Zeitleiste.', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', start: 'Video abspielen', soundOn: 'Ton einschalten', soundOff: 'Ton aus', onYoutube: 'Auf YouTube ansehen' },
     share: { eyebrow: 'Leben in der Villa', title: 'So sieht es bei uns aus', body: 'Werfen Sie auf unserem Instagram einen Blick in den Alltag der Villa — der Wechsel der Jahreszeiten, Abende am Feuer und Momente unserer Gäste. Und wenn Sie bei uns waren, markieren Sie @villarudolfretreat und #villarudolf, damit auch andere Ihre Fotos sehen.', ig: 'Auf Instagram folgen' },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
@@ -1440,7 +1440,7 @@ const T = {
       stripLabel: 'Sceny spaceru 360°', stripPrev: 'Poprzednie miniatury', stripNext: 'Następne miniatury',
       groups: { ground: 'Parter', floor1: '1. piętro', floor2: 'Poddasze', basement: 'Piwnica', extSummer: 'Na zewnątrz — lato', extWinter: 'Na zewnątrz — zima' },
     },
-    gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Kliknij, by powiększyć', all: 'Wszystko', leto: 'Lato', zima: 'Zima', vecer: 'Wieczór', interier: 'Wnętrze' },
+    gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Wszystkie zdjęcia ({n}) · kliknij, by powiększyć' },
     vylety: {
       eyebrow: 'Planer wycieczek', title: 'Góry zaczynają się za drzwiami', note: 'Wybieramy według sezonu · {n} sprawdzonych celów do godziny od domu.', drop: 'Tu trafi zdjęcie z wycieczki', cta: 'Otwórz planer wycieczek', ctaSub: 'Bez rejestracji. Mapa, filtry i tip na konkretny dzień.',
       items: [
@@ -1481,7 +1481,7 @@ const T = {
       errRate: 'Otrzymaliśmy zbyt wiele próśb. Spróbuj później lub napisz do nas e-mail.',
       errGeneric: 'Wysłanie nie powiodło się. Spróbuj ponownie lub napisz na rezervace@villarudolf.com.',
     },
-    video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', play: 'Odtwórz wideo', playFull: 'Odtwórz całe wideo z dźwiękiem' },
+    video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', note: 'Wideo odtwarza się samo i bez dźwięku. Napisy są wtopione w obraz; dźwięk włączysz przyciskiem, a przewiniesz na osi czasu.', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', start: 'Odtwórz wideo', soundOn: 'Włącz dźwięk', soundOff: 'Wyłącz dźwięk', onYoutube: 'Obejrzyj na YouTube' },
     share: { eyebrow: 'Życie w willi', title: 'Zobacz, jak jest u nas naprawdę', body: 'Zajrzyj do codziennego życia willi na naszym Instagramie — zmiana pór roku, wieczory przy ogniu i chwile naszych gości. A jeśli u nas byliście, oznaczcie @villarudolfretreat i #villarudolf, żeby wasze zdjęcia zobaczyli też inni.', ig: 'Obserwuj na Instagramie' },
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
@@ -1509,7 +1509,7 @@ const T = {
 };
 
 /* ============================ State + helpers ============================ */
-const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, panoGroup: 'all', lb: -1, lbList: [], galFilter: 'all', selStart: 0, selEnd: 0, mob: false, calOffset: 0 };
+const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, panoGroup: 'all', lb: -1, lbList: [], selStart: 0, selEnd: 0, mob: false, calOffset: 0 };
 /* Kalendář: okno 2 měsíců lze posouvat 0 .. CAL_MAX_OFFSET (dnešek .. +18 měsíců). */
 const CAL_MAX_OFFSET = 17;
 /* Ceny řídí VR_PRICING (nahoře v souboru). */
@@ -1592,30 +1592,81 @@ const PANO_YAWF = {
    vložení nové scény tiše rozhodilo tlačítka „Prohlédnout ve 360°". */
 function panoIdx(id) { return PANO_SETS.zima.indexOf(id); }
 
-/* Gallery: curated real photos. c = filter category (leto/zima/vecer/interier).
-   Order below is the "Vše" order (greatest-hits interleave). Files live at
-   media/gallery/{slug}.jpg (1600px) and media/gallery/t/{slug}.jpg (640px thumb). */
+/* GALERIE — VŠECHNY FOTKY, ŽÁDNÉ FILTRY (majitel, 7/2026):
+   „ta galerie — dům, pozemek a okolí, léto, zima, večer, interiér… já bych tady
+   nechal vše, vůbec bych to nekomplikoval těma filtrama. Udělal bych z toho
+   takový trošku Instagram. Ty fotky by tady mohly být všechny, srovnaný,
+   a kdo má zájem, dojde až sem, klikne a bude si je prohlížet."
+
+   Pořadí NENÍ náhodné — je to prohlídka: dům a pozemek → bazén a terasa →
+   společné prostory → wellness → ložnice a koupelny → zima → večer a noc.
+   f = plná fotka (1600 px, otevře se v lightboxu). Náhled je hotový čtverec
+   512×512 ve media/gallery/sq/ pod stejným názvem souboru — mřížka tedy stahuje
+   ~46 kB na dlaždici, ne 300kB master.
+
+   Vyřazeno záměrně: technicky slabé noční drony (aerial-night, areal-night),
+   duplicity stejného záběru (dining-kitchen, summer-house, pool-sunbeds,
+   int-sauna, int-wellness, am-billiard, am-lounge, int-kitchen, am-pergola-table,
+   firepit-dusk, pergola-night, bath-room4, room-2c/3c/4c), výřezy použité jako
+   pozadí sekcí (tile-*, trustband-*, statement-estate), technická fotka lyžárny
+   a starší vybavení pokojů (room1-corner, room2-lamps, room4-beams) — ty ukazují
+   nábytek, který v domě už není. */
 const GALLERY = [
-  { s: '01-house-summer', c: 'leto', alt: 'Villa Rudolf z rozlehlé zahrady — hrázděný štít, veranda a terasa' },
-  { s: '09-estate-blue-hour', c: 'vecer', alt: 'Celý pozemek z patra za modré hodiny — bazén, ohniště, altán a stodola' },
-  { s: '10-winter-night-framed', c: 'zima', alt: 'Vila v noci rámovaná zasněženými větvemi, teplé světlo na sněhu' },
-  { s: '17-pool-hall-interior', c: 'interier', alt: 'Zastřešený bazén — symetrický pohled prosklenou halou' },
-  { s: '03-pool-hall-exterior', c: 'leto', alt: 'Prosklená hala bazénu zvenčí a řada lehátek na trávníku' },
-  { s: '08-firepit-night', c: 'vecer', alt: 'Ohniště v noci — kruh křesílek a gabiony prosvětlené LED' },
-  { s: '11-winter-day', c: 'zima', alt: 'Villa Rudolf v plném zimním slunci pod zasněženými stromy' },
-  { s: '14-table-for-ten', c: 'interier', alt: 'Dlouhý jídelní stůl pro deset s károvaným ubrusem' },
-  { s: '02-playground-house', c: 'leto', alt: 'Dům z boku s lanovým mostem a prolézačkou dětského hřiště' },
-  { s: '06-pergola-night', c: 'vecer', alt: 'Altán v noci — nasvícený vnitřek svítí teple do tmy' },
-  { s: '12-winter-garden', c: 'zima', alt: 'Pohled přes zasněženou zahradu na vilu mezi vysokými smrky' },
-  { s: '18-sauna-inside', c: 'interier', alt: 'Uvnitř finské sauny — lavice ze světlého dřeva a kamna' },
-  { s: '07-gabion-pool-day', c: 'leto', alt: 'Gabionová opěrná zeď, trávník a zastřešený bazén ve dne' },
-  { s: '05-pergola-autumn', c: 'leto', alt: 'Altán z boku na podzim proti žluto-oranžovému listí' },
-  { s: '13-frozen-apples', c: 'zima', alt: 'Jabloň se zmrzlými jablky ve sněhu v protisvětle' },
-  { s: '16-dining-room', c: 'interier', alt: 'Jídelna s kuchyňskou linkou a dubovým stolem pro osm' },
-  { s: '04-terrace-loungers', c: 'leto', alt: 'Terasa u bazénu s perspektivní řadou lehátek' },
-  { s: '15-ensuite-bathroom', c: 'interier', alt: 'Koupelna u pokoje — sprchový kout a umyvadlo na dubové skříňce' },
+  { f: 'media/gallery/01-house-summer.jpg', alt: 'Villa Rudolf z rozlehlé zahrady — hrázděný štít, veranda a terasa' },
+  { f: 'media/gallery/summer-drive.jpg', alt: 'Příjezdová cesta k vile mezi vzrostlými stromy v létě' },
+  { f: 'media/gallery/02-playground-house.jpg', alt: 'Dům z boku s lanovým mostem a prolézačkou dětského hřiště' },
+  { f: 'media/gallery/pergola-exterior.jpg', alt: 'Dřevěný altán na travnaté ploše pozemku v létě' },
+  { f: 'media/gallery/05-pergola-autumn.jpg', alt: 'Altán z boku na podzim proti žluto-oranžovému listí' },
+  { f: 'media/gallery/pergola-view.jpg', alt: 'Uvnitř altánu — dlouhý stůl a židle pod krovem' },
+  { f: 'media/gallery/03-pool-hall-exterior.jpg', alt: 'Prosklená hala bazénu zvenčí a řada lehátek na trávníku' },
+  { f: 'media/gallery/pool-storm.jpg', alt: 'Bazén a dům pod bouřkovými mraky' },
+  { f: 'media/gallery/07-gabion-pool-day.jpg', alt: 'Gabionová opěrná zeď, trávník a zastřešený bazén ve dne' },
+  { f: 'media/gallery/04-terrace-loungers.jpg', alt: 'Terasa u bazénu s perspektivní řadou lehátek' },
+  { f: 'media/sections/am-pool-open.jpg', alt: 'Bazén s odsunutým zastřešením v letním dni' },
+  { f: 'media/gallery/pool-day.jpg', alt: 'Vyhřívaný bazén pod prosklenou halou' },
+  { f: 'media/gallery/17-pool-hall-interior.jpg', alt: 'Zastřešený bazén — symetrický pohled prosklenou halou' },
+  { f: 'media/gallery/16-dining-room.jpg', alt: 'Jídelna s kuchyňskou linkou a dubovým stolem pro osm' },
+  { f: 'media/sections/am-kitchen.jpg', alt: 'Velká kuchyně s jídelním stolem a okny do zahrady' },
+  { f: 'media/gallery/14-table-for-ten.jpg', alt: 'Dlouhý jídelní stůl pro deset s károvaným ubrusem' },
+  { f: 'media/sections/room-suite.jpg', alt: 'Společenský prostor apartmá — jídelní stůl, sedačky a schodiště' },
+  { f: 'media/sections/room-suite-b.jpg', alt: 'Apartmá z druhé strany — posezení, stůl a dřevěné sloupy' },
+  { f: 'media/sections/room-suite-c.jpg', alt: 'Sedací souprava a jídelní stůl v podkrovním apartmá' },
+  { f: 'media/gallery/suite-billiard.jpg', alt: 'Kulečníkový sál s bílými stěnami a dubovou podlahou' },
+  { f: 'media/sections/playground.jpg', alt: 'Dětský koutek s hracím kobercem a hračkami' },
+  { f: 'media/gallery/sauna-hall.jpg', alt: 'Předsíň wellness — vstup do finské sauny a lavice' },
+  { f: 'media/gallery/18-sauna-inside.jpg', alt: 'Uvnitř finské sauny — lavice ze světlého dřeva a kamna' },
+  { f: 'media/sections/int-bath.jpg', alt: 'Sprchový kout u sauny s obkladem v hnědém tónu' },
+  { f: 'media/sections/room-1.jpg', alt: 'Ložnice s manželskou postelí a tapetovanou stěnou v čele' },
+  { f: 'media/sections/room-1b.jpg', alt: 'Táž ložnice od okna — postel, noční stolky a dřevěná podlaha' },
+  { f: 'media/sections/room-1c.jpg', alt: 'Rodinná ložnice se dvěma lůžky vedle sebe a velkými okny' },
+  { f: 'media/sections/room-2.jpg', alt: 'Pokoj s vlastní koupelnou za prosklenými dveřmi' },
+  { f: 'media/sections/room-2b.jpg', alt: 'Pokoj s posezením u okna a manželskou postelí' },
+  { f: 'media/sections/room-2d.jpg', alt: 'Podkrovní pokoj se stolem, lavicemi a dvojlůžkem' },
+  { f: 'media/sections/room-3.jpg', alt: 'Světlý pokoj s lůžky, lavicí a výhledem do zahrady' },
+  { f: 'media/sections/room-3b.jpg', alt: 'Pokoj s vlastní koupelnou a květinami na komodě' },
+  { f: 'media/sections/room-4.jpg', alt: 'Podkrovní pokoj s kamennou stěnou za čelem postele' },
+  { f: 'media/sections/room-4b.jpg', alt: 'Symetrický pohled na dvojlůžko pod trámovým podkrovím' },
+  { f: 'media/sections/room-suite-d.jpg', alt: 'Ložnice apartmá — dvojlůžko u okna se šedou tapetou' },
+  { f: 'media/gallery/15-ensuite-bathroom.jpg', alt: 'Koupelna u pokoje — sprchový kout a umyvadlo na dubové skříňce' },
+  { f: 'media/sections/bath-room2.jpg', alt: 'Koupelna s rohovým sprchovým koutem a umyvadlem' },
+  { f: 'media/sections/bath-room3.jpg', alt: 'Koupelna s WC, žebříkovým radiátorem a dubovou skříňkou' },
+  { f: 'media/gallery/11-winter-day.jpg', alt: 'Villa Rudolf v plném zimním slunci pod zasněženými stromy' },
+  { f: 'media/gallery/winter-snow.jpg', alt: 'Zasněžená zahrada a vila mezi vzrostlými stromy' },
+  { f: 'media/gallery/12-winter-garden.jpg', alt: 'Pohled přes zasněženou zahradu na vilu mezi vysokými smrky' },
+  { f: 'media/gallery/winter-forest.jpg', alt: 'Zasněžená cesta a smrkový les u vily' },
+  { f: 'media/gallery/13-frozen-apples.jpg', alt: 'Jabloň se zmrzlými jablky ve sněhu v protisvětle' },
+  { f: 'media/gallery/winter-room-snow.jpg', alt: 'Pokoj v zimě — zasněžená zahrada za oknem' },
+  { f: 'media/gallery/winter-twin-snow.jpg', alt: 'Dvoulůžkový pokoj se stolem a zimním výhledem z okna' },
+  { f: 'media/gallery/09-estate-blue-hour.jpg', alt: 'Celý pozemek z patra za modré hodiny — bazén, ohniště, altán a stodola' },
+  { f: 'media/gallery/firepit-sunset.jpg', alt: 'Ohniště a bazén při západu slunce nad hřebeny' },
+  { f: 'media/gallery/08-firepit-night.jpg', alt: 'Ohniště v noci — kruh křesílek a gabiony prosvětlené LED' },
+  { f: 'media/gallery/06-pergola-night.jpg', alt: 'Altán v noci — nasvícený vnitřek svítí teple do tmy' },
+  { f: 'media/gallery/pool-night.jpg', alt: 'Nasvícená hala bazénu a dům po setmění' },
+  { f: 'media/sections/evening-window.jpg', alt: 'Pohled z domu na nasvícený bazén po setmění' },
+  { f: 'media/gallery/10-winter-night-framed.jpg', alt: 'Vila v noci rámovaná zasněženými větvemi, teplé světlo na sněhu' },
+  { f: 'media/gallery/winter-night.jpg', alt: 'Zimní noc — zasněžená cesta a nasvícený bazén' },
+  { f: 'media/gallery/winter-night-close.jpg', alt: 'Vila v zimní noci pod měsícem, teplá okna ve sněhu' },
 ];
-const GAL_FILTERS = ['all', 'leto', 'zima', 'vecer', 'interier'];
 /* Fotky karet „Kam na výlet" (pořadí = vylety.items). JEN skutečné snímky z repa —
    žádné AI/stažené fotky. Sněžka/hory, letní cesta lesem, lyžování, hřiště pro děti. */
 /* Fotky ke kartám sekce #vylety. Sekce je JEN LETNÍ, takže tu nesmí být zimní
@@ -1665,6 +1716,7 @@ function setTexts() {
     if (typeof v === 'string') n.innerHTML = fillFacts(v);
   });
   applyVideoAria();
+  applyGalleryNote();  // „Všechny fotky ({n})" — počet do poznámky galerie
   applyTripCounts();   // {n} v okruzích a v nadpisu mapy (plurály podle jazyka)
   renderArrive();      // blok „Než dorazíte"
   document.documentElement.lang = state.lang;
@@ -1741,94 +1793,38 @@ function reviewsForSeason() {
    duplikovala pás pod heroem a stejně odkazovala na platformy. Jediné místo,
    kde recenze na webu žijí, je teď pojezd v pásu — viz renderTrustBand(). */
 
-/* ---------- Video: click-to-play FULLSCREEN lightbox (cookie-free až do otevření) ----------
-   Po kliknutí na náhled se karta plynule (FLIP transform, bez knihoven) zvětší přes
-   celý viewport na tmavém podkladu (rgba(0,0,0,.85)); teprve v otevřeném stavu vložíme
-   iframe youtube-nocookie.com s autoplay=1. Zavření: křížek, Esc i klik mimo video —
-   s plynulým zmenšením zpět do karty. Na mobilu vyplní obrazovku (16:9 letterbox). */
-let vlbThumb = null, vlbAnim = false;
-function vlbReduced() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
-function vlbInsertFrame(id, label) {
-  const frameHost = $('#vr-vlb-frame'); if (!frameHost) return;
-  frameHost.appendChild(el('iframe', {
-    src: 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1',
-    title: label || 'Villa Rudolf',
-    allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
-    allowfullscreen: '', frameborder: '0',
-  }));
-}
-function openVideoLightbox(btn) {
-  const id = btn.getAttribute('data-yt'); if (!id) return;
-  const lb = $('#vr-vlb'), stage = $('#vr-vlb-stage'), frameHost = $('#vr-vlb-frame'), poster = $('#vr-vlb-poster');
-  if (!lb || !stage || lb.getAttribute('aria-hidden') === 'false') return;
-  const wrap = btn.closest('.vr-vid');
-  const label = wrap && wrap.querySelector('.vr-vid-label');
-  const labelTxt = (label && label.textContent) || 'Villa Rudolf';
-  // Náhled pro FLIP animaci: buď <img>, nebo poster živé smyčky.
-  const img = btn.querySelector('img'), loop = btn.querySelector('.vr-vid-loop');
-  vlbThumb = btn;
-  if (poster) {
-    if (img) poster.src = img.currentSrc || img.src;
-    else if (loop && loop.poster) poster.src = loop.poster;
-  }
-  frameHost.innerHTML = '';
-  // Open state is set synchronously (backdrop + close visible immediately). The
-  // FLIP grow is a progressive enhancement; the iframe is inserted via an
-  // independent timer so playback never depends on the animation.
-  const from = btn.getBoundingClientRect();
-  lb.style.display = 'flex'; lb.setAttribute('aria-hidden', 'false'); lb.setAttribute('data-open', 'true');
-  document.body.style.overflow = 'hidden';
-  vlbFocusClose();
-  const to = stage.getBoundingClientRect();
-  if (!vlbReduced() && to.width && from.width) {
-    const dx = from.left - to.left, dy = from.top - to.top;
-    const sx = from.width / to.width, sy = from.height / to.height;
-    stage.style.transition = 'none';
-    stage.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
-    void stage.offsetWidth; // reflow before animating to identity
-    const settle = () => { stage.style.transition = 'transform .34s cubic-bezier(.2,.7,.15,1)'; stage.style.transform = 'none'; };
-    requestAnimationFrame(settle);
-    setTimeout(settle, 60); // fallback if rAF is throttled
-  } else {
-    stage.style.transition = 'none'; stage.style.transform = 'none';
-  }
-  setTimeout(() => vlbInsertFrame(id, labelTxt), vlbReduced() ? 0 : 340);
-}
-function vlbFocusClose() { const c = $('#vr-vlb-close'); if (c) { try { c.focus(); } catch (e) {} } }
-function closeVideoLightbox() {
-  const lb = $('#vr-vlb'), stage = $('#vr-vlb-stage'), frameHost = $('#vr-vlb-frame');
-  if (!lb || lb.getAttribute('aria-hidden') === 'true') return;
-  if (frameHost) frameHost.innerHTML = ''; // stop playback now; poster shows underneath during shrink
-  const finish = () => {
-    lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); lb.removeAttribute('data-open');
-    stage.style.transition = 'none'; stage.style.transform = 'none';
-    document.body.style.overflow = '';
-    if (vlbThumb) { try { vlbThumb.focus(); } catch (e) {} }
-    vlbThumb = null; vlbAnim = false;
-  };
-  lb.setAttribute('data-open', 'false');
-  const from = vlbThumb && vlbThumb.getBoundingClientRect();
-  const to = stage.getBoundingClientRect();
-  if (vlbReduced() || !from || !from.width || !to.width) { finish(); return; }
-  const dx = from.left - to.left, dy = from.top - to.top;
-  const sx = from.width / to.width, sy = from.height / to.height;
-  vlbAnim = true;
-  stage.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
-  stage.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
-  const done = (e) => {
-    if (e && e.propertyName && e.propertyName !== 'transform') return;
-    stage.removeEventListener('transitionend', done); finish();
-  };
-  stage.addEventListener('transitionend', done);
-  setTimeout(done, 380);
-}
-/* ---------- Živá video-tapeta na velké ploše (.vr-vidstage) ----------
-   Tichá smyčka místo statického náhledu. Zdroj se nahrává až když je plocha ve
-   viewportu; mimo viewport se přehrávání pozastaví. Vůbec se nepřehrává při
-   prefers-reduced-motion, při zapnutém spořiči dat a na úzkých obrazovkách
-   (<640px) — tam zůstane jen poster (mobilní data).
-   Klik na plochu dál otevírá fullscreen lightbox s plným videem a zvukem. */
-function loopsAllowed() {
+/* ============================ VIDEO: PŘEHRÁVAČ V PLOŠE ============================
+   Majitel (7/2026): „Ten YouTube button vypadá dost hrozně. Co kdybychom ho dali
+   úplně pryč, nechali to video přehrávat… chybí tam ty titulky… byl by tam čudlík
+   na to, že by se zapnul zvuk… a ještě možnost to přehrát přímo v YouTube.
+   A mohl by tam být ještě slider."
+
+   Volba cesty: youtube-nocookie iframe, ne vlastní přehrávač nad mp4.
+   · Titulky jsou VYPÁLENÉ v obraze, takže stačí neořezávat snímek (CSS 16:9).
+   · Časová osa (slider), hlasitost i celoobrazovka = nativní controls=1.
+     Fungují i s vypnutým naším JS a na všech platformách stejně.
+   · Zdrojová videa mají 7:36 (116 MB) a 10:33 (74 MB). Vlastní hosting by
+     znamenal desítky MB v repu bez adaptivní kvality — proti smyslu zadání
+     („ať u toho lidi zůstanou"), protože na mobilních datech by se to nerozjelo.
+
+   ŠETRNOST (nic se nenačte předem):
+   · iframe vzniká teprve při vstupu plochy do viewportu (IntersectionObserver).
+   · Mimo viewport se přehrávání pauzuje (postMessage pauseVideo).
+   · prefers-reduced-motion / spořič dat / displej pod 640 px → žádný autoplay:
+     zůstane poster a tlačítko „Přehrát video". Do kliknutí neodejde na YouTube
+     jediný požadavek.
+   · Přepnutí sezóny zbourá iframe skryté sezóny, aby nehrál na pozadí. */
+
+const YT_ORIGIN = 'https://www.youtube-nocookie.com';
+const VID_ICONS = {
+  /* reproduktor přeškrtnutý = teď je ticho, klik zapne zvuk */
+  off: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.2-3.9v2.1l2.1 2.1c.1-.1.1-.2.1-.3zM19 12c0 .9-.2 1.7-.5 2.4l1.5 1.5A7.9 7.9 0 0 0 21 12a8 8 0 0 0-6.7-7.9v2.1C17 6.8 19 9.2 19 12zM4.3 3 3 4.3 7.7 9H3v6h4l5 5v-6.7l4.3 4.3c-.7.5-1.4.9-2.3 1.1v2.1c1.4-.2 2.6-.8 3.7-1.6l2 2 1.3-1.3-8.7-8.7L4.3 3zM12 4 9.9 6.1 12 8.2V4z"/></svg>',
+  /* reproduktor s vlnami = zvuk hraje, klik ho vypne */
+  on: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05A4.47 4.47 0 0 0 16.5 12zM14 3.23v2.06A7 7 0 0 1 14 18.7v2.06A9 9 0 0 0 14 3.23z"/></svg>',
+};
+
+/* Autoplay smí jen tam, kde nikoho nepřekvapí a nestojí data. */
+function vidAutoAllowed() {
   try {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
     if (window.innerWidth && window.innerWidth < 640) return false;
@@ -1837,56 +1833,158 @@ function loopsAllowed() {
   } catch (e) {}
   return true;
 }
-function wireVideoLoops() {
-  const vids = $all('.vr-vid-loop[data-loop-src]');
-  if (!vids.length) return;
-  if (!loopsAllowed()) return;                    // jen poster, žádné stahování
-  if (!('IntersectionObserver' in window) || !window.innerHeight) return;
-  // Majitel: „ať video jede od začátku svého úseku a spustí se teprve, když k němu
-  // doskroluješ." Proto se přehrávání spouští až při vstupu do viewportu, VŽDY se
-  // převine na currentTime = 0. Při opuštění se pauzuje.
-  // RYCHLOST 1× (dřív 0,6×): na malé kartě se zpomalení neprojevilo, ale na
-  // full-bleed ploše ano — zdroj má 25–30 fps, při 0,6× se každý snímek drží
-  // 1,7× déle a švenky přes dům a zahradu začnou viditelně škubat. Normální
-  // rychlost vypadá na velké ploše plynule a přirozeně; „klidnost" obrazu drží
-  // ztlumení (filter: brightness) a scrim, ne zpomalení.
-  const startFromZero = (v) => {
-    v.playbackRate = 1;                            // plná rychlost — viz komentář výše
-    try { v.currentTime = 0; } catch (e) {}        // vždy od začátku klipu
-    const p = v.play();
-    if (p && p.catch) p.catch(() => {});           // autoplay blokován → zůstane poster
-  };
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      const v = en.target;
-      if (en.isIntersecting) {
-        if (!v.src) { v.src = v.getAttribute('data-loop-src'); v.load(); }
-        if (v.readyState >= 1) startFromZero(v);
-        else v.addEventListener('loadedmetadata', () => startFromZero(v), { once: true });
-      } else if (!v.paused) {
-        try { v.pause(); } catch (e) {}
-      }
-    });
-  }, { rootMargin: '0px', threshold: 0.25 });      // spustí se teprve po doscrollování k videu
-  vids.forEach((v) => { v.muted = true; io.observe(v); });
+/* Příkaz do přehrávače (dokumentované postMessage rozhraní enablejsapi=1). */
+function vidCmd(box, func, args) {
+  const f = box && box.querySelector('iframe');
+  if (!f || !f.contentWindow) return;
+  try {
+    f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), YT_ORIGIN);
+  } catch (e) {}
+}
+function vidLabel(box) {
+  const l = vidPart(box, '.vr-vid-label');
+  return (l && l.textContent) || 'Villa Rudolf';
+}
+/* Čudlík na zvuk i popisek leží v liště POD plochou, tedy vedle .vr-vidbox
+   uvnitř téhož .vr-vid — hledá se proto od společného rodiče. */
+function vidPart(box, sel) {
+  const wrap = box && box.closest('.vr-vid');
+  return wrap ? wrap.querySelector(sel) : null;
+}
+/* Přepíše text i ikonu čudlíku podle toho, co zrovna platí. */
+function vidSyncSound(box) {
+  const btn = vidPart(box, '.vr-vid-sound'); if (!btn) return;
+  const t = tt(), v = t.video || {};
+  const on = btn.getAttribute('data-sound') === 'on';
+  const tx = btn.querySelector('.vr-vid-sound-tx');
+  const ic = btn.querySelector('.vr-vid-sound-ic');
+  const label = on ? (v.soundOff || 'Mute') : (v.soundOn || 'Sound on');
+  if (tx) { tx.textContent = label; tx.setAttribute('data-t', on ? 'video.soundOff' : 'video.soundOn'); }
+  if (ic) ic.innerHTML = on ? VID_ICONS.on : VID_ICONS.off;
+  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  btn.setAttribute('aria-label', label + ' — ' + vidLabel(box));
+}
+/* Vloží přehrávač. muted=true → tichý autoplay při doscrollování;
+   muted=false → uživatel sám klikl na „Přehrát video", takže zvuk rovnou hraje. */
+function vidMount(box, muted) {
+  if (!box || box.dataset.mounted === '1') return;
+  const id = box.getAttribute('data-yt'); if (!id) return;
+  const slot = box.querySelector('.vr-vid-slot'); if (!slot) return;
+  box.dataset.mounted = '1';
+  const p = [
+    'autoplay=1', 'mute=' + (muted ? '1' : '0'), 'playsinline=1',
+    'controls=1',            // časová osa, hlasitost, celoobrazovka — nativní
+    'rel=0', 'modestbranding=1', 'enablejsapi=1',
+    'origin=' + encodeURIComponent(location.origin),
+  ].join('&');
+  const frame = el('iframe', {
+    src: YT_ORIGIN + '/embed/' + id + '?' + p,
+    title: vidLabel(box),
+    allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
+    allowfullscreen: '', frameborder: '0', loading: 'lazy',
+  });
+  slot.appendChild(frame);
+  const start = box.querySelector('.vr-vid-start'); if (start) start.setAttribute('hidden', '');
+  const sound = vidPart(box, '.vr-vid-sound');
+  if (sound) { sound.setAttribute('data-sound', muted ? 'off' : 'on'); sound.removeAttribute('hidden'); vidSyncSound(box); }
+  /* Přihlášení k odběru stavu přehrávače — jen kvůli tomu, aby čudlík neříkal
+     „Zapnout zvuk", když si ho host mezitím pustil nativním ovládáním. */
+  frame.addEventListener('load', () => {
+    try {
+      frame.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: id, channel: 'widget' }), YT_ORIGIN);
+    } catch (e) {}
+  });
+}
+function vidUnmount(box) {
+  if (!box) return;
+  const slot = box.querySelector('.vr-vid-slot'); if (slot) slot.innerHTML = '';
+  delete box.dataset.mounted; delete box.dataset.autopaused; delete box.dataset.ytState;
+  const sound = vidPart(box, '.vr-vid-sound');
+  if (sound) { sound.setAttribute('hidden', ''); sound.setAttribute('data-sound', 'off'); }
+  const start = box.querySelector('.vr-vid-start');
+  if (start && !vidAutoAllowed()) start.removeAttribute('hidden');
+}
+/* Sezóna se přepnula → zbourat přehrávač té, která zmizela (jinak hraje pod
+   stránkou dál). Skrytá plocha má hidden i display:none, takže IO ji nevzkřísí. */
+function vidResetHidden() {
+  $all('.vr-vid').forEach((v) => {
+    if (v.hasAttribute('hidden')) {
+      const box = v.querySelector('.vr-vidbox');
+      if (box && box.dataset.mounted === '1') vidUnmount(box);
+    }
+  });
 }
 function wireVideos() {
-  $all('.vr-vid-thumb[data-yt]').forEach((btn) => btn.addEventListener('click', () => openVideoLightbox(btn)));
-  wireVideoLoops();
-  const lb = $('#vr-vlb');
-  if (lb && !lb.dataset.wired) {
-    lb.dataset.wired = '1';
-    lb.addEventListener('click', (e) => { if (!e.target.closest('.vr-vlb-stage')) closeVideoLightbox(); });
-    const c = $('#vr-vlb-close'); if (c) c.addEventListener('click', closeVideoLightbox);
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.getAttribute('aria-hidden') === 'false') closeVideoLightbox(); });
+  const boxes = $all('.vr-vidbox[data-yt]');
+  if (!boxes.length) return;
+  const auto = vidAutoAllowed();
+  boxes.forEach((box) => {
+    const start = box.querySelector('.vr-vid-start');
+    const sound = vidPart(box, '.vr-vid-sound');
+    if (start) {
+      if (!auto) start.removeAttribute('hidden');
+      start.addEventListener('click', () => vidMount(box, false));  // gesto = smí i zvuk
+    }
+    if (sound) {
+      sound.addEventListener('click', () => {
+        const on = sound.getAttribute('data-sound') === 'on';
+        sound.setAttribute('data-sound', on ? 'off' : 'on');
+        vidCmd(box, on ? 'mute' : 'unMute');
+        if (!on) vidCmd(box, 'setVolume', [100]);
+        vidSyncSound(box);
+      });
+    }
+  });
+  if (!auto) return;                                   // poster + tlačítko, nic víc
+  if (!('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      const box = en.target;
+      if (en.isIntersecting) {
+        if (box.dataset.mounted !== '1') { vidMount(box, true); return; }
+        // Rozjet znovu jen to, co jsme sami uspali. Když si host video zastavil,
+        // odscrolloval a vrátil se, nesmí mu to skočit zpátky do přehrávání.
+        if (box.dataset.autopaused === '1') { delete box.dataset.autopaused; vidCmd(box, 'playVideo'); }
+      } else if (box.dataset.mounted === '1') {
+        const st = box.dataset.ytState;                 // '' = přehrávač mlčí, chováme se konzervativně
+        if (st === '' || st === undefined || st === '1' || st === '3') {
+          vidCmd(box, 'pauseVideo');                    // mimo obraz nemá co hrát
+          box.dataset.autopaused = '1';
+        }
+      }
+    });
+  }, { threshold: 0.35 });
+  boxes.forEach((box) => io.observe(box));
+  /* Zprávy z přehrávače. Zajímají nás dvě pole: `muted` (ať čudlík neříká
+     „Zapnout zvuk", když si ho host mezitím pustil nativním ovládáním)
+     a `playerState` (ať víme, jestli video zastavil host, nebo my). */
+  if (!window.__vrVidMsg) {
+    window.__vrVidMsg = true;
+    window.addEventListener('message', (e) => {
+      if (e.origin !== YT_ORIGIN || typeof e.data !== 'string') return;
+      let d; try { d = JSON.parse(e.data); } catch (err) { return; }
+      const info = d && d.info; if (!info) return;
+      $all('.vr-vidbox[data-yt]').forEach((box) => {
+        const f = box.querySelector('iframe');
+        if (!f || f.contentWindow !== e.source) return;
+        if (info.playerState != null) box.dataset.ytState = String(info.playerState);
+        if (info.muted != null) {
+          const sound = vidPart(box, '.vr-vid-sound'); if (!sound) return;
+          const want = (info.muted === true || info.muted === 'true') ? 'off' : 'on';
+          if (sound.getAttribute('data-sound') !== want) { sound.setAttribute('data-sound', want); vidSyncSound(box); }
+        }
+      });
+    });
   }
 }
-/* Lokalizovaný aria-label „Přehrát video: <popis>" na tlačítkách náhledů. */
+/* Lokalizace čudlíku (text se mění podle stavu, takže data-t sám nestačí). */
 function applyVideoAria() {
-  const t = tt();
-  $all('.vr-vid').forEach((v) => {
-    const btn = v.querySelector('.vr-vid-thumb[data-yt]'), label = v.querySelector('.vr-vid-label');
-    if (btn && label) btn.setAttribute('aria-label', (t.video && t.video.play ? t.video.play : 'Play') + ': ' + label.textContent);
+  $all('.vr-vidbox[data-yt]').forEach((box) => {
+    vidSyncSound(box);
+    const start = box.querySelector('.vr-vid-start');
+    if (start) start.setAttribute('aria-label', ((tt().video && tt().video.start) || 'Play') + ': ' + vidLabel(box));
+    const frame = box.querySelector('iframe');
+    if (frame) frame.setAttribute('title', vidLabel(box));
   });
 }
 
@@ -2487,35 +2585,32 @@ function renderTrips() {
   });
 }
 
-/* ============================ Gallery (filterable + lightbox) ============================ */
-function galItems() {
-  return state.galFilter === 'all' ? GALLERY : GALLERY.filter((g) => g.c === state.galFilter);
-}
-function renderGalleryChips() {
-  const t = tt();
-  const host = $('#vr-gal-chips'); if (!host) return;
-  host.innerHTML = '';
-  GAL_FILTERS.forEach((f) => {
-    host.appendChild(el('button', {
-      class: 'vr-gal-chip', type: 'button', 'data-filter': f,
-      'data-active': state.galFilter === f ? 'true' : 'false',
-      'aria-pressed': state.galFilter === f ? 'true' : 'false',
-      text: t.gallery[f],
-      onclick: () => { if (state.galFilter !== f) { state.galFilter = f; renderGallery(); } },
-    }));
-  });
-}
+/* ============================ Galerie (všechny fotky + lightbox) ============================
+   Bez filtrů a bez sezónního předvýběru — jeden souvislý list, jak si majitel
+   přál. Mřížka je rychlá i při stovce položek: dlaždice je čtvercový 512px
+   náhled s loading="lazy" a pevným width/height (žádný CLS), plná fotka se
+   stahuje teprve v lightboxu. */
+function galSquare(f) { return 'media/gallery/sq/' + f.slice(f.lastIndexOf('/') + 1); }
 function renderGallery() {
-  renderGalleryChips();
   const host = $('#vr-gal'); if (!host) return;
-  const items = galItems();
   host.innerHTML = '';
-  const lbList = items.map((g) => ({ src: 'media/gallery/' + g.s + '.jpg' }));
-  items.forEach((g, i) => host.appendChild(el('img', {
-    src: 'media/gallery/t/' + g.s + '.jpg', alt: g.alt, loading: 'lazy', decoding: 'async',
-    width: '600', height: '600',
+  const lbList = GALLERY.map((g) => ({ src: g.f }));
+  const frag = document.createDocumentFragment();
+  GALLERY.forEach((g, i) => frag.appendChild(el('img', {
+    src: galSquare(g.f), alt: g.alt, loading: 'lazy', decoding: 'async',
+    width: '512', height: '512',
     onclick: () => lbOpen(lbList, i),
   })));
+  host.appendChild(frag);
+  applyGalleryNote();
+}
+/* Poznámka v hlavičce nese počet — „Všechny fotky (54)" je konkrétnější slib
+   než holé „Galerie" a rovnou říká, že se pod tím nic neschovává. Běží i ze
+   setTexts(), aby počet přežil přepnutí jazyka. */
+function applyGalleryNote() {
+  const note = $('.vr-gal-head .vr-sec-note');
+  const tpl = (tt().gallery || {}).note;
+  if (note && typeof tpl === 'string') note.textContent = tpl.replace('{n}', GALLERY.length);
 }
 
 /* ============================ Booking calendar ============================ */
@@ -3362,11 +3457,12 @@ function setSeason(season) {
   state.panoGroup = 'all';   // filtr skupin patří k sadě scén, se sezónou se resetuje
   renderPanoGroups(); renderThumbs(); renderScene();
   if (loadPano) loadPano(0);
-  // Season → default gallery filter (Zima preselects the winter set; user can
-  // still switch). If the lightbox is open, keep it in sync with the new filter.
-  state.galFilter = season === 'zima' ? 'zima' : 'all';
-  renderGallery();
+  // Galerie je od 7/2026 sezónně neutrální (jeden list bez filtrů), takže se
+  // při přepnutí nepřekresluje. Zavírá se jen otevřený lightbox — jinak by
+  // zůstal viset nad jinak nasvícenou stránkou.
   if (state.lb >= 0) lbSet(-1);
+  // Video: zbourat přehrávač sezóny, která právě zmizela, ať nehraje potmě.
+  vidResetHidden();
   // Sezónní jsou i počty cílů v katalogu (zimní a letní se liší) a blok
   // „Než dorazíte" (v zimě nahoru skibus a parkování, vlak+autobus na jeden řádek).
   applySeasonTripCounts();
@@ -3769,7 +3865,6 @@ function init() {
   // initial render
   document.querySelector('.vr-root').setAttribute('data-season', state.season);
   applyThemeColor();
-  state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); applySeasonBranches(); setTexts();
   renderRatings(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   setupPanoGroupKeys(); setupThumbStrip(); applyStripAria();

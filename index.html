@@ -372,58 +372,86 @@
         <div class="vr-vidhead">
           <span class="vr-eyebrow" data-t="video.eyebrow">Video</span>
           <h3 class="vr-vidtitle" data-t="video.title">Prohlédněte si vilu na videu</h3>
+          <p class="vr-vidnote" data-t="video.note">Video běží samo a bez zvuku. Titulky jsou přímo v obraze; zvuk zapnete tlačítkem, posunout se můžete na časové ose.</p>
         </div>
       </div>
     </div>
 
-    <!-- ===================== VIDEO JAKO VELKÁ AMBIENTNÍ PLOCHA =====================
-         Majitel: „když tam je to jedno video, mohlo by se přehrávat na pozadí —
-         stejně, aby to vypadalo jako ty 360 fotky, kdyby to tam jelo. A byl tam
-         takový ten YouTube button, že si můžeš zmáčknout, a vyskočil by pop-up
-         a na tom pop-upu by se to přehrávalo."
-         Proto je blok FULL-BLEED ve stejném jazyce jako .vrp-stage nad ním
-         (stejná výška, stejné měkké okraje do var(--vr-bg), stejný titulek
-         v rohu). Tiše na něm běží vlastní sestříhaná smyčka BEZ ZVUKU; klik na
-         kulaté YouTube tlačítko otevře TÝŽ fullscreen lightbox jako dřív
-         (youtube-nocookie iframe s autoplay=1, zvuk, zavření křížkem/Esc/klikem
-         mimo) — žádná druhá implementace přehrávače.
-         ŠETRNOST: smyčka se stahuje až při doscrollování k ní (IntersectionObserver),
-         mimo viewport se pauzuje a při prefers-reduced-motion, zapnutém spořiči
-         dat nebo na displeji pod 640 px se nestáhne vůbec — zůstane jen poster
-         (24 kB léto / 111 kB zima), takže načtení stránky se nezhorší. -->
+    <!-- ===================== VIDEO: SKUTEČNÝ PŘEHRÁVAČ, NE NÁHLED =====================
+         Majitel (7/2026): „Ten YouTube button vypadá dost hrozně. Co kdybychom ho
+         dali úplně pryč, nechali to video přehrávat. Akorát nám tam chybí ty
+         titulky. Byl by tam čudlík na to, že by se zapnul zvuk, a chtělo by to
+         víc roztáhnout, aby tam byly ty titulky. A ještě možnost to přehrát
+         přímo v YouTube. A mohl by tam být ještě slider."
+
+         Proto je tu youtube-nocookie iframe místo vlastní mp4 smyčky:
+         · TITULKY jsou vypálené v obraze, takže se plocha NESMÍ ořezávat —
+           rámeček je proto přesně 16:9 (aspect-ratio) a snímek se ukazuje celý.
+           Předchozí verze měla object-fit:cover a titulky z kadru vypadávaly.
+         · SLIDER, hlasitost a celoobrazovka = nativní ovládání přehrávače
+           (controls=1). Funguje i bez našeho JS.
+         · ODKAZ „Přehrát na YouTube" je obyčejný <a> pod plochou — funguje
+           vždycky, i kdyby se iframe vůbec nenačetl.
+         · ČUDLÍK NA ZVUK je náš vlastní (postMessage unMute/mute přes
+           enablejsapi=1) — sedí v rohu plochy, ne u titulků dole.
+         · CELÉ VIDEO, ne desetivteřinová smyčka: léto 7:36, zima 10:33.
+           Vlastní hosting nepřipadá v úvahu (zdroje mají 116 MB a 74 MB).
+
+         ŠETRNOST: iframe se vkládá teprve při doscrollování do viewportu
+         (IntersectionObserver), mimo viewport se pauzuje a při
+         prefers-reduced-motion, zapnutém spořiči dat nebo na displeji pod
+         640 px se nevloží vůbec — zůstane poster a tlačítko „Přehrát video".
+         Do té doby stránka neposílá na YouTube jediný požadavek. -->
     <div class="vr-vidstage vr-reveal">
       <!-- KAŽDÁ SEZÓNA UKAZUJE JEN SVOJE VIDEO (verdikt, sekce VIDEA —
            shoda všech tří specialistů bez výhrad). Letní video se jmenuje
            „Dům, zahrada, bazén a příjezd" a bazén v něm hraje hlavní roli;
            pustit ho zimnímu hostovi neznamená ukázat víc, ale vyrobit
            očekávání, které se rozbije při příjezdu. Druhá sezóna je na
-           jedno kliknutí přepínačem nahoře a její fotky jsou v galerii
-           pod sezónním filtrem. -->
+           jedno kliknutí přepínačem nahoře. -->
       <div class="vr-vid summer" data-season-only="leto">
-        <button type="button" class="vr-vid-thumb" data-yt="ksVpDr-P8ic" aria-label="Přehrát video: Dům, zahrada, bazén a příjezd">
-          <video class="vr-vid-loop" data-loop-src="media/video/loop-summer.mp4?v=30"
-                 poster="media/video/loop-summer.jpg?v=30" muted loop playsinline preload="none"
-                 width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
-          <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
-          <span class="vr-vid-cue" aria-hidden="true" data-t="video.playFull">Přehrát celé video se zvukem</span>
-        </button>
-        <span class="vr-vid-meta" aria-hidden="true">
+        <div class="vr-vidbox" data-yt="ksVpDr-P8ic">
+          <img class="vr-vid-poster" src="media/video/poster-summer.jpg?v=47" alt="" loading="lazy" decoding="async" width="1280" height="720">
+          <div class="vr-vid-slot"></div>
+          <button type="button" class="vr-vid-start" hidden>
+            <span class="vr-vid-start-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
+            <span class="vr-vid-start-tx" data-t="video.start">Přehrát video</span>
+          </button>
+        </div>
+        <div class="vr-vidbar">
           <span class="vr-vid-season" data-t="hero.summer">Léto</span>
           <span class="vr-vid-label" data-t="video.summer">Dům, zahrada, bazén a příjezd</span>
-        </span>
+          <button type="button" class="vr-vid-sound" data-sound="off" hidden>
+            <span class="vr-vid-sound-ic" aria-hidden="true"></span>
+            <span class="vr-vid-sound-tx" data-t="video.soundOn">Zapnout zvuk</span>
+          </button>
+          <a class="vr-vid-yt" href="https://www.youtube.com/watch?v=ksVpDr-P8ic" target="_blank" rel="noopener">
+            <span class="vr-vid-yt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
+            <span data-t="video.onYoutube">Přehrát na YouTube</span>
+          </a>
+        </div>
       </div>
       <div class="vr-vid winter" data-season-only="zima">
-        <button type="button" class="vr-vid-thumb" data-yt="tWCuuovnh2U" aria-label="Přehrát video: Prohlídka domu, sauna a skibus">
-          <video class="vr-vid-loop" data-loop-src="media/video/loop-winter.mp4?v=30"
-                 poster="media/video/loop-winter.jpg?v=30" muted loop playsinline preload="none"
-                 width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
-          <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
-          <span class="vr-vid-cue" aria-hidden="true" data-t="video.playFull">Přehrát celé video se zvukem</span>
-        </button>
-        <span class="vr-vid-meta" aria-hidden="true">
+        <div class="vr-vidbox" data-yt="tWCuuovnh2U">
+          <img class="vr-vid-poster" src="media/video/poster-winter.jpg?v=47" alt="" loading="lazy" decoding="async" width="1280" height="720">
+          <div class="vr-vid-slot"></div>
+          <button type="button" class="vr-vid-start" hidden>
+            <span class="vr-vid-start-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
+            <span class="vr-vid-start-tx" data-t="video.start">Přehrát video</span>
+          </button>
+        </div>
+        <div class="vr-vidbar">
           <span class="vr-vid-season" data-t="hero.winter">Zima</span>
           <span class="vr-vid-label" data-t="video.winter">Prohlídka domu, sauna a skibus</span>
-        </span>
+          <button type="button" class="vr-vid-sound" data-sound="off" hidden>
+            <span class="vr-vid-sound-ic" aria-hidden="true"></span>
+            <span class="vr-vid-sound-tx" data-t="video.soundOn">Zapnout zvuk</span>
+          </button>
+          <a class="vr-vid-yt" href="https://www.youtube.com/watch?v=tWCuuovnh2U" target="_blank" rel="noopener">
+            <span class="vr-vid-yt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
+            <span data-t="video.onYoutube">Přehrát na YouTube</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -802,7 +830,15 @@
         </div>
         <span class="vr-sec-note" data-t="gallery.note">Klepnutím zvětšíte</span>
       </div>
-      <div class="vr-gal-chips vr-reveal" id="vr-gal-chips" role="group" aria-label="Filtr galerie"></div>
+      <!-- BEZ FILTRŮ. Majitel (7/2026): „ta galerie — dům, pozemek a okolí, léto,
+           zima, večer, interiér… já bych tady nechal vše, vůbec bych to
+           nekomplikoval těma filtrama. Udělal bych z toho takový trošku
+           Instagram. Ty fotky by tady mohly být všechny, srovnaný, a kdo má
+           zájem, dojde až sem, klikne a bude si je prohlížet."
+           Mřížka se proto vykresluje z jediného pole GALLERY v pořadí
+           dům a pozemek → bazén → interiér → wellness → ložnice → zima → večer.
+           Náhledy jsou hotové čtverce 512×512 (media/gallery/sq/), plná fotka
+           se stahuje až v lightboxu. -->
       <div class="vr-gal vr-reveal" id="vr-gal"></div>
     </div>
   </section>
@@ -977,15 +1013,9 @@
   <!-- ===================== Sticky mobile CTA (≤960px, appears after hero) ===================== -->
   <a class="vr-stickycta" id="vr-stickycta" href="#rezervace" data-show="false" data-t="nav.cta">Rezervovat termín</a>
 
-  <!-- ===================== Video lightbox (full-screen click-to-play) ===================== -->
-  <div class="vr-vlb" id="vr-vlb" role="dialog" aria-modal="true" aria-label="Video" style="display:none" aria-hidden="true">
-    <div class="vr-vlb-backdrop"></div>
-    <button class="vr-vlb-close" id="vr-vlb-close" type="button" aria-label="Zavřít video">&#10005;</button>
-    <div class="vr-vlb-stage" id="vr-vlb-stage">
-      <img class="vr-vlb-poster" id="vr-vlb-poster" alt="" width="1280" height="720">
-      <div class="vr-vlb-frame" id="vr-vlb-frame"></div>
-    </div>
-  </div>
+  <!-- Video-lightbox tu býval do 7/2026. Zrušen s velkým YouTube tlačítkem:
+       video se teď přehrává rovnou v ploše sekce, takže druhý přehrávač
+       (a druhá cesta ke stejnému obsahu) nemá co držet. -->
 
   <!-- ===================== Lightbox ===================== -->
   <div class="vr-lb" id="vr-lb" role="dialog" aria-modal="true" aria-label="Galerie" style="display:none" aria-hidden="true">
