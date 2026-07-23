@@ -1604,28 +1604,45 @@ function panoIdx(id) { return PANO_SETS.zima.indexOf(id); }
    512×512 ve media/gallery/sq/ pod stejným názvem souboru — mřížka tedy stahuje
    ~46 kB na dlaždici, ne 300kB master.
 
-   Vyřazeno záměrně: technicky slabé noční drony (aerial-night, areal-night),
-   duplicity stejného záběru (dining-kitchen, summer-house, pool-sunbeds,
-   int-sauna, int-wellness, am-billiard, am-lounge, int-kitchen, am-pergola-table,
-   firepit-dusk, pergola-night, bath-room4, room-2c/3c/4c), výřezy použité jako
-   pozadí sekcí (tile-*, trustband-*, statement-estate), technická fotka lyžárny
-   a starší vybavení pokojů (room1-corner, room2-lamps, room4-beams) — ty ukazují
-   nábytek, který v domě už není. */
+   ROZŠÍŘENÍ (majitel, 7/2026, druhé kolo): „Galerii bych určitě chtěl rozšířit —
+   teďka tam dej těch 31 (nikde nepoužitých fotek), já se na to kouknu; pokud je
+   to dobrý, necháme, pokud ne, udělám složku s fotkami, které chci." Proto tu
+   teď JSOU i dřív vyřazené záběry (noční drony aerial/areal-night, denní i noční
+   varianty ohniště, altánu a bazénu, výřezy pozadí sekcí tile-*, starší záběry
+   pokojů room1-corner/room2-lamps/room4-beams i wellness am-/int-wellness) —
+   ať si majitel sám rozhodne, co nechat. Nekurátorujeme, jen řadíme tematicky.
+   Ze 31 nepoužitých souborů se sem nedostalo jen 6 miniatur media/photos/*_t.jpg —
+   to jsou zmenšeniny gallery1–6, jejichž plné verze v galerii už jsou. */
 const GALLERY = [
   { f: 'media/gallery/01-house-summer.jpg', alt: 'Villa Rudolf z rozlehlé zahrady — hrázděný štít, veranda a terasa' },
+  { f: 'media/gallery/summer-house.jpg', alt: 'Vedlejší budova areálu s houpacími sítěmi a příjezdovou cestou v létě' },
+  { f: 'media/photos/exterior.jpg', alt: 'Zahrada s houpacími sítěmi a vedlejší budovou areálu z čelního pohledu' },
   { f: 'media/gallery/summer-drive.jpg', alt: 'Příjezdová cesta k vile mezi vzrostlými stromy v létě' },
   { f: 'media/gallery/02-playground-house.jpg', alt: 'Dům z boku s lanovým mostem a prolézačkou dětského hřiště' },
+  { f: 'media/sections/tile-playground.jpg', alt: 'Vila s dřevěným lanovým mostem dětského hřiště v popředí' },
   { f: 'media/gallery/pergola-exterior.jpg', alt: 'Dřevěný altán na travnaté ploše pozemku v létě' },
+  { f: 'media/photos/pergola.jpg', alt: 'Dřevěný altán se židlemi proti podzimnímu lesu' },
+  { f: 'media/sections/tile-pergola.jpg', alt: 'Dřevěný altán na kraji zahrady mezi vzrostlými stromy' },
   { f: 'media/gallery/05-pergola-autumn.jpg', alt: 'Altán z boku na podzim proti žluto-oranžovému listí' },
   { f: 'media/gallery/pergola-view.jpg', alt: 'Uvnitř altánu — dlouhý stůl a židle pod krovem' },
+  { f: 'media/photos/gallery1.jpg', alt: 'Uvnitř altánu — dlouhý stůl a židle pod dřevěným krovem s grilem' },
+  { f: 'media/photos/gallery3.jpg', alt: 'Posezení v altánu s výhledem na vilu mezi stromy' },
+  { f: 'media/photos/gallery5.jpg', alt: 'Pohled z altánu k vile přes zahradu s dětským hřištěm' },
+  { f: 'media/photos/season-summer.jpg', alt: 'Terasa u bazénu s lehátky a vila pod dramatickou letní oblohou' },
   { f: 'media/gallery/03-pool-hall-exterior.jpg', alt: 'Prosklená hala bazénu zvenčí a řada lehátek na trávníku' },
   { f: 'media/gallery/pool-storm.jpg', alt: 'Bazén a dům pod bouřkovými mraky' },
   { f: 'media/gallery/07-gabion-pool-day.jpg', alt: 'Gabionová opěrná zeď, trávník a zastřešený bazén ve dne' },
+  { f: 'media/sections/tile-firepit.jpg', alt: 'Gabionová terasa s ohništěm a dřevěným molem u bazénu ve dne' },
   { f: 'media/gallery/04-terrace-loungers.jpg', alt: 'Terasa u bazénu s perspektivní řadou lehátek' },
+  { f: 'media/gallery/pool-sunbeds.jpg', alt: 'Vila se zastřešeným bazénem a řadou lehátek na trávníku' },
+  { f: 'media/photos/gallery2.jpg', alt: 'Prosklené zastřešení bazénu a pískovcová terasa s lehátky' },
+  { f: 'media/photos/gallery4.jpg', alt: 'Zastřešený bazén s lehátky na terase a vilou v pozadí' },
   { f: 'media/sections/am-pool-open.jpg', alt: 'Bazén s odsunutým zastřešením v letním dni' },
   { f: 'media/gallery/pool-day.jpg', alt: 'Vyhřívaný bazén pod prosklenou halou' },
+  { f: 'media/sections/tile-pool.jpg', alt: 'Hladina vyhřívaného bazénu s lehátky a vilou za ním' },
   { f: 'media/gallery/17-pool-hall-interior.jpg', alt: 'Zastřešený bazén — symetrický pohled prosklenou halou' },
   { f: 'media/gallery/16-dining-room.jpg', alt: 'Jídelna s kuchyňskou linkou a dubovým stolem pro osm' },
+  { f: 'media/gallery/dining-kitchen.jpg', alt: 'Kuchyně s jídelním stolem pro osm a okny do zahrady' },
   { f: 'media/sections/am-kitchen.jpg', alt: 'Velká kuchyně s jídelním stolem a okny do zahrady' },
   { f: 'media/gallery/14-table-for-ten.jpg', alt: 'Dlouhý jídelní stůl pro deset s károvaným ubrusem' },
   { f: 'media/sections/room-suite.jpg', alt: 'Společenský prostor apartmá — jídelní stůl, sedačky a schodiště' },
@@ -1635,16 +1652,21 @@ const GALLERY = [
   { f: 'media/sections/playground.jpg', alt: 'Dětský koutek s hracím kobercem a hračkami' },
   { f: 'media/gallery/sauna-hall.jpg', alt: 'Předsíň wellness — vstup do finské sauny a lavice' },
   { f: 'media/gallery/18-sauna-inside.jpg', alt: 'Uvnitř finské sauny — lavice ze světlého dřeva a kamna' },
+  { f: 'media/sections/am-wellness.jpg', alt: 'Wellness — vstup do finské sauny a sprchový kout s obklady' },
+  { f: 'media/sections/int-wellness.jpg', alt: 'Wellness z druhé strany — sauna, sprcha a lavice na dlažbě' },
   { f: 'media/sections/int-bath.jpg', alt: 'Sprchový kout u sauny s obkladem v hnědém tónu' },
   { f: 'media/sections/room-1.jpg', alt: 'Ložnice s manželskou postelí a tapetovanou stěnou v čele' },
+  { f: 'media/gallery/room1-corner.jpg', alt: 'Ložnice s manželskou postelí a rohovými okny do zahrady' },
   { f: 'media/sections/room-1b.jpg', alt: 'Táž ložnice od okna — postel, noční stolky a dřevěná podlaha' },
   { f: 'media/sections/room-1c.jpg', alt: 'Rodinná ložnice se dvěma lůžky vedle sebe a velkými okny' },
   { f: 'media/sections/room-2.jpg', alt: 'Pokoj s vlastní koupelnou za prosklenými dveřmi' },
+  { f: 'media/gallery/room2-lamps.jpg', alt: 'Pokoj s manželskou postelí a vlastní koupelnou za prosklenými dveřmi' },
   { f: 'media/sections/room-2b.jpg', alt: 'Pokoj s posezením u okna a manželskou postelí' },
   { f: 'media/sections/room-2d.jpg', alt: 'Podkrovní pokoj se stolem, lavicemi a dvojlůžkem' },
   { f: 'media/sections/room-3.jpg', alt: 'Světlý pokoj s lůžky, lavicí a výhledem do zahrady' },
   { f: 'media/sections/room-3b.jpg', alt: 'Pokoj s vlastní koupelnou a květinami na komodě' },
   { f: 'media/sections/room-4.jpg', alt: 'Podkrovní pokoj s kamennou stěnou za čelem postele' },
+  { f: 'media/gallery/room4-beams.jpg', alt: 'Podkrovní pokoj s dvojlůžkem mezi dřevěnými sloupy a trámy' },
   { f: 'media/sections/room-4b.jpg', alt: 'Symetrický pohled na dvojlůžko pod trámovým podkrovím' },
   { f: 'media/sections/room-suite-d.jpg', alt: 'Ložnice apartmá — dvojlůžko u okna se šedou tapetou' },
   { f: 'media/gallery/15-ensuite-bathroom.jpg', alt: 'Koupelna u pokoje — sprchový kout a umyvadlo na dubové skříňce' },
@@ -1659,9 +1681,14 @@ const GALLERY = [
   { f: 'media/gallery/winter-twin-snow.jpg', alt: 'Dvoulůžkový pokoj se stolem a zimním výhledem z okna' },
   { f: 'media/gallery/09-estate-blue-hour.jpg', alt: 'Celý pozemek z patra za modré hodiny — bazén, ohniště, altán a stodola' },
   { f: 'media/gallery/firepit-sunset.jpg', alt: 'Ohniště a bazén při západu slunce nad hřebeny' },
+  { f: 'media/gallery/firepit-dusk.jpg', alt: 'Areál za soumraku — nasvícený zastřešený bazén, ohniště a altán' },
   { f: 'media/gallery/08-firepit-night.jpg', alt: 'Ohniště v noci — kruh křesílek a gabiony prosvětlené LED' },
   { f: 'media/gallery/06-pergola-night.jpg', alt: 'Altán v noci — nasvícený vnitřek svítí teple do tmy' },
+  { f: 'media/gallery/pergola-night.jpg', alt: 'Altán v noci nasvícený zevnitř na tmavé zahradě' },
   { f: 'media/gallery/pool-night.jpg', alt: 'Nasvícená hala bazénu a dům po setmění' },
+  { f: 'media/photos/gallery6.jpg', alt: 'Vila a modře prosvícený bazén po setmění s řadou lehátek' },
+  { f: 'media/gallery/aerial-night.jpg', alt: 'Letecký noční pohled na areál — prosvícený bazén a nasvícené cesty' },
+  { f: 'media/gallery/areal-night.jpg', alt: 'Noční letecký záběr celého areálu — svítící bazén a altán' },
   { f: 'media/sections/evening-window.jpg', alt: 'Pohled z domu na nasvícený bazén po setmění' },
   { f: 'media/gallery/10-winter-night-framed.jpg', alt: 'Vila v noci rámovaná zasněženými větvemi, teplé světlo na sněhu' },
   { f: 'media/gallery/winter-night.jpg', alt: 'Zimní noc — zasněžená cesta a nasvícený bazén' },
