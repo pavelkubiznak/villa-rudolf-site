@@ -230,23 +230,36 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-segbtn{font-family:'Archivo',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--vr-text-muted);background:transparent;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;transition:background .25s,color .25s}
 .vr-segbtn[data-active="true"]{background:var(--vr-accent);color:var(--vr-on-accent)}
 
-/* ---------- Winter hero: text over clean snow, villa stays untouched ----------
-   Majitel: „na zimním hero je nápis přímo na baráku, tím písmem zabíjíme vilu."
-   Zimní fotka má vilu NAHOŘE uprostřed a dole čistý jasný sníh. Řešení: v zimě
-   textový blok sjede DOLŮ nad sníh, přepne na TMAVÝ text (#17242e) se světelnou
-   aurou (čitelný na sněhu BEZ ztmavení) a ztmavovací vrstvy hera (scrim,
-   vinětace) se v zimě RUŠÍ; lokální elipsa se otáčí na bílou (viz níž) —
-   titulek tak nesedí na baráku ani ho neztmavuje. Léto (které majitel miluje)
-   zůstává BEZE ZMĚNY. */
-.vr-root[data-season="zima"] .vrim-scrim,
+/* ---------- Winter hero: LIGHT text like summer, carried by a local scrim -----
+   Majitel 7/2026: „u zimního hero to udělej stejně jako to má letní … ty bílý
+   písmena tam vypadají líp." Zima proto dostává STEJNÉ ošetření jako léto:
+   světlý text (#F7F1E8 / #E4E0D6) + tmavá opora pod textem. Aby fotka zůstala
+   světlá a vzdušná (a vila NEZANIKLA, což majitel u dřívější celoplošně tmavé
+   verze vytýkal), je ztmavení jen dvojí a obojí míří MIMO vilu:
+   1) .vrim-scrim — jemný proužek nahoře (čitelnost navigace: bez něj drží
+      světlé odkazy na sněhu jen 1,45:1) a náběh odspodu, který začíná až POD
+      patou vily (40 % výšky),
+   2) .vrim-copy::before — lokální elipsa svázaná s VÝŠKOU textového bloku
+      (calc(100% + 26vh)) a posunutá výš (top:33 %), takže vrchol leží na
+      eyebrow/h1/podtitulku, ne pod tlačítky; díky vazbě na blok drží ve všech
+      4 jazycích stejně.
+   Vinětace zůstává v zimě VYPNUTÁ (ztmavovala celou fotku do rohů).
+   Naměřeno na skutečných pixelech zimní fotky (scratchpad/herogrid2.mjs +
+   grideval.py, text schovaný, vzorkován přesně rámeček h1/podtitulku):
+   h1 p90 = 7,04:1 desktop 1440×900 / 5,55:1 mobil 390×780 (nejhorší ze 4 jazyků),
+   podtitulek p90 = 5,71:1, eyebrow p90 = 3,8–5,2:1 (léto má na svém eyebrow
+   2,5–2,9:1, jde o dekorativní popisek). Pro srovnání ostré letní hero:
+   h1 p90 6,78:1 desktop / 7,05:1 mobil. Průměrný jas hera: zima 0,120 vs.
+   léto 0,067 — zimní fotka tedy zůstává skoro dvakrát světlejší, pás s vilou
+   0,189 vs. 0,130 v létě. Léto NESAHAT. */
 .vr-root[data-season="zima"] .vrim-vig{background:none}
-/* Majitel: „zimní nic extra — zkus tomu černému písmu dát bílý podklad (měkký
-   stín)." Ztmavovací elipsu proto v zimě NEVYPÍNÁME, ale OTÁČÍME na BÍLOU:
-   kompaktní, měkce vyhasínající světlá opora přesně kolem textového bloku dole.
-   Vila zůstává nedotčená (elipsa k ní nedosáhne a nic neztmavuje). */
+.vr-root[data-season="zima"] .vrim-scrim{
+  background:linear-gradient(180deg,rgba(4,7,10,.30) 0%,rgba(4,7,10,.048) 13%,
+    rgba(4,7,10,0) 40%,rgba(4,7,10,.17) 70%,rgba(4,7,10,.5) 100%)}
 .vr-root[data-season="zima"] .vrim-copy::before{
-  width:min(120vw,1720px);height:min(44vh,420px);
-  background:radial-gradient(closest-side,rgba(255,255,255,.76) 0%,rgba(255,255,255,.64) 46%,rgba(255,255,255,.38) 70%,rgba(255,255,255,.14) 87%,transparent 100%)}
+  top:33%;width:min(126vw,1960px);height:calc(100% + 26vh);
+  background:radial-gradient(closest-side,rgba(5,9,12,.58) 0%,rgba(5,9,12,.545) 52%,
+    rgba(5,9,12,.394) 74%,rgba(5,9,12,.151) 89%,transparent 100%)}
 /* PÍSMO JE V ZIMĚ STEJNĚ VELKÉ JAKO V LÉTĚ (majitel: „zkus zvětšit to písmo
    stejně jako to je v letní verzi"). Zimní blok proto NEMÁ vlastní font-size ani
    vlastní odsazení h1/podtitulku — obojí dědí letní clamp(). Aby se větší text
@@ -256,25 +269,13 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
    2) blok je ukotvený níž nad čistým sněhem (výškově odstupňovaný clamp).
    Ověřeno měřením ve 4 jazycích na desktopu i mobilu. */
 .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(18px,4vh,64px)}
-/* Vícevrstvý BÍLÝ text-shadow = měkký bílý podklad přímo pod literami: těsný
-   neprůhledný lem (obtah do 4 směrů) + tři rozostřené aury. Text tak vystoupí
-   ze sněhu i tam, kde je za ním strom nebo stín, a fotka zůstane světlá. */
-.vr-root[data-season="zima"] .vrim-h1{color:#17242e;max-width:22ch;
-  text-shadow:1px 1px 2px rgba(255,255,255,.98),-1px 1px 2px rgba(255,255,255,.98),
-    1px -1px 2px rgba(255,255,255,.98),-1px -1px 2px rgba(255,255,255,.98),
-    0 0 9px rgba(255,255,255,.96),0 0 20px rgba(255,255,255,.9),
-    0 0 38px rgba(255,255,255,.78),0 0 66px rgba(255,255,255,.55)}
-.vr-root[data-season="zima"] .vrim-sub{color:#22303b;max-width:48ch;
-  text-shadow:1px 1px 2px rgba(255,255,255,.97),-1px 1px 2px rgba(255,255,255,.97),
-    1px -1px 2px rgba(255,255,255,.97),-1px -1px 2px rgba(255,255,255,.97),
-    0 0 8px rgba(255,255,255,.94),0 0 18px rgba(255,255,255,.84),0 0 34px rgba(255,255,255,.6)}
-.vr-root[data-season="zima"] .vrim-sub em{color:#0f5c86}
-/* Eyebrow je malý text (12 px) → drží stejně tmavou barvu jako h1, aby i na
-   nejtmavší dlaždici sněhu vyšel na AA 4,5:1 (měřeno bez bílé aury). */
-.vr-root[data-season="zima"] .vrim-eyebrow{color:#17242e;
-  text-shadow:1px 1px 2px rgba(255,255,255,.97),-1px 1px 2px rgba(255,255,255,.97),
-    1px -1px 2px rgba(255,255,255,.97),-1px -1px 2px rgba(255,255,255,.97),
-    0 0 10px rgba(255,255,255,.9),0 0 22px rgba(255,255,255,.7)}
+/* Barvy i stíny textu jsou v zimě STEJNÉ JAKO V LÉTĚ; zimní zůstává jen
+   line-breaking (širší max-width → h1 na 2 řádky), aby se blok vešel pod patu
+   vily. Zkoušeli jsme i letní ukotvení bloku (text přes dům, jak majitel
+   povolil) — vila na něm sice zůstala vidět, ale podtitulek spadl na 4,25:1
+   (pod AA), a fotka se ztmavila víc; proto zůstává blok dole nad sněhem. */
+.vr-root[data-season="zima"] .vrim-h1{max-width:22ch}
+.vr-root[data-season="zima"] .vrim-sub{max-width:48ch}
 /* Jediná zbylá zimní komprese je mezera NAD TLAČÍTKY (písma se netýká): bez ní
    by blok na 2:1 laptopech a malých telefonech vylezl na vilu. */
 .vr-root[data-season="zima"] .vrim-actions{margin-top:18px}
@@ -284,10 +285,10 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(12px,2.4vh,24px)}
 }
 /* Mobil: h1 se láme podle šířky displeje (max-width se neuplatní), blok je tedy
-   vysoký → ukotvi ho co nejníž nad sněhem a rozšiř bílou oporu pod něj. */
+   vysoký → ukotvi ho co nejníž nad sněhem. Elipsa se šířkou/výškou už řídí sama
+   podle bloku (calc(100% + 26vh)), takže vlastní mobilní rozměr nepotřebuje. */
 @media(max-width:640px){
   .vr-root[data-season="zima"] .vrim-copy{bottom:clamp(8px,1.6vh,18px)}
-  .vr-root[data-season="zima"] .vrim-copy::before{width:184vw;height:min(46vh,380px)}
 }
 
 /* ---------- Section shells ---------- */
