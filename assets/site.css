@@ -880,16 +880,22 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-root[data-season="zima"] .vrh-hero::after,
 .vr-root[data-season="zima"] .sec-vecer::after{opacity:1}
 
-/* ---------- VIDEO: SKUTEČNÝ PŘEHRÁVAČ VE VELKÉ PLOŠE (styl 360 scény) ----------
-   Plocha zůstává full-bleed a velkorysá jako .vrp-stage nad ní — to se majiteli
-   líbilo. Změnilo se, CO na ní běží: místo ustřižené tiché smyčky s kulatým
-   YouTube tlačítkem tu jede CELÉ video z youtube-nocookie.
+/* ---------- VIDEO: SKUTEČNÝ PŘEHRÁVAČ PŘES CELOU ŠÍŘKU (styl 360 scény) ----------
+   Plocha je full-bleed jako .vrp-stage nad ní. Majitel (7/2026): „Šlo by, aby to
+   video bylo úplně přes celou stránku — ne na max zvětšené do toho sloupce, ale
+   přes celou tu stránku, jako podklad?" Snímek už tedy NEsedí ve vystředěném
+   sloupci — roztahuje se od kraje ke kraji viewportu.
 
-   PROČ 16:9 A ŽÁDNÝ OŘEZ: titulky jsou vypálené dole v obraze. Dřívější
-   object-fit:cover na ploše vysoké 78vh je z kadru vyřízl. Rámeček proto drží
-   přesný poměr 16/9 a šířku bere z výšky (min(86vh,940px)*16/9), takže se na
-   běžném notebooku roztáhne skoro přes celou šířku a na širokém monitoru zůstane
-   uprostřed na tmavém pásu — snímek je vždycky vidět celý, i s titulky. */
+   PROČ 16:9 A ŽÁDNÝ OŘEZ: titulky jsou vypálené dole v obraze. Žádný object-fit:
+   cover — rámeček drží přesný poměr 16/9, takže je snímek VŽDY vidět celý včetně
+   titulků. Šířka = min(100%, 96vh*16/9):
+   · na 16:10 a užších/vyšších displejích (typicky notebooky) je to plná šířka
+     (100%) a výška vyjde z ní (šířka×9/16) → vyplní prakticky celou obrazovku;
+   · na 16:9 to vyjde ~96vw (výška uškrcená na 96vh) — pořád prakticky celá plocha;
+   · na velmi širokých (21:9) by plná šířka přerostla obrazovku na výšku, proto
+     strop 96vh: video je pak užší než viewport a zůstává vystředěné na tmavém
+     pásu, celý snímek se vejde a lišta ovládání zůstává pod ním.
+   Šířku sdílí i lišta pod obrazem, aby popisek a odkaz lícovaly s okrajem videa. */
 .vr-vidwrap{margin-top:clamp(30px,4vw,52px);border-top:1px solid var(--vr-line);padding-top:clamp(26px,3vw,40px)}
 .vr-vidhead{max-width:680px}
 .vr-vidtitle{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.1;color:var(--vr-text-soft);margin:10px 0 0;transition:color .6s ease}
@@ -903,10 +909,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-vidstage::before{top:0;height:clamp(14px,2.6vh,32px);background:linear-gradient(180deg,var(--vr-bg),transparent)}
 .vr-vidstage::after{bottom:0;height:clamp(18px,3vh,36px);background:linear-gradient(0deg,var(--vr-bg),transparent)}
 .vr-vid{display:block;position:relative;width:100%}
-/* Rámeček přehrávače: přesně 16:9, vystředěný, bez radiusu a bez rámečku —
-   je to plátno, ne dlaždice. --vr-vidw sdílí i lišta pod ním, aby popisek
-   a odkaz lícovaly s levým okrajem obrazu. */
-.vr-vidbox{--vr-vidw:min(100%,calc(min(86vh,940px) * 16 / 9));
+/* Rámeček přehrávače: přesně 16:9, full-bleed přes celou šířku (strop 96vh na
+   ultraširokých), bez radiusu a bez rámečku — je to podklad přes stránku, ne
+   dlaždice. --vr-vidw sdílí i lišta pod ním, aby popisek a odkaz lícovaly s
+   levým okrajem obrazu. */
+.vr-vidbox{--vr-vidw:min(100%,calc(96vh * 16 / 9));
   position:relative;width:var(--vr-vidw);margin:0 auto;aspect-ratio:16/9;background:#05070a;overflow:hidden}
 .vr-vid-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .vr-vid-slot{position:absolute;inset:0;z-index:1}
@@ -944,7 +951,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-vid-start-ic svg{width:100%;height:100%;display:block}
 /* Lišta pod obrazem: sezóna + název + odkaz na YouTube. Popisek byl dřív VE
    snímku vlevo dole — přesně tam, kde jsou titulky, takže se musel odstěhovat. */
-.vr-vidbar{--vr-vidw:min(100%,calc(min(86vh,940px) * 16 / 9));
+.vr-vidbar{--vr-vidw:min(100%,calc(96vh * 16 / 9));
   width:var(--vr-vidw);margin:14px auto 0;box-sizing:border-box;padding:0 clamp(14px,1.6vw,20px);
   display:flex;align-items:baseline;gap:8px 20px;flex-wrap:wrap}
 .vr-vid-season{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--vr-ember-2)}
