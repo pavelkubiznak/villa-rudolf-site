@@ -843,24 +843,39 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-root[data-season="zima"] .vrh-hero::after,
 .vr-root[data-season="zima"] .sec-vecer::after{opacity:1}
 
-/* ---------- 360 section: video lite-embeds (no iframe, cookie-free) ---------- */
+/* ---------- 360 section: VIDEO JAKO VELKÁ AMBIENTNÍ PLOCHA ----------
+   Majitel chtěl, ať jediné sezónní video vypadá stejně velkoryse jako sekce
+   360° nad ním („aby to vypadalo jako ty 360 fotky, kdyby to tam jelo"), takže
+   .vr-vidstage je full-bleed pás se stejnou výškou i stejnými měkkými okraji
+   jako .vrp-stage. Přes něj běží tichá smyčka; klik na kulaté YouTube tlačítko
+   otevře fullscreen lightbox s plným videem a zvukem. */
 .vr-vidwrap{margin-top:clamp(30px,4vw,52px);border-top:1px solid var(--vr-line);padding-top:clamp(26px,3vw,40px)}
 .vr-vidhead{max-width:680px}
 .vr-vidtitle{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.1;color:var(--vr-text-soft);margin:10px 0 0;transition:color .6s ease}
-.vr-vids{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,26px);margin-top:clamp(20px,2.4vw,30px)}
-.vr-vid{display:block;text-decoration:none;border:1px solid var(--vr-line);border-radius:3px;overflow:hidden;background:var(--vr-panel);transition:border-color .3s ease,transform .3s ease,background-color .6s ease}
-.vr-vid:hover{border-color:var(--vr-accent);transform:translateY(-2px)}
-.vr-vid-thumb{position:relative;display:block;aspect-ratio:16/9;overflow:hidden;background:#0b0f0d;width:100%;margin:0;padding:0;border:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.vr-vid-thumb img,.vr-vid-thumb .vr-vid-loop{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
-.vr-vid-thumb:focus-visible{outline:2px solid var(--vr-ember);outline-offset:-3px}
+.vr-vidstage{position:relative;width:100%;margin-top:clamp(20px,2.6vw,32px)}
+/* Karta videa = celá plocha. Rámeček, radius ani zdvih na hover tu nemají co
+   dělat — je to plátno, ne dlaždice. */
+.vr-vid{display:block;position:relative;width:100%;height:min(78vh,860px);
+  overflow:hidden;background:#0b0f0d;text-decoration:none;border:0;border-radius:0}
+.vr-vid-thumb{position:relative;display:block;width:100%;height:100%;overflow:hidden;background:#0b0f0d;
+  margin:0;padding:0;border:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.vr-vid-thumb img,.vr-vid-thumb .vr-vid-loop{width:100%;height:100%;object-fit:cover;display:block}
+.vr-vid-thumb:focus-visible{outline:2px solid var(--vr-ember);outline-offset:-4px}
 /* Živá video-tapeta: mírně ztlumená, aby play tlačítko a popisek zůstaly čitelné
    a bylo pořád zřejmé, že klik otevře plné video. Na hover se rozjasní. */
-.vr-vid-loop{filter:brightness(.82) saturate(.95);transition:transform .5s ease,filter .4s ease}
-.vr-vid:hover .vr-vid-loop{filter:brightness(.95) saturate(1)}
-/* Jemný scrim pod play tlačítkem — drží kontrast i na světlých snímcích. */
+.vr-vid-loop{filter:brightness(.88) saturate(.97);transition:filter .45s ease}
+.vr-vid-thumb:hover .vr-vid-loop{filter:brightness(1) saturate(1.02)}
+/* Měkké okraje do var(--vr-bg) — TÁŽ řeč jako .vrp-stage, aby plocha navazovala
+   na 360 scénu a nekončila ostrou hranou. Drží v obou sezónách. */
+.vr-vidstage::before,.vr-vidstage::after{content:'';position:absolute;left:0;right:0;z-index:3;pointer-events:none}
+.vr-vidstage::before{top:0;height:8%;background:linear-gradient(180deg,var(--vr-bg) 0%,30%,transparent 100%)}
+.vr-vidstage::after{bottom:0;height:13%;background:linear-gradient(0deg,var(--vr-bg) 0%,34%,transparent 100%)}
+/* Scrim + vinětace pod ovládáním — drží kontrast play tlačítka i titulku
+   na světlých snímcích (zimní záběry jsou skoro bílé). */
 .vr-vid-thumb::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(38% 55% at 50% 50%,rgba(6,9,8,.42),transparent 70%),
-    linear-gradient(180deg,transparent 55%,rgba(6,9,8,.35))}
+  background:radial-gradient(34% 46% at 50% 46%,rgba(6,9,8,.5),transparent 72%),
+    radial-gradient(125% 100% at 50% 44%,transparent 58%,rgba(3,6,9,.34) 86%,rgba(3,6,9,.56) 100%),
+    linear-gradient(180deg,rgba(6,9,8,.22),transparent 22%,transparent 62%,rgba(6,9,8,.62))}
 /* Full-screen video lightbox (click-to-play, FLIP grow, cookie-free until open) */
 .vr-vlb{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:clamp(10px,3.5vw,48px)}
 .vr-vlb-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.85);opacity:0;transition:opacity .34s ease}
@@ -878,18 +893,41 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-vlb[data-open="true"] .vr-vlb-close{opacity:1}
 .vr-vlb-close:hover{background:rgba(40,40,40,.85);border-color:var(--vr-ember)}
 @media (prefers-reduced-motion:reduce){.vr-vlb-backdrop,.vr-vlb-stage,.vr-vlb-close{transition:none}}
-.vr-vid:hover .vr-vid-thumb img,.vr-vid:hover .vr-vid-thumb .vr-vid-loop{transform:scale(1.04)}
-.vr-vid-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;
-  background:rgba(11,15,13,.6);backdrop-filter:blur(4px);border:1px solid rgba(240,235,225,.5);
-  display:flex;align-items:center;justify-content:center;color:#F7F1E8;transition:background .3s ease,color .3s ease,border-color .3s ease,transform .3s ease}
-.vr-vid:hover .vr-vid-play{background:var(--vr-ember);color:#10150f;border-color:transparent;transform:translate(-50%,-50%) scale(1.06)}
-.vr-vid-play svg{width:22px;height:22px;margin-left:3px}
-.vr-vid-meta{display:flex;flex-direction:column;gap:4px;padding:14px 16px 16px}
-.vr-vid-season{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--vr-accent);transition:color .6s ease}
-.vr-vid-label{font-family:'Archivo',sans-serif;font-size:14px;line-height:1.4;color:var(--vr-text-muted);transition:color .6s ease}
-/* Každá sezóna ukazuje jen svoje video (schová [data-season-only]), takže
-   v mřížce zůstává jedna karta — dá se roztáhnout do rozumné šířky. */
-.vr-vids{grid-template-columns:minmax(0,720px)}
+/* KULATÉ YOUTUBE TLAČÍTKO uprostřed plochy — majitel: „a byl tam takový ten
+   YouTube button, že si můžeš zmáčknout". Červený kruh s bílým trojúhelníkem
+   je jednoznačný signál „tohle je video, klikni"; nekonkuruje jantarovému CTA
+   „Rezervovat termín", protože leží na jiné ploše a v jiné barvě. */
+.vr-vid-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:clamp(72px,7.4vw,104px);height:clamp(72px,7.4vw,104px);border-radius:50%;
+  background:rgba(226,32,26,.92);border:2px solid rgba(255,255,255,.9);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:0 20px 56px rgba(0,0,0,.5),0 0 0 12px rgba(255,255,255,.06);
+  transition:background .28s ease,transform .28s ease,box-shadow .28s ease}
+.vr-vid-thumb:hover .vr-vid-play,.vr-vid-thumb:focus-visible .vr-vid-play{
+  background:#FF0000;transform:translate(-50%,-50%) scale(1.07);box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 0 16px rgba(255,255,255,.1)}
+.vr-vid-play svg{width:38%;height:38%;margin-left:6%}
+/* Textová pobídka pod tlačítkem: říká, že klik dá CELÉ video SE ZVUKEM
+   (smyčka na ploše je schválně tichá a bez ovládání). Je to sklovitá pilulka
+   jako „Chyť a otáčej" u 360 scény — pod ní běží živý obraz, takže samotný
+   text se stínem by na světlých a členitých záběrech zanikl. */
+.vr-vid-cue{position:absolute;left:50%;top:50%;transform:translateX(-50%);
+  margin-top:clamp(58px,4.8vw,74px);white-space:nowrap;pointer-events:none;
+  padding:8px 15px;border:1px solid rgba(240,235,225,.2);border-radius:999px;
+  background:rgba(8,11,14,.55);backdrop-filter:blur(10px);
+  font-family:'Archivo',sans-serif;font-size:clamp(10.5px,.95vw,12px);font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:#EDE8DE}
+/* Titulek plochy v rohu — stejné místo i rukopis jako .vrp-cap u 360 scény. */
+.vr-vid-meta{position:absolute;z-index:2;left:clamp(20px,3vw,32px);bottom:clamp(26px,4vh,52px);
+  display:flex;flex-direction:column;gap:6px;padding:0;pointer-events:none}
+.vr-vid-season{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--vr-ember-2);text-shadow:0 1px 12px rgba(0,0,0,.8)}
+.vr-vid-label{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.35rem,2.4vw,2.1rem);line-height:1.06;color:#F7F1E8;text-shadow:0 1px 2px rgba(0,0,0,.9),0 2px 26px rgba(0,0,0,.6)}
+@media(max-width:900px){.vr-vid{height:min(62vh,560px)}}
+@media(max-width:600px){
+  .vr-vid{height:min(56vh,440px)}
+  .vr-vid-cue{font-size:10.5px;letter-spacing:.1em;margin-top:52px}
+  .vr-vid-meta{left:16px;bottom:20px}
+}
+@media(prefers-reduced-motion:reduce){.vr-vid-play,.vr-vid-loop{transition:none}}
 
 /* ---------- Guest photo sharing ---------- */
 .sec-sdilet{padding:clamp(56px,9vh,110px) 0;background:var(--vr-bg-deep);border-top:1px solid var(--vr-line);transition:background .6s ease}
@@ -1072,7 +1110,6 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-foot-social svg{flex:none}
 
 /* ---------- Responsive ---------- */
-@media(max-width:720px){.vr-vids{grid-template-columns:1fr}}
 @media(max-width:1000px){.vr-reviews{grid-template-columns:1fr 1fr}}
 @media(max-width:920px){.vr-qfacts{grid-template-columns:repeat(3,1fr);gap:22px 18px}}
 @media(max-width:640px){

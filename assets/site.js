@@ -1794,12 +1794,12 @@ function closeVideoLightbox() {
   stage.addEventListener('transitionend', done);
   setTimeout(done, 380);
 }
-/* ---------- Živá video-tapeta v kartách videa ----------
-   Ztlumená, zpomalená smyčka místo statického náhledu. Zdroj se nahrává až
-   když je karta ve viewportu; mimo viewport se přehrávání pozastaví. Vůbec se
-   nepřehrává při prefers-reduced-motion, při zapnutém spořiči dat a na úzkých
-   obrazovkách (<640px) — tam zůstane jen poster (mobilní data).
-   Klik na kartu dál otevírá fullscreen lightbox s plným videem a zvukem. */
+/* ---------- Živá video-tapeta na velké ploše (.vr-vidstage) ----------
+   Tichá smyčka místo statického náhledu. Zdroj se nahrává až když je plocha ve
+   viewportu; mimo viewport se přehrávání pozastaví. Vůbec se nepřehrává při
+   prefers-reduced-motion, při zapnutém spořiči dat a na úzkých obrazovkách
+   (<640px) — tam zůstane jen poster (mobilní data).
+   Klik na plochu dál otevírá fullscreen lightbox s plným videem a zvukem. */
 function loopsAllowed() {
   try {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
@@ -1816,9 +1816,14 @@ function wireVideoLoops() {
   if (!('IntersectionObserver' in window) || !window.innerHeight) return;
   // Majitel: „ať video jede od začátku svého úseku a spustí se teprve, když k němu
   // doskroluješ." Proto se přehrávání spouští až při vstupu do viewportu, VŽDY se
-  // převine na currentTime = 0 a jede zpomaleně (0,6×). Při opuštění se pauzuje.
+  // převine na currentTime = 0. Při opuštění se pauzuje.
+  // RYCHLOST 1× (dřív 0,6×): na malé kartě se zpomalení neprojevilo, ale na
+  // full-bleed ploše ano — zdroj má 25–30 fps, při 0,6× se každý snímek drží
+  // 1,7× déle a švenky přes dům a zahradu začnou viditelně škubat. Normální
+  // rychlost vypadá na velké ploše plynule a přirozeně; „klidnost" obrazu drží
+  // ztlumení (filter: brightness) a scrim, ne zpomalení.
   const startFromZero = (v) => {
-    v.playbackRate = 0.6;                          // 60 % rychlost (klidná podkladní smyčka)
+    v.playbackRate = 1;                            // plná rychlost — viz komentář výše
     try { v.currentTime = 0; } catch (e) {}        // vždy od začátku klipu
     const p = v.play();
     if (p && p.catch) p.catch(() => {});           // autoplay blokován → zůstane poster

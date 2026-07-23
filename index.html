@@ -20,11 +20,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=43">
+<link rel="stylesheet" href="assets/site.css?v=44">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
-<script src="assets/season.js?v=43"></script>
+<script src="assets/season.js?v=44"></script>
 </head>
 <body>
 <noscript>
@@ -357,47 +357,57 @@
           <span class="vr-eyebrow" data-t="video.eyebrow">Video</span>
           <h3 class="vr-vidtitle" data-t="video.title">Prohlédněte si vilu na videu</h3>
         </div>
-        <!-- Click-to-play lite embeds: ztlumená zpomalená smyčka jako živé pozadí
-             (majitel: „kdyby to video bylo zpomalený a bez zvuku a rovnou jelo
-             jako podkladní fotka"). Klik dál otevírá fullscreen lightbox s PLNÝM
-             videem a zvukem — youtube-nocookie iframe se vkládá až po kliknutí
-             (žádné cookies ani externí JS, dokud si host nepřeje).
-             Smyčka je vlastní majitelův materiál, sestříhaný z týchž videí:
-             ztlumená, zpomalená na 0,6×, bez titulků. Přehrávání řídí JS
-             (IntersectionObserver + prefers-reduced-motion + saveData + <640px). -->
-        <div class="vr-vids">
-          <!-- KAŽDÁ SEZÓNA UKAZUJE JEN SVOJE VIDEO (verdikt, sekce VIDEA —
-               shoda všech tří specialistů bez výhrad). Letní video se jmenuje
-               „Dům, zahrada, bazén a příjezd" a bazén v něm hraje hlavní roli;
-               pustit ho zimnímu hostovi neznamená ukázat víc, ale vyrobit
-               očekávání, které se rozbije při příjezdu. Druhá sezóna je na
-               jedno kliknutí přepínačem nahoře a její fotky jsou v galerii
-               pod sezónním filtrem. -->
-          <div class="vr-vid summer" data-season-only="leto">
-            <button type="button" class="vr-vid-thumb" data-yt="ksVpDr-P8ic" aria-label="Přehrát video: Dům, zahrada, bazén a příjezd">
-              <video class="vr-vid-loop" data-loop-src="media/video/loop-summer.mp4?v=30"
-                     poster="media/video/loop-summer.jpg?v=30" muted loop playsinline preload="none"
-                     width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
-              <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
-            </button>
-            <span class="vr-vid-meta">
-              <span class="vr-vid-season" data-t="hero.summer">Léto</span>
-              <span class="vr-vid-label" data-t="video.summer">Dům, zahrada, bazén a příjezd</span>
-            </span>
-          </div>
-          <div class="vr-vid winter" data-season-only="zima">
-            <button type="button" class="vr-vid-thumb" data-yt="tWCuuovnh2U" aria-label="Přehrát video: Prohlídka domu, sauna a skibus">
-              <video class="vr-vid-loop" data-loop-src="media/video/loop-winter.mp4?v=30"
-                     poster="media/video/loop-winter.jpg?v=30" muted loop playsinline preload="none"
-                     width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
-              <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
-            </button>
-            <span class="vr-vid-meta">
-              <span class="vr-vid-season" data-t="hero.winter">Zima</span>
-              <span class="vr-vid-label" data-t="video.winter">Prohlídka domu, sauna a skibus</span>
-            </span>
-          </div>
-        </div>
+      </div>
+    </div>
+
+    <!-- ===================== VIDEO JAKO VELKÁ AMBIENTNÍ PLOCHA =====================
+         Majitel: „když tam je to jedno video, mohlo by se přehrávat na pozadí —
+         stejně, aby to vypadalo jako ty 360 fotky, kdyby to tam jelo. A byl tam
+         takový ten YouTube button, že si můžeš zmáčknout, a vyskočil by pop-up
+         a na tom pop-upu by se to přehrávalo."
+         Proto je blok FULL-BLEED ve stejném jazyce jako .vrp-stage nad ním
+         (stejná výška, stejné měkké okraje do var(--vr-bg), stejný titulek
+         v rohu). Tiše na něm běží vlastní sestříhaná smyčka BEZ ZVUKU; klik na
+         kulaté YouTube tlačítko otevře TÝŽ fullscreen lightbox jako dřív
+         (youtube-nocookie iframe s autoplay=1, zvuk, zavření křížkem/Esc/klikem
+         mimo) — žádná druhá implementace přehrávače.
+         ŠETRNOST: smyčka se stahuje až při doscrollování k ní (IntersectionObserver),
+         mimo viewport se pauzuje a při prefers-reduced-motion, zapnutém spořiči
+         dat nebo na displeji pod 640 px se nestáhne vůbec — zůstane jen poster
+         (24 kB léto / 111 kB zima), takže načtení stránky se nezhorší. -->
+    <div class="vr-vidstage vr-reveal">
+      <!-- KAŽDÁ SEZÓNA UKAZUJE JEN SVOJE VIDEO (verdikt, sekce VIDEA —
+           shoda všech tří specialistů bez výhrad). Letní video se jmenuje
+           „Dům, zahrada, bazén a příjezd" a bazén v něm hraje hlavní roli;
+           pustit ho zimnímu hostovi neznamená ukázat víc, ale vyrobit
+           očekávání, které se rozbije při příjezdu. Druhá sezóna je na
+           jedno kliknutí přepínačem nahoře a její fotky jsou v galerii
+           pod sezónním filtrem. -->
+      <div class="vr-vid summer" data-season-only="leto">
+        <button type="button" class="vr-vid-thumb" data-yt="ksVpDr-P8ic" aria-label="Přehrát video: Dům, zahrada, bazén a příjezd">
+          <video class="vr-vid-loop" data-loop-src="media/video/loop-summer.mp4?v=30"
+                 poster="media/video/loop-summer.jpg?v=30" muted loop playsinline preload="none"
+                 width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
+          <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
+          <span class="vr-vid-cue" aria-hidden="true" data-t="video.playFull">Přehrát celé video se zvukem</span>
+        </button>
+        <span class="vr-vid-meta" aria-hidden="true">
+          <span class="vr-vid-season" data-t="hero.summer">Léto</span>
+          <span class="vr-vid-label" data-t="video.summer">Dům, zahrada, bazén a příjezd</span>
+        </span>
+      </div>
+      <div class="vr-vid winter" data-season-only="zima">
+        <button type="button" class="vr-vid-thumb" data-yt="tWCuuovnh2U" aria-label="Přehrát video: Prohlídka domu, sauna a skibus">
+          <video class="vr-vid-loop" data-loop-src="media/video/loop-winter.mp4?v=30"
+                 poster="media/video/loop-winter.jpg?v=30" muted loop playsinline preload="none"
+                 width="1280" height="720" tabindex="-1" aria-hidden="true"></video>
+          <span class="vr-vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></span>
+          <span class="vr-vid-cue" aria-hidden="true" data-t="video.playFull">Přehrát celé video se zvukem</span>
+        </button>
+        <span class="vr-vid-meta" aria-hidden="true">
+          <span class="vr-vid-season" data-t="hero.winter">Zima</span>
+          <span class="vr-vid-label" data-t="video.winter">Prohlídka domu, sauna a skibus</span>
+        </span>
       </div>
     </div>
   </section>
@@ -1001,7 +1011,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=43" defer></script>
+<script src="assets/site.js?v=44" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>
