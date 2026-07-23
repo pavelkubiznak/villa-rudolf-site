@@ -124,15 +124,18 @@
   </section>
 
   <!-- ===================== Trust (ratings) + quick facts strip ===================== -->
-  <!-- Ratings moved directly under the hero and made prominent (owner couldn't find
-       reviews). Each badge links to its platform; a rotating quote teaser links to
-       #recenze. Then the quick-facts grid, then the direct-booking value badge. -->
+  <!-- Pás pod heroem drží celý „sociální důkaz" webu — jinde na stránce už
+       recenze nejsou (sekce #recenze zrušena 7/2026). Nahoře odkazy na
+       hodnocení jednotlivých platforem v JEJICH VLASTNÍ ŠKÁLE, pod nimi
+       NEKONEČNÝ POJEZD skutečných citací, každá karta = proklik na platformu. -->
   <section class="sec-quickfacts">
     <!-- Full-width guest-review band (edge-to-edge, like the hero): a villa photo
-         (summer/winter swap) under a dark scrim, the numeric ratings on top, and a
-         large rotating REAL guest quote with its visible source (Google / Airbnb /
-         Booking.com) linking to the platform profile. Light text over the scrim in
-         BOTH seasons keeps WCAG AA contrast. -->
+         (summer/winter swap) under a dark scrim, the platform ratings on top, and
+         an infinite marquee of REAL guest quotes underneath. Light text over the
+         scrim in BOTH seasons keeps WCAG AA contrast.
+         ZPRŮMĚROVANÁ ZNÁMKA TU UŽ NENÍ (majitel, 7/2026): „Booking se hodnotí
+         do desítky, takže to úplně nesedí." Míchat pětihvězdičkovou škálu
+         s desetibodovou do jednoho čísla je věcně sporné — nevracej to. -->
     <div class="vr-trustband vr-reveal" id="vr-trustband">
       <div class="vr-trustband-bg" aria-hidden="true">
         <img class="vr-seasonimg summer" src="media/sections/trustband-summer.jpg" alt="" loading="lazy" decoding="async" width="2400" height="1028">
@@ -141,8 +144,11 @@
       <div class="vr-trustband-scrim" aria-hidden="true"></div>
       <div class="vr-trustband-inner">
         <div class="vr-ratings" id="vr-ratings"></div>
-        <div class="vr-quote" id="vr-teaser"></div>
       </div>
+      <!-- Pojezd je ZÁMĚRNĚ mimo .vr-trustband-inner: má jít přes celou šířku
+           obrazovky až za pravý okraj (majitel: „využil bych to místo, co je
+           ta pravá strana monitoru"). Obsah vyrábí renderTrustBand(). -->
+      <div class="vr-revmarq" id="vr-teaser"></div>
     </div>
     <div class="vr-wrap">
       <!-- RYCHLÁ FAKTA — všechna čísla se dosazují z VR_FACTS (site.js), tady

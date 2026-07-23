@@ -1023,7 +1023,7 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-trustband-bg .vr-seasonimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease}
 .vr-trustband-scrim{position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(100deg,rgba(6,9,8,.9) 0%,rgba(6,9,8,.7) 48%,rgba(6,9,8,.44) 100%),linear-gradient(0deg,rgba(6,9,8,.66),transparent 42%)}
-.vr-trustband-inner{max-width:1340px;margin:0 auto;padding:clamp(48px,7.5vw,100px) clamp(20px,5vw,64px)}
+.vr-trustband-inner{max-width:1340px;margin:0 auto;padding:clamp(44px,6vw,80px) clamp(20px,5vw,64px) 0}
 /* ratings chips read over the photo (light + translucent) in both seasons */
 .vr-trustband .vr-ratings{margin:0}
 .vr-trustband .vr-rating{flex:0 1 auto;border-color:rgba(240,235,225,.26);background:rgba(10,14,12,.34);backdrop-filter:blur(6px)}
@@ -1034,58 +1034,79 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-trustband .vr-rating-count{color:#C7CCC1}
 .vr-trustband .vr-rating-arrow{color:var(--vr-ember-2)}
 .vr-trustband .vr-ratings-note{color:#B9BEB2}
-/* ROTUJÍCÍ CITACE HOSTŮ v pásu pod heroem (majitel: „jak tam projížděly ty
-   reference, to bylo dobrý"). Blok drží pevnou minimální výšku, aby se stránka
-   při přepnutí citace neškubala, a fade jde jen přes .vr-quote-rot — čísla nad
-   ním i tlačítko pod ním stojí. */
-.vr-quote{display:block;max-width:62ch;margin:clamp(26px,3.4vw,44px) 0 0}
-.vr-quote-rot{display:block;margin-top:clamp(18px,2.4vw,28px);min-height:clamp(140px,15vw,210px);
-  transition:opacity .34s ease}
-.vr-quote-rot[data-fade="true"]{opacity:0}
-.vr-quote-q{margin:0;font-family:'Newsreader',serif;font-style:italic;font-weight:300;
-  font-size:clamp(1.32rem,2.6vw,2.05rem);line-height:1.34;letter-spacing:-.01em;color:#F6F1E8;
-  text-wrap:balance;text-shadow:0 2px 26px rgba(0,0,0,.5)}
-.vr-quote-q::before{content:'\201C';color:var(--vr-ember-2);margin-right:.05em}
-.vr-quote-q::after{content:'\201D';color:var(--vr-ember-2);margin-left:.02em}
-.vr-quote-cap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:clamp(14px,1.8vw,20px)}
-.vr-quote-author{font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;letter-spacing:.02em;color:#DED9CD}
-/* Štítek zdroje (Google / Airbnb / Booking.com) je u KAŽDÉ citace vidět
-   a proklikne se na profil platformy — přesně to, co majitel chválil.
-   POZOR na specificitu: dřív obecné `.vr-root a{color:inherit}` (0,1,1) přebilo
-   jednotřídní `.vr-quote-source` (0,1,0) a v ZIMNÍM (světlém) motivu vyšel text
-   štítku i tlačítka TMAVĚ na tmavém scrimu — prakticky neviditelně. Proto jsou
-   obě pravidla zanořená pod .vr-trustband (0,2,0). */
-.vr-trustband .vr-quote-source{display:inline-flex;align-items:center;gap:6px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:#F1ECE2;border:1px solid rgba(240,235,225,.32);border-radius:999px;
-  padding:6px 12px;text-decoration:none;background:rgba(10,14,12,.32);transition:border-color .2s ease,background-color .2s ease}
-.vr-trustband a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,.55);color:#FFF9EF}
-.vr-trustband a.vr-quote-source:focus-visible{outline:2px solid var(--vr-ember-2);outline-offset:3px}
-.vr-quote-source .vr-rating-arrow{color:var(--vr-ember-2);font-size:12px;margin-left:0}
-/* Souhrn hodnocení (průměr napříč platformami) — ČÍSLA zůstávají nahoře,
-   citace jim jen přibyly pod ně. */
-.vr-trustsum{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px}
-.vr-trustsum-n{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1;color:#F4EFE6}
-.vr-trustsum .vr-star{font-style:normal;font-size:clamp(1.1rem,2vw,1.5rem);color:var(--vr-ember-2);line-height:1}
-.vr-trustsum-l{font-family:'Archivo',sans-serif;font-size:clamp(13px,1.1vw,15px);color:#DED9CD;letter-spacing:.01em}
-@media(max-width:520px){.vr-trustsum{gap:4px 8px}}
-/* „Zobrazit všechny recenze" — ZÁMĚRNĚ ghost tlačítko, ne jantarová plocha:
-   nesmí konkurovat hlavnímu CTA „Rezervovat termín". */
-.vr-trustband .vr-quote-more{display:inline-flex;align-items:center;gap:8px;margin-top:clamp(16px,2vw,22px);
-  font-family:'Archivo',sans-serif;font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
-  color:#F1ECE2;text-decoration:none;border:1px solid rgba(240,235,225,.42);border-radius:999px;
-  padding:11px 20px;background:rgba(10,14,12,.28);backdrop-filter:blur(6px);
-  transition:border-color .22s ease,background-color .22s ease,color .22s ease}
-.vr-quote-more::after{content:'\2193';color:var(--vr-ember-2);font-size:13px;transition:transform .22s ease}
-.vr-trustband .vr-quote-more:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,.62);color:#FFF9EF}
-.vr-quote-more:hover::after{transform:translateY(2px)}
-.vr-quote-more:focus-visible{outline:2px solid var(--vr-ember-2);outline-offset:3px}
+/* NEKONEČNÝ POJEZD RECENZÍ v pásu pod heroem (majitel 7/2026: „Kdyby to tam
+   projíždělo… když na to najedeš, tak se to zastaví a můžeš na to kliknout").
+   Jde ZÁMĚRNĚ přes celou šířku obrazovky — pás je edge-to-edge a karty mizí
+   za pravým i levým okrajem, takže je vidět, že smyčka pokračuje.
+
+   Mechanika: .vr-revmarq-track = dvě identické poloviny; posun o -50 % šířky
+   tracku a skok zpět. Doba jednoho průjezdu je v --vr-marq-dur (dopočítá JS
+   z reálné šířky, aby rychlost byla vždy stejná v px/s).
+
+   ZASTAVENÍ: :hover (myš) i :focus-within (tabulátor) → animation-play-state.
+   Bez animace (reduced motion, mobil) se pás chová jako nativní vodorovný
+   scroll — duplicitní polovina se schová, aby v něm nebyly věci dvakrát. */
+.vr-revmarq{position:relative;margin-top:clamp(28px,3.4vw,42px);
+  padding:0 0 clamp(40px,5.5vw,72px);
+  /* měkké okraje: karty se nevynořují „z ničeho", ale vyjedou z mlhy */
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 5%,#000 92%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 5%,#000 92%,transparent 100%);
+  overflow:hidden}
+.vr-revmarq-track{display:flex;width:max-content;
+  animation:vr-marq var(--vr-marq-dur,60s) linear infinite}
+.vr-revmarq:hover .vr-revmarq-track,
+.vr-revmarq:focus-within .vr-revmarq-track{animation-play-state:paused}
+.vr-revmarq-half{display:flex;align-items:stretch;gap:clamp(14px,1.4vw,22px);
+  padding-right:clamp(14px,1.4vw,22px)}
+@keyframes vr-marq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+
+/* Karta = citace + jméno hosta + štítek platformy s JEJÍM hodnocením v JEJÍ
+   škále. Celá karta je odkaz na profil platformy (nová záložka). */
+.vr-revcard{flex:0 0 clamp(258px,25vw,346px);display:flex;flex-direction:column;gap:14px;margin:0;
+  border:1px solid rgba(240,235,225,.22);border-radius:4px;background:rgba(10,14,12,.36);
+  backdrop-filter:blur(7px);padding:clamp(18px,1.7vw,24px);text-decoration:none;
+  transition:border-color .25s ease,background-color .25s ease,transform .25s ease}
+a.vr-revcard:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,.6);transform:translateY(-3px)}
+a.vr-revcard:focus-visible{outline:2px solid var(--vr-ember-2);outline-offset:3px}
+.vr-revcard-q{margin:0;font-family:'Newsreader',serif;font-style:italic;font-weight:300;
+  font-size:clamp(1rem,1.15vw,1.16rem);line-height:1.45;color:#F4EFE6;letter-spacing:-.005em}
+.vr-revcard-q::before{content:'\201C';color:var(--vr-ember-2);margin-right:.04em}
+.vr-revcard-q::after{content:'\201D';color:var(--vr-ember-2);margin-left:.02em}
+.vr-revcard-cap{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:auto;padding-top:4px}
+.vr-revcard-author{font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;letter-spacing:.02em;color:#DED9CD}
+.vr-revcard-plat{display:inline-flex;align-items:center;gap:7px;flex:none;
+  font-family:'Archivo',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:#F1ECE2;border:1px solid rgba(240,235,225,.3);border-radius:999px;padding:5px 10px;
+  background:rgba(10,14,12,.3);white-space:nowrap;transition:border-color .25s ease}
+a.vr-revcard:hover .vr-revcard-plat{border-color:var(--vr-ember-2)}
+.vr-revcard-score{display:inline-flex;align-items:center;gap:3px;color:var(--vr-ember-2);letter-spacing:.06em}
+.vr-revcard-score .vr-star{font-size:11px}
+.vr-revcard-plat .vr-rating-arrow{font-size:11px;margin-left:0}
+
+/* Nadhlavička nad chipy platforem — pás potřebuje hlavičku, když z něj
+   zmizelo velké průměrné číslo. */
+.vr-ratings-eyebrow{display:block;margin-bottom:clamp(14px,1.6vw,20px);color:var(--vr-ember-2)}
+
+/* Bez animace (reduced motion i mobil): nativní vodorovný scroll, duplicitní
+   polovina pryč, ať v pásu nejsou tytéž recenze dvakrát pod prstem. */
 @media(prefers-reduced-motion:reduce){
-  .vr-quote-rot{transition:none}
-  .vr-quote-more::after{transition:none}
+  .vr-revmarq{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .vr-revmarq-track{animation:none;width:auto}
+  .vr-revmarq-half.is-dup{display:none}
+  .vr-revcard{scroll-snap-align:start;transition:none}
+  a.vr-revcard:hover{transform:none}
+}
+@media(max-width:760px){
+  .vr-revmarq{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;
+    -webkit-mask-image:none;mask-image:none}
+  .vr-revmarq-track{animation:none;width:auto}
+  .vr-revmarq-half.is-dup{display:none}
+  .vr-revmarq-half{padding-left:clamp(20px,5vw,32px)}
+  .vr-revcard{flex-basis:min(78vw,300px);scroll-snap-align:start}
 }
 @media(max-width:560px){
   .vr-trustband .vr-rating{flex:1 1 100%;justify-content:space-between}
-  .vr-quote-rot{min-height:190px}
 }
 
 /* ---------- Location: illustrated static map + distances (dark map card, both seasons) ---------- */
