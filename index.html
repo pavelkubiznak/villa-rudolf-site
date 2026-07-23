@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Villa Rudolf – celé horské sídlo jen pro vás | Krkonoše</title>
-<meta name="description" content="Villa Rudolf – soukromé horské sídlo v Krkonoších. Celý dům i rozlehlý pozemek jen pro vaši skupinu 6–22 lidí: sauna, altán, ohniště, lyžárna a v letní sezóně zastřešený bazén. Léto i zima. Rezervujte celý dům.">
+<title>Villa Rudolf – celý dům pro 6–22 osob, 7 ložnic | Krkonoše</title>
+<meta name="description" content="Celý dům i pozemek jen pro vaši skupinu 6–22 osob ve Svobodě nad Úpou. 7 ložnic, 5 koupelen, 4 500 m² pozemku, sauna, lyžárna. Lyžování i bazén sezónně.">
 <link rel="canonical" href="https://villarudolf.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Villa Rudolf">
-<meta property="og:title" content="Villa Rudolf – celé horské sídlo jen pro vás | Krkonoše">
-<meta property="og:description" content="Celý dům i rozlehlý pozemek jen pro vaši skupinu 6–22 lidí. Sauna, altán, ohniště, lyžárna – a v letní sezóně zastřešený bazén. Léto i zima v srdci Krkonoš.">
+<meta property="og:title" content="Villa Rudolf – celý dům pro 6–22 osob, 7 ložnic | Krkonoše">
+<meta property="og:description" content="Celý dům i pozemek jen pro vaši skupinu 6–22 osob ve Svobodě nad Úpou. 7 ložnic, 5 koupelen, 4 500 m² pozemku, sauna, lyžárna. Lyžování i bazén sezónně.">
 <meta property="og:url" content="https://villarudolf.com/">
 <meta property="og:image" content="https://villarudolf.com/media/photos/hero-summer.jpg">
 <meta property="og:locale" content="cs_CZ">
@@ -20,7 +20,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=40">
+<link rel="stylesheet" href="assets/site.css?v=41">
+<!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
+     před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
+     bez defer — soubor je pár set bajtů. -->
+<script src="assets/season.js?v=41"></script>
 </head>
 <body>
 <noscript>
@@ -31,6 +35,9 @@
   </div>
 </noscript>
 <div class="vr-root" data-season="leto">
+<script>/* Sezóna do DOM ještě před vykreslením — v HTML je „leto" jen jako
+     stav bez JS; VRSeason.resolve() rozhodne podle ?season → data → volby. */
+(function(){try{var r=document.currentScript.parentNode;var s=window.VRSeason&&window.VRSeason.resolve();if(s)r.setAttribute('data-season',s);}catch(e){}})();</script>
 
   <!-- ===================== Nav ===================== -->
   <header class="vr-nav" data-scrolled="false">
@@ -46,8 +53,8 @@
       </nav>
       <div class="vr-navright">
         <div class="vr-seg vr-nav-season" role="group" aria-label="Sezóna">
-          <button class="vr-segbtn" data-season="leto" data-active="true" aria-pressed="true" data-t="hero.summer">Léto</button>
-          <button class="vr-segbtn" data-season="zima" aria-pressed="false" data-t="hero.winter">Zima</button>
+          <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Léto</a>
+          <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Zima</a>
         </div>
         <div class="vr-langs" role="group" aria-label="Jazyk / Language">
           <button class="vr-lang" data-lang="cs" data-active="true">CS</button>
@@ -73,8 +80,8 @@
     <a href="vylety/" data-langlink="vylety/" data-t="nav.vylety">Výlety</a>
     <a href="#rezervace" class="vr-mob-cta" data-t="nav.cta">Rezervovat termín</a>
     <div class="vr-seg vr-mob-season" role="group" aria-label="Sezóna">
-      <button class="vr-segbtn" data-season="leto" data-active="true" aria-pressed="true" data-t="hero.summer">Léto</button>
-      <button class="vr-segbtn" data-season="zima" aria-pressed="false" data-t="hero.winter">Zima</button>
+      <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Léto</a>
+      <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Zima</a>
     </div>
     <a class="vr-mob-2nd" href="info/" data-langlink="info/" data-t="nav.info">Praktické info</a>
     <div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">
@@ -94,9 +101,14 @@
     <div class="vrim-vig"></div>
     <div class="vrim-scrim"></div>
     <div class="vrim-copy" id="vrimCopy">
-      <span class="vrim-eyebrow" data-t="hero.eyebrow">Celý dům jen pro vaši skupinu · Krkonoše</span>
+      <!-- SEZÓNNĚ DĚLENÝ SLOT 1+2 (nadhlavička a podtitul). Obě znění jsou ve
+           zdroji stránky, neaktivní schová CSS — viz komentář „SEZÓNNÍ VĚTVE"
+           v site.css a kontrolní list VR_SEASON_SLOTS v site.js. -->
+      <span class="vrim-eyebrow" data-season-only="leto" data-t="hero.eyebrow">Celý dům jen pro vaši skupinu · Krkonoše</span>
+      <span class="vrim-eyebrow" data-season-only="zima" data-t="hero.eyebrowWinter">Lyžování za rohem · Krkonoše</span>
       <h1 class="vrim-h1"><span data-t="hero.h1">Soukromá vila v Krkonoších pro 6–22 hostů</span></h1>
-      <p class="vrim-sub" data-t-html="hero.sub">Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.</p>
+      <p class="vrim-sub" data-season-only="leto" data-t-html="hero.sub">Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.</p>
+      <p class="vrim-sub" data-season-only="zima" data-t-html="hero.subWinter">Lyžování hned za rohem — <em>skibus u domu</em>, Černá hora 4 km.</p>
       <div class="vrim-actions">
         <a href="#rezervace" class="vr-btn-primary"><span data-t="nav.cta">Rezervovat termín</span> <span aria-hidden="true">&#8594;</span></a>
         <a href="#dum" class="vr-btn-ghost" data-t="hero.ctaSec">Prohlédnout dům</a>
@@ -126,7 +138,19 @@
       </div>
     </div>
     <div class="vr-wrap">
-      <div class="vr-qfacts vr-reveal" id="vr-facts"></div>
+      <!-- RYCHLÁ FAKTA — všechna čísla se dosazují z VR_FACTS (site.js), tady
+           nejsou natvrdo. Wellness dlaždice je SEZÓNNĚ DĚLENÝ SLOT 3: v létě
+           bazén + sauna, v zimě sauna + lyžárna (bazén v zimě nejede). Obě
+           varianty jsou ve zdroji, neaktivní schová CSS. -->
+      <div class="vr-qfacts vr-reveal" id="vr-facts">
+        <div class="vr-fact"><div class="vr-fact-k" data-t="facts.loznice.k">7</div><div class="vr-fact-v" data-t="facts.loznice.v">ložnic</div></div>
+        <div class="vr-fact"><div class="vr-fact-k" data-t="facts.koupelny.k">5</div><div class="vr-fact-v" data-t="facts.koupelny.v">koupelen a WC</div></div>
+        <div class="vr-fact"><div class="vr-fact-k" data-t="facts.luzka.k">22</div><div class="vr-fact-v" data-t="facts.luzka.v">lůžek — 19 + 3 přistýlky</div></div>
+        <div class="vr-fact"><div class="vr-fact-k" data-t="facts.plocha.k">257 m²</div><div class="vr-fact-v" data-t="facts.plocha.v">obytná plocha</div></div>
+        <div class="vr-fact wide" data-season-only="leto"><div class="vr-fact-k" data-t="facts.wellnessSummer.k">Bazén + sauna</div><div class="vr-fact-v" data-t="facts.wellnessSummer.v">krytý vyhřívaný bazén a privátní sauna</div></div>
+        <div class="vr-fact wide" data-season-only="zima"><div class="vr-fact-k" data-t="facts.wellnessWinter.k">Sauna + lyžárna</div><div class="vr-fact-v" data-t="facts.wellnessWinter.v">privátní sauna, lyžárna přímo v domě</div></div>
+        <div class="vr-fact wide"><div class="vr-fact-k" data-t="facts.parking.k">Vlastní parkoviště</div><div class="vr-fact-v" data-t="facts.parking.v">na pozemku hned u vchodu, za vlastní bránou</div></div>
+      </div>
     </div>
   </section>
 
@@ -146,16 +170,19 @@
           <span class="vr-eyebrow" data-t="statement.eyebrow">Celý areál jen pro vás</span>
           <h2 class="vr-own-h2" data-t="statement.title">Za bránou už jste jen vy.</h2>
           <div class="vr-own-rule" aria-hidden="true"></div>
-          <p class="vr-own-lead" data-t-html="statement.lead">Berete si celý pozemek.</p>
+          <p class="vr-own-lead" data-t-html="statement.lead">Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, oplocený park, saunu, altán, ohniště a v letní sezóně i bazén.</p>
         </div>
       </div>
     </div>
     <div class="vr-wrap">
       <div class="vr-own-stats vr-reveal">
-        <div class="vr-own-stat"><span class="n" data-t="statement.stats.0.num">4 500 m²</span><span class="l" data-t="statement.stats.0.label"></span></div>
-        <div class="vr-own-stat"><span class="n" data-t="statement.stats.1.num">22 lůžek</span><span class="l" data-t="statement.stats.1.label"></span></div>
-        <div class="vr-own-stat"><span class="n" data-t="statement.stats.2.num">1 skupina</span><span class="l" data-t="statement.stats.2.label"></span></div>
-        <div class="vr-own-stat"><span class="n" data-t="statement.stats.3.num">0</span><span class="l" data-t="statement.stats.3.label"></span></div>
+        <!-- Čísla dosazuje VR_FACTS (site.js). Lůžka a ložnice se tu ZÁMĚRNĚ
+             neopakují — jsou v rychlých faktech nad tím; tenhle panel je
+             o výlučnosti (pozemek, jeden stůl, jedna skupina, nula sdílení). -->
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.0.num">4 500 m²</span><span class="l" data-t="statement.stats.0.label">oploceného parku jen pro vaši skupinu</span></div>
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.1.num">1 stůl</span><span class="l" data-t="statement.stats.1.label">dost velký na to, aby si u něj sedla celá parta najednou</span></div>
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.2.num">1 skupina</span><span class="l" data-t="statement.stats.2.label">v areálu je vždycky jen jedna, nikdy dvě najednou</span></div>
+        <div class="vr-own-stat"><span class="n" data-t="statement.stats.3.num">0</span><span class="l" data-t="statement.stats.3.label">prostor sdílených s cizími lidmi</span></div>
       </div>
     </div>
   </section>
@@ -262,13 +289,58 @@
           <img class="vr-seasonimg summer" src="media/gallery/17-pool-hall-interior.jpg" alt="Zastřešený vyhřívaný bazén — pohled prosklenou halou" loading="lazy" decoding="async" width="1600" height="1067">
           <img class="vr-seasonimg winter" src="media/gallery/11-winter-day.jpg" alt="Lyžování za rohem — Villa Rudolf v zimním slunci" loading="lazy" decoding="async" width="1600" height="1067">
         </div>
-        <div>
-          <span class="vr-tag" id="am-pool-tag">Wellness</span>
-          <h3 id="am-pool-name">Zastřešený vyhřívaný bazén</h3>
-          <p id="am-pool-desc"></p>
+        <!-- SEZÓNNĚ DĚLENÝ SLOT 4 — hlavní karta vybavení. Obě znění ve zdroji. -->
+        <div data-season-only="leto">
+          <span class="vr-tag" data-t="amenities.summer.hero.tag">Wellness</span>
+          <h3 data-t="amenities.summer.hero.name">Zastřešený vyhřívaný bazén</h3>
+          <p data-t="amenities.summer.hero.desc">Bazén pod střechou s ohřevem vody — v letní sezóně v provozu za každého počasí, i když venku prší. Po koupeli rovnou do sauny.</p>
+        </div>
+        <div data-season-only="zima">
+          <span class="vr-tag" data-t="amenities.winter.hero.tag">Lyžování</span>
+          <h3 data-t="amenities.winter.hero.name">Lyžování hned za rohem</h3>
+          <p data-t="amenities.winter.hero.desc">Ski Resort Černá hora jen 4 km. Skibus zdarma zastavuje přímo u domu — k vlekům bez auta a hledání parkování. Doma navíc lyžárna na uskladnění vybavení.</p>
         </div>
       </div>
-      <div class="vr-amen3 vr-reveal" id="vr-amen3"></div>
+      <!-- SEZÓNNĚ DĚLENÝ SLOT 5 — tři karty vybavení. Ve zdroji jsou obě trojice,
+           neaktivní schová CSS; JS už tady nic nevykresluje. -->
+      <div class="vr-amen3 vr-reveal" id="vr-amen3">
+        <article data-season-only="leto">
+          <img src="media/sections/am-wellness.jpg" alt="Privátní finská sauna ve Villa Rudolf" loading="lazy" decoding="async" width="1200" height="900">
+          <span class="vr-tag" data-t="amenities.summer.cards.0.tag">Wellness</span>
+          <h3 data-t="amenities.summer.cards.0.name">Privátní sauna</h3>
+          <p data-t="amenities.summer.cards.0.desc">Finská sauna jen pro vaši skupinu. Žádné sdílení, žádné časové sloty.</p>
+        </article>
+        <article data-season-only="leto">
+          <img src="media/sections/am-pergola-table.jpg" alt="Krytý altán s velkým stolem pro celou skupinu" loading="lazy" decoding="async" width="1200" height="900">
+          <span class="vr-tag" data-t="amenities.summer.cards.1.tag">Venkovní život</span>
+          <h3 data-t="amenities.summer.cards.1.name">Velký altán</h3>
+          <p data-t="amenities.summer.cards.1.desc">Kryté posezení, kam se vejde celá skupina najednou. Společné večeře venku i za deště.</p>
+        </article>
+        <article data-season-only="leto">
+          <img src="media/gallery/02-playground-house.jpg" alt="Dětské hřiště s prolézačkou a lanovou stěnou u domu" loading="lazy" decoding="async" width="1200" height="900">
+          <span class="vr-tag" data-t="amenities.summer.cards.2.tag">Pro rodiny</span>
+          <h3 data-t="amenities.summer.cards.2.name">Dětské hřiště</h3>
+          <p data-t="amenities.summer.cards.2.desc">Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od altánu.</p>
+        </article>
+        <article data-season-only="zima">
+          <img src="media/sections/am-wellness.jpg" alt="Privátní finská sauna ve Villa Rudolf" loading="lazy" decoding="async" width="1200" height="900">
+          <span class="vr-tag" data-t="amenities.winter.cards.0.tag">Wellness</span>
+          <h3 data-t="amenities.winter.cards.0.name">Po lyžích do sauny</h3>
+          <p data-t="amenities.winter.cards.0.desc">Finská sauna jen pro vaši skupinu — ideální po dni na sjezdovce. Žádné sdílení, žádné časové sloty.</p>
+        </article>
+        <article data-season-only="zima">
+          <img src="media/gallery/08-firepit-night.jpg" alt="Nasvícené ohniště s gabionovou stěnou po setmění" loading="lazy" decoding="async" width="1200" height="900">
+          <span class="vr-tag" data-t="amenities.winter.cards.1.tag">Venkovní život</span>
+          <h3 data-t="amenities.winter.cards.1.name">Zimní večery u ohniště</h3>
+          <p data-t="amenities.winter.cards.1.desc">Nově dokončené ohniště s gabionovou stěnou se po setmění samo nasvítí — teplo pod širým nebem, i když venku mrzne.</p>
+        </article>
+        <article data-season-only="zima">
+          <img src="media/sections/am-pergola-table.jpg" alt="Krytý altán s grilovacím pultem a stolem pro celou skupinu" loading="lazy" decoding="async" width="1200" height="900">
+          <span class="vr-tag" data-t="amenities.winter.cards.2.tag">Venkovní život</span>
+          <h3 data-t="amenities.winter.cards.2.name">Altán i pod sněhem</h3>
+          <p data-t="amenities.winter.cards.2.desc">Krytý altán s grilovacím pultem a stolem pro celou skupinu stojí i v zimě — pod střechou se grilovat dá, jen se k němu jde po sněhu.</p>
+        </article>
+      </div>
       <!-- Celoroční vybavení (nezávislé na sezóně): stůl pro celou skupinu,
            kulečník, lyžárna, obývací část apartmá. -->
       <p class="vr-amen-extra-title vr-reveal" data-t="amenities.extraTitle">A k tomu celoročně</p>
@@ -333,22 +405,33 @@
         <span class="vr-sec-note" data-t="sezony.note">Přepněte sezónu nahoře a celý web se promění.</span>
       </div>
       <div class="vr-sez vr-reveal">
+        <!-- SEZÓNNĚ DĚLENÝ SLOT 7 — karty sezón. Tady jsou obě vidět VŽDY
+             (sekce je právě o porovnání), takže se nic neschovává; texty jen
+             musí být ve zdroji stránky, ne až z JS. -->
         <article class="summer" id="sez-sum" data-on="true">
           <img src="media/photos/season-summer.jpg" alt="Léto ve Villa Rudolf" loading="lazy">
           <div class="vr-sez-body">
-            <span class="vr-tag" id="sez-sum-tag">Léto</span>
-            <h3 id="sez-sum-title">Dlouhé večery venku</h3>
-            <p id="sez-sum-desc"></p>
-            <ul class="vr-sez-list" id="sez-sum-list"></ul>
+            <span class="vr-tag" id="sez-sum-tag" data-t="sezony.summer.tag">Léto</span>
+            <h3 id="sez-sum-title" data-t="sezony.summer.title">Dlouhé večery venku</h3>
+            <p id="sez-sum-desc" data-t="sezony.summer.desc">Bazén, altán, ohniště a velký pozemek pro děti i dospělé. Turistika a výlety přímo od domu.</p>
+            <ul class="vr-sez-list" id="sez-sum-list">
+              <li data-t="sezony.summer.list.0">Vyhřívaný bazén, sauna a altán</li>
+              <li data-t="sezony.summer.list.1">Ohniště a dlouhé večery na pozemku</li>
+              <li data-t="sezony.summer.list.2">Turistika a výlety přímo od domu</li>
+            </ul>
           </div>
         </article>
         <article class="winter" id="sez-win" data-on="true">
           <img src="media/photos/season-winter.jpg" alt="Zima ve Villa Rudolf" loading="lazy">
           <div class="vr-sez-body">
-            <span class="vr-tag" id="sez-win-tag">Zima</span>
-            <h3 id="sez-win-title">Lyžovačka bez starostí</h3>
-            <p id="sez-win-desc"></p>
-            <ul class="vr-sez-list" id="sez-win-list"></ul>
+            <span class="vr-tag" id="sez-win-tag" data-t="sezony.winter.tag">Zima</span>
+            <h3 id="sez-win-title" data-t="sezony.winter.title">Lyžovačka bez starostí</h3>
+            <p id="sez-win-desc" data-t="sezony.winter.desc">Ski Resort Černá hora jen 4 km, lyžárna na vybavení přímo v domě a privátní finská sauna na zahřátí po dni na sjezdovce.</p>
+            <ul class="vr-sez-list" id="sez-win-list">
+              <li data-t="sezony.winter.list.0">Ski Resort Černá hora 4 km, skibus zdarma 200 m</li>
+              <li data-t="sezony.winter.list.1">Privátní finská sauna a nasvícené ohniště</li>
+              <li data-t="sezony.winter.list.2">Lyžárna na uskladnění vybavení</li>
+            </ul>
           </div>
         </article>
       </div>
@@ -378,7 +461,9 @@
       <div class="vr-lok-head vr-reveal">
         <span class="vr-eyebrow" data-t="lokalita.eyebrow">Lokalita · Svoboda nad Úpou</span>
         <h2 class="vr-h2" data-t="lokalita.title">V horách, ne na konci světa.</h2>
-        <p class="vr-lok-lead" id="vr-lok-lead"></p>
+        <!-- SEZÓNNĚ DĚLENÝ SLOT 6 — lead lokality. Obě znění ve zdroji. -->
+        <p class="vr-lok-lead" id="vr-lok-lead" data-season-only="leto" data-t="lokalita.lead">Stojíme ve Svobodě nad Úpou, 150 metrů od centra — obchod, restaurace, vlak i autobus zvládnete pěšky. Sněžka je odsud dvacet minut autem. A z Prahy i z Vratislavi sem dojedete přibližně za dvě hodiny.</p>
+        <p class="vr-lok-lead" data-season-only="zima" data-t="lokalita.leadWinter">Skibus do SkiResortu Černá hora–Pec staví 200 metrů od brány a jezdí zdarma — k vlekům se dostanete bez auta a bez hledání parkování. Auto pak může stát celý týden na jednom místě přímo na pozemku.</p>
       </div>
       <div class="vr-lok-doorstep vr-reveal">
         <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.0.num">150 m</span><span class="l" data-t="lokalita.doorstep.0.label"></span></div>
@@ -760,7 +845,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=40" defer></script>
+<script src="assets/site.js?v=41" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

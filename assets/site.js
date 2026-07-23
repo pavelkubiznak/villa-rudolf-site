@@ -113,25 +113,85 @@ const TRIPS_URL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/trip
 const TRIPS_CACHE_KEY = 'vr_tripcounts_v2';   // v2 = počty včetně lokálních doplňků
 const TRIPS_TTL = 21600000; // 6 h
 
+/* ============================ FAKTA O DOMĚ — JEDINÝ ZDROJ PRAVDY ============================
+   Každé číslo o domě žije JEN tady. Do textů se dosazuje zástupným znakem
+   {klic} — stejným mechanismem, jakým se do textů dostávají počty výletů ({n}).
+   Když se něco změní (přibude lůžko, ubude koupelna), opravuje se JEN tahle
+   konstanta a projeví se to všude: v <title>, v meta popisku, v rychlých
+   faktech, v sekci „Za bránou", v rozpisu lůžek i v bloku před formulářem.
+   NIKDY nepiš číslo natvrdo do překladu — ve čtyřech jazycích se to rozejde.
+
+   KDE SE Z NÍ DOSAZUJE (kontrolní list):
+     meta.title, meta.desc … <title> a popisek ve výsledcích vyhledávání
+     hero.h1 …………………………… hlavní nadpis
+     facts.* ……………………………… rychlá fakta pod heroem (#vr-facts v index.html)
+     statement.stats ……………… číselný panel sekce „Za bránou už jste jen vy"
+     bedrooms.note ………………… podnadpis sekce Ložnice a lůžka
+     skupina.desc ………………… odstavec „Vaše parta, ať je jakkoli velká"
+     prebook.facts ………………… blok „Co potřebujete vědět před rezervací"
+   ========================================================================== */
+const VR_FACTS = {
+  loznice: 7,             // ložnic
+  koupelny: 5,            // koupelen a WC
+  luzka: 22,              // lůžek celkem
+  luzkaDetail: '19 + 3',  // z toho 19 pevných + 3 přistýlky (slovo doplní překlad)
+  plocha: 257,            // m² obytné plochy
+  pozemek: 4500,          // m² oploceného pozemku (potvrzeno majitelem i inzerátem)
+  minHostu: 6,            // dolní hranice skupiny, na kterou dům dává smysl
+  maxHostu: 22,           // maximum hostů (= VR_PRICING.maxGuests)
+};
+/* Oddělovač tisíců podle jazyka — 4 500 / 4,500 / 4.500. */
+const VR_NUM_SEP = { cs: '\u00a0', en: ',', de: '.', pl: '\u00a0' };
+function factValue(key) {
+  const v = VR_FACTS[key];
+  if (v == null) return '';
+  if (typeof v !== 'number') return String(v);
+  if (v < 1000) return String(v);
+  const sep = VR_NUM_SEP[state.lang] || VR_NUM_SEP.cs;
+  return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+}
+/* Dosadí {klic} z VR_FACTS do libovolného řetězce. Neznámé zástupné znaky
+   (např. {n} u počtů výletů) nechává být — o ty se stará applyTripCounts(). */
+function fillFacts(str) {
+  if (typeof str !== 'string' || str.indexOf('{') < 0) return str;
+  return str.replace(/\{([a-zA-Z]+)\}/g, (m, k) => (Object.prototype.hasOwnProperty.call(VR_FACTS, k) ? factValue(k) : m));
+}
+
 /* ============================ Translations (verbatim from prototype) ============================ */
 const T = {
   cs: {
     photoSoon: 'Fotku doplníme',
     meta: {
-      title: 'Villa Rudolf – celé horské sídlo jen pro vás | Krkonoše',
-      desc: 'Villa Rudolf – soukromé horské sídlo v Krkonoších. Celý dům i rozlehlý pozemek jen pro vaši skupinu 6–22 lidí: sauna, altán, ohniště, lyžárna a v letní sezóně zastřešený bazén. Léto i zima. Rezervujte celý dům.',
+      /* Sezónně NEUTRÁLNÍ a faktově husté — musí fungovat v lednu i v červenci
+         a nesmí začínat bazénem (v zimě popisuje zavřené zařízení). Čísla se
+         dosazují z VR_FACTS. Titulek do ~60 znaků, popisek do ~155. */
+      title: 'Villa Rudolf – celý dům pro {minHostu}–{maxHostu} osob, {loznice} ložnic | Krkonoše',
+      desc: 'Celý dům i pozemek jen pro vaši skupinu {minHostu}–{maxHostu} osob ve Svobodě nad Úpou. {loznice} ložnic, {koupelny} koupelen, {pozemek} m² pozemku, sauna, lyžárna. Lyžování i bazén sezónně.',
       locale: 'cs_CZ',
     },
     nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
       eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
       eyebrowWinter: 'Lyžování za rohem · Krkonoše',
-      h1: 'Soukromá vila v Krkonoších pro 6–22 hostů',
+      h1: 'Soukromá vila v Krkonoších pro {minHostu}–{maxHostu} hostů',
       sub: 'Celé to místo — dům i rozlehlý pozemek — je <em>jen vaše</em>.',
       subWinter: 'Lyžování hned za rohem — <em>skibus u domu</em>, Černá hora 4 km.',
       ctaSec: 'Prohlédnout dům', badge: 'Volné termíny 2026', video: 'Přehrát video',
       summer: 'Léto', winter: 'Zima',
       nightLine: 'Setmělo se. Ohniště, gabiony i bazén se rozsvítily samy — večer tady teprve začíná.',
+    },
+    /* Rychlá fakta pod heroem (#vr-facts v index.html). Ověřeno z platform
+       listingu Villa Rudolf — čísla se dosazují z VR_FACTS, needitovat je tady.
+       wellnessSummer / wellnessWinter je SEZÓNNĚ DĚLENÝ SLOT: bazén přes zimu
+       není vyhřívaný a nesmí vzbudit dojem, že bude v provozu. */
+    facts: {
+      loznice:        { k: '{loznice}', v: 'ložnic' },
+      koupelny:       { k: '{koupelny}', v: 'koupelen a WC' },
+      luzka:          { k: '{luzka}', v: 'lůžek — {luzkaDetail} přistýlky' },
+      plocha:         { k: '{plocha} m²', v: 'obytná plocha' },
+      wellnessSummer: { k: 'Bazén + sauna', v: 'krytý vyhřívaný bazén a privátní sauna' },
+      wellnessWinter: { k: 'Sauna + lyžárna', v: 'privátní sauna, lyžárna přímo v domě' },
+      parking:        { k: 'Vlastní parkoviště', v: 'na pozemku hned u vchodu, za vlastní bránou' },
     },
     ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno', teaserMore: 'Přečíst recenze' },
     direct: {
@@ -142,10 +202,12 @@ const T = {
     statement: {
       eyebrow: 'Celý areál jen pro vás',
       title: 'Za bránou už jste jen vy.',
-      lead: 'Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, 4 500 m² oploceného parku, saunu, altán, ohniště a v letní sezóně i bazén. <span class="vr-sm-hide">Žádná recepce, žádní cizí lidé u snídaně, žádné čekání, až se uvolní sauna.</span>',
+      lead: 'Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, oplocený park, saunu, altán, ohniště a v letní sezóně i bazén. <span class="vr-sm-hide">Žádná recepce, žádní cizí lidé u snídaně, žádné čekání, až se uvolní sauna.</span>',
+      /* Čísla z VR_FACTS. Lůžka ani ložnice se tu ZÁMĚRNĚ neopakují — jsou
+         v rychlých faktech kousek nad tím; tenhle panel je o výlučnosti. */
       stats: [
-        { num: '4 500 m²', label: 'oploceného parku jen pro vaši skupinu' },
-        { num: '22 lůžek', label: 'v sedmi ložnicích — a jeden stůl, u kterého sedí celá parta' },
+        { num: '{pozemek} m²', label: 'oploceného parku jen pro vaši skupinu' },
+        { num: '1 stůl', label: 'dost velký na to, aby si u něj sedla celá parta najednou' },
         { num: '1 skupina', label: 'v areálu je vždycky jen jedna, nikdy dvě najednou' },
         { num: '0', label: 'prostor sdílených s cizími lidmi' },
       ],
@@ -180,7 +242,7 @@ const T = {
     bedrooms: {
       eyebrow: 'Ložnice a lůžka',
       title: 'Kde se u nás vyspíte',
-      note: '7 ložnic a 22 lůžek — pohodlné spaní pro celou skupinu i pro rodiny.',
+      note: '{loznice} ložnic a {luzka} lůžek — pohodlné spaní pro celou skupinu i pro rodiny.',
       noBunk: 'Žádné patrové postele — klidnější spaní i pro rodiče s malými dětmi.',
       rooms: [
         { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi, 2 samostatná lůžka a 1 lůžko s výsuvným druhým lůžkem · vlastní kuchyňka a kulečník · koupelna' },
@@ -204,7 +266,7 @@ const T = {
     skupina: {
       eyebrow: 'Vaše parta, ať je jakkoli velká',
       big: 'Šest kamarádů na motorkách, nebo sraz dvaceti dvou. Místo si pokaždé vezme celou partu.',
-      desc: 'Nestavíme to na čísle. Pohodlně tu přespí až 22 lidí, ale stejně dobře sem sednou rodina, parta přátel i menší skupina — celý dům a celý pozemek je vždycky jen váš.',
+      desc: 'Nestavíme to na čísle. Pohodlně tu přespí až {maxHostu} lidí, ale stejně dobře sem sednou rodina, parta přátel i menší skupina — celý dům a celý pozemek je vždycky jen váš.',
     },
     sezony: {
       eyebrow: 'Léto vs. Zima', title: 'Co vás čeká v každé sezóně', note: 'Přepněte sezónu nahoře a celý web se promění.',
@@ -366,11 +428,11 @@ const T = {
     prebook: {
       title: 'Co potřebujete vědět před rezervací', link: 'Vše praktické →',
       facts: [
-        { k: 'Kapacita', v: '6–22 hostů v 7 ložnicích' },
+        { k: 'Kapacita', v: '{minHostu}–{maxHostu} hostů v {loznice} ložnicích' },
         { k: 'Soukromí', v: 'Celý dům i pozemek jen pro vaši skupinu' },
         { k: 'Příjezd / odjezd', v: 'Check-in od 15:00 · check-out do 10:00' },
         { k: 'Mazlíčci', v: 'Pes vítán za poplatek' },
-        { k: 'Parkování', v: 'Zdarma přímo na pozemku, za bránou' },
+        { k: 'Parkování', v: 'Vlastní parkoviště na pozemku u vchodu, zdarma' },
         { k: 'Lyžování', v: 'Sjezdovky Černá hora 4 km · skibus zdarma 200 m' },
       ],
     },
@@ -379,20 +441,29 @@ const T = {
   en: {
     photoSoon: 'Photo coming soon',
     meta: {
-      title: 'Villa Rudolf – the whole mountain estate, just for you | Krkonoše',
-      desc: 'Villa Rudolf – a private mountain estate in the Czech Krkonoše. The whole house and grounds for your group of 6–22: sauna, gazebo, fire pit, ski room and a covered pool in the summer season. Summer and winter. Book the entire house.',
+      title: 'Villa Rudolf – whole house for {minHostu}–{maxHostu}, {loznice} bedrooms | Krkonoše',
+      desc: 'Whole house and grounds for a group of {minHostu}–{maxHostu} in Svoboda nad Úpou, Krkonoše. {loznice} bedrooms, {koupelny} bathrooms, {pozemek} m², sauna, ski room. Skiing and pool in season.',
       locale: 'en_GB',
     },
     nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
       eyebrow: 'The whole house, just for your group · Krkonoše',
       eyebrowWinter: 'Skiing just around the corner · Krkonoše',
-      h1: 'A private villa in the Krkonoše mountains for 6–22 guests',
+      h1: 'A private villa in the Krkonoše mountains for {minHostu}–{maxHostu} guests',
       sub: 'The whole place — the house and its sweeping grounds — is <em>yours alone</em>.',
       subWinter: 'Skiing just around the corner — <em>ski bus at the door</em>, Černá hora 4 km.',
       ctaSec: 'Explore the house', badge: 'Open dates 2026', video: 'Play video',
       summer: 'Summer', winter: 'Winter',
       nightLine: 'Night has fallen. The fire pit, gabion wall and pool have lit themselves — the evening is just beginning.',
+    },
+    facts: {
+      loznice:        { k: '{loznice}', v: 'bedrooms' },
+      koupelny:       { k: '{koupelny}', v: 'bathrooms & WCs' },
+      luzka:          { k: '{luzka}', v: 'beds — {luzkaDetail} extra' },
+      plocha:         { k: '{plocha} m²', v: 'living area' },
+      wellnessSummer: { k: 'Pool + sauna', v: 'covered heated pool and private sauna' },
+      wellnessWinter: { k: 'Sauna + ski room', v: 'private sauna, ski room inside the house' },
+      parking:        { k: 'Private parking', v: 'on the grounds by the door, behind your own gate' },
     },
     ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified', teaserMore: 'Read the reviews' },
     direct: {
@@ -403,10 +474,10 @@ const T = {
     statement: {
       eyebrow: 'The whole estate, only yours',
       title: 'Past the gate, it\'s just you.',
-      lead: 'You are not booking rooms in a house where somebody else is staying too. You take the whole place — the house, 4,500 m² of fenced grounds, the sauna, the gazebo, the fire pit and, in the summer season, the pool. <span class="vr-sm-hide">No reception desk, no strangers at breakfast, no waiting for the sauna to free up.</span>',
+      lead: 'You are not booking rooms in a house where somebody else is staying too. You take the whole place — the house, the fenced grounds, the sauna, the gazebo, the fire pit and, in the summer season, the pool. <span class="vr-sm-hide">No reception desk, no strangers at breakfast, no waiting for the sauna to free up.</span>',
       stats: [
-        { num: '4,500 m²', label: 'of fenced grounds for your group alone' },
-        { num: '22 beds', label: 'in seven bedrooms — and one table the whole party sits at' },
+        { num: '{pozemek} m²', label: 'of fenced grounds for your group alone' },
+        { num: '1 table', label: 'big enough for the whole party to sit down at once' },
         { num: '1 group', label: 'there is only ever one on the estate, never two at once' },
         { num: '0', label: 'spaces shared with strangers' },
       ],
@@ -441,7 +512,7 @@ const T = {
     bedrooms: {
       eyebrow: 'Bedrooms & beds',
       title: 'Where you’ll sleep',
-      note: '7 bedrooms and 22 beds — comfortable sleeping for the whole group and for families.',
+      note: '{loznice} bedrooms and {luzka} beds — comfortable sleeping for the whole group and for families.',
       noBunk: 'No bunk beds — a calmer night, ideal for parents with small children too.',
       rooms: [
         { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds, 2 single beds and 1 bed with a pull-out second bed · own kitchenette and billiard table · bathroom' },
@@ -465,7 +536,7 @@ const T = {
     skupina: {
       eyebrow: 'Your group, whatever its size',
       big: 'Six friends on motorbikes, or a reunion of twenty-two. The place always takes the whole party.',
-      desc: 'It isn’t about the number. Up to 22 sleep here in comfort, but a family, a circle of friends or a smaller group fit just as well — the whole house and grounds are always yours alone.',
+      desc: 'It isn’t about the number. Up to {maxHostu} sleep here in comfort, but a family, a circle of friends or a smaller group fit just as well — the whole house and grounds are always yours alone.',
     },
     sezony: {
       eyebrow: 'Summer vs. Winter', title: 'What each season brings', note: 'Switch season above and the whole site transforms.',
@@ -627,7 +698,7 @@ const T = {
     prebook: {
       title: 'What to know before you book', link: 'All the practical info →',
       facts: [
-        { k: 'Capacity', v: '6–22 guests across 7 bedrooms' },
+        { k: 'Capacity', v: '{minHostu}–{maxHostu} guests across {loznice} bedrooms' },
         { k: 'Privacy', v: 'The whole house and grounds, just your group' },
         { k: 'Check-in / out', v: 'Check-in from 15:00 · check-out by 10:00' },
         { k: 'Pets', v: 'Dogs welcome for a fee' },
@@ -640,20 +711,29 @@ const T = {
   de: {
     photoSoon: 'Foto folgt',
     meta: {
-      title: 'Villa Rudolf – das ganze Berganwesen nur für euch | Riesengebirge',
-      desc: 'Villa Rudolf – ein privates Berganwesen im Riesengebirge. Das ganze Haus und Grundstück für eure Gruppe von 6–22 Personen: Sauna, Pavillon, Feuerstelle, Skiraum und in der Sommersaison ein überdachter Pool. Sommer und Winter. Ganzes Haus buchen.',
+      title: 'Villa Rudolf – ganzes Haus für {minHostu}–{maxHostu} Gäste | Riesengebirge',
+      desc: 'Ganzes Haus und Grundstück nur für eure Gruppe von {minHostu}–{maxHostu} in Svoboda nad Úpou. {loznice} Schlafzimmer, {koupelny} Bäder, {pozemek} m², Sauna, Skiraum. Ski und Pool saisonal.',
       locale: 'de_DE',
     },
     nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
       eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
       eyebrowWinter: 'Skifahren gleich um die Ecke · Riesengebirge',
-      h1: 'Eine private Villa im Riesengebirge für 6–22 Gäste',
+      h1: 'Eine private Villa im Riesengebirge für {minHostu}–{maxHostu} Gäste',
       sub: 'Der ganze Ort — Haus und weitläufiges Grundstück — gehört <em>nur euch</em>.',
       subWinter: 'Skifahren gleich um die Ecke — <em>Skibus am Haus</em>, Černá hora 4 km.',
       ctaSec: 'Haus ansehen', badge: 'Freie Termine 2026', video: 'Video abspielen',
       summer: 'Sommer', winter: 'Winter',
       nightLine: 'Es ist dunkel geworden. Feuerstelle, Gabionenwand und Pool leuchten von selbst — der Abend fängt gerade erst an.',
+    },
+    facts: {
+      loznice:        { k: '{loznice}', v: 'Schlafzimmer' },
+      koupelny:       { k: '{koupelny}', v: 'Bäder & WCs' },
+      luzka:          { k: '{luzka}', v: 'Betten — {luzkaDetail} Zusatz' },
+      plocha:         { k: '{plocha} m²', v: 'Wohnfläche' },
+      wellnessSummer: { k: 'Pool + Sauna', v: 'überdachter beheizter Pool und private Sauna' },
+      wellnessWinter: { k: 'Sauna + Skiraum', v: 'private Sauna, Skiraum direkt im Haus' },
+      parking:        { k: 'Eigener Parkplatz', v: 'auf dem Grundstück direkt am Eingang, hinter dem eigenen Tor' },
     },
     ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft', teaserMore: 'Bewertungen lesen' },
     direct: {
@@ -664,10 +744,10 @@ const T = {
     statement: {
       eyebrow: 'Das ganze Anwesen nur für euch',
       title: 'Hinter dem Tor seid ihr unter euch.',
-      lead: 'Ihr bucht keine Zimmer in einem Haus, in dem noch jemand anderes wohnt. Ihr nehmt das ganze Grundstück — das Haus, 4.500 m² eingezäunten Park, Sauna, Pavillon, Feuerstelle und in der Sommersaison auch den Pool. <span class="vr-sm-hide">Keine Rezeption, keine Fremden beim Frühstück, kein Warten, bis die Sauna frei wird.</span>',
+      lead: 'Ihr bucht keine Zimmer in einem Haus, in dem noch jemand anderes wohnt. Ihr nehmt das ganze Grundstück — das Haus, den eingezäunten Park, Sauna, Pavillon, Feuerstelle und in der Sommersaison auch den Pool. <span class="vr-sm-hide">Keine Rezeption, keine Fremden beim Frühstück, kein Warten, bis die Sauna frei wird.</span>',
       stats: [
-        { num: '4.500 m²', label: 'eingezäunter Park nur für eure Gruppe' },
-        { num: '22 Betten', label: 'in sieben Schlafzimmern — und ein Tisch für die ganze Runde' },
+        { num: '{pozemek} m²', label: 'eingezäunter Park nur für eure Gruppe' },
+        { num: '1 Tisch', label: 'groß genug für die ganze Runde auf einmal' },
         { num: '1 Gruppe', label: 'auf dem Anwesen ist immer nur eine, nie zwei gleichzeitig' },
         { num: '0', label: 'Räume, die ihr mit Fremden teilt' },
       ],
@@ -702,7 +782,7 @@ const T = {
     bedrooms: {
       eyebrow: 'Schlafzimmer & Betten',
       title: 'Wo ihr schlaft',
-      note: '7 Schlafzimmer und 22 Betten — bequemer Schlaf für die ganze Gruppe und für Familien.',
+      note: '{loznice} Schlafzimmer und {luzka} Betten — bequemer Schlaf für die ganze Gruppe und für Familien.',
       noBunk: 'Keine Etagenbetten — ruhigerer Schlaf, auch ideal für Eltern mit kleinen Kindern.',
       rooms: [
         { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küchenzeile und Billardtisch · Bad' },
@@ -726,7 +806,7 @@ const T = {
     skupina: {
       eyebrow: 'Eure Gruppe, egal wie groß',
       big: 'Sechs Freunde auf Motorrädern oder ein Treffen mit zweiundzwanzig. Der Ort fasst immer die ganze Runde.',
-      desc: 'Es geht nicht um die Zahl. Bis zu 22 schlafen hier bequem, aber eine Familie, ein Freundeskreis oder eine kleinere Gruppe passen genauso gut — das ganze Haus und Grundstück gehören immer nur euch.',
+      desc: 'Es geht nicht um die Zahl. Bis zu {maxHostu} schlafen hier bequem, aber eine Familie, ein Freundeskreis oder eine kleinere Gruppe passen genauso gut — das ganze Haus und Grundstück gehören immer nur euch.',
     },
     sezony: {
       eyebrow: 'Sommer vs. Winter', title: 'Was jede Jahreszeit bietet', note: 'Wechselt oben die Jahreszeit — die ganze Seite verwandelt sich.',
@@ -888,7 +968,7 @@ const T = {
     prebook: {
       title: 'Was Sie vor der Buchung wissen sollten', link: 'Alle Praxis-Infos →',
       facts: [
-        { k: 'Kapazität', v: '6–22 Gäste in 7 Schlafzimmern' },
+        { k: 'Kapazität', v: '{minHostu}–{maxHostu} Gäste in {loznice} Schlafzimmern' },
         { k: 'Privatsphäre', v: 'Ganzes Haus und Grundstück, nur Ihre Gruppe' },
         { k: 'Check-in / -out', v: 'Check-in ab 15:00 · Check-out bis 10:00' },
         { k: 'Haustiere', v: 'Hunde gegen Gebühr willkommen' },
@@ -901,20 +981,29 @@ const T = {
   pl: {
     photoSoon: 'Zdjęcie wkrótce',
     meta: {
-      title: 'Villa Rudolf – cała górska rezydencja tylko dla was | Karkonosze',
-      desc: 'Villa Rudolf – prywatna górska rezydencja w Karkonoszach. Cały dom i posesja dla grupy 6–22 osób: sauna, altana, palenisko, narciarnia, a w sezonie letnim kryty basen. Lato i zima. Zarezerwuj cały dom.',
+      title: 'Villa Rudolf – cały dom dla {minHostu}–{maxHostu} osób | Karkonosze',
+      desc: 'Cały dom i posesja tylko dla grupy {minHostu}–{maxHostu} osób w Svobodzie nad Úpą. {loznice} sypialni, {koupelny} łazienek, {pozemek} m², sauna, narciarnia. Narty i basen sezonowo.',
       locale: 'pl_PL',
     },
     nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
       eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
       eyebrowWinter: 'Narty tuż za rogiem · Karkonosze',
-      h1: 'Prywatna willa w Karkonoszach dla 6–22 gości',
+      h1: 'Prywatna willa w Karkonoszach dla {minHostu}–{maxHostu} gości',
       sub: 'Całe to miejsce — dom i rozległa posesja — jest <em>tylko wasze</em>.',
       subWinter: 'Narty tuż za rogiem — <em>skibus przy domu</em>, Černá hora 4 km.',
       ctaSec: 'Zobacz dom', badge: 'Wolne terminy 2026', video: 'Odtwórz wideo',
       summer: 'Lato', winter: 'Zima',
       nightLine: 'Zapadła noc. Palenisko, ściana gabionowa i basen zapaliły się same — wieczór dopiero się zaczyna.',
+    },
+    facts: {
+      loznice:        { k: '{loznice}', v: 'sypialni' },
+      koupelny:       { k: '{koupelny}', v: 'łazienek i WC' },
+      luzka:          { k: '{luzka}', v: 'miejsc — {luzkaDetail} dostawki' },
+      plocha:         { k: '{plocha} m²', v: 'powierzchnia' },
+      wellnessSummer: { k: 'Basen + sauna', v: 'kryty ogrzewany basen i prywatna sauna' },
+      wellnessWinter: { k: 'Sauna + narciarnia', v: 'prywatna sauna, narciarnia w domu' },
+      parking:        { k: 'Własny parking', v: 'na posesji tuż przy wejściu, za własną bramą' },
     },
     ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano', teaserMore: 'Przeczytaj recenzje' },
     direct: {
@@ -925,10 +1014,10 @@ const T = {
     statement: {
       eyebrow: 'Cały teren tylko dla was',
       title: 'Za bramą jesteście tylko wy.',
-      lead: 'Nie rezerwujecie pokoi w domu, w którym mieszka jeszcze ktoś inny. Bierzecie całą posesję — dom, 4500 m² ogrodzonego parku, saunę, altanę, palenisko, a w sezonie letnim także basen. <span class="vr-sm-hide">Żadnej recepcji, żadnych obcych przy śniadaniu, żadnego czekania, aż zwolni się sauna.</span>',
+      lead: 'Nie rezerwujecie pokoi w domu, w którym mieszka jeszcze ktoś inny. Bierzecie całą posesję — dom, ogrodzony park, saunę, altanę, palenisko, a w sezonie letnim także basen. <span class="vr-sm-hide">Żadnej recepcji, żadnych obcych przy śniadaniu, żadnego czekania, aż zwolni się sauna.</span>',
       stats: [
-        { num: '4500 m²', label: 'ogrodzonego parku tylko dla waszej grupy' },
-        { num: '22 łóżka', label: 'w siedmiu sypialniach — i jeden stół dla całej ekipy' },
+        { num: '{pozemek} m²', label: 'ogrodzonego parku tylko dla waszej grupy' },
+        { num: '1 stół', label: 'na tyle duży, że siada przy nim cała ekipa naraz' },
         { num: '1 grupa', label: 'na terenie jest zawsze tylko jedna, nigdy dwie naraz' },
         { num: '0', label: 'przestrzeni dzielonych z obcymi' },
       ],
@@ -963,7 +1052,7 @@ const T = {
     bedrooms: {
       eyebrow: 'Sypialnie i łóżka',
       title: 'Gdzie będziecie spać',
-      note: '7 sypialni i 22 miejsca do spania — wygodny sen dla całej grupy i dla rodzin.',
+      note: '{loznice} sypialni i {luzka} miejsca do spania — wygodny sen dla całej grupy i dla rodzin.',
       noBunk: 'Bez łóżek piętrowych — spokojniejszy sen, także dla rodziców z małymi dziećmi.',
       rooms: [
         { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi, 2 pojedyncze łóżka i 1 łóżko z wysuwanym drugim · własny aneks kuchenny i stół bilardowy · łazienka' },
@@ -987,7 +1076,7 @@ const T = {
     skupina: {
       eyebrow: 'Wasza grupa, niezależnie od wielkości',
       big: 'Sześciu kolegów na motocyklach albo zjazd dwudziestu dwóch. Miejsce zawsze pomieści całą ekipę.',
-      desc: 'Nie chodzi o liczbę. Wygodnie śpi tu do 22 osób, ale rodzina, grono przyjaciół czy mniejsza grupa zmieszczą się równie dobrze — cały dom i posesja są zawsze tylko wasze.',
+      desc: 'Nie chodzi o liczbę. Wygodnie śpi tu do {maxHostu} osób, ale rodzina, grono przyjaciół czy mniejsza grupa zmieszczą się równie dobrze — cały dom i posesja są zawsze tylko wasze.',
     },
     sezony: {
       eyebrow: 'Lato vs. Zima', title: 'Co czeka w każdym sezonie', note: 'Przełącz sezon u góry, a cała strona się zmieni.',
@@ -1149,7 +1238,7 @@ const T = {
     prebook: {
       title: 'Co warto wiedzieć przed rezerwacją', link: 'Wszystkie informacje praktyczne →',
       facts: [
-        { k: 'Pojemność', v: '6–22 gości w 7 sypialniach' },
+        { k: 'Pojemność', v: '{minHostu}–{maxHostu} gości w {loznice} sypialniach' },
         { k: 'Prywatność', v: 'Cały dom i teren tylko dla Waszej grupy' },
         { k: 'Zameldowanie / wym.', v: 'Zameldowanie od 15:00 · wymeldowanie do 10:00' },
         { k: 'Zwierzęta', v: 'Psy mile widziane za opłatą' },
@@ -1301,78 +1390,29 @@ function setTexts() {
   const t = tt();
   $all('[data-t]').forEach((n) => {
     const v = resolve(t, n.getAttribute('data-t'));
-    if (typeof v === 'string') n.textContent = v;
+    if (typeof v === 'string') n.textContent = fillFacts(v);
   });
   $all('[data-t-ph]').forEach((n) => {
     const v = resolve(t, n.getAttribute('data-t-ph'));
-    if (typeof v === 'string') n.setAttribute('placeholder', v);
+    if (typeof v === 'string') n.setAttribute('placeholder', fillFacts(v));
   });
   // trusted, first-party HTML strings (e.g. hero sub with <em> accent)
   $all('[data-t-html]').forEach((n) => {
     const v = resolve(t, n.getAttribute('data-t-html'));
-    if (typeof v === 'string') n.innerHTML = v;
+    if (typeof v === 'string') n.innerHTML = fillFacts(v);
   });
   applyVideoAria();
   applyTripCounts();   // {n} v okruzích a v nadpisu mapy (plurály podle jazyka)
   renderArrive();      // blok „Než dorazíte"
-  applyLokLead();      // lead sekce Lokalita je sezónní (léto / zima)
   document.documentElement.lang = state.lang;
 }
 
 /* ============================ Dynamic list renders ============================ */
-/* Rychlá fakta pod heroem. Ověřeno z platform listingu Villa Rudolf — needitovat
-   mimo skutečné hodnoty (7 ložnic, 5 koupelen a WC, 22 lůžek = 19+3 přistýlky,
-   257 m², soukromý pozemek s parkováním).
-   Dlaždice wellness je SEZÓNNÍ: v létě bazén+sauna, v zimě sauna+lyžárna —
-   bazén přes zimu není vyhřívaný a nesmí vzbudit dojem, že bude v provozu. */
-function renderFacts() {
-  const F = ({
-    cs: [
-      { k: '7', v: 'ložnic' },
-      { k: '5', v: 'koupelen a WC' },
-      { k: '22', v: 'lůžek — 19 + 3 přistýlky' },
-      { k: '257 m²', v: 'obytná plocha' },
-      state.season === 'zima'
-        ? { k: 'Sauna + lyžárna', v: 'privátní sauna, lyžárna přímo v domě', wide: true }
-        : { k: 'Bazén + sauna', v: 'krytý vyhřívaný bazén a privátní sauna', wide: true },
-      { k: 'Vlastní pozemek', v: 's parkováním u domu', wide: true },
-    ],
-    en: [
-      { k: '7', v: 'bedrooms' },
-      { k: '5', v: 'bathrooms & WCs' },
-      { k: '22', v: 'beds — 19 + 3 extra' },
-      { k: '257 m²', v: 'living area' },
-      state.season === 'zima'
-        ? { k: 'Sauna + ski room', v: 'private sauna, ski room inside the house', wide: true }
-        : { k: 'Pool + sauna', v: 'covered heated pool and private sauna', wide: true },
-      { k: 'Private grounds', v: 'with parking at the house', wide: true },
-    ],
-    de: [
-      { k: '7', v: 'Schlafzimmer' },
-      { k: '5', v: 'Bäder & WCs' },
-      { k: '22', v: 'Betten — 19 + 3 Zusatz' },
-      { k: '257 m²', v: 'Wohnfläche' },
-      state.season === 'zima'
-        ? { k: 'Sauna + Skiraum', v: 'private Sauna, Skiraum direkt im Haus', wide: true }
-        : { k: 'Pool + Sauna', v: 'überdachter beheizter Pool und private Sauna', wide: true },
-      { k: 'Eigenes Grundstück', v: 'mit Parkplatz am Haus', wide: true },
-    ],
-    pl: [
-      { k: '7', v: 'sypialni' },
-      { k: '5', v: 'łazienek i WC' },
-      { k: '22', v: 'miejsc — 19 + 3 dostawki' },
-      { k: '257 m²', v: 'powierzchnia' },
-      state.season === 'zima'
-        ? { k: 'Sauna + narciarnia', v: 'prywatna sauna, narciarnia w domu', wide: true }
-        : { k: 'Basen + sauna', v: 'kryty ogrzewany basen i prywatna sauna', wide: true },
-      { k: 'Własna posesja', v: 'z parkingiem przy domu', wide: true },
-    ],
-  })[state.lang] || null;
-  const host = $('#vr-facts'); if (!host) return; host.innerHTML = '';
-  (F || []).forEach((f) => host.appendChild(el('div', { class: 'vr-fact' + (f.wide ? ' wide' : '') }, [
-    el('div', { class: 'vr-fact-k', text: f.k }), el('div', { class: 'vr-fact-v', text: f.v }),
-  ])));
-}
+/* RYCHLÁ FAKTA POD HEREM se od 7/2026 nevykreslují z JS — jsou staticky
+   v index.html (#vr-facts) s klíči facts.* a čísla se do nich dosazují
+   z VR_FACTS. Důvod: text, který ve stránce fyzicky není, se neindexuje,
+   a sezónní wellness dlaždice tam proto musí být v obou zněních naráz
+   (léto: bazén + sauna, zima: sauna + lyžárna — bazén v zimě nejede). */
 
 /* Datum ověření hodnocení — lokalizovaný formát z VR_REVIEWS.checkedAt (ISO). */
 function fmtCheckedAt(iso) {
@@ -1607,7 +1647,7 @@ function applyTripCounts() {
     let tpl = v;
     if (Array.isArray(v)) tpl = v[Math.min(pluralForm(state.lang, num), v.length - 1)];
     if (typeof tpl !== 'string') return;
-    n.textContent = tpl.replace('{n}', String(num));
+    n.textContent = fillFacts(tpl.replace('{n}', String(num)));
   });
 }
 function renderArrive() {
@@ -1619,11 +1659,8 @@ function renderArrive() {
     ]));
   });
 }
-function applyLokLead() {
-  const t = tt();
-  const n = $('#vr-lok-lead'); if (!n || !t.lokalita) return;
-  n.textContent = state.season === 'zima' && t.lokalita.leadWinter ? t.lokalita.leadWinter : t.lokalita.lead;
-}
+/* Lead sekce Lokalita je SEZÓNNĚ DĚLENÝ SLOT — obě znění (lokalita.lead /
+   lokalita.leadWinter) jsou staticky v index.html a přepínají se stylem. */
 /* Živé počty z katalogu průvodce. Selhání je bezbolestné — zůstanou fallback čísla. */
 function loadTripCounts() {
   const apply = (c) => {
@@ -1668,28 +1705,9 @@ function loadTripCounts() {
    Všechny fotky jsou naše skutečné (žádné AI/fake ski fotky) — hero zimy používá
    vr-crossfade obrázek winter-forest.jpg definovaný v HTML. */
 function renderAmenities() {
-  const t = tt();
-  const winter = state.season === 'zima';
-  const A = winter ? t.amenities.winter : t.amenities.summer;
-  // hero card (léto = bazén, zima = lyžování za rohem)
-  $('#am-pool-tag').textContent = A.hero.tag;
-  $('#am-pool-name').textContent = A.hero.name;
-  $('#am-pool-desc').textContent = A.hero.desc;
-  // 3 cards — skutečné fotky podle sezóny
-  const imgs = winter
-    ? ['media/sections/am-wellness.jpg', 'media/gallery/08-firepit-night.jpg', 'media/gallery/17-pool-hall-interior.jpg']
-    : ['media/sections/am-wellness.jpg', 'media/sections/am-pergola-table.jpg', 'media/gallery/02-playground-house.jpg'];
-  const host = $('#vr-amen3'); host.innerHTML = '';
-  A.cards.forEach((it, i) => {
-    const art = el('article');
-    const src = imgs[i];
-    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy', decoding: 'async', width: '1200', height: '900' }));
-    else art.appendChild(slot(t.photoSoon));
-    art.appendChild(el('span', { class: 'vr-tag', text: it.tag }));
-    art.appendChild(el('h3', { text: it.name }));
-    art.appendChild(el('p', { text: it.desc }));
-    host.appendChild(art);
-  });
+  // Hlavní karta i tři sezónní karty jsou staticky v index.html v OBOU zněních
+  // (viz applySeasonBranches) — JS už jen přepíná, která větev je vidět.
+  // Zbývá vykreslit celoroční řadu, která sezónní variantu nemá.
   renderAmenityExtras();
 }
 
@@ -2070,24 +2088,9 @@ function renderScene() {
 
 /* Sekce Sezóny je teď „Léto vs. Zima" srovnání — obě karty vždy plně viditelné,
    každá s vlastní sezónní tónovanou linkou a seznamem, co je v ní zahrnuté. */
-function renderSeasonsCards() {
-  const t = tt();
-  const S = t.sezony.summer, W = t.sezony.winter;
-  $('#sez-sum-tag').textContent = S.tag;
-  $('#sez-sum-title').textContent = S.title;
-  $('#sez-sum-desc').textContent = S.desc;
-  $('#sez-win-tag').textContent = W.tag;
-  $('#sez-win-title').textContent = W.title;
-  $('#sez-win-desc').textContent = W.desc;
-  const fillList = (id, arr) => {
-    const host = $(id); if (!host) return; host.innerHTML = '';
-    (arr || []).forEach((li) => host.appendChild(el('li', { text: li })));
-  };
-  fillList('#sez-sum-list', S.list);
-  fillList('#sez-win-list', W.list);
-  $('#sez-sum').setAttribute('data-on', 'true');
-  $('#sez-win').setAttribute('data-on', 'true');
-}
+/* Karty sezón jsou staticky v index.html (klíče sezony.summer.* / sezony.winter.*),
+   aby zimní i letní text byl ve zdroji stránky. Obě jsou vidět vždycky — sekce
+   je právě o porovnání. */
 
 
 function renderTrips() {
@@ -2631,21 +2634,49 @@ function submitBooking() {
 function applyLangButtons() {
   $all('.vr-lang').forEach((b) => b.setAttribute('data-active', b.getAttribute('data-lang') === state.lang ? 'true' : 'false'));
 }
+/* Přepínač sezóny je SKUTEČNÝ odkaz (<a href="?season=…">), aby ho viděl
+   i crawler a fungoval bez JS. JS jen zachytí kliknutí a přepne bez reloadu.
+   Sémantika: aria-current="true" na aktivní větvi (u odkazů, ne aria-pressed —
+   to patří k <button>). Klávesnice funguje nativně (Tab + Enter). */
 function applySeasonButtons() {
   $all('.vr-segbtn').forEach((b) => {
-    const on = b.getAttribute('data-season') === state.season;
+    const s = b.getAttribute('data-season');
+    const on = s === state.season;
     b.setAttribute('data-active', on ? 'true' : 'false');
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    // href drží i aktuální jazyk, ať je odkaz sdílitelný a bez JS dá totéž
+    if (b.tagName === 'A') b.setAttribute('href', '?season=' + s + '&lang=' + state.lang);
   });
 }
 
-/* Hero eyebrow + sub se v zimě přepnou na lyžování. (setTexts() je nastaví na
-   letní znění přes data-t/data-t-html, proto applyHeroSeason voláme až po něm.) */
-function applyHeroSeason() {
-  const t = tt(), winter = state.season === 'zima';
-  const eb = $('.vrim-eyebrow'), sub = $('.vrim-sub');
-  if (eb) eb.textContent = winter ? (t.hero.eyebrowWinter || t.hero.eyebrow) : t.hero.eyebrow;
-  if (sub) sub.innerHTML = winter ? (t.hero.subWinter || t.hero.sub) : t.hero.sub; // first-party trusted HTML (<em>)
+/* Nadhlavička a podtitul hero jsou SEZÓNNĚ DĚLENÉ SLOTY — obě znění jsou
+   staticky v index.html a přepínají se stylem (viz applySeasonBranches). */
+
+/* ============================ SEZÓNNÍ VĚTVE V HTML ============================
+   U sezónně dělených slotů jsou ve zdroji stránky OBĚ znění — text schovaný
+   stylem se indexuje, text, který ve stránce vůbec není, nikdy. Viditelnost
+   řídí CSS podle .vr-root[data-season]; JS k tomu jen doplní hidden +
+   aria-hidden, aby čtečka obrazovky nepředčítala obě verze.
+
+   KONTROLNÍ LIST SEZÓNNĚ DĚLENÝCH SLOTŮ (strop je ~12–15, teď jich je 7):
+     1. hero.eyebrow      / hero.eyebrowWinter
+     2. hero.sub          / hero.subWinter
+     3. facts.wellnessSummer / facts.wellnessWinter   (rychlá fakta)
+     4. amenities.summer.hero / amenities.winter.hero (hlavní karta vybavení)
+     5. amenities.summer.cards / amenities.winter.cards (tři karty vybavení)
+     6. lokalita.lead     / lokalita.leadWinter
+     7. sezony.summer     / sezony.winter  (karty sezón — vidět jsou VŽDY obě)
+   Přidáváš osmý? Spočítej si: 1 slot = 4 překlady, z toho dva (DE, PL)
+   si nikdy nepřečteš. Nad ~10 se to musí postavit z dat, ne psát do slovníku.
+   ========================================================================== */
+function applySeasonBranches() {
+  $all('[data-season-only]').forEach((n) => {
+    if (n.getAttribute('data-season-only') === state.season) {
+      n.removeAttribute('hidden'); n.removeAttribute('aria-hidden');
+    } else {
+      n.setAttribute('hidden', ''); n.setAttribute('aria-hidden', 'true');
+    }
+  });
 }
 
 /* Přímá rezervace = nejlepší cena — badge v hero pásu, u rezervace a řádek v boxu.
@@ -2741,8 +2772,12 @@ function renderFooterContact() {
   host.appendChild(el('span', { text: t.footer.region }));
 }
 
-/* Uloží sezónu a sladí meta theme-color s aktuálním motivem. */
-function persistSeason() { try { localStorage.setItem('vrSeason', state.season); } catch (e) {} }
+/* Uloží sezónu (jen na dobu návštěvy — viz assets/season.js) a sladí meta
+   theme-color s aktuálním motivem. */
+function persistSeason() {
+  if (window.VRSeason) window.VRSeason.remember(state.season);
+  else { try { sessionStorage.setItem('vrSeason', state.season); } catch (e) {} }
+}
 function applyThemeColor() {
   const m = document.querySelector('meta[name="theme-color"]');
   if (m) m.setAttribute('content', state.season === 'zima' ? '#eef2f6' : '#0E1311');
@@ -2757,21 +2792,24 @@ function resolveLang(qs) {
   if (T[nav]) return nav;
   return 'cs';
 }
-/* Sezóna: ?season= → localStorage vrSeason → leto. */
+/* Sezóna: ?season= → DATUM → uložená volba (jen v rámci návštěvy).
+   Celá logika i hranice sezón žijí v assets/season.js — jediné místo pro celý
+   web včetně podstránek. Tady je jen fallback pro případ, že by se soubor
+   nenačetl (pak se chová jako dřív a otevře léto). */
 function resolveSeason(qs) {
+  if (window.VRSeason) return window.VRSeason.resolve(location.search);
   const q = (qs.get('season') || '').toLowerCase();
-  if (q === 'leto' || q === 'zima') return q;
-  try { const s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') return s; } catch (e) {}
-  return 'leto';
+  return (q === 'leto' || q === 'zima') ? q : 'leto';
 }
 /* Přeložený <title> + meta description (+ og) podle aktuálního jazyka. */
 function applyMeta() {
   const m = tt().meta; if (!m) return;
-  if (m.title) document.title = m.title;
+  const title = fillFacts(m.title), desc = fillFacts(m.desc);
+  if (title) document.title = title;
   const set = (sel, val) => { const n = document.querySelector(sel); if (n && val) n.setAttribute('content', val); };
-  set('meta[name="description"]', m.desc);
-  set('meta[property="og:title"]', m.title);
-  set('meta[property="og:description"]', m.desc);
+  set('meta[name="description"]', desc);
+  set('meta[property="og:title"]', title);
+  set('meta[property="og:description"]', desc);
   set('meta[property="og:locale"]', m.locale);
 }
 /* Odkazy s data-langlink dostanou ?lang=<aktuální jazyk>, ať jsou sdílitelné
@@ -2807,10 +2845,10 @@ function setLang(lang) {
   if (!T[lang] || state.lang === lang) return;
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
-  applyLangButtons(); setTexts();
-  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
-  renderSeasonsCards(); renderTrips(); renderGallery();
-  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyHeroSeason();
+  applyLangButtons(); applySeasonButtons(); setTexts();
+  renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderTrips(); renderGallery();
+  renderPriceBlock(); renderCalendar(); renderBookingPanel();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
@@ -2831,10 +2869,8 @@ function setSeason(season) {
   eagerLoadSeason(season);
   document.querySelector('.vr-root').setAttribute('data-season', season);
   applyThemeColor();
-  applySeasonButtons(); renderSeasonsCards(); applyHeroSeason();
-  applyLokLead();    // lead sekce Lokalita má vlastní zimní znění
-  renderAmenities(); // hero amenity card (bazén ↔ lyžování) + 3 cards swap by season
-  renderFacts();     // rychlá fakta: v zimě sauna+lyžárna místo bazénu (bazén v zimě nejede)
+  applySeasonButtons();
+  applySeasonBranches();  // přepne, která sezónní větev textů je vidět (obě jsou v HTML)
   // 360° prohlídka má vlastní sadu scén pro každou sezónu — přepni ji celou
   // (náhledy, popisky, čítač) a nahraj první scénu; stará textura se uvolní
   // uvnitř loadPano() přes tex.dispose().
@@ -3185,12 +3221,17 @@ function init() {
   state.lang = resolveLang(qsInit);
   state.season = resolveSeason(qsInit);
   try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
-  try { localStorage.setItem('vrSeason', state.season); } catch (e) {}
+  persistSeason();
 
   // language buttons
   $all('.vr-lang').forEach((b) => b.addEventListener('click', () => setLang(b.getAttribute('data-lang'))));
-  // season buttons (nav, hero pill, mobile menu — all .vr-segbtn, kept in sync)
-  $all('.vr-segbtn').forEach((b) => b.addEventListener('click', () => setSeason(b.getAttribute('data-season'))));
+  // Přepínač sezóny — odkazy (nav, mobilní menu). Kliknutí přepne bez reloadu;
+  // Ctrl/Cmd/prostřední tlačítko necháme projít, ať jde otevřít v novém panelu.
+  $all('.vr-segbtn').forEach((b) => b.addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button > 0) return;
+    e.preventDefault();
+    setSeason(b.getAttribute('data-season'));
+  }));
 
   // gallery lightbox (grid thumbs get their own click handlers in renderGallery)
   $('#vr-lb').addEventListener('click', () => lbSet(-1));
@@ -3232,11 +3273,11 @@ function init() {
   document.querySelector('.vr-root').setAttribute('data-season', state.season);
   applyThemeColor();
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
-  applyLangButtons(); applySeasonButtons(); setTexts();
-  renderFacts(); renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  applyLangButtons(); applySeasonButtons(); applySeasonBranches(); setTexts();
+  renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   setupPanoGroupKeys();
-  renderSeasonsCards(); renderTrips(); renderGallery();
-  renderPriceBlock(); renderCalendar(); renderBookingPanel(); applyHeroSeason();
+  renderTrips(); renderGallery();
+  renderPriceBlock(); renderCalendar(); renderBookingPanel();
   renderDirectBook(); renderTeaser(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   loadAvailability();

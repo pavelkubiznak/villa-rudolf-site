@@ -227,7 +227,9 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-root .vr-btn-ghost{color:#F0EBE1}
 .vr-btn-ghost{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;background:rgba(16,21,18,.42);backdrop-filter:blur(6px);border:1px solid rgba(240,235,225,.32);border-radius:2px;padding:14px 24px;cursor:pointer}
 .vr-seg{display:inline-flex;background:var(--vr-seg-bg);border:1px solid var(--vr-line);border-radius:999px;padding:3px;transition:background-color .6s ease,border-color .6s ease}
-.vr-segbtn{font-family:'Archivo',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--vr-text-muted);background:transparent;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;transition:background .25s,color .25s}
+/* Přepínač sezóny je <a href="?season=…"> (crawler ho musí vidět jako odkaz),
+   proto tu jsou i vlastnosti, které <button> dostával od prohlížeče. */
+.vr-segbtn{display:inline-block;font-family:'Archivo',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--vr-text-muted);background:transparent;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;text-decoration:none;white-space:nowrap;line-height:1.2;transition:background .25s,color .25s}
 .vr-segbtn[data-active="true"]{background:var(--vr-accent);color:var(--vr-on-accent)}
 
 /* ---------- Winter hero: LIGHT text like summer, carried by a local scrim -----
@@ -728,6 +730,18 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 /* ---------- Seasonal crossfade images ---------- */
 /* Two stacked photos (summer / winter) that crossfade on season toggle.
    Used by the statement, amenities-hero and evening sections. */
+/* ===================== SEZÓNNÍ VĚTVE V HTML =====================
+   U sezónně dělených slotů (hero, hlavní karta vybavení, tři karty, rychlá
+   fakta, lead lokality) jsou ve zdroji stránky OBĚ znění a neaktivní se schová
+   TÍMHLE pravidlem — ne výměnou textu v JS. Text schovaný stylem se indexuje;
+   text, který ve stránce vůbec není, se neindexuje nikdy.
+   !important je tu schválně: některé sloty mají vlastní display (např.
+   .vrim-eyebrow je inline-block) a autorské pravidlo by přebilo i atribut
+   [hidden], který k tomu JS dodává kvůli čtečkám obrazovky.
+   Kontrolní list slotů je v komentáři u applySeasonBranches() v site.js. */
+.vr-root[data-season="leto"] [data-season-only="zima"],
+.vr-root[data-season="zima"] [data-season-only="leto"]{display:none!important}
+
 .vr-crossfade{position:relative;overflow:hidden;border-radius:2px}
 .vr-crossfade .vr-seasonimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease}
 .vr-root[data-season="leto"] .vr-seasonimg.summer{opacity:1}
