@@ -338,8 +338,26 @@ const T = {
     lokalita: {
       eyebrow: 'Lokalita · Svoboda nad Úpou',
       title: 'V horách, ne na konci světa.',
-      lead: 'Stojíme ve Svobodě nad Úpou, 150 metrů od centra — obchod, restaurace, vlak i autobus zvládnete pěšky. Sněžka je odsud dvacet minut autem. A z Prahy i z Vratislavi sem dojedete přibližně za dvě hodiny.',
+      lead: 'Stojíme ve Svobodě nad Úpou, 150 metrů od centra — obchod, restaurace, vlak i autobus zvládnete pěšky. A Sněžka je odsud dvacet minut autem.',
       leadWinter: 'Skibus do SkiResortu Černá hora–Pec staví 200 metrů od brány — k vlekům se dostanete bez auta a bez hledání parkování. Auto pak může stát celý týden na jednom místě přímo na pozemku. Aktuální tarif a jízdní řád najdete u provozovatele.',
+      /* PÁS ČÍSEL „od dveří" MÁ DVĚ SADY. Majitel o té původní v LÉTĚ:
+         „150 metrů do centra Svobody, 200 metrů k zastávce skibusu — to je
+         jim v létě úplně jedno. Praha přibližně dvě hodiny, Vratislav,
+         Drážďany tři hodiny — taky. Sjezdovka 4 kilometry, to je na letní
+         stránce úplně zbytečný."
+         V létě proto zůstalo jen centrum (pěší dostupnost platí celoročně)
+         a přibyla letní čísla, která už web publikuje jinde — na mapě
+         a v okruzích výletů: Sněžka, Janské Lázně, Trutnov. Nová tvrzení
+         se tu NEVYMÝŠLEJÍ. Dojezdy z metropolí nezmizely úplně, smrskly se
+         na jediný nenápadný řádek arriveCarSummer v bloku „Než dorazíte".
+         ZIMNÍ sada (doorstep níž) se NEMĚNÍ — tam je skibus to hlavní. */
+      doorstepSummer: [
+        { num: '150 m', label: 'do centra Svobody — obchod, restaurace i nádraží pěšky' },
+        { num: '20 min', label: 'autem pod Sněžku — nahoru lanovkou, nebo po svých' },
+        { num: '4 km', label: 'Janské Lázně — Stezka korunami stromů a lanovka na Černou horu' },
+        { num: '11 km', label: 'Trutnov — koupaliště, lezecká stěna a velké nákupy' },
+      ],
+      /* Zimní sada — skibus a sjezdovky jsou tu to hlavní. */
       doorstep: [
         { num: '150 m', label: 'do centra Svobody — asi dvě minuty pěšky' },
         { num: '200 m', label: 'k zastávce skibusu — necelé tři minuty pěšky' },
@@ -373,6 +391,11 @@ const T = {
       /* V zimě se vlak a autobus slévají do JEDNOHO řádku — nemažeme je
          (vždycky někdo dojíždí zvlášť), jen jim bereme vizuální váhu. */
       arriveTransitWinter: { id: 'transit', k: 'Vlak a autobus', v: 'nádraží i zastávka ve městě, k domu pěšky' },
+      /* V LÉTĚ se tři řádky dojezdů (Praha / Vratislav / Drážďany) slévají
+         do jednoho nenápadného. Majitel je v letní verzi nechtěl mít nahoře
+         v pásu čísel; nechat je zmizet úplně by ale okradlo hosta o odpověď
+         na „kolik to je z Prahy", kterou si stejně někdo hledá. */
+      arriveCarSummer: { id: 'car', k: 'Autem', v: 'z Prahy i z Vratislavi přibližně 2 hodiny, z Drážďan 3' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Sněžka', snezkaMeta: '1603 m',
@@ -435,11 +458,18 @@ const T = {
     gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Klepnutím zvětšíte', all: 'Vše', leto: 'Léto', zima: 'Zima', vecer: 'Večer', interier: 'Interiér' },
     vylety: {
       eyebrow: 'Plánovač výletů', title: 'Hory začínají za dveřmi', note: 'Vybíráme podle sezóny · {n} ověřených cílů do hodiny od domu.', drop: 'Sem přijde fotka z výletu', cta: 'Otevřít plánovač výletů', ctaSub: 'Bez registrace. Mapa, filtry i tip na konkrétní den.',
+      /* SEKCE #vylety JE JEN LETNÍ — a od 7/2026 to platí i pro obsah karet.
+         Majitel: „Ne v tom mít bobovky a sjezdovky a lyžování v okolí, když se
+         bavíme o letní stránce." Vypadly proto karty „Lyžování v okolí"
+         a „Bobovky a stezky"; nahradily je letní cíle, které web publikuje
+         i v okruzích lokality a ke kterým máme skutečnou letní fotku
+         (media/trips/*). Do téhle čtveřice NIKDY nedávej zimní program —
+         zimní ekvivalent je exkluzivní sekce #lyzovani. */
       items: [
         { tag: 'Celoročně', name: 'Sněžka', desc: 'Nejvyšší hora Česka — pěšky po hřebenech, nebo lanovkou z Pece pod Sněžkou.' },
-        { tag: 'Léto', name: 'Hřebenovky a vodopády', desc: 'Značené trasy od pohodových okruhů po celodenní přechody. Mumlavský vodopád zvládnou i děti.' },
-        { tag: 'Zima', name: 'Lyžování v okolí', desc: 'Ski Resort Černá hora jen 4 km od domu a lyžárna na uskladnění vybavení přímo v domě.' },
-        { tag: 'S dětmi', name: 'Bobovky a stezky', desc: 'Bobové dráhy, lanové parky a stezka v korunách stromů v pohodlném dojezdu.' },
+        { tag: 'Turistika', name: 'Hřebenovky a vodopády', desc: 'Značené trasy od pohodových okruhů po celodenní přechody. Mumlavský vodopád zvládnou i děti.' },
+        { tag: 'Nenáročné', name: 'Černohorské rašeliniště', desc: 'Dřevěné chodníky přes horské rašeliniště na Černé hoře. Nahoru kabinkovou lanovkou, pak procházka po rovině.' },
+        { tag: 'S dětmi', name: 'Stezka korunami stromů', desc: 'Vyhlídková stezka nad Janskými Lázněmi — v okruhu cílů, na které nepotřebujete auto.' },
       ],
     },
     book: {
@@ -657,8 +687,16 @@ const T = {
     lokalita: {
       eyebrow: 'Location · Svoboda nad Úpou',
       title: 'In the mountains, not at the end of the world.',
-      lead: 'We are in Svoboda nad Úpou, 150 metres from the centre — shop, restaurant, train and bus are all within walking distance. Sněžka is twenty minutes away by car. And Prague and Wrocław are both roughly two hours from here.',
+      lead: 'We are in Svoboda nad Úpou, 150 metres from the centre — shop, restaurant, train and bus are all within walking distance. And Sněžka is twenty minutes away by car.',
       leadWinter: 'The ski bus to SkiResort Černá hora–Pec stops 200 metres from the gate — you reach the lifts without the car and without hunting for a parking space. The car can then stay put on the grounds all week. Current fares and timetables are published by the operator.',
+      /* Letní sada — viz komentář u české větve (doorstepSummer). */
+      doorstepSummer: [
+        { num: '150 m', label: 'to the centre of Svoboda — shop, restaurant and station on foot' },
+        { num: '20 min', label: 'by car to Sněžka — up by cable car, or on your own two feet' },
+        { num: '4 km', label: 'Janské Lázně — the Treetop Walk and the Černá hora cable car' },
+        { num: '11 km', label: 'Trutnov — outdoor pool, climbing wall and the big shops' },
+      ],
+      /* Zimní sada — skibus a sjezdovky jsou tu to hlavní. */
       doorstep: [
         { num: '150 m', label: 'to the centre of Svoboda — about a two-minute walk' },
         { num: '200 m', label: 'to the ski-bus stop — under three minutes on foot' },
@@ -690,6 +728,7 @@ const T = {
         { id: 'parking', k: 'Parking', v: 'on the grounds, behind the gate' },
       ],
       arriveTransitWinter: { id: 'transit', k: 'Train & bus', v: 'station and stop in town, then a short walk' },
+      arriveCarSummer: { id: 'car', k: 'By car', v: 'roughly 2 hours from Prague and Wrocław, 3 from Dresden' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Sněžka', snezkaMeta: '1603 m',
@@ -754,9 +793,9 @@ const T = {
       eyebrow: 'Trip planner', title: 'The mountains start at the door', note: 'We pick by season · {n} verified places within an hour of the house.', drop: 'A trip photo goes here', cta: 'Open the trip planner', ctaSub: 'No sign-up. Map, filters and a tip for a specific day.',
       items: [
         { tag: 'Year-round', name: 'Sněžka', desc: 'The highest peak in Czechia — hike the ridges, or take the cable car from Pec pod Sněžkou.' },
-        { tag: 'Summer', name: 'Ridge trails & waterfalls', desc: 'Marked routes from easy loops to full-day traverses. The Mumlava waterfall works with kids too.' },
-        { tag: 'Winter', name: 'Skiing nearby', desc: 'Ski Resort Černá hora just 4 km away, with a ski room in the house for your gear.' },
-        { tag: 'With kids', name: 'Toboggans & trails', desc: 'Mountain toboggan runs, rope parks and a treetop walkway within an easy drive.' },
+        { tag: 'Hiking', name: 'Ridge trails & waterfalls', desc: 'Marked routes from easy loops to full-day traverses. The Mumlava waterfall works with kids too.' },
+        { tag: 'Easy going', name: 'Černá hora peat bog', desc: 'Boardwalks across a mountain peat bog on Černá hora. Up by cabin lift, then a level walk.' },
+        { tag: 'With kids', name: 'The Treetop Walk', desc: 'A walkway above Janské Lázně — in the ring of places you can reach without the car.' },
       ],
     },
     book: {
@@ -974,8 +1013,16 @@ const T = {
     lokalita: {
       eyebrow: 'Lage · Svoboda nad Úpou',
       title: 'In den Bergen, nicht am Ende der Welt.',
-      lead: 'Wir stehen in Svoboda nad Úpou, 150 Meter vom Zentrum — Laden, Restaurant, Bahn und Bus schafft ihr zu Fuß. Die Schneekoppe ist zwanzig Autominuten entfernt. Und aus Prag wie aus Breslau seid ihr in rund zwei Stunden hier.',
+      lead: 'Wir stehen in Svoboda nad Úpou, 150 Meter vom Zentrum — Laden, Restaurant, Bahn und Bus schafft ihr zu Fuß. Und die Schneekoppe ist zwanzig Autominuten entfernt.',
       leadWinter: 'Der Skibus zum SkiResort Černá hora–Pec hält 200 Meter vom Tor — zu den Liften kommt ihr ohne Auto und ohne Parkplatzsuche. Das Auto kann dann die ganze Woche auf dem Grundstück stehen bleiben. Aktuellen Tarif und Fahrplan veröffentlicht der Betreiber.',
+      /* Letní sada — viz komentář u české větve (doorstepSummer). */
+      doorstepSummer: [
+        { num: '150 m', label: 'ins Zentrum von Svoboda — Laden, Restaurant und Bahnhof zu Fuß' },
+        { num: '20 min', label: 'mit dem Auto zur Schneekoppe — hinauf per Seilbahn oder zu Fuß' },
+        { num: '4 km', label: 'Janské Lázně — Baumwipfelpfad und Gondel auf die Černá hora' },
+        { num: '11 km', label: 'Trutnov — Freibad, Kletterwand und die großen Geschäfte' },
+      ],
+      /* Zimní sada — skibus a sjezdovky jsou tu to hlavní. */
       doorstep: [
         { num: '150 m', label: 'ins Zentrum von Svoboda — etwa zwei Minuten zu Fuß' },
         { num: '200 m', label: 'zur Skibus-Haltestelle — keine drei Minuten zu Fuß' },
@@ -1007,6 +1054,7 @@ const T = {
         { id: 'parking', k: 'Parken', v: 'direkt auf dem Grundstück, hinter dem Tor' },
       ],
       arriveTransitWinter: { id: 'transit', k: 'Bahn & Bus', v: 'Bahnhof und Haltestelle im Ort, zu Fuß zum Haus' },
+      arriveCarSummer: { id: 'car', k: 'Mit dem Auto', v: 'rund 2 Stunden aus Prag und Breslau, 3 aus Dresden' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Schneekoppe', snezkaMeta: '1603 m',
@@ -1071,9 +1119,9 @@ const T = {
       eyebrow: 'Ausflugsplaner', title: 'Die Berge beginnen vor der Tür', note: 'Wir wählen nach Saison · {n} geprüfte Ziele bis zu einer Stunde vom Haus.', drop: 'Hier kommt ein Ausflugsfoto', cta: 'Ausflugsplaner öffnen', ctaSub: 'Ohne Registrierung. Karte, Filter und ein Tipp für einen konkreten Tag.',
       items: [
         { tag: 'Ganzjährig', name: 'Schneekoppe', desc: 'Der höchste Gipfel Tschechiens — zu Fuß über die Kämme oder mit der Seilbahn ab Pec pod Sněžkou.' },
-        { tag: 'Sommer', name: 'Kammwege & Wasserfälle', desc: 'Markierte Routen von leichten Runden bis zu Tagestouren. Der Mumlava-Wasserfall klappt auch mit Kindern.' },
-        { tag: 'Winter', name: 'Skifahren in der Nähe', desc: 'Skigebiet Černá hora nur 4 km entfernt, mit einem Skiraum im Haus für die Ausrüstung.' },
-        { tag: 'Mit Kindern', name: 'Rodelbahnen & Pfade', desc: 'Sommerrodelbahnen, Seilparks und ein Baumwipfelpfad in bequemer Fahrdistanz.' },
+        { tag: 'Wandern', name: 'Kammwege & Wasserfälle', desc: 'Markierte Routen von leichten Runden bis zu Tagestouren. Der Mumlava-Wasserfall klappt auch mit Kindern.' },
+        { tag: 'Gemütlich', name: 'Hochmoor auf der Černá hora', desc: 'Bohlenwege über ein Bergmoor auf der Černá hora. Hinauf mit der Gondel, dann ein ebener Spaziergang.' },
+        { tag: 'Mit Kindern', name: 'Baumwipfelpfad', desc: 'Der Wipfelpfad über Janské Lázně — im Ring der Ziele, für die ihr kein Auto braucht.' },
       ],
     },
     book: {
@@ -1291,8 +1339,16 @@ const T = {
     lokalita: {
       eyebrow: 'Lokalizacja · Svoboda nad Úpou',
       title: 'W górach, a nie na końcu świata.',
-      lead: 'Stoimy w Svobodzie nad Úpou, 150 metrów od centrum — sklep, restauracja, pociąg i autobus są w zasięgu spaceru. Śnieżka jest stąd dwadzieścia minut samochodem. A z Pragi i z Wrocławia dojedziecie tu w mniej więcej dwie godziny.',
+      lead: 'Stoimy w Svobodzie nad Úpou, 150 metrów od centrum — sklep, restauracja, pociąg i autobus są w zasięgu spaceru. A Śnieżka jest stąd dwadzieścia minut samochodem.',
       leadWinter: 'Skibus do SkiResortu Černá hora–Pec zatrzymuje się 200 metrów od bramy — pod wyciągi dostaniecie się bez auta i bez szukania parkingu. Samochód może potem stać cały tydzień na terenie posesji. Aktualną taryfę i rozkład publikuje przewoźnik.',
+      /* Letní sada — viz komentář u české větve (doorstepSummer). */
+      doorstepSummer: [
+        { num: '150 m', label: 'do centrum Svobody — sklep, restauracja i dworzec pieszo' },
+        { num: '20 min', label: 'samochodem pod Śnieżkę — na górę kolejką albo pieszo' },
+        { num: '4 km', label: 'Janské Lázně — ścieżka w koronach drzew i kolejka na Černą horę' },
+        { num: '11 km', label: 'Trutnov — basen, ścianka wspinaczkowa i duże zakupy' },
+      ],
+      /* Zimní sada — skibus a sjezdovky jsou tu to hlavní. */
       doorstep: [
         { num: '150 m', label: 'do centrum Svobody — jakieś dwie minuty pieszo' },
         { num: '200 m', label: 'do przystanku skibusu — niecałe trzy minuty pieszo' },
@@ -1324,6 +1380,7 @@ const T = {
         { id: 'parking', k: 'Parking', v: 'na terenie posesji, za bramą' },
       ],
       arriveTransitWinter: { id: 'transit', k: 'Pociąg i autobus', v: 'stacja i przystanek w miasteczku, do domu pieszo' },
+      arriveCarSummer: { id: 'car', k: 'Samochodem', v: 'z Pragi i z Wrocławia około 2 godziny, z Drezna 3' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Śnieżka', snezkaMeta: '1603 m',
@@ -1388,9 +1445,9 @@ const T = {
       eyebrow: 'Planer wycieczek', title: 'Góry zaczynają się za drzwiami', note: 'Wybieramy według sezonu · {n} sprawdzonych celów do godziny od domu.', drop: 'Tu trafi zdjęcie z wycieczki', cta: 'Otwórz planer wycieczek', ctaSub: 'Bez rejestracji. Mapa, filtry i tip na konkretny dzień.',
       items: [
         { tag: 'Cały rok', name: 'Śnieżka', desc: 'Najwyższy szczyt Czech — pieszo graniami albo kolejką z Pecu pod Śnieżką.' },
-        { tag: 'Lato', name: 'Szlaki grzbietowe i wodospady', desc: 'Znakowane trasy od spokojnych pętli po całodniowe przejścia. Wodospad Mumlawy da się przejść z dziećmi.' },
-        { tag: 'Zima', name: 'Narty w okolicy', desc: 'Ośrodek Černá hora zaledwie 4 km od domu, z narciarnią w domu na sprzęt.' },
-        { tag: 'Z dziećmi', name: 'Tory saneczkowe i ścieżki', desc: 'Letnie tory bobslejowe, parki linowe i ścieżka w koronach drzew w łatwym dojeździe.' },
+        { tag: 'Turystyka', name: 'Szlaki grzbietowe i wodospady', desc: 'Znakowane trasy od spokojnych pętli po całodniowe przejścia. Wodospad Mumlawy da się przejść z dziećmi.' },
+        { tag: 'Na spokojnie', name: 'Torfowisko na Černej horze', desc: 'Drewniane kładki przez górskie torfowisko na Černej horze. Na górę kolejką gondolową, potem spacer po płaskim.' },
+        { tag: 'Z dziećmi', name: 'Ścieżka w koronach drzew', desc: 'Ścieżka widokowa nad Janskimi Lázněmi — w kręgu celów, do których nie trzeba auta.' },
       ],
     },
     book: {
@@ -1561,11 +1618,15 @@ const GALLERY = [
 const GAL_FILTERS = ['all', 'leto', 'zima', 'vecer', 'interier'];
 /* Fotky karet „Kam na výlet" (pořadí = vylety.items). JEN skutečné snímky z repa —
    žádné AI/stažené fotky. Sněžka/hory, letní cesta lesem, lyžování, hřiště pro děti. */
+/* Fotky ke kartám sekce #vylety. Sekce je JEN LETNÍ, takže tu nesmí být zimní
+   záběr — dvě takové tu do 7/2026 byly (winter-forest, winter-snow) a patřily
+   ke kartám o lyžování, které majitel z letní stránky nechal odstranit.
+   Pořadí odpovídá pořadí v t.vylety.items. */
 const TRIP_IMAGES = [
-  'media/gallery/winter-forest.jpg',
+  'media/trips/snezka-cablecar.jpg',
   'media/gallery/summer-drive.jpg',
-  'media/gallery/winter-snow.jpg',
-  'media/sections/playground.jpg',
+  'media/trips/cernohorske-raseliniste.jpg',
+  'media/trips/baumwipfelpfad.jpg',
 ];
 
 function tt() { return T[state.lang] || T.cs; }
@@ -1854,12 +1915,18 @@ function applyTripCounts() {
     n.textContent = fillFacts(tpl.replace('{n}', String(num)));
   });
 }
-/* Blok „Než dorazíte". V ZIMĚ má jiné priority než v létě (verdikt, bod e):
-   zimní host řeší skibus, parkování a cestu autem — vlak a autobus se slévají
+/* Blok „Než dorazíte". KAŽDÁ SEZÓNA MÁ JINÉ PRIORITY (verdikt, bod e):
+
+   ZIMA — host řeší skibus, parkování a cestu autem. Vlak a autobus se slévají
    do jednoho řádku (nemažou se, vždycky někdo dojíždí zvlášť) a Drážďany
    vypadnou. Ne však na německé verzi: Sasko je reálný zdrojový trh německých
    skupin a tam ta vzdálenost rozhoduje nejvíc (verdikt, chyba č. 13 — „mazat
-   Drážďany všude" je chyba, řeší se to variantou, ne mazáním). */
+   Drážďany všude" je chyba, řeší se to variantou, ne mazáním).
+
+   LÉTO (7/2026, majitel) — skibus pryč (v létě nejezdí) a tři řádky dojezdů
+   z metropolí se slévají do jediného nenápadného „Autem" na konci seznamu.
+   Ten řádek je poslední místo na webu, kde dojezd z Prahy a Vratislavi ještě
+   stojí; z pásu čísel nad mapou v létě zmizel úplně. */
 function renderArrive() {
   const t = tt();
   const host = $('#vr-lok-arrive'); if (!host) return; host.innerHTML = '';
@@ -1876,6 +1943,13 @@ function renderArrive() {
     // Skibus a parkování nahoru; zbytek si drží pořadí (Array#sort je stabilní).
     const rank = { skibus: 0, parking: 1 };
     rows.sort((a, b) => (rank[a.id] != null ? rank[a.id] : 9) - (rank[b.id] != null ? rank[b.id] : 9));
+  } else {
+    // LÉTO: skibus v létě nejezdí, tak ho tu nikdo nehledá. A tři samostatné
+    // řádky dojezdů (Praha / Vratislav / Drážďany) majitel v letní verzi
+    // nechtěl — slévají se do jednoho nenápadného řádku „Autem" úplně dole.
+    // Nemažou se úplně: „kolik to je z Prahy" je pořád legitimní otázka.
+    rows = rows.filter((r) => r.id !== 'skibus' && r.id !== 'praha' && r.id !== 'wroclaw' && r.id !== 'dresden');
+    if (L.arriveCarSummer) rows.push(L.arriveCarSummer);
   }
   rows.forEach((r) => {
     host.appendChild(el('div', { class: 'vr-lok-arrive-row' }, [

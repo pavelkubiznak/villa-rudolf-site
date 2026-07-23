@@ -594,10 +594,25 @@
         <span class="vr-eyebrow" data-t="lokalita.eyebrow">Lokalita · Svoboda nad Úpou</span>
         <h2 class="vr-h2" data-t="lokalita.title">V horách, ne na konci světa.</h2>
         <!-- SEZÓNNĚ DĚLENÝ SLOT 6 — lead lokality. Obě znění ve zdroji. -->
-        <p class="vr-lok-lead" id="vr-lok-lead" data-season-only="leto" data-t="lokalita.lead">Stojíme ve Svobodě nad Úpou, 150 metrů od centra — obchod, restaurace, vlak i autobus zvládnete pěšky. Sněžka je odsud dvacet minut autem. A z Prahy i z Vratislavi sem dojedete přibližně za dvě hodiny.</p>
+        <p class="vr-lok-lead" id="vr-lok-lead" data-season-only="leto" data-t="lokalita.lead">Stojíme ve Svobodě nad Úpou, 150 metrů od centra — obchod, restaurace, vlak i autobus zvládnete pěšky. A Sněžka je odsud dvacet minut autem.</p>
         <p class="vr-lok-lead" data-season-only="zima" data-t="lokalita.leadWinter">Skibus do SkiResortu Černá hora–Pec staví 200 metrů od brány — k vlekům se dostanete bez auta a bez hledání parkování. Auto pak může stát celý týden na jednom místě přímo na pozemku. Aktuální tarif a jízdní řád najdete u provozovatele.</p>
       </div>
-      <div class="vr-lok-doorstep vr-reveal">
+      <!-- SEZÓNNĚ DĚLENÝ SLOT 7 — pás čísel „od dveří". DVĚ SADY, ne jedna
+           okleštěná. Majitel o letní verzi: „150 metrů do centra Svobody,
+           200 metrů k zastávce skibusu — to je jim v létě úplně jedno. Praha
+           přibližně dvě hodiny, Vratislav, Drážďany tři hodiny — taky.
+           Sjezdovka 4 kilometry, to je na letní stránce úplně zbytečný."
+           V LÉTĚ tu proto stojí letní čísla (centrum, Sněžka, Janské Lázně,
+           Trutnov), V ZIMĚ zůstává původní sada — tam je skibus to hlavní.
+           Dojezdy z Prahy / Vratislavi / Drážďan v létě nemizí úplně, jen se
+           smrskly na jediný nenápadný řádek v bloku „Než dorazíte". -->
+      <div class="vr-lok-doorstep vr-reveal" data-season-only="leto">
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstepSummer.0.num">150 m</span><span class="l" data-t="lokalita.doorstepSummer.0.label"></span></div>
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstepSummer.1.num">20 min</span><span class="l" data-t="lokalita.doorstepSummer.1.label"></span></div>
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstepSummer.2.num">4 km</span><span class="l" data-t="lokalita.doorstepSummer.2.label"></span></div>
+        <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstepSummer.3.num">11 km</span><span class="l" data-t="lokalita.doorstepSummer.3.label"></span></div>
+      </div>
+      <div class="vr-lok-doorstep vr-reveal" data-season-only="zima">
         <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.0.num">150 m</span><span class="l" data-t="lokalita.doorstep.0.label"></span></div>
         <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.1.num">200 m</span><span class="l" data-t="lokalita.doorstep.1.label"></span></div>
         <div class="vr-lok-door"><span class="n" data-t="lokalita.doorstep.2.num">2 h</span><span class="l" data-t="lokalita.doorstep.2.label"></span></div>
@@ -653,7 +668,14 @@
             <g class="vr-mp" data-ring="car" data-prio="1">
               <circle cx="334" cy="338" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
               <text class="vr-mp-name" x="344" y="339" data-t="lokalita.mapLabels.cernaHora" fill="var(--vr-map-ink)">cernaHora</text>
-              <text class="vr-mp-meta" x="344" y="353" data-t="lokalita.mapLabels.cernaHoraMeta" fill="var(--vr-accent-photo)">–</text>
+              <!-- Jediný sezónní popisek na mapě. V ZIMĚ je u Černé hory
+                   podstatné, že jsou tam sjezdovky; na LETNÍ stránce to
+                   majitel označil za zbytečné („sjezdovka 4 kilometry, to je
+                   na letní stránce úplně zbytečný"), takže zůstane holá
+                   vzdálenost — žádný nový údaj, jen ubraný. „4 km" je stejné
+                   ve všech čtyřech jazycích, proto bez data-t. -->
+              <text class="vr-mp-meta" data-season-only="zima" x="344" y="353" data-t="lokalita.mapLabels.cernaHoraMeta" fill="var(--vr-accent-photo)">–</text>
+              <text class="vr-mp-meta" data-season-only="leto" x="344" y="353" fill="var(--vr-accent-photo)">4 km</text>
             </g>
             <g class="vr-mp" data-ring="car" data-prio="2">
               <circle cx="485" cy="345" r="4" fill="var(--vr-map-ink)" stroke="var(--vr-map-paper)" stroke-width="1.5"></circle>
