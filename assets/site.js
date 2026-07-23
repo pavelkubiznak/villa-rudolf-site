@@ -2246,18 +2246,25 @@ function setupCarousel(track) {
 
 /* Skok z lightboxu do 360°: interiérové scény žijí jen v ZIMNÍ sadě, takže
    přepneme na zimu, zrušíme filtr skupin (ať je scéna vidět i v pruhu),
-   nastavíme scénu, doskrolujeme k prohlídce a načteme pano. */
+   nastavíme scénu, doskrolujeme k prohlídce a načteme pano.
+   POŘADÍ: nejdřív renderThumbs() (postaví pruh), teprve pak renderScene() —
+   ten totiž doroluje AKTIVNÍ náhled do pruhu, a musí k tomu už existovat.
+   Dřív bylo pořadí opačné, takže se scéna sice načetla správně, ale její
+   náhled mohl zůstat schovaný za okrajem pruhu. */
 function openTourScene(idx) {
   panoSkipIntro = true;      // cílený skok na scénu → žádný nájezd
   if (state.season !== 'zima') setSeason('zima');
   state.panoGroup = 'all';
   state.scene = idx;
-  renderPanoGroups(); renderScene(); renderThumbs();
+  renderPanoGroups(); renderThumbs(); renderScene();
   ensureThree(initPano);
   const jump = () => { if (loadPano) loadPano(idx); };
   jump(); setTimeout(jump, 380);
   const sec = document.getElementById('interier');
-  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (sec) sec.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'start' });
+  // Pruh se rozloží až po přepnutí sezóny/skupiny — dorolování zopakuj, až
+  // bude mít strip finální šířku (jinak by scrollLeft počítal ze starého stavu).
+  setTimeout(() => { syncStripArrows(); scrollThumbIntoView(false); }, 420);
 }
 
 /* Přepnutí scény z pruhu náhledů i z menu skupin. */
@@ -3314,8 +3321,16 @@ function lbSet(i) {
   if (b360) {
     const p = it.pano != null ? panoIdx(it.pano) : -1;
     if (p >= 0) {
+      /* Majitel: „u těch fotek ložnice, když by bylo to 360, tak by je to
+         přehodilo do té naší sekce ‚Projděte si dům i pozemek'." Přesně to
+         openTourScene() dělá — a tlačítko to teď říká i navenek: ikona
+         panoramatu + text, který jmenuje CÍL („…v 360° prohlídce domu"),
+         + šipka dolů, protože skok vede po stránce níž. */
       b360.style.display = 'inline-flex';
-      b360.textContent = (tt().interior && tt().interior.open360) || 'View in 360°';
+      b360.innerHTML = '';
+      b360.appendChild(el('span', { class: 'vr-lb-360-ic', 'aria-hidden': 'true', html: spinIcon() }));
+      b360.appendChild(el('span', { text: (tt().interior && tt().interior.open360) || 'View in 360°' }));
+      b360.appendChild(el('span', { class: 'vr-lb-360-ar', 'aria-hidden': 'true', text: '↓' }));
       b360.onclick = (e) => { e.stopPropagation(); lbSet(-1); openTourScene(p); };
     } else { b360.style.display = 'none'; b360.onclick = null; }
   }

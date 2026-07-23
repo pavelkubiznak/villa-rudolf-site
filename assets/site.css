@@ -836,11 +836,22 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-lb-next{right:clamp(10px,3vw,34px);top:50%;transform:translateY(-50%)}
 .vr-lb-close{right:clamp(10px,3vw,34px);top:clamp(10px,3vw,28px);font-size:16px}
 .vr-lb-count{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font-family:'Archivo',sans-serif;font-size:12px;letter-spacing:.14em;color:#AEB4A8}
-/* „Prohlédnout ve 360°" — jen u karet, které mají zimní 360° scénu */
-.vr-lb-360{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);z-index:3;align-items:center;gap:8px;
+/* „Otevřít ve 360° prohlídce domu" — jen u fotek, které mají zimní 360° scénu.
+   Text jmenuje CÍL a šipka dolů říká, že skok vede po stránce níž, do sekce
+   „Projděte si dům i pozemek" (majitelovo přání). */
+.vr-lb-360{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);z-index:3;align-items:center;gap:9px;
   font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;letter-spacing:.01em;color:#10150f;background:var(--vr-ember);
-  border:0;border-radius:999px;padding:12px 22px;cursor:pointer;box-shadow:0 12px 32px rgba(214,138,76,.42)}
-.vr-lb-360:hover{filter:brightness(1.06)}
+  border:0;border-radius:999px;padding:12px 22px;cursor:pointer;box-shadow:0 12px 32px rgba(214,138,76,.42);
+  max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:filter .2s ease,transform .2s ease,box-shadow .2s ease}
+.vr-lb-360:hover{filter:brightness(1.06);box-shadow:0 16px 40px rgba(214,138,76,.5)}
+.vr-lb-360:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.vr-lb-360-ic{display:inline-flex;flex:none}
+.vr-lb-360-ic svg{width:19px;height:19px;display:block}
+.vr-lb-360-ar{flex:none;font-size:14px;line-height:1;transition:transform .2s ease}
+.vr-lb-360:hover .vr-lb-360-ar{transform:translateY(2px)}
+@media(max-width:520px){.vr-lb-360{font-size:12px;padding:11px 16px;gap:7px;bottom:48px}}
+@media(prefers-reduced-motion:reduce){.vr-lb-360,.vr-lb-360-ar{transition:none}}
 
 /* ---------- Keyframes ---------- */
 @keyframes vrNavIn{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
