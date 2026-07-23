@@ -49,7 +49,7 @@
       card: { detail: 'Detail, ceny a otevírací doba \u2192' },
       cta: { eyebrow: 'Rezervace', title: 'Líbí se vám okolí? Zarezervujte si termín.', body: 'Celý dům i pozemek jen pro vaši skupinu 6–22 lidí — a všechny tyhle výlety kousek za bránou.' },
       footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', host: 'Pavel — váš hostitel', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', terms: 'Ubytovací podmínky a ochrana údajů', forGuests: 'Pro hosty', guide: 'Plánovač výletů' },
-      meta: { title: 'Výlety v Krkonoších z Villa Rudolf — 38 tipů a plánovač na léto i zimu', desc: 'Nejlepší výlety kousek od Villa Rudolf ve Svobodě nad Úpou: Sněžka, Adršpašské skály, Stezka korunami stromů, Safari Dvůr Králové, lyžování na Černé hoře i aquaparky. Kurátorované tipy na léto i zimu.', locale: 'cs_CZ' },
+      meta: { title: 'Výlety v Krkonoších z Villa Rudolf — tipy a plánovač na léto i zimu', desc: 'Nejlepší výlety kousek od Villa Rudolf ve Svobodě nad Úpou: Sněžka, Adršpašské skály, Stezka korunami stromů, Safari Dvůr Králové, lyžování na Černé hoře i aquaparky. Kurátorované tipy na léto i zimu.', locale: 'cs_CZ' },
     },
 
     en: {
@@ -93,7 +93,7 @@
       card: { detail: 'Details, prices and opening hours \u2192' },
       cta: { eyebrow: 'Booking', title: 'Like the area? Reserve your dates.', body: 'The whole house and grounds just for your group of 6–22 — with all these trips right beyond the gate.' },
       footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', host: 'Pavel — your host', rights: '© 2026 Villa Rudolf', social: 'Follow us', terms: 'Booking terms & privacy', forGuests: 'For guests', guide: 'Trip planner' },
-      meta: { title: 'Trips in the Krkonoše from Villa Rudolf — 38 ideas and a trip planner', desc: 'The best trips near Villa Rudolf in Svoboda nad Úpou: Sněžka, the Adršpach rocks, the Treetop Walk, Dvůr Králové Safari, skiing on Černá hora and water parks. Curated ideas for summer and winter.', locale: 'en_US' },
+      meta: { title: 'Trips in the Krkonoše from Villa Rudolf — trip ideas and a planner', desc: 'The best trips near Villa Rudolf in Svoboda nad Úpou: Sněžka, the Adršpach rocks, the Treetop Walk, Dvůr Králové Safari, skiing on Černá hora and water parks. Curated ideas for summer and winter.', locale: 'en_US' },
     },
 
     de: {
@@ -137,7 +137,7 @@
       card: { detail: 'Details, Preise und Öffnungszeiten \u2192' },
       cta: { eyebrow: 'Buchung', title: 'Gefällt Ihnen die Gegend? Sichern Sie sich Ihren Termin.', body: 'Das ganze Haus und Grundstück nur für Ihre Gruppe von 6–22 — mit all diesen Ausflügen gleich hinter dem Tor.' },
       footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', host: 'Pavel — euer Gastgeber', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', terms: 'Buchungsbedingungen & Datenschutz', forGuests: 'Für Gäste', guide: 'Ausflugsplaner' },
-      meta: { title: 'Ausflüge im Riesengebirge ab Villa Rudolf — 38 Tipps und Ausflugsplaner', desc: 'Die besten Ausflüge nahe Villa Rudolf in Svoboda nad Úpou: Sněžka, die Adersbacher Felsen, der Baumwipfelpfad, Safari Dvůr Králové, Skifahren auf der Černá hora und Aquaparks. Kuratierte Tipps für Sommer und Winter.', locale: 'de_DE' },
+      meta: { title: 'Ausflüge im Riesengebirge ab Villa Rudolf — Tipps und Ausflugsplaner', desc: 'Die besten Ausflüge nahe Villa Rudolf in Svoboda nad Úpou: Sněžka, die Adersbacher Felsen, der Baumwipfelpfad, Safari Dvůr Králové, Skifahren auf der Černá hora und Aquaparks. Kuratierte Tipps für Sommer und Winter.', locale: 'de_DE' },
     },
 
     pl: {
@@ -181,7 +181,7 @@
       card: { detail: 'Szczegóły, ceny i godziny otwarcia \u2192' },
       cta: { eyebrow: 'Rezerwacja', title: 'Podoba się okolica? Zarezerwuj termin.', body: 'Cały dom i teren tylko dla Waszej grupy 6–22 osób — a wszystkie te wycieczki tuż za bramą.' },
       footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', host: 'Pavel — wasz gospodarz', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', terms: 'Warunki pobytu i prywatność', forGuests: 'Dla gości', guide: 'Planer wycieczek' },
-      meta: { title: 'Wycieczki w Karkonoszach z Villa Rudolf — 38 pomysłów i planer wycieczek', desc: 'Najlepsze wycieczki blisko Villa Rudolf w Svoboda nad Úpou: Śnieżka, Skały Adršpach, Ścieżka w koronach drzew, Safari Dvůr Králové, narty na Czarnej Górze i aquaparki. Wyselekcjonowane pomysły na lato i zimę.', locale: 'pl_PL' },
+      meta: { title: 'Wycieczki w Karkonoszach z Villa Rudolf — pomysły i planer wycieczek', desc: 'Najlepsze wycieczki blisko Villa Rudolf w Svoboda nad Úpou: Śnieżka, Skały Adršpach, Ścieżka w koronach drzew, Safari Dvůr Králové, narty na Czarnej Górze i aquaparki. Wyselekcjonowane pomysły na lato i zimę.', locale: 'pl_PL' },
     },
   };
 
@@ -211,7 +211,10 @@
 
   /* Počty cílů — dokud plánovač nenačte katalog, platí fallback; pak se
      přepíšou živými čísly (viz VRPlanner.counts()). Homepage má stejná čísla
-     přes VR_TRIP_COUNTS v site.js. */
+     přes VR_TRIP_COUNTS v site.js.
+     POČTY JSOU SEZÓNNÍ (katalog nese u části cílů pole `seasons`), takže se
+     smí objevit JEN přes {total}/{foot} — nikdy natvrdo v textu, titulku nebo
+     meta popisku, kde by je nešlo přepočítat. Fallback = letní stav 7/2026. */
   var COUNTS = { total: 39, foot: 8, car: 27, day: 4 };
   function fillCounts(s) {
     return s.replace(/\{(total|foot|car|day)\}/g, function (m, k) { return COUNTS[k]; });

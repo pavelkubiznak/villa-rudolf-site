@@ -128,7 +128,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-brand{display:flex;flex-direction:column;line-height:1}
 .vr-brand b{font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;letter-spacing:.18em;color:var(--vr-nav-fg);transition:color .4s ease}
 .vr-brand i{font-family:'Archivo',sans-serif;font-weight:600;font-size:10px;letter-spacing:.34em;color:var(--vr-accent);margin-top:5px;font-style:normal;transition:color .6s ease}
-.vr-navlinks{display:flex;gap:clamp(16px,2vw,30px);font-size:13.5px;font-weight:500;letter-spacing:.02em;color:var(--vr-nav-fg-muted);white-space:nowrap}
+.vr-navlinks{display:flex;gap:clamp(13px,1.7vw,28px);font-size:13.5px;font-weight:500;letter-spacing:.02em;color:var(--vr-nav-fg-muted);white-space:nowrap}
+/* Lišta má v zimě o položku navíc („Lyžování"). Aby se nikde nepřetekla,
+   dvě nejméně kritické položky se pod 1200 px schovají — v mobilním menu
+   i v patičce zůstávají, takže se nic nestane nedosažitelným. */
+@media(max-width:1200px){.vr-navlinks .vr-nav-opt{display:none}}
 .vr-navlinks a{position:relative;transition:color .2s}
 .vr-navlinks a::after{content:'';position:absolute;left:0;right:0;bottom:-5px;height:1.5px;background:var(--vr-accent);transform:scaleX(0);transform-origin:left;transition:transform .25s,background-color .6s ease}
 .vr-navlinks a:hover{color:var(--vr-nav-fg)}
@@ -373,26 +377,68 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 
 /* Amenities */
 .sec-vybaveni{padding:clamp(80px,13vh,170px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
-.vr-amen-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,64px);align-items:center;margin-top:clamp(40px,6vw,72px)}
-.vr-amen-hero img{display:block;width:100%;height:clamp(300px,40vw,480px);object-fit:cover;border-radius:2px}
 .vr-tag{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--vr-accent);transition:color .6s ease}
-.vr-amen-hero h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.7rem,3vw,2.6rem);color:var(--vr-text-soft);margin:16px 0 0;line-height:1.08;transition:color .6s ease}
-.vr-amen-hero p{font-family:'Archivo',sans-serif;font-size:clamp(15px,1.05vw,17px);line-height:1.72;color:var(--vr-text-muted);margin:16px 0 0;max-width:42ch;transition:color .6s ease}
-.vr-amen3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,2.6vw,36px);margin-top:clamp(28px,3.4vw,48px)}
-.vr-amen3 img,.vr-amen3 .vr-slot{display:block;width:100%;height:clamp(220px,24vw,300px);border-radius:2px}
-.vr-amen3 img{object-fit:cover}
-.vr-amen3 h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.3rem,2vw,1.7rem);color:var(--vr-text-soft);margin:10px 0 0;line-height:1.12;transition:color .6s ease}
-.vr-amen3 .vr-tag{display:inline-block;margin-top:18px}
-.vr-amen3 p{font-family:'Archivo',sans-serif;font-size:14.5px;line-height:1.65;color:var(--vr-text-muted);margin:10px 0 0;transition:color .6s ease}
-/* Celoroční vybavení (bez sezónní varianty) */
-.vr-amen-extra-title{font-family:'Newsreader',serif;font-weight:300;font-size:clamp(1.35rem,2vw,1.9rem);color:var(--vr-text-soft);
-  margin:clamp(40px,5vw,64px) 0 0;transition:color .6s ease}
-.vr-amen4{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,2.2vw,28px);margin-top:clamp(18px,2.4vw,28px)}
-.vr-amen4 img{display:block;width:100%;height:clamp(150px,15vw,200px);object-fit:cover;border-radius:2px}
-.vr-amen4 h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.15rem,1.6vw,1.4rem);color:var(--vr-text-soft);margin:12px 0 0;line-height:1.14;transition:color .6s ease}
-.vr-amen4 p{font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.6;color:var(--vr-text-muted);margin:8px 0 0;transition:color .6s ease}
-@media(max-width:900px){.vr-amen4{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.vr-amen4{grid-template-columns:1fr}.vr-amen4 img{height:clamp(180px,42vw,240px)}}
+
+/* ===================== VYBAVENÍ — JEDEN SEZNAM, DVĚ ŘAZENÍ =====================
+   V HTML je JEDEN seznam karet (#vr-amen). Pořadí i velikost karty určuje TATO
+   tabulka podle .vr-root[data-season] — v HTML se nic nepřesouvá a žádná položka
+   neexistuje dvakrát. Tři úrovně hierarchie (verdikt: plochý seznam by ji zabil):
+     hlavní karta   --amspan:12  (fotka vedle textu, přes celou šířku)
+     velká karta    --amspan:4   (3 v řadě)
+     malá karta     --amspan:3/4 (4 v řadě v létě, 3 v zimě — vyjde přesná řada)
+   POŘADÍ (zadání majitele + verdikt):
+     léto:  bazén → altán → hřiště → sauna → kuchyně → ohniště → kulečník → apartmá
+     zima:  lyžárna → sauna → kuchyně → ohniště → altán → kulečník → apartmá
+   Lyžárna je v zimě PRVNÍ a jako samostatná hlavní karta — podle majitele je to
+   nejčastější dotaz zimních hostů a dřív byla až čtvrtou odrážkou „celoročně". */
+.vr-amen{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(20px,2.6vw,36px) clamp(18px,2.2vw,30px);margin-top:clamp(40px,6vw,72px)}
+.vr-amen>article{grid-column:span var(--amspan,4);min-width:0}
+.vr-amen>article img{display:block;width:100%;height:var(--amh,clamp(200px,21vw,270px));object-fit:cover;border-radius:2px}
+.vr-amen .vr-tag{display:inline-block;margin-top:16px}
+.vr-amen>article h3{font-family:'Newsreader',serif;font-weight:400;font-size:var(--amfs,clamp(1.25rem,1.9vw,1.6rem));color:var(--vr-text-soft);margin:8px 0 0;line-height:1.12;transition:color .6s ease}
+.vr-amen>article p{font-family:'Archivo',sans-serif;font-size:var(--amps,14px);line-height:1.64;color:var(--vr-text-muted);margin:9px 0 0;transition:color .6s ease}
+/* --- hlavní karta: fotka vedle textu --- */
+.vr-root[data-season="leto"] .vr-amen>[data-am="pool"],
+.vr-root[data-season="zima"] .vr-amen>[data-am="skiroom"]{
+  --amspan:12;--amh:clamp(280px,36vw,440px);--amfs:clamp(1.7rem,3vw,2.5rem);--amps:clamp(15px,1.05vw,17px);
+  display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,3.6vw,60px);align-items:center}
+.vr-root[data-season="leto"] .vr-amen>[data-am="pool"] p,
+.vr-root[data-season="zima"] .vr-amen>[data-am="skiroom"] p{max-width:46ch}
+.vr-root[data-season="leto"] .vr-amen>[data-am="pool"] .vr-tag,
+.vr-root[data-season="zima"] .vr-amen>[data-am="skiroom"] .vr-tag{margin-top:0}
+/* --- malé karty (páté a další v pořadí) --- */
+.vr-root[data-season="leto"] .vr-amen>[data-am="kitchen"],
+.vr-root[data-season="leto"] .vr-amen>[data-am="firepit"],
+.vr-root[data-season="leto"] .vr-amen>[data-am="billiard"],
+.vr-root[data-season="leto"] .vr-amen>[data-am="lounge"]{--amspan:3;--amh:clamp(150px,15vw,200px);--amfs:clamp(1.1rem,1.5vw,1.35rem);--amps:13.5px}
+.vr-root[data-season="zima"] .vr-amen>[data-am="altan"],
+.vr-root[data-season="zima"] .vr-amen>[data-am="billiard"],
+.vr-root[data-season="zima"] .vr-amen>[data-am="lounge"]{--amh:clamp(150px,15vw,200px);--amfs:clamp(1.1rem,1.5vw,1.35rem);--amps:13.5px}
+/* --- pořadí --- */
+.vr-root[data-season="leto"] .vr-amen>[data-am="pool"]{order:1}
+.vr-root[data-season="leto"] .vr-amen>[data-am="altan"]{order:2}
+.vr-root[data-season="leto"] .vr-amen>[data-am="hriste"]{order:3}
+.vr-root[data-season="leto"] .vr-amen>[data-am="sauna"]{order:4}
+.vr-root[data-season="leto"] .vr-amen>[data-am="kitchen"]{order:5}
+.vr-root[data-season="leto"] .vr-amen>[data-am="firepit"]{order:6}
+.vr-root[data-season="leto"] .vr-amen>[data-am="billiard"]{order:7}
+.vr-root[data-season="leto"] .vr-amen>[data-am="lounge"]{order:8}
+.vr-root[data-season="zima"] .vr-amen>[data-am="skiroom"]{order:1}
+.vr-root[data-season="zima"] .vr-amen>[data-am="sauna"]{order:2}
+.vr-root[data-season="zima"] .vr-amen>[data-am="kitchen"]{order:3}
+.vr-root[data-season="zima"] .vr-amen>[data-am="firepit"]{order:4}
+.vr-root[data-season="zima"] .vr-amen>[data-am="altan"]{order:5}
+.vr-root[data-season="zima"] .vr-amen>[data-am="billiard"]{order:6}
+.vr-root[data-season="zima"] .vr-amen>[data-am="lounge"]{order:7}
+@media(max-width:1000px){
+  .vr-amen{grid-template-columns:repeat(6,1fr)}
+  .vr-amen>article{--amspan:3!important;--amh:clamp(190px,26vw,240px)!important;--amfs:clamp(1.2rem,2.6vw,1.5rem)!important;--amps:14px!important}
+  .vr-root[data-season="leto"] .vr-amen>[data-am="pool"],
+  .vr-root[data-season="zima"] .vr-amen>[data-am="skiroom"]{--amspan:6!important;--amh:clamp(260px,44vw,380px)!important;--amfs:clamp(1.6rem,4vw,2.1rem)!important;grid-template-columns:1fr}
+}
+@media(max-width:560px){.vr-amen{grid-template-columns:1fr}.vr-amen>article{--amspan:1!important;--amh:clamp(190px,46vw,250px)!important}
+  .vr-root[data-season="leto"] .vr-amen>[data-am="pool"],
+  .vr-root[data-season="zima"] .vr-amen>[data-am="skiroom"]{--amspan:1!important}}
 
 /* ---------- Bedrooms & beds ---------- */
 .sec-loznice{padding:clamp(72px,11vh,150px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
@@ -503,6 +549,45 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 
 /* Location */
 .sec-lokalita{padding:clamp(80px,13vh,170px) 0}
+
+/* ===================== JEN ZIMA — „Lyžování odsud" =====================
+   Exkluzivní zimní sekce (verdikt: právě jedna na sezónu). Schovává ji obecné
+   pravidlo [data-season-only]; tady jde čistě o vzhled. Struktura místo prózy:
+   jména středisek a čísla jsou jazykově nezávislá, překládají se jen popisky. */
+.sec-lyzovani{padding:clamp(72px,11vh,150px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
+.vr-ski-hero{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(26px,4vw,60px);align-items:center;margin-top:clamp(34px,5vw,56px)}
+.vr-ski-heroimg img{display:block;width:100%;height:clamp(240px,30vw,400px);object-fit:cover;border-radius:2px}
+.vr-ski-herobody h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.55rem,2.7vw,2.3rem);color:var(--vr-text-soft);margin:14px 0 0;line-height:1.09;transition:color .6s ease}
+.vr-ski-herobody>p{font-family:'Archivo',sans-serif;font-size:clamp(14.5px,1vw,16px);line-height:1.72;color:var(--vr-text-muted);margin:14px 0 0;max-width:52ch;transition:color .6s ease}
+.vr-ski-specs{list-style:none;display:flex;flex-wrap:wrap;gap:12px 26px;margin:20px 0 0;padding:16px 0 0;border-top:1px solid var(--vr-line)}
+.vr-ski-specs li{display:flex;align-items:baseline;gap:9px;flex:1 1 200px;font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.45;color:var(--vr-text-muted);transition:color .6s ease}
+.vr-ski-specs b{font-family:'Newsreader',serif;font-weight:400;font-size:1.4rem;color:var(--vr-accent);white-space:nowrap;transition:color .6s ease}
+.vr-ski-plus{font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.65;color:var(--vr-text-muted);margin:16px 0 0;transition:color .6s ease}
+/* Poctivá poznámka (sněhové podmínky) — vizuálně tišší, ale nesmí zmizet. */
+.vr-ski-warn{font-family:'Archivo',sans-serif;font-size:13px;line-height:1.66;color:var(--vr-text-faint);margin:12px 0 0;padding-left:14px;border-left:2px solid var(--vr-line-2);transition:color .6s ease,border-color .6s ease}
+.vr-ski-block{margin-top:clamp(40px,6vw,72px)}
+.vr-ski-h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.35rem,2.1vw,1.85rem);color:var(--vr-text-soft);margin:0;line-height:1.14;transition:color .6s ease}
+.vr-ski-lead{font-family:'Archivo',sans-serif;font-size:14.5px;line-height:1.7;color:var(--vr-text-muted);margin:10px 0 0;max-width:74ch;transition:color .6s ease}
+.vr-ski-rows{list-style:none;margin:20px 0 0;padding:0;border-top:1px solid var(--vr-line)}
+.vr-ski-rows li{display:grid;grid-template-columns:minmax(170px,1.05fr) 92px 100px minmax(0,1.5fr);align-items:baseline;gap:6px 18px;padding:14px 0;border-bottom:1px solid var(--vr-line);font-family:'Archivo',sans-serif}
+.vr-ski-rows .n{font-size:15px;color:var(--vr-text-soft);transition:color .6s ease}
+.vr-ski-rows .d,.vr-ski-rows .t{font-size:13.5px;color:var(--vr-accent);white-space:nowrap;font-variant-numeric:tabular-nums;transition:color .6s ease}
+.vr-ski-rows .x{font-size:13px;line-height:1.55;color:var(--vr-text-faint);transition:color .6s ease}
+.vr-ski-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,2.4vw,32px);margin-top:clamp(34px,4.5vw,56px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--vr-line)}
+.vr-ski-notes h4{font-family:'Archivo',sans-serif;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--vr-accent);margin:0;transition:color .6s ease}
+.vr-ski-notes p{font-family:'Archivo',sans-serif;font-size:13.5px;line-height:1.68;color:var(--vr-text-muted);margin:10px 0 0;transition:color .6s ease}
+.vr-ski-tiles{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(12px,1.6vw,20px);margin:clamp(18px,2.4vw,28px) 0 0;padding:0}
+.vr-ski-tiles li{border:1px solid var(--vr-line);border-radius:3px;padding:16px 16px 18px;background:var(--vr-panel);transition:background-color .6s ease,border-color .6s ease}
+.vr-ski-tiles b{display:block;font-family:'Newsreader',serif;font-weight:400;font-size:1.1rem;line-height:1.22;color:var(--vr-text-soft);transition:color .6s ease}
+.vr-ski-tiles span{display:block;margin-top:7px;font-family:'Archivo',sans-serif;font-size:12.5px;line-height:1.55;color:var(--vr-text-faint);transition:color .6s ease}
+@media(max-width:1080px){.vr-ski-tiles{grid-template-columns:repeat(3,1fr)}.vr-ski-notes{grid-template-columns:1fr;gap:20px}}
+@media(max-width:900px){.vr-ski-hero{grid-template-columns:1fr}
+  .vr-ski-rows li{grid-template-columns:1fr auto auto}
+  .vr-ski-rows .x{grid-column:1/-1}}
+@media(max-width:640px){.vr-ski-tiles{grid-template-columns:1fr 1fr}
+  .vr-ski-rows li{grid-template-columns:1fr auto;gap:4px 12px}
+  .vr-ski-rows .t{grid-column:2}}
+@media(max-width:400px){.vr-ski-tiles{grid-template-columns:1fr}}
 
 /* Trips */
 .sec-vylety{padding:clamp(80px,13vh,170px) 0;background:linear-gradient(180deg,var(--vr-bg),var(--vr-bg-grad) 50%,var(--vr-bg));transition:background .6s ease}
@@ -746,7 +831,6 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-crossfade .vr-seasonimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease}
 .vr-root[data-season="leto"] .vr-seasonimg.summer{opacity:1}
 .vr-root[data-season="zima"] .vr-seasonimg.winter{opacity:1}
-.vr-amen-imgwrap{height:clamp(300px,40vw,480px)}
 
 /* ---------- Winter cool cast (owner: "zima víc do běla") ---------- */
 /* A very subtle bluish/lighter wash over the season-swapped photo scenes.
@@ -803,11 +887,9 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-vid-meta{display:flex;flex-direction:column;gap:4px;padding:14px 16px 16px}
 .vr-vid-season{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--vr-accent);transition:color .6s ease}
 .vr-vid-label{font-family:'Archivo',sans-serif;font-size:14px;line-height:1.4;color:var(--vr-text-muted);transition:color .6s ease}
-/* Season toggle promotes the matching video to first position. */
-.vr-root[data-season="leto"] .vr-vid.summer{order:1}
-.vr-root[data-season="leto"] .vr-vid.winter{order:2}
-.vr-root[data-season="zima"] .vr-vid.winter{order:1}
-.vr-root[data-season="zima"] .vr-vid.summer{order:2}
+/* Každá sezóna ukazuje jen svoje video (schová [data-season-only]), takže
+   v mřížce zůstává jedna karta — dá se roztáhnout do rozumné šířky. */
+.vr-vids{grid-template-columns:minmax(0,720px)}
 
 /* ---------- Guest photo sharing ---------- */
 .sec-sdilet{padding:clamp(56px,9vh,110px) 0;background:var(--vr-bg-deep);border-top:1px solid var(--vr-line);transition:background .6s ease}
@@ -897,6 +979,13 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   padding:6px 12px;text-decoration:none;background:rgba(10,14,12,.32);transition:border-color .2s ease,background-color .2s ease}
 a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,.55)}
 .vr-quote-source .vr-rating-arrow{color:var(--vr-ember-2);font-size:12px;margin-left:0}
+/* Souhrn hodnocení v pásu pod heroem (nahradil rotující citaci — ta se
+   dublovala se sekcí #recenze; nahoře patří čísla, dole citace). */
+.vr-trustsum{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px}
+.vr-trustsum-n{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1;color:#F4EFE6}
+.vr-trustsum .vr-star{font-style:normal;font-size:clamp(1.1rem,2vw,1.5rem);color:var(--vr-ember-2);line-height:1}
+.vr-trustsum-l{font-family:'Archivo',sans-serif;font-size:clamp(13px,1.1vw,15px);color:#DED9CD;letter-spacing:.01em}
+@media(max-width:520px){.vr-trustsum{gap:4px 8px}}
 .vr-quote-more{display:inline-block;margin-top:clamp(14px,1.8vw,20px);font-family:'Archivo',sans-serif;
   font-size:12.5px;font-weight:600;letter-spacing:.03em;color:var(--vr-ember-2);text-decoration:none}
 .vr-quote-more:hover{color:#F1ECE2}
@@ -987,8 +1076,7 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vr-stickycta[data-show="true"]{transform:none;opacity:1;pointer-events:auto}
 }
 @media(max-width:880px){
-  .vr-ohn-grid,.vr-amen-hero{grid-template-columns:1fr}
-  .vr-amen3{grid-template-columns:1fr 1fr}
+  .vr-ohn-grid{grid-template-columns:1fr}
   .vr-sez{grid-template-columns:1fr}
   .vr-foot{grid-template-columns:1fr;gap:34px}
   .vr-skup{grid-template-columns:1fr}
@@ -999,7 +1087,6 @@ a.vr-quote-source:hover{border-color:var(--vr-ember-2);background:rgba(10,14,12,
   .vr-gal{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:620px){
-  .vr-amen3{grid-template-columns:1fr}
   .vr-gal{grid-template-columns:repeat(2,1fr);gap:12px}
   .vr-facts{grid-template-columns:1fr 1fr}
   .vr-vyl{grid-template-columns:1fr}

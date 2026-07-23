@@ -20,11 +20,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=41">
+<link rel="stylesheet" href="assets/site.css?v=42">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
-<script src="assets/season.js?v=41"></script>
+<script src="assets/season.js?v=42"></script>
 </head>
 <body>
 <noscript>
@@ -44,11 +44,16 @@
     <div class="vr-nav-inner">
       <a href="#top" class="vr-brand"><b>VILLA RUDOLF</b><i>KRKONOŠE</i></a>
       <nav class="vr-navlinks" aria-label="Sekce">
+        <!-- V zimě přibývá odskok na „Lyžování odsud"; aby se lišta na užších
+             obrazovkách nepřeplnila, dvě nejméně kritické položky (Recenze,
+             Galerie) se pod 1200 px schovají — v mobilním menu zůstávají obě. -->
+        <a href="#lyzovani" data-season-only="zima" data-t="nav.lyzovani">Lyžování</a>
         <a href="#dum" data-t="nav.dum">Dům</a>
+        <a href="#loznice" data-t="nav.loznice">Ložnice</a>
         <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
-        <a href="#recenze" data-t="nav.recenze">Recenze</a>
+        <a href="#recenze" class="vr-nav-opt" data-t="nav.recenze">Recenze</a>
         <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
-        <a href="#galerie" data-t="nav.galerie">Galerie</a>
+        <a href="#galerie" class="vr-nav-opt" data-t="nav.galerie">Galerie</a>
         <a href="vylety/" data-langlink="vylety/" data-t="nav.vylety">Výlety</a>
       </nav>
       <div class="vr-navright">
@@ -72,7 +77,9 @@
 
   <!-- ===================== Mobile menu (added; not in prototype) ===================== -->
   <div class="vr-mob" id="vr-mob" data-open="false">
+    <a href="#lyzovani" data-season-only="zima" data-t="nav.lyzovani">Lyžování</a>
     <a href="#dum" data-t="nav.dum">Dům</a>
+    <a href="#loznice" data-t="nav.loznice">Ložnice</a>
     <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
     <a href="#recenze" data-t="nav.recenze">Recenze</a>
     <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
@@ -150,6 +157,122 @@
         <div class="vr-fact wide" data-season-only="leto"><div class="vr-fact-k" data-t="facts.wellnessSummer.k">Bazén + sauna</div><div class="vr-fact-v" data-t="facts.wellnessSummer.v">krytý vyhřívaný bazén a privátní sauna</div></div>
         <div class="vr-fact wide" data-season-only="zima"><div class="vr-fact-k" data-t="facts.wellnessWinter.k">Sauna + lyžárna</div><div class="vr-fact-v" data-t="facts.wellnessWinter.v">privátní sauna, lyžárna přímo v domě</div></div>
         <div class="vr-fact wide"><div class="vr-fact-k" data-t="facts.parking.k">Vlastní parkoviště</div><div class="vr-fact-v" data-t="facts.parking.v">na pozemku hned u vchodu, za vlastní bránou</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== JEN ZIMA — „Lyžování odsud" =====================
+       VRSTVA C podle verdiktu: PRÁVĚ JEDNA sekce navíc na sezónu. V zimě je to
+       tahle, v létě „Hory začínají za dveřmi" (#vylety). Sedí hned pod pásem
+       s hodnocením a rychlými fakty, protože zimní host kupuje NEJDŘÍV důvod
+       (lyžování) a teprve pak dům.
+
+       VŠECHNA TVRZENÍ POCHÁZEJÍ Z OVĚŘENÉ REŠERŠE (vr-lyzarska-fakta.json,
+       ověřeno 7/2026). Co se sem NESMÍ nikdy dostat (pole `nepublikovat`):
+         · ceny skipasů, jízdní řády, provozní a otevírací doby
+         · počty aktuálně otevřených vleků (živý provozní widget, ne inventura)
+         · „skibus zdarma" jako tvrdé tvrzení (podmíněný tarif, mění se)
+         · „zelené sjezdovky" — všechny tři ve Svobodě jsou MODRÉ
+         · konkrétní dny a časy večerního lyžování (provozovatel si protiřečí)
+         · počet areálů na skipas jako tvrdé číslo (provozovatel uvádí 5 i 6)
+         · Malá Úpa jako nejvýše položená obec ČR (je druhá, po Kvildě)
+       Struktura místo prózy (verdikt, chyba č. 4): jména středisek a čísla jsou
+       jazykově nezávislá, překládají se jen popisky. -->
+  <section id="lyzovani" class="sec-lyzovani" data-season-only="zima">
+    <div class="vr-wrap">
+      <div class="vr-reveal vr-sec-head">
+        <div style="max-width:720px">
+          <span class="vr-eyebrow" data-t="ski.eyebrow">Lyžování · SkiResort Černá hora – Pec</span>
+          <h2 class="vr-h2" data-t="ski.title">Lyžování odsud</h2>
+        </div>
+        <span class="vr-sec-note" data-t="ski.note">Uvádíme jen to, co se nemění mezi sezónami. Ceny, jízdní řády a provozní doby najdete u provozovatele.</span>
+      </div>
+
+      <!-- Hlavní sdělení, které web dosud vůbec neměl: vlastní areál přímo ve městě. -->
+      <div class="vr-ski-hero vr-reveal">
+        <div class="vr-ski-heroimg">
+          <img src="media/gallery/winter-forest.jpg" alt="Villa Rudolf v zimě — zasněžená zahrada a prohrnutá cesta k domu" loading="lazy" decoding="async" width="1600" height="1067">
+        </div>
+        <div class="vr-ski-herobody">
+          <span class="vr-tag" data-t="ski.local.tag">1,9 km od domu</span>
+          <h3 data-t="ski.local.name">Lyžařský areál přímo ve Svobodě nad Úpou</h3>
+          <p data-t="ski.local.desc">Nejbližší sjezdovky nejsou „někde v horách" — jsou ve stejném městě jako dům. Autem tam jste za pět minut, pěšky do půl hodiny. Je to nejmenší areál resortu a přesně proto se hodí na první lyžování dětí a začátečníků, zatímco zbytek party vyrazí na velké svahy.</p>
+          <ul class="vr-ski-specs">
+            <li><b>3</b><span data-t="ski.local.specs.0">modré (lehké) sjezdovky, každá zhruba 350 m</span></li>
+            <li><b>3</b><span data-t="ski.local.specs.1">vleky — lanovka tu není</span></li>
+            <li><b>≈ 5 min</b><span data-t="ski.local.specs.2">autem od domu — 1,9 km po silnici</span></li>
+          </ul>
+          <p class="vr-ski-plus" data-t="ski.local.school">V areálu je lyžařská škola, půjčovna vybavení i dětský pojízdný koberec.</p>
+          <p class="vr-ski-warn" data-t="ski.local.snow">Poctivě: je to nejníže položený areál resortu (zhruba 530–600 m), takže jeho provoz stojí a padá se sněhem a zasněžováním a sezóna tu bývá kratší než výš v horách. Než na něj postavíte celý pobyt, ověřte si, že jede.</p>
+        </div>
+      </div>
+
+      <!-- DATA: jeden skipas + dojezdy autem ze Svobody nad Úpou.
+           Jména středisek a čísla se nepřekládají, jen popisky pod tabulkou. -->
+      <div class="vr-ski-block vr-reveal">
+        <h3 class="vr-ski-h3" data-t="ski.resorts.title">Jeden skipas, několik areálů</h3>
+        <p class="vr-ski-lead" data-t="ski.resorts.lead">Dům leží v oblasti SkiResortu ČERNÁ HORA – PEC, kde podle provozovatele platí jeden skipas napříč několika areály. Dojezdy autem ze Svobody nad Úpou:</p>
+        <ul class="vr-ski-rows">
+          <li>
+            <span class="n">Janské Lázně / Černá hora</span>
+            <span class="d">≈ 4 km</span><span class="t">≈ 10 min</span>
+            <span class="x" data-t="ski.rows.cernaHora">největší areál resortu</span>
+          </li>
+          <li>
+            <span class="n">Velká Úpa</span>
+            <span class="d">≈ 10 km</span><span class="t">≈ 15 min</span>
+            <span class="x" data-t="ski.rows.velkaUpa">dětský park u dolní stanice lanovky</span>
+          </li>
+          <li>
+            <span class="n">Černý Důl</span>
+            <span class="d">≈ 10–12 km</span><span class="t">≈ 15–30 min</span>
+            <span class="x" data-t="ski.rows.cernyDul">horský přejezd přes sedlo — klikatá silnice, počítejte s rezervou</span>
+          </li>
+          <li>
+            <span class="n">Pec pod Sněžkou</span>
+            <span class="d">≈ 13 km</span><span class="t">≈ 20 min</span>
+            <span class="x" data-t="ski.rows.pec">druhý největší areál, sjezdovky všech obtížností</span>
+          </li>
+          <li>
+            <span class="n">Malá Úpa</span>
+            <span class="d">≈ 19 km</span><span class="t">≈ 25–30 min</span>
+            <span class="x" data-t="ski.rows.malaUpa">provozuje jiná společnost, platnost skipasu si ověřte</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tři věci, které host jinde nenajde napsané poctivě. -->
+      <div class="vr-ski-notes vr-reveal">
+        <article>
+          <h4 data-t="ski.notes.connect.t">Areály na sebe nenavazují sjezdovkami</h4>
+          <p data-t="ski.notes.connect.b">Nečekejte propojený areál. Jediné lyžařské propojení je SkiTour z Černé hory do Pece — funguje jen jedním směrem a na dvou ze čtyř úseků vás táhne rolba; zpátky se jede skibusem. Mezi ostatními areály se přejíždí autem nebo skibusem, spojuje je společný skipas.</p>
+        </article>
+        <article>
+          <h4 data-t="ski.notes.skibus.t">Dá se lyžovat i bez auta</h4>
+          <p data-t="ski.notes.skibus.b">Páteřní skibus SkiResortu zastavuje přímo ve Svobodě nad Úpou — mimo jiné Maršov II, Maršov I, Sokolovna, autobusové nádraží a hotel PROM. Rozsah linek i podmínky přepravy se mezi sezónami mění, ověřte si je u provozovatele.</p>
+        </article>
+        <article>
+          <h4 data-t="ski.notes.evening.t">Večerní lyžování</h4>
+          <p data-t="ski.notes.evening.b">V sezóně se vypisuje na uměle osvětlených sjezdovkách; nejdelší z nich je Protěž na Černé hoře — podle provozovatele 1,6 km. Konkrétní dny a časy se mění, aktuální rozpis mívá provozovatel.</p>
+        </article>
+      </div>
+
+      <!-- Plán B. Ve dvacetičlenné partě je vždycky někdo, kdo nelyžuje. -->
+      <div class="vr-ski-block vr-reveal">
+        <h3 class="vr-ski-h3" data-t="ski.plan.title">Když se nelyžuje</h3>
+        <p class="vr-ski-lead" data-t="ski.plan.lead">Ve větší partě se vždycky někdo lyžovat nechystá — a ze sedmi nocí bývají lyžařské čtyři až pět. Tohle je zbytek programu.</p>
+        <ul class="vr-ski-tiles">
+          <li><b data-t="ski.plan.tiles.0.n">Aquacentrum Janské Lázně</b><span data-t="ski.plan.tiles.0.m">krytý bazén, pěšky od domu</span></li>
+          <li><b data-t="ski.plan.tiles.1.n">Běžecké stopy</b><span data-t="ski.plan.tiles.1.m">nástupy u Černé hory, ≈ 4 km autem</span></li>
+          <li><b data-t="ski.plan.tiles.2.n">Sklárna Harrachov</b><span data-t="ski.plan.tiles.2.m">prohlídka v teple, autem ≈ 50 min</span></li>
+          <li><b data-t="ski.plan.tiles.3.n">Pevnost Stachelberg</b><span data-t="ski.plan.tiles.3.m">podzemí opevnění u Trutnova</span></li>
+          <li><b data-t="ski.plan.tiles.4.n">Aquapark Karpacz (PL)</b><span data-t="ski.plan.tiles.4.m">velký krytý aquapark, autem ≈ 45 min</span></li>
+        </ul>
+      </div>
+
+      <div class="vr-reveal">
+        <a href="vylety/?season=zima" data-langlink="vylety/?season=zima" class="vr-vyl-cta"><span data-t="ski.cta">Zimní cíle v plánovači</span> <span aria-hidden="true">&#8594;</span></a>
+        <p class="vr-vyl-ctasub" data-t="ski.ctaSub">Mapa, filtry a tip na konkrétní den — bez registrace.</p>
       </div>
     </div>
   </section>
@@ -243,7 +366,14 @@
              ztlumená, zpomalená na 0,6×, bez titulků. Přehrávání řídí JS
              (IntersectionObserver + prefers-reduced-motion + saveData + <640px). -->
         <div class="vr-vids">
-          <div class="vr-vid summer">
+          <!-- KAŽDÁ SEZÓNA UKAZUJE JEN SVOJE VIDEO (verdikt, sekce VIDEA —
+               shoda všech tří specialistů bez výhrad). Letní video se jmenuje
+               „Dům, zahrada, bazén a příjezd" a bazén v něm hraje hlavní roli;
+               pustit ho zimnímu hostovi neznamená ukázat víc, ale vyrobit
+               očekávání, které se rozbije při příjezdu. Druhá sezóna je na
+               jedno kliknutí přepínačem nahoře a její fotky jsou v galerii
+               pod sezónním filtrem. -->
+          <div class="vr-vid summer" data-season-only="leto">
             <button type="button" class="vr-vid-thumb" data-yt="ksVpDr-P8ic" aria-label="Přehrát video: Dům, zahrada, bazén a příjezd">
               <video class="vr-vid-loop" data-loop-src="media/video/loop-summer.mp4?v=30"
                      poster="media/video/loop-summer.jpg?v=30" muted loop playsinline preload="none"
@@ -255,7 +385,7 @@
               <span class="vr-vid-label" data-t="video.summer">Dům, zahrada, bazén a příjezd</span>
             </span>
           </div>
-          <div class="vr-vid winter">
+          <div class="vr-vid winter" data-season-only="zima">
             <button type="button" class="vr-vid-thumb" data-yt="tWCuuovnh2U" aria-label="Přehrát video: Prohlídka domu, sauna a skibus">
               <video class="vr-vid-loop" data-loop-src="media/video/loop-winter.mp4?v=30"
                      poster="media/video/loop-winter.jpg?v=30" muted loop playsinline preload="none"
@@ -279,72 +409,94 @@
         <span class="vr-eyebrow" data-t="amenities.eyebrow">Vybavení</span>
         <h2 class="vr-h2" data-t="amenities.title">Komfort, který drží skupinu pohromadě</h2>
       </div>
-      <!-- Amenity hero card swaps by season (JS fills tag/name/desc):
-           Léto = krytý vyhřívaný bazén, Zima = "Lyžování za rohem".
-           Winter image = our own real winter photo (villa in the snowy forest).
-           TODO(majitel): až SkiResort Černá hora povolí, lze nahradit oficiálními
-           fotkami střediska — do té doby zásadně NEpoužívat AI/fake ski fotky. -->
-      <div class="vr-amen-hero vr-reveal">
-        <div class="vr-amen-imgwrap vr-crossfade">
-          <img class="vr-seasonimg summer" src="media/gallery/17-pool-hall-interior.jpg" alt="Zastřešený vyhřívaný bazén — pohled prosklenou halou" loading="lazy" decoding="async" width="1600" height="1067">
-          <img class="vr-seasonimg winter" src="media/gallery/11-winter-day.jpg" alt="Lyžování za rohem — Villa Rudolf v zimním slunci" loading="lazy" decoding="async" width="1600" height="1067">
-        </div>
-        <!-- SEZÓNNĚ DĚLENÝ SLOT 4 — hlavní karta vybavení. Obě znění ve zdroji. -->
-        <div data-season-only="leto">
-          <span class="vr-tag" data-t="amenities.summer.hero.tag">Wellness</span>
-          <h3 data-t="amenities.summer.hero.name">Zastřešený vyhřívaný bazén</h3>
-          <p data-t="amenities.summer.hero.desc">Bazén pod střechou s ohřevem vody — v letní sezóně v provozu za každého počasí, i když venku prší. Po koupeli rovnou do sauny.</p>
-        </div>
-        <div data-season-only="zima">
-          <span class="vr-tag" data-t="amenities.winter.hero.tag">Lyžování</span>
-          <h3 data-t="amenities.winter.hero.name">Lyžování hned za rohem</h3>
-          <p data-t="amenities.winter.hero.desc">Ski Resort Černá hora jen 4 km. Skibus zastavuje kousek od domu — k vlekům bez auta a hledání parkování; podmínky přepravy si ověřte u provozovatele. Doma navíc lyžárna na uskladnění vybavení.</p>
-        </div>
-      </div>
-      <!-- SEZÓNNĚ DĚLENÝ SLOT 5 — tři karty vybavení. Ve zdroji jsou obě trojice,
-           neaktivní schová CSS; JS už tady nic nevykresluje. -->
-      <div class="vr-amen3 vr-reveal" id="vr-amen3">
-        <article data-season-only="leto">
-          <img src="media/sections/am-wellness.jpg" alt="Privátní finská sauna ve Villa Rudolf" loading="lazy" decoding="async" width="1200" height="900">
-          <span class="vr-tag" data-t="amenities.summer.cards.0.tag">Wellness</span>
-          <h3 data-t="amenities.summer.cards.0.name">Privátní sauna</h3>
-          <p data-t="amenities.summer.cards.0.desc">Finská sauna jen pro vaši skupinu. Žádné sdílení, žádné časové sloty.</p>
+      <!-- ================= JEDEN ZDROJOVÝ SEZNAM, DVĚ ŘAZENÍ =================
+           Oddělený blok „A k tomu celoročně" ZRUŠEN (verdikt, bod b): právě v něm
+           ležela LYŽÁRNA jako čtvrtá odrážka, přestože je to nejčastější dotaz
+           zimních hostů. Teď je tu jeden seznam položek; každá má štítek sezóny
+           (data-season-only, když v druhé sezóně NEPLATÍ) a váhu, kterou dává
+           CSS `order` podle .vr-root[data-season]:
+             zima:  lyžárna → sauna → kuchyně a stůl → ohniště → altán → …
+             léto:  bazén → altán → dětské hřiště → sauna → kuchyně → …
+           První položka v pořadí se vykreslí jako široká hlavní karta, další tři
+           jako velké, zbytek jako malé — hierarchie zůstává, duplicita mizí.
+           Texty jsou celoroční (VRSTVA A): nesmí v nich být sezónní slovo, jinak
+           se sem vrátí past typu „bazén i v mrazu".
+           Fotky sauny sem byly PŘESUNUTY z ložnicového karuselu (verdikt, bod a) —
+           opakovaly se na stránce dvakrát. -->
+      <div class="vr-amen vr-reveal" id="vr-amen">
+        <article data-am="pool" data-season-only="leto">
+          <img src="media/gallery/17-pool-hall-interior.jpg" alt="Zastřešený vyhřívaný bazén — pohled prosklenou halou" loading="lazy" decoding="async" width="1600" height="1067">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.pool.tag">Wellness</span>
+            <h3 data-t="amenities.items.pool.name">Zastřešený vyhřívaný bazén</h3>
+            <p data-t="amenities.items.pool.desc">Bazén pod střechou s ohřevem vody — v letní sezóně v provozu za každého počasí, i když venku prší. Po koupeli rovnou do sauny.</p>
+          </div>
         </article>
-        <article data-season-only="leto">
-          <img src="media/sections/am-pergola-table.jpg" alt="Krytý altán s velkým stolem pro celou skupinu" loading="lazy" decoding="async" width="1200" height="900">
-          <span class="vr-tag" data-t="amenities.summer.cards.1.tag">Venkovní život</span>
-          <h3 data-t="amenities.summer.cards.1.name">Velký altán</h3>
-          <p data-t="amenities.summer.cards.1.desc">Kryté posezení, kam se vejde celá skupina najednou. Společné večeře venku i za deště.</p>
+        <article data-am="skiroom" data-season-only="zima">
+          <img src="media/sections/am-skiroom.jpg" alt="Lyžárna ve Villa Rudolf — stojany na lyže a držáky na boty" loading="lazy" decoding="async" width="1600" height="1068">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.skiroom.tag">Lyžování</span>
+            <h3 data-t="amenities.items.skiroom.name">Lyžárna</h3>
+            <p data-t="amenities.items.skiroom.desc">Samostatná místnost jen na lyže a boty: stojany na lyže a snowboardy, držáky na boty a omyvatelná podlaha. Mokré vybavení zůstane dole a nemusí do pokojů — v zimě je to nejčastější otázka, kterou dostáváme.</p>
+          </div>
         </article>
-        <article data-season-only="leto">
-          <img src="media/gallery/02-playground-house.jpg" alt="Dětské hřiště s prolézačkou a lanovou stěnou u domu" loading="lazy" decoding="async" width="1200" height="900">
-          <span class="vr-tag" data-t="amenities.summer.cards.2.tag">Pro rodiny</span>
-          <h3 data-t="amenities.summer.cards.2.name">Dětské hřiště</h3>
-          <p data-t="amenities.summer.cards.2.desc">Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od altánu.</p>
+        <article data-am="sauna">
+          <img src="media/sections/int-sauna.jpg" alt="Uvnitř finské sauny — lavice ze světlého dřeva a kamna" loading="lazy" decoding="async" width="1600" height="1200">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.sauna.tag">Wellness</span>
+            <h3 data-t="amenities.items.sauna.name">Privátní finská sauna</h3>
+            <p data-t="amenities.items.sauna.desc">Finská sauna jen pro vaši skupinu, s předsálím a sprchou. Žádné sdílení, žádné časové sloty.</p>
+          </div>
         </article>
-        <article data-season-only="zima">
-          <img src="media/sections/am-wellness.jpg" alt="Privátní finská sauna ve Villa Rudolf" loading="lazy" decoding="async" width="1200" height="900">
-          <span class="vr-tag" data-t="amenities.winter.cards.0.tag">Wellness</span>
-          <h3 data-t="amenities.winter.cards.0.name">Po lyžích do sauny</h3>
-          <p data-t="amenities.winter.cards.0.desc">Finská sauna jen pro vaši skupinu — ideální po dni na sjezdovce. Žádné sdílení, žádné časové sloty.</p>
+        <article data-am="kitchen">
+          <img src="media/sections/am-kitchen.jpg" alt="Plně vybavená kuchyně a velký dřevěný stůl pro celou skupinu" loading="lazy" decoding="async" width="1200" height="900">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.kitchen.tag">Společně</span>
+            <h3 data-t="amenities.items.kitchen.name">Kuchyně a stůl pro celou skupinu</h3>
+            <p data-t="amenities.items.kitchen.desc">Plně vybavená kuchyně a velký dřevěný stůl, u kterého se sejdete všichni najednou.</p>
+          </div>
         </article>
-        <article data-season-only="zima">
-          <img src="media/gallery/08-firepit-night.jpg" alt="Nasvícené ohniště s gabionovou stěnou po setmění" loading="lazy" decoding="async" width="1200" height="900">
-          <span class="vr-tag" data-t="amenities.winter.cards.1.tag">Venkovní život</span>
-          <h3 data-t="amenities.winter.cards.1.name">Zimní večery u ohniště</h3>
-          <p data-t="amenities.winter.cards.1.desc">Nově dokončené ohniště s gabionovou stěnou se po setmění samo nasvítí — teplo pod širým nebem, i když venku mrzne.</p>
+        <article data-am="firepit">
+          <img src="media/gallery/08-firepit-night.jpg" alt="Nasvícené ohniště s gabionovou stěnou po setmění" loading="lazy" decoding="async" width="1600" height="1067">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.firepit.tag">Venkovní život</span>
+            <h3 data-t="amenities.items.firepit.name">Ohniště s gabionovou stěnou</h3>
+            <p data-t="amenities.items.firepit.desc">Nově dokončené otevřené ohniště pojme celou skupinu. Po setmění se samo nasvítí — teplo pod širým nebem.</p>
+          </div>
         </article>
-        <article data-season-only="zima">
+        <article data-am="altan">
           <img src="media/sections/am-pergola-table.jpg" alt="Krytý altán s grilovacím pultem a stolem pro celou skupinu" loading="lazy" decoding="async" width="1200" height="900">
-          <span class="vr-tag" data-t="amenities.winter.cards.2.tag">Venkovní život</span>
-          <h3 data-t="amenities.winter.cards.2.name">Altán i pod sněhem</h3>
-          <p data-t="amenities.winter.cards.2.desc">Krytý altán s grilovacím pultem a stolem pro celou skupinu stojí i v zimě — pod střechou se grilovat dá, jen se k němu jde po sněhu.</p>
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.altan.tag">Venkovní život</span>
+            <h3 data-t="amenities.items.altan.name">Velký altán s grilem</h3>
+            <p data-t="amenities.items.altan.desc">Kryté posezení s grilovacím pultem a stolem, kam se vejde celá skupina najednou. Střecha drží, ať prší, nebo sněží.</p>
+          </div>
+        </article>
+        <article data-am="hriste" data-season-only="leto">
+          <img src="media/gallery/02-playground-house.jpg" alt="Dětské hřiště s prolézačkou a lanovou stěnou u domu" loading="lazy" decoding="async" width="1600" height="1067">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.hriste.tag">Pro rodiny</span>
+            <h3 data-t="amenities.items.hriste.name">Dětské hřiště</h3>
+            <p data-t="amenities.items.hriste.desc">Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od altánu.</p>
+          </div>
+        </article>
+        <article data-am="billiard">
+          <img src="media/sections/am-billiard.jpg" alt="Kulečníkový stůl v apartmá Suite" loading="lazy" decoding="async" width="1200" height="900">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.billiard.tag">Uvnitř</span>
+            <h3 data-t="amenities.items.billiard.name">Kulečník</h3>
+            <p data-t="amenities.items.billiard.desc">Kulečníkový stůl v apartmá Suite — na líné odpoledne i na turnaj po večeři.</p>
+          </div>
+        </article>
+        <article data-am="lounge">
+          <img src="media/sections/am-lounge.jpg" alt="Obývací část apartmá Suite — dlouhá sedací souprava pod trámy" loading="lazy" decoding="async" width="1600" height="1000">
+          <div class="vr-amen-body">
+            <span class="vr-tag" data-t="amenities.items.lounge.tag">Uvnitř</span>
+            <h3 data-t="amenities.items.lounge.name">Obývací část apartmá</h3>
+            <p data-t="amenities.items.lounge.desc">Dlouhá sedací souprava pod trámy a velký stůl — vlastní společenský prostor apartmá Suite.</p>
+          </div>
         </article>
       </div>
-      <!-- Celoroční vybavení (nezávislé na sezóně): stůl pro celou skupinu,
-           kulečník, lyžárna, obývací část apartmá. -->
-      <p class="vr-amen-extra-title vr-reveal" data-t="amenities.extraTitle">A k tomu celoročně</p>
-      <div class="vr-amen4 vr-reveal" id="vr-amen4"></div>
     </div>
   </section>
 
@@ -616,8 +768,12 @@
     </div>
   </section>
 
-  <!-- ===================== Trips ===================== -->
-  <section id="vylety" class="sec-vylety">
+  <!-- ===================== Trips (JEN LÉTO) =====================
+       V zimě tuhle sekci nikdo nepotřebuje — hřebenovky, vodopády, bobovka
+       a Adršpach jako hlavní tahák jsou letní program. Zimní ekvivalent je
+       exkluzivní sekce #lyzovani nahoře (a plán B „Když se nelyžuje" v ní).
+       Kotva #vylety zůstává v DOM kvůli starým odkazům z Bookingu a Airbnb. -->
+  <section id="vylety" class="sec-vylety" data-season-only="leto">
     <div class="vr-wrap">
       <div class="vr-reveal vr-sec-head">
         <div style="max-width:700px">
@@ -845,7 +1001,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=41" defer></script>
+<script src="assets/site.js?v=42" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

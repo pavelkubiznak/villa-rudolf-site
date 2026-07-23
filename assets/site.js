@@ -74,7 +74,7 @@ const VR_REVIEWS = {
     { author: 'Ryan', platform: 'airbnb', lang: 'en',
       quote: "I stayed at Pavel's place with a huge group of friends and it was the perfect accommodation! … We fit a ton of people comfortably and never felt crowded … everything was spotless.",
       quote_cs: "Bydleli jsme u Pavla s obrovskou partou přátel a bylo to dokonalé ubytování! … Pohodlně jsme se vešli všichni a nikdy jsme se necítili nahusto … všechno bylo bez poskvrnky." },
-    { author: 'Torsten', platform: 'booking', lang: 'de',
+    { author: 'Torsten', platform: 'booking', lang: 'de', pool: true,
       quote: "Rundum sehr gut. Der Pool, die Sauna, die Küche, die Zimmeraufteilung – super. Die Betten waren, wie von allen neun Personen bestätigt, sehr gut. Pavel war immer erreichbar…",
       quote_cs: "Vynikající celkově. Bazén, sauna, kuchyň i uspořádání pokoje byly skvělé. Jak potvrdilo všech devět z nás, postele byly velmi pohodlné. Pavel byl vždy k dispozici…" },
     { author: 'Marta', platform: 'booking', lang: 'pl',
@@ -83,7 +83,7 @@ const VR_REVIEWS = {
     { author: 'Evžen', platform: 'booking', lang: 'cs',
       quote: "Moc se nám tu líbilo. Ubytování bylo krásné, čisté a velmi dobře vybavené. … Majitel byl naprosto úžasný - velmi milý, ochotný a ve všem nám pomohl. Komunikace byla perfektní.",
       quote_cs: null },
-    { author: 'Martina', platform: 'google', lang: 'cs',
+    { author: 'Martina', platform: 'google', lang: 'cs', pool: true,
       quote: "Perfektní servis, skvělé zázemí, ochotný majitel, spousta výletů pro každé počasí a všechny věkové kategorie, bazén se dá využít i za deště - super výhoda!",
       quote_cs: null },
     { author: 'Grzegorz', platform: 'google', lang: 'pl',
@@ -108,9 +108,12 @@ const VR_CONTACT = {
    (dnes jeden: RK masáže, zóna villa). Aby počty na homepage souhlasily
    s tím, co plánovač reálně ukáže, přičítáme je i tady. */
 const VR_LOCAL_EXTRA = { foot: 1, car: 0, day: 0 };
+/* Fallback = LETNÍ stav katalogu k 7/2026 (38 cílů + 1 lokální doplněk).
+   Používá se jen tehdy, když se katalog nepodaří stáhnout; jinak se počty
+   dopočítají pro aktuální sezónu z živých dat (viz loadTripCounts). */
 const VR_TRIP_COUNTS = { foot: 8, car: 27, day: 4, total: 39 };
 const TRIPS_URL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/trips.json';
-const TRIPS_CACHE_KEY = 'vr_tripcounts_v2';   // v2 = počty včetně lokálních doplňků
+const TRIPS_CACHE_KEY = 'vr_trips_v3';   // v3 = keš slim katalogu, ne hotových počtů
 const TRIPS_TTL = 21600000; // 6 h
 
 /* ============================ FAKTA O DOMĚ — JEDINÝ ZDROJ PRAVDY ============================
@@ -169,7 +172,7 @@ const T = {
       desc: 'Celý dům i pozemek jen pro vaši skupinu {minHostu}–{maxHostu} osob ve Svobodě nad Úpou. {loznice} ložnic, {koupelny} koupelen, {pozemek} m² pozemku, sauna, lyžárna. Lyžování i bazén sezónně.',
       locale: 'cs_CZ',
     },
-    nav: { dum: 'Dům', interier: 'Interiér', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
+    nav: { dum: 'Dům', interier: 'Interiér', loznice: 'Ložnice', lyzovani: 'Lyžování', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
       eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
       eyebrowWinter: 'Lyžování za rohem · Krkonoše',
@@ -193,7 +196,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + lyžárna', v: 'privátní sauna, lyžárna přímo v domě' },
       parking:        { k: 'Vlastní parkoviště', v: 'na pozemku hned u vchodu, za vlastní bránou' },
     },
-    ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno', teaserMore: 'Přečíst recenze' },
+    ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno', avg: 'průměr napříč platformami', teaserMore: 'Přečíst recenze' },
     direct: {
       badge: '<b>Přímá rezervace = nejlepší cena.</b> O 5 % výhodněji než na platformách. Osobní přístup a férové storno podmínky.',
       book: '<b>Přímá rezervace = nejlepší cena.</b> O 5 % výhodněji než na platformách. Osobní přístup a férové storno podmínky.',
@@ -202,7 +205,7 @@ const T = {
     statement: {
       eyebrow: 'Celý areál jen pro vás',
       title: 'Za bránou už jste jen vy.',
-      lead: 'Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, oplocený park, saunu, altán, ohniště a v letní sezóně i bazén. <span class="vr-sm-hide">Žádná recepce, žádní cizí lidé u snídaně, žádné čekání, až se uvolní sauna.</span>',
+      lead: 'Nerezervujete si pokoje v domě, kde bydlí ještě někdo další. Berete si celý pozemek — dům, oplocený park, saunu, altán i ohniště. <span class="vr-sm-hide">Žádná recepce, žádní cizí lidé u snídaně, žádné čekání, až se uvolní sauna.</span>',
       /* Čísla z VR_FACTS. Lůžka ani ložnice se tu ZÁMĚRNĚ neopakují — jsou
          v rychlých faktech kousek nad tím; tenhle panel je o výlučnosti. */
       stats: [
@@ -213,31 +216,27 @@ const T = {
       ],
     },
     band: { eyebrow: 'Jeden večer tady' },
+    /* ===================== VYBAVENÍ — JEDEN SEZNAM, DVĚ ŘAZENÍ =====================
+       Oddělený blok „A k tomu celoročně" je zrušen; položky mají jediné znění
+       a pořadí jim dává CSS `order` podle sezóny (viz .vr-amen v site.css):
+         zima: lyžárna → sauna → kuchyně → ohniště → altán → kulečník → apartmá
+         léto: bazén → altán → hřiště → sauna → kuchyně → ohniště → kulečník → apartmá
+       Texty jsou CELOROČNÍ (vrstva A): žádné sezónní slovo. Sezónnost je
+       vlastností DAT (data-season-only v HTML), ne věty v textu — právě proto
+       už nemůže vzniknout další „bazén v mrazu". */
     amenities: {
       eyebrow: 'Vybavení', title: 'Komfort, který drží skupinu pohromadě', drop: 'Přetáhněte sem fotku',
-      summer: {
-        hero: { tag: 'Wellness', name: 'Zastřešený vyhřívaný bazén', desc: 'Bazén pod střechou s ohřevem vody — v letní sezóně v provozu za každého počasí, i když venku prší. Po koupeli rovnou do sauny.' },
-        cards: [
-          { tag: 'Wellness', name: 'Privátní sauna', desc: 'Finská sauna jen pro vaši skupinu. Žádné sdílení, žádné časové sloty.' },
-          { tag: 'Venkovní život', name: 'Velký altán', desc: 'Kryté posezení, kam se vejde celá skupina najednou. Společné večeře venku i za deště.' },
-          { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od altánu.' },
-        ],
+      items: {
+        pool:     { tag: 'Wellness', name: 'Zastřešený vyhřívaný bazén', desc: 'Bazén pod střechou s ohřevem vody — v letní sezóně v provozu za každého počasí, i když venku prší. Po koupeli rovnou do sauny.' },
+        skiroom:  { tag: 'Lyžování', name: 'Lyžárna', desc: 'Samostatná místnost jen na lyže a boty: stojany na lyže a snowboardy, držáky na boty a omyvatelná podlaha. Mokré vybavení zůstane dole a nemusí do pokojů — v zimě je to nejčastější otázka, kterou dostáváme.' },
+        sauna:    { tag: 'Wellness', name: 'Privátní finská sauna', desc: 'Finská sauna jen pro vaši skupinu, s předsálím a sprchou. Žádné sdílení, žádné časové sloty.' },
+        kitchen:  { tag: 'Společně', name: 'Kuchyně a stůl pro celou skupinu', desc: 'Plně vybavená kuchyně a velký dřevěný stůl, u kterého se sejdete všichni najednou.' },
+        firepit:  { tag: 'Venkovní život', name: 'Ohniště s gabionovou stěnou', desc: 'Nově dokončené otevřené ohniště pojme celou skupinu. Po setmění se samo nasvítí — teplo pod širým nebem.' },
+        altan:    { tag: 'Venkovní život', name: 'Velký altán s grilem', desc: 'Kryté posezení s grilovacím pultem a stolem, kam se vejde celá skupina najednou. Střecha drží, ať prší, nebo sněží.' },
+        hriste:   { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od altánu.' },
+        billiard: { tag: 'Uvnitř', name: 'Kulečník', desc: 'Kulečníkový stůl v apartmá Suite — na líné odpoledne i na turnaj po večeři.' },
+        lounge:   { tag: 'Uvnitř', name: 'Obývací část apartmá', desc: 'Dlouhá sedací souprava pod trámy a velký stůl — vlastní společenský prostor apartmá Suite.' },
       },
-      winter: {
-        hero: { tag: 'Lyžování', name: 'Lyžování hned za rohem', desc: 'Ski Resort Černá hora jen 4 km. Skibus zastavuje kousek od domu — k vlekům bez auta a hledání parkování; podmínky přepravy si ověřte u provozovatele. Doma navíc lyžárna na uskladnění vybavení.' },
-        cards: [
-          { tag: 'Wellness', name: 'Po lyžích do sauny', desc: 'Finská sauna jen pro vaši skupinu — ideální po dni na sjezdovce. Žádné sdílení, žádné časové sloty.' },
-          { tag: 'Venkovní život', name: 'Zimní večery u ohniště', desc: 'Nově dokončené ohniště s gabionovou stěnou se po setmění samo nasvítí — teplo pod širým nebem, i když venku mrzne.' },
-          { tag: 'Venkovní život', name: 'Altán i pod sněhem', desc: 'Krytý altán s grilovacím pultem a stolem pro celou skupinu stojí i v zimě — pod střechou se grilovat dá, jen se k němu jde po sněhu.' },
-        ],
-      },
-      extraTitle: 'A k tomu celoročně',
-      extra: [
-        { name: 'Kuchyně a stůl pro celou skupinu', desc: 'Plně vybavená kuchyně a velký dřevěný stůl, u kterého se sejdete všichni najednou.' },
-        { name: 'Obývací část apartmá', desc: 'Dlouhá sedací souprava pod trámy a velký stůl — vlastní společenský prostor apartmá Suite.' },
-        { name: 'Kulečník', desc: 'Kulečníkový stůl v apartmá Suite — na deštivé odpoledne i na turnaj po večeři.' },
-        { name: 'Lyžárna', desc: 'Samostatná místnost jen na lyže a boty — stojany na vybavení a omyvatelná podlaha. Nic se netahá do pokojů.' },
-      ],
     },
     bedrooms: {
       eyebrow: 'Ložnice a lůžka',
@@ -275,6 +274,64 @@ const T = {
       winter: { tag: 'Zima', title: 'Lyžovačka bez starostí', desc: 'Ski Resort Černá hora jen 4 km, lyžárna na vybavení přímo v domě a privátní finská sauna na zahřátí po dni na sjezdovce.',
         list: ['Ski Resort Černá hora 4 km, skibus 200 m od brány', 'Privátní finská sauna a nasvícené ohniště', 'Lyžárna na uskladnění vybavení'] },
     },
+    /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
+       Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
+       DO TÉTO VĚTVE NIKDY NEPIŠ: ceny skipasů, jízdní řády, provozní a otevírací
+       doby, počty aktuálně otevřených vleků, „skibus zdarma" jako tvrdé tvrzení,
+       „zelené sjezdovky" (všechny tři ve Svobodě jsou MODRÉ), konkrétní dny
+       a časy večerního lyžování ani počet areálů na skipas jako tvrdé číslo —
+       provozovatel si v těchto údajích na vlastním webu protiřečí a zastaralý
+       údaj je horší než žádný (host podle něj plánuje den).
+       Čísla u vleků a sjezdovek jsou INSTALOVANÝ stav, ne garance provozu. */
+    ski: {
+      eyebrow: 'Lyžování · SkiResort Černá hora – Pec',
+      title: 'Lyžování odsud',
+      note: 'Uvádíme jen to, co se nemění mezi sezónami. Ceny, jízdní řády a provozní doby najdete u provozovatele.',
+      local: {
+        tag: '1,9 km od domu',
+        name: 'Lyžařský areál přímo ve Svobodě nad Úpou',
+        desc: 'Nejbližší sjezdovky nejsou „někde v horách" — jsou ve stejném městě jako dům. Autem tam jste za pět minut, pěšky do půl hodiny. Je to nejmenší areál resortu a přesně proto se hodí na první lyžování dětí a začátečníků, zatímco zbytek party vyrazí na velké svahy.',
+        specs: [
+          'modré (lehké) sjezdovky, každá zhruba 350 m',
+          'vleky — lanovka tu není',
+          'autem od domu — 1,9 km po silnici',
+        ],
+        school: 'V areálu je lyžařská škola, půjčovna vybavení i dětský pojízdný koberec.',
+        snow: 'Poctivě: je to nejníže položený areál resortu (zhruba 530–600 m), takže jeho provoz stojí a padá se sněhem a zasněžováním a sezóna tu bývá kratší než výš v horách. Než na něj postavíte celý pobyt, ověřte si, že jede.',
+      },
+      resorts: {
+        title: 'Jeden skipas, několik areálů',
+        lead: 'Dům leží v oblasti SkiResortu ČERNÁ HORA – PEC, kde podle provozovatele platí jeden skipas napříč několika areály. Dojezdy autem ze Svobody nad Úpou:',
+      },
+      rows: {
+        cernaHora: 'největší areál resortu',
+        velkaUpa: 'dětský park u dolní stanice lanovky',
+        cernyDul: 'horský přejezd přes sedlo — klikatá silnice, počítejte s rezervou',
+        pec: 'druhý největší areál, sjezdovky všech obtížností',
+        malaUpa: 'provozuje jiná společnost, platnost skipasu si ověřte',
+      },
+      notes: {
+        connect: { t: 'Areály na sebe nenavazují sjezdovkami',
+          b: 'Nečekejte propojený areál. Jediné lyžařské propojení je SkiTour z Černé hory do Pece — funguje jen jedním směrem a na dvou ze čtyř úseků vás táhne rolba; zpátky se jede skibusem. Mezi ostatními areály se přejíždí autem nebo skibusem, spojuje je společný skipas.' },
+        skibus: { t: 'Dá se lyžovat i bez auta',
+          b: 'Páteřní skibus SkiResortu zastavuje přímo ve Svobodě nad Úpou — mimo jiné Maršov II, Maršov I, Sokolovna, autobusové nádraží a hotel PROM. Rozsah linek i podmínky přepravy se mezi sezónami mění, ověřte si je u provozovatele.' },
+        evening: { t: 'Večerní lyžování',
+          b: 'V sezóně se vypisuje na uměle osvětlených sjezdovkách; nejdelší z nich je Protěž na Černé hoře — podle provozovatele 1,6 km. Konkrétní dny a časy se mění, aktuální rozpis mívá provozovatel.' },
+      },
+      plan: {
+        title: 'Když se nelyžuje',
+        lead: 'Ve větší partě se vždycky někdo lyžovat nechystá — a ze sedmi nocí bývají lyžařské čtyři až pět. Tohle je zbytek programu.',
+        tiles: [
+          { n: 'Aquacentrum Janské Lázně', m: 'krytý bazén, pěšky od domu' },
+          { n: 'Běžecké stopy', m: 'nástupy u Černé hory, ≈ 4 km autem' },
+          { n: 'Sklárna Harrachov', m: 'prohlídka v teple, autem ≈ 50 min' },
+          { n: 'Pevnost Stachelberg', m: 'podzemí opevnění u Trutnova' },
+          { n: 'Aquapark Karpacz (PL)', m: 'velký krytý aquapark, autem ≈ 45 min' },
+        ],
+      },
+      cta: 'Zimní cíle v plánovači',
+      ctaSub: 'Mapa, filtry a tip na konkrétní den — bez registrace.',
+    },
     lokalita: {
       eyebrow: 'Lokalita · Svoboda nad Úpou',
       title: 'V horách, ne na konci světa.',
@@ -302,14 +359,17 @@ const T = {
           link: 'Ukázat v plánovači →' },
       ],
       arrive: [
-        { k: 'Praha', v: 'přibližně 2 hodiny autem' },
-        { k: 'Vratislav (PL)', v: 'přibližně 2 hodiny autem' },
-        { k: 'Drážďany', v: 'přibližně 3 hodiny autem' },
-        { k: 'Vlakem', v: 'nádraží Svoboda nad Úpou, k domu pěšky' },
-        { k: 'Autobusem', v: 'zastávka ve městě, k domu pěšky' },
-        { k: 'Skibus', v: 'zastávka 200 m od brány; tarif ověřte u provozovatele' },
-        { k: 'Parkování', v: 'přímo na pozemku, za bránou' },
+        { id: 'praha', k: 'Praha', v: 'přibližně 2 hodiny autem' },
+        { id: 'wroclaw', k: 'Vratislav (PL)', v: 'přibližně 2 hodiny autem' },
+        { id: 'dresden', k: 'Drážďany', v: 'přibližně 3 hodiny autem' },
+        { id: 'train', k: 'Vlakem', v: 'nádraží Svoboda nad Úpou, k domu pěšky' },
+        { id: 'bus', k: 'Autobusem', v: 'zastávka ve městě, k domu pěšky' },
+        { id: 'skibus', k: 'Skibus', v: 'zastávka 200 m od brány; tarif ověřte u provozovatele' },
+        { id: 'parking', k: 'Parkování', v: 'přímo na pozemku, za bránou' },
       ],
+      /* V zimě se vlak a autobus slévají do JEDNOHO řádku — nemažeme je
+         (vždycky někdo dojíždí zvlášť), jen jim bereme vizuální váhu. */
+      arriveTransitWinter: { id: 'transit', k: 'Vlak a autobus', v: 'nádraží i zastávka ve městě, k domu pěšky' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Sněžka', snezkaMeta: '1603 m',
@@ -353,7 +413,7 @@ const T = {
         { name: 'Wellness u sauny', desc: 'Předsálí sauny — lavice na vychladnutí, sprcha a vstup do finské sauny. Celé jen pro vaši skupinu.' },
         { name: 'Finská sauna', desc: 'Uvnitř vyhřáté finské sauny — lavice ze světlého dřeva a kamna.' },
         { name: 'Lyžárna', desc: 'Samostatná lyžárna v suterénu — stojany na lyže a snowboardy a držáky na boty. Vybavení zůstane dole a nemusí do pokojů.' },
-        { name: 'Zahrada v zimě', desc: 'Zasněžená zahrada od altánu k domu — vzrostlé smrky, prošlapané cestičky a zastřešený bazén.' },
+        { name: 'Zahrada v zimě', desc: 'Zasněžená zahrada od altánu k domu — vzrostlé smrky, prošlapané cestičky a hory nad střechami.' },
         { name: 'Altán s grily', desc: 'Týž altán jako v létě, jen pod sněhem: krov z masivního dřeva, grilovací pult podél stěny a otevřené strany do zahrady.' },
       ],
       scenesSummer: [
@@ -445,7 +505,7 @@ const T = {
       desc: 'Whole house and grounds for a group of {minHostu}–{maxHostu} in Svoboda nad Úpou, Krkonoše. {loznice} bedrooms, {koupelny} bathrooms, {pozemek} m², sauna, ski room. Skiing and pool in season.',
       locale: 'en_GB',
     },
-    nav: { dum: 'The House', interier: 'Interior', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
+    nav: { dum: 'The House', interier: 'Interior', loznice: 'Bedrooms', lyzovani: 'Skiing', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
       eyebrow: 'The whole house, just for your group · Krkonoše',
       eyebrowWinter: 'Skiing just around the corner · Krkonoše',
@@ -465,7 +525,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + ski room', v: 'private sauna, ski room inside the house' },
       parking:        { k: 'Private parking', v: 'on the grounds by the door, behind your own gate' },
     },
-    ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified', teaserMore: 'Read the reviews' },
+    ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified', avg: 'average across platforms', teaserMore: 'Read the reviews' },
     direct: {
       badge: '<b>Book direct = best price.</b> 5% better than the platforms. Personal service and fair cancellation terms.',
       book: '<b>Book direct = best price.</b> 5% better than the platforms. Personal service and fair cancellation terms.',
@@ -474,7 +534,7 @@ const T = {
     statement: {
       eyebrow: 'The whole estate, only yours',
       title: 'Past the gate, it\'s just you.',
-      lead: 'You are not booking rooms in a house where somebody else is staying too. You take the whole place — the house, the fenced grounds, the sauna, the gazebo, the fire pit and, in the summer season, the pool. <span class="vr-sm-hide">No reception desk, no strangers at breakfast, no waiting for the sauna to free up.</span>',
+      lead: 'You are not booking rooms in a house where somebody else is staying too. You take the whole place — the house, the fenced grounds, the sauna, the gazebo and the fire pit. <span class="vr-sm-hide">No reception desk, no strangers at breakfast, no waiting for the sauna to free up.</span>',
       stats: [
         { num: '{pozemek} m²', label: 'of fenced grounds for your group alone' },
         { num: '1 table', label: 'big enough for the whole party to sit down at once' },
@@ -483,31 +543,27 @@ const T = {
       ],
     },
     band: { eyebrow: 'One evening here' },
+    /* ===================== VYBAVENÍ — JEDEN SEZNAM, DVĚ ŘAZENÍ =====================
+       Oddělený blok „A k tomu celoročně" je zrušen; položky mají jediné znění
+       a pořadí jim dává CSS `order` podle sezóny (viz .vr-amen v site.css):
+         zima: lyžárna → sauna → kuchyně → ohniště → altán → kulečník → apartmá
+         léto: bazén → altán → hřiště → sauna → kuchyně → ohniště → kulečník → apartmá
+       Texty jsou CELOROČNÍ (vrstva A): žádné sezónní slovo. Sezónnost je
+       vlastností DAT (data-season-only v HTML), ne věty v textu — právě proto
+       už nemůže vzniknout další „bazén v mrazu". */
     amenities: {
-      eyebrow: 'Amenities', title: 'Comfort that keeps the group together', drop: 'Drop a photo here',
-      summer: {
-        hero: { tag: 'Wellness', name: 'Covered heated pool', desc: 'An indoor pool with heated water — open right through the summer season in any weather, rain included. Straight from the water into the sauna.' },
-        cards: [
-          { tag: 'Wellness', name: 'Private sauna', desc: 'A Finnish sauna for your group only. No sharing, no time slots.' },
-          { tag: 'Outdoor living', name: 'Large gazebo', desc: 'Covered seating big enough for the whole group at once. Shared dinners outside, even in the rain.' },
-          { tag: 'For families', name: 'Children’s playground', desc: 'Climbing frames, a small climbing wall and a rope wall. The kids get their own space in sight of the gazebo.' },
-        ],
+      eyebrow: 'Amenities', title: 'Comfort that keeps a group together', drop: 'Drop a photo here',
+      items: {
+        pool:     { tag: 'Wellness', name: 'Covered heated pool', desc: 'An indoor pool with heated water — open right through the summer season in any weather, rain included. Straight from the water into the sauna.' },
+        skiroom:  { tag: 'Skiing', name: 'Ski room', desc: 'A separate room just for skis and boots: racks for skis and snowboards, boot holders and a washable floor. Wet gear stays downstairs and never goes into the bedrooms — in winter this is the question we get most often.' },
+        sauna:    { tag: 'Wellness', name: 'Private Finnish sauna', desc: 'A Finnish sauna for your group alone, with an anteroom and a shower. No sharing, no time slots.' },
+        kitchen:  { tag: 'Together', name: 'Kitchen and a table for everyone', desc: 'A fully equipped kitchen and a big wooden table that seats the whole group at once.' },
+        firepit:  { tag: 'Outdoor life', name: 'Fire pit with a gabion wall', desc: 'A newly finished open fire pit that takes the whole group. After dark it lights itself — warmth under an open sky.' },
+        altan:    { tag: 'Outdoor life', name: 'Large gazebo with a grill', desc: 'Covered seating with a grill counter and a table big enough for everyone at once. The roof holds, whether it rains or snows.' },
+        hriste:   { tag: 'For families', name: 'Playground', desc: 'Climbing frames, a small climbing wall and a rope wall. The kids get their own corner within sight of the gazebo.' },
+        billiard: { tag: 'Indoors', name: 'Billiards', desc: 'A billiard table in the Suite apartment — for a lazy afternoon or a tournament after dinner.' },
+        lounge:   { tag: 'Indoors', name: 'Suite living area', desc: 'A long sofa under the beams and a big table — the Suite apartment has its own social space.' },
       },
-      winter: {
-        hero: { tag: 'Skiing', name: 'Skiing just around the corner', desc: 'Ski Resort Černá hora just 4 km away. The ski bus stops a short walk from the house — reach the lifts without the car or the parking hunt; check current fares with the operator. Plus a ski room at home for your gear.' },
-        cards: [
-          { tag: 'Wellness', name: 'Sauna after the slopes', desc: 'A Finnish sauna for your group only — perfect after a day on the piste. No sharing, no time slots.' },
-          { tag: 'Outdoor living', name: 'Winter evenings by the fire', desc: 'The newly finished fire pit with a gabion wall lights up on its own after dark — warmth under the open sky, even in the frost.' },
-          { tag: 'Outdoor living', name: 'The gazebo under snow', desc: 'The covered gazebo with its grill counter and a table for the whole group stands through the winter too — you can still grill under its roof, you just walk there through the snow.' },
-        ],
-      },
-      extraTitle: 'And year-round',
-      extra: [
-        { name: 'Kitchen and a table for everyone', desc: 'A fully equipped kitchen and a large wooden table that seats the whole group at once.' },
-        { name: 'The Suite’s own lounge', desc: 'A long sofa under the beams and a big table — the Suite apartment’s own living and dining area.' },
-        { name: 'Billiards', desc: 'A billiard table in the Suite apartment — for a rainy afternoon or a tournament after dinner.' },
-        { name: 'Ski room', desc: 'A separate room just for skis and boots — racks for your gear and a washable floor. Nothing has to go up to the bedrooms.' },
-      ],
     },
     bedrooms: {
       eyebrow: 'Bedrooms & beds',
@@ -545,6 +601,64 @@ const T = {
       winter: { tag: 'Winter', title: 'Skiing without the hassle', desc: 'Ski Resort Černá hora just 4 km away, a ski room for your gear in the house, and a private Finnish sauna to warm up after a day on the slopes.',
         list: ['Ski Resort Černá hora 4 km, ski-bus stop 200 m', 'Private Finnish sauna and a lit fire pit', 'Ski room for your gear'] },
     },
+    /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
+       Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
+       DO TÉTO VĚTVE NIKDY NEPIŠ: ceny skipasů, jízdní řády, provozní a otevírací
+       doby, počty aktuálně otevřených vleků, „skibus zdarma" jako tvrdé tvrzení,
+       „zelené sjezdovky" (všechny tři ve Svobodě jsou MODRÉ), konkrétní dny
+       a časy večerního lyžování ani počet areálů na skipas jako tvrdé číslo —
+       provozovatel si v těchto údajích na vlastním webu protiřečí a zastaralý
+       údaj je horší než žádný (host podle něj plánuje den).
+       Čísla u vleků a sjezdovek jsou INSTALOVANÝ stav, ne garance provozu. */
+    ski: {
+      eyebrow: 'Skiing · SkiResort Černá hora – Pec',
+      title: 'Skiing from here',
+      note: 'We only publish what does not change between seasons. Prices, timetables and opening hours are with the operator.',
+      local: {
+        tag: '1.9 km from the house',
+        name: 'A ski area right in Svoboda nad Úpou',
+        desc: 'The nearest slopes are not "somewhere up in the mountains" — they are in the same small town as the house. Five minutes by car, under half an hour on foot. It is the smallest area in the resort, and that is exactly why it suits children and first-timers while the rest of the group heads for the big slopes.',
+        specs: [
+          'blue (easy) runs, each about 350 m',
+          'lifts — there is no cable car here',
+          'by car from the house — 1.9 km by road',
+        ],
+        school: 'The area has a ski school, an equipment rental and a magic carpet for children.',
+        snow: 'Honestly: this is the lowest-lying area in the resort (roughly 530–600 m), so it depends entirely on snow and snowmaking and its season tends to be shorter than higher up. Before you build a whole stay around it, check that it is running.',
+      },
+      resorts: {
+        title: 'One ski pass, several areas',
+        lead: 'The house sits in the SkiResort ČERNÁ HORA – PEC area, where, according to the operator, a single ski pass covers several ski areas. Driving times from Svoboda nad Úpou:',
+      },
+      rows: {
+        cernaHora: 'the largest area in the resort',
+        velkaUpa: "children's park at the bottom lift station",
+        cernyDul: 'a mountain crossing over a saddle — winding road, allow extra time',
+        pec: 'the second largest area, runs of every grade',
+        malaUpa: 'run by a different company — check that your pass is valid',
+      },
+      notes: {
+        connect: { t: 'The areas are not linked by pistes',
+          b: 'Do not expect one connected ski area. The only skiing link is the SkiTour from Černá hora to Pec — it works in one direction only and on two of its four sections a snowcat tows you; you come back by ski bus. Between the other areas you drive or take the ski bus; what joins them is the shared pass.' },
+        skibus: { t: 'You can ski without a car',
+          b: 'The SkiResort trunk ski bus stops right in Svoboda nad Úpou — among others Maršov II, Maršov I, Sokolovna, the bus station and Hotel PROM. The number of lines and the terms of carriage change from season to season, so check them with the operator.' },
+        evening: { t: 'Night skiing',
+          b: 'In season it runs on floodlit pistes; the longest of them is Protěž on Černá hora — 1.6 km according to the operator. The exact days and times change, so look for the current schedule at the operator.' },
+      },
+      plan: {
+        title: 'When nobody is skiing',
+        lead: 'In a larger group somebody always skips the skiing — and out of seven nights, four or five are realistically ski days. This is the rest of the programme.',
+        tiles: [
+          { n: 'Aquacentrum Janské Lázně', m: 'indoor pool, walking distance' },
+          { n: 'Cross-country trails', m: 'trailheads by Černá hora, ≈ 4 km by car' },
+          { n: 'Harrachov glassworks', m: 'a tour in the warm, ≈ 50 min by car' },
+          { n: 'Stachelberg fortress', m: 'underground fortifications near Trutnov' },
+          { n: 'Karpacz water park (PL)', m: 'large indoor water park, ≈ 45 min by car' },
+        ],
+      },
+      cta: 'Winter trips in the planner',
+      ctaSub: 'Map, filters and a tip for a particular day — no sign-up.',
+    },
     lokalita: {
       eyebrow: 'Location · Svoboda nad Úpou',
       title: 'In the mountains, not at the end of the world.',
@@ -572,14 +686,15 @@ const T = {
           link: 'See it in the planner →' },
       ],
       arrive: [
-        { k: 'Prague', v: 'roughly 2 hours by car' },
-        { k: 'Wrocław (PL)', v: 'roughly 2 hours by car' },
-        { k: 'Dresden', v: 'roughly 3 hours by car' },
-        { k: 'By train', v: 'Svoboda nad Úpou station, then a short walk' },
-        { k: 'By bus', v: 'a stop in town, then a short walk' },
-        { k: 'Ski bus', v: 'stop 200 m from the gate; check fares with the operator' },
-        { k: 'Parking', v: 'on the grounds, behind the gate' },
+        { id: 'praha', k: 'Prague', v: 'roughly 2 hours by car' },
+        { id: 'wroclaw', k: 'Wrocław (PL)', v: 'roughly 2 hours by car' },
+        { id: 'dresden', k: 'Dresden', v: 'roughly 3 hours by car' },
+        { id: 'train', k: 'By train', v: 'Svoboda nad Úpou station, then a short walk' },
+        { id: 'bus', k: 'By bus', v: 'a stop in town, then a short walk' },
+        { id: 'skibus', k: 'Ski bus', v: 'stop 200 m from the gate; check fares with the operator' },
+        { id: 'parking', k: 'Parking', v: 'on the grounds, behind the gate' },
       ],
+      arriveTransitWinter: { id: 'transit', k: 'Train & bus', v: 'station and stop in town, then a short walk' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Sněžka', snezkaMeta: '1603 m',
@@ -623,7 +738,7 @@ const T = {
         { name: 'Wellness by the sauna', desc: 'The room in front of the sauna — a bench to cool down on, a shower and the door into the Finnish sauna. All yours alone.' },
         { name: 'Inside the sauna', desc: 'Inside the heated Finnish sauna — pale timber benches and the stove.' },
         { name: 'Ski room', desc: 'A ski room of its own downstairs — racks for skis and snowboards and holders for boots. The kit stays down here instead of in the bedrooms.' },
-        { name: 'The garden in winter', desc: 'The snowbound garden from the gazebo back to the house — tall spruces, trodden paths and the covered pool.' },
+        { name: 'The garden in winter', desc: 'The snowbound garden from the gazebo back to the house — tall spruces, trodden paths and the mountains above the roofs.' },
         { name: 'The gazebo with the grills', desc: 'The same gazebo as in summer, only under snow: a solid timber roof, the grill counter along the wall and open sides onto the garden.' },
       ],
       scenesSummer: [
@@ -715,7 +830,7 @@ const T = {
       desc: 'Ganzes Haus und Grundstück nur für eure Gruppe von {minHostu}–{maxHostu} in Svoboda nad Úpou. {loznice} Schlafzimmer, {koupelny} Bäder, {pozemek} m², Sauna, Skiraum. Ski und Pool saisonal.',
       locale: 'de_DE',
     },
-    nav: { dum: 'Das Haus', interier: 'Innen', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
+    nav: { dum: 'Das Haus', interier: 'Innen', loznice: 'Schlafzimmer', lyzovani: 'Skifahren', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
       eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
       eyebrowWinter: 'Skifahren gleich um die Ecke · Riesengebirge',
@@ -735,7 +850,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + Skiraum', v: 'private Sauna, Skiraum direkt im Haus' },
       parking:        { k: 'Eigener Parkplatz', v: 'auf dem Grundstück direkt am Eingang, hinter dem eigenen Tor' },
     },
-    ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft', teaserMore: 'Bewertungen lesen' },
+    ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft', avg: 'Durchschnitt über alle Plattformen', teaserMore: 'Bewertungen lesen' },
     direct: {
       badge: '<b>Direkt buchen = bester Preis.</b> 5 % günstiger als über die Plattformen. Persönlicher Service und faire Stornobedingungen.',
       book: '<b>Direkt buchen = bester Preis.</b> 5 % günstiger als über die Plattformen. Persönlicher Service und faire Stornobedingungen.',
@@ -744,7 +859,7 @@ const T = {
     statement: {
       eyebrow: 'Das ganze Anwesen nur für euch',
       title: 'Hinter dem Tor seid ihr unter euch.',
-      lead: 'Ihr bucht keine Zimmer in einem Haus, in dem noch jemand anderes wohnt. Ihr nehmt das ganze Grundstück — das Haus, den eingezäunten Park, Sauna, Pavillon, Feuerstelle und in der Sommersaison auch den Pool. <span class="vr-sm-hide">Keine Rezeption, keine Fremden beim Frühstück, kein Warten, bis die Sauna frei wird.</span>',
+      lead: 'Ihr bucht keine Zimmer in einem Haus, in dem noch jemand anderes wohnt. Ihr nehmt das ganze Grundstück — das Haus, den eingezäunten Park, Sauna, Pavillon und Feuerstelle. <span class="vr-sm-hide">Keine Rezeption, keine Fremden beim Frühstück, kein Warten, bis die Sauna frei wird.</span>',
       stats: [
         { num: '{pozemek} m²', label: 'eingezäunter Park nur für eure Gruppe' },
         { num: '1 Tisch', label: 'groß genug für die ganze Runde auf einmal' },
@@ -753,31 +868,27 @@ const T = {
       ],
     },
     band: { eyebrow: 'Ein Abend hier' },
+    /* ===================== VYBAVENÍ — JEDEN SEZNAM, DVĚ ŘAZENÍ =====================
+       Oddělený blok „A k tomu celoročně" je zrušen; položky mají jediné znění
+       a pořadí jim dává CSS `order` podle sezóny (viz .vr-amen v site.css):
+         zima: lyžárna → sauna → kuchyně → ohniště → altán → kulečník → apartmá
+         léto: bazén → altán → hřiště → sauna → kuchyně → ohniště → kulečník → apartmá
+       Texty jsou CELOROČNÍ (vrstva A): žádné sezónní slovo. Sezónnost je
+       vlastností DAT (data-season-only v HTML), ne věty v textu — právě proto
+       už nemůže vzniknout další „bazén v mrazu". */
     amenities: {
       eyebrow: 'Ausstattung', title: 'Komfort, der die Gruppe zusammenhält', drop: 'Foto hierher ziehen',
-      summer: {
-        hero: { tag: 'Wellness', name: 'Überdachter beheizter Pool', desc: 'Ein Innenpool mit beheiztem Wasser — in der Sommersaison bei jedem Wetter nutzbar, auch wenn es draußen regnet. Aus dem Wasser direkt in die Sauna.' },
-        cards: [
-          { tag: 'Wellness', name: 'Private Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe. Kein Teilen, keine Zeitfenster.' },
-          { tag: 'Draußen leben', name: 'Großer Pavillon', desc: 'Überdachte Sitzplätze für die ganze Gruppe auf einmal. Gemeinsame Abendessen draußen, auch bei Regen.' },
-          { tag: 'Für Familien', name: 'Kinderspielplatz', desc: 'Klettergerüste, eine kleine Kletterwand und eine Seilwand. Die Kinder haben ihren eigenen Bereich in Sichtweite des Pavillons.' },
-        ],
+      items: {
+        pool:     { tag: 'Wellness', name: 'Überdachter beheizter Pool', desc: 'Ein Innenpool mit beheiztem Wasser — in der Sommersaison bei jedem Wetter nutzbar, auch wenn es draußen regnet. Aus dem Wasser direkt in die Sauna.' },
+        skiroom:  { tag: 'Skifahren', name: 'Skiraum', desc: 'Ein eigener Raum nur für Ski und Schuhe: Ständer für Ski und Snowboards, Schuhhalter und ein abwaschbarer Boden. Nasse Ausrüstung bleibt unten und muss nicht in die Zimmer — im Winter ist das die häufigste Frage, die wir bekommen.' },
+        sauna:    { tag: 'Wellness', name: 'Private finnische Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe, mit Vorraum und Dusche. Kein Teilen, keine Zeitfenster.' },
+        kitchen:  { tag: 'Gemeinsam', name: 'Küche und ein Tisch für alle', desc: 'Eine voll ausgestattete Küche und ein großer Holztisch, an dem die ganze Gruppe auf einmal sitzt.' },
+        firepit:  { tag: 'Draußen', name: 'Feuerstelle mit Gabionenwand', desc: 'Die neu fertiggestellte offene Feuerstelle fasst die ganze Gruppe. Nach Einbruch der Dunkelheit leuchtet sie von selbst — Wärme unter freiem Himmel.' },
+        altan:    { tag: 'Draußen', name: 'Großer Pavillon mit Grill', desc: 'Überdachte Sitzplätze mit Grilltheke und einem Tisch, an dem die ganze Gruppe auf einmal Platz hat. Das Dach hält, ob es regnet oder schneit.' },
+        hriste:   { tag: 'Für Familien', name: 'Spielplatz', desc: 'Klettergerüst, eine kleine Kletter- und eine Seilwand. Die Kinder haben ihre Ecke in Sichtweite des Pavillons.' },
+        billiard: { tag: 'Drinnen', name: 'Billard', desc: 'Ein Billardtisch im Apartment Suite — für einen faulen Nachmittag oder ein Turnier nach dem Abendessen.' },
+        lounge:   { tag: 'Drinnen', name: 'Wohnbereich des Apartments', desc: 'Eine lange Sitzgruppe unter den Balken und ein großer Tisch — das Apartment Suite hat seinen eigenen Aufenthaltsraum.' },
       },
-      winter: {
-        hero: { tag: 'Skifahren', name: 'Skifahren gleich um die Ecke', desc: 'Skigebiet Černá hora nur 4 km entfernt. Der Skibus hält ein Stück vom Haus — zu den Liften ohne Auto und Parkplatzsuche; die Beförderungsbedingungen bitte beim Betreiber prüfen. Dazu ein Skiraum im Haus für die Ausrüstung.' },
-        cards: [
-          { tag: 'Wellness', name: 'Nach dem Skifahren in die Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe — perfekt nach einem Tag auf der Piste. Kein Teilen, keine Zeitfenster.' },
-          { tag: 'Draußen leben', name: 'Winterabende am Feuer', desc: 'Die neu fertiggestellte Feuerstelle mit Gabionenwand leuchtet nach Einbruch der Dunkelheit von selbst — Wärme unter freiem Himmel, auch bei Frost.' },
-          { tag: 'Draußen leben', name: 'Pavillon auch unter Schnee', desc: 'Der überdachte Pavillon mit Grilltheke und einem Tisch für die ganze Gruppe steht auch im Winter — unter dem Dach lässt sich grillen, man geht nur durch den Schnee hin.' },
-        ],
-      },
-      extraTitle: 'Und das ganze Jahr über',
-      extra: [
-        { name: 'Küche und ein Tisch für alle', desc: 'Eine voll ausgestattete Küche und ein großer Holztisch, an dem die ganze Gruppe auf einmal Platz findet.' },
-        { name: 'Wohnbereich des Apartments', desc: 'Eine lange Sitzgruppe unter den Balken und ein großer Tisch — der eigene Wohn- und Essbereich der Suite.' },
-        { name: 'Billard', desc: 'Ein Billardtisch im Suite-Apartment — für einen Regennachmittag oder ein Turnier nach dem Essen.' },
-        { name: 'Skiraum', desc: 'Ein eigener Raum nur für Ski und Schuhe — Ständer für die Ausrüstung und abwaschbarer Boden. Nichts muss in die Zimmer.' },
-      ],
     },
     bedrooms: {
       eyebrow: 'Schlafzimmer & Betten',
@@ -815,6 +926,64 @@ const T = {
       winter: { tag: 'Winter', title: 'Skifahren ohne Stress', desc: 'Skigebiet Černá hora nur 4 km entfernt, ein Skiraum für die Ausrüstung im Haus und eine private finnische Sauna zum Aufwärmen nach einem Tag auf der Piste.',
         list: ['Skigebiet Černá hora 4 km, Skibus-Haltestelle 200 m', 'Private finnische Sauna und beleuchtete Feuerstelle', 'Skiraum für die Ausrüstung'] },
     },
+    /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
+       Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
+       DO TÉTO VĚTVE NIKDY NEPIŠ: ceny skipasů, jízdní řády, provozní a otevírací
+       doby, počty aktuálně otevřených vleků, „skibus zdarma" jako tvrdé tvrzení,
+       „zelené sjezdovky" (všechny tři ve Svobodě jsou MODRÉ), konkrétní dny
+       a časy večerního lyžování ani počet areálů na skipas jako tvrdé číslo —
+       provozovatel si v těchto údajích na vlastním webu protiřečí a zastaralý
+       údaj je horší než žádný (host podle něj plánuje den).
+       Čísla u vleků a sjezdovek jsou INSTALOVANÝ stav, ne garance provozu. */
+    ski: {
+      eyebrow: 'Skifahren · SkiResort Černá hora – Pec',
+      title: 'Skifahren von hier aus',
+      note: 'Wir veröffentlichen nur, was sich zwischen den Saisons nicht ändert. Preise, Fahrpläne und Öffnungszeiten hat der Betreiber.',
+      local: {
+        tag: '1,9 km vom Haus',
+        name: 'Ein Skigebiet direkt in Svoboda nad Úpou',
+        desc: 'Die nächsten Pisten liegen nicht „irgendwo in den Bergen" — sie liegen im selben Städtchen wie das Haus. Mit dem Auto fünf Minuten, zu Fuß unter einer halben Stunde. Es ist das kleinste Gebiet des Resorts, und genau deshalb passt es für Kinder und Anfänger, während der Rest der Gruppe an die großen Hänge fährt.',
+        specs: [
+          'blaue (leichte) Pisten, je rund 350 m',
+          'Schlepplifte — eine Seilbahn gibt es hier nicht',
+          'mit dem Auto vom Haus — 1,9 km über die Straße',
+        ],
+        school: 'Im Gebiet gibt es eine Skischule, einen Verleih und ein Förderband für Kinder.',
+        snow: 'Ehrlich gesagt: Es ist das am tiefsten gelegene Gebiet des Resorts (etwa 530–600 m), sein Betrieb hängt also ganz an Schnee und Beschneiung und die Saison ist kürzer als weiter oben. Bevor ihr den ganzen Aufenthalt darauf baut, prüft bitte, ob es läuft.',
+      },
+      resorts: {
+        title: 'Ein Skipass, mehrere Skigebiete',
+        lead: 'Das Haus liegt im Gebiet des SkiResorts ČERNÁ HORA – PEC, wo laut Betreiber ein Skipass in mehreren Skigebieten gilt. Fahrzeiten mit dem Auto ab Svoboda nad Úpou:',
+      },
+      rows: {
+        cernaHora: 'das größte Gebiet des Resorts',
+        velkaUpa: 'Kinderpark an der Talstation',
+        cernyDul: 'Gebirgsübergang über einen Sattel — kurvige Straße, plant Reserve ein',
+        pec: 'das zweitgrößte Gebiet, Pisten aller Schwierigkeiten',
+        malaUpa: 'anderer Betreiber — bitte die Gültigkeit des Skipasses prüfen',
+      },
+      notes: {
+        connect: { t: 'Die Gebiete sind nicht per Piste verbunden',
+          b: 'Erwartet kein zusammenhängendes Skigebiet. Die einzige Skiverbindung ist die SkiTour von der Černá hora nach Pec — sie funktioniert nur in eine Richtung, und auf zwei von vier Abschnitten zieht euch eine Pistenraupe; zurück geht es mit dem Skibus. Zwischen den übrigen Gebieten fährt man mit dem Auto oder dem Skibus, verbunden sind sie durch den gemeinsamen Skipass.' },
+        skibus: { t: 'Skifahren geht auch ohne Auto',
+          b: 'Der Hauptlinien-Skibus des SkiResorts hält direkt in Svoboda nad Úpou — unter anderem Maršov II, Maršov I, Sokolovna, Busbahnhof und Hotel PROM. Linienumfang und Beförderungsbedingungen ändern sich von Saison zu Saison, bitte beim Betreiber prüfen.' },
+        evening: { t: 'Nachtskilauf',
+          b: 'In der Saison wird er auf beleuchteten Pisten angeboten; die längste davon ist die Protěž an der Černá hora — laut Betreiber 1,6 km. Konkrete Tage und Zeiten ändern sich, den aktuellen Plan hat der Betreiber.' },
+      },
+      plan: {
+        title: 'Wenn nicht Ski gefahren wird',
+        lead: 'In einer größeren Gruppe fährt immer jemand nicht Ski — und von sieben Nächten sind realistisch vier bis fünf Skitage. Das hier ist der Rest des Programms.',
+        tiles: [
+          { n: 'Aquacentrum Janské Lázně', m: 'Hallenbad, zu Fuß erreichbar' },
+          { n: 'Loipen', m: 'Einstiege an der Černá hora, ≈ 4 km mit dem Auto' },
+          { n: 'Glashütte Harrachov', m: 'Führung im Warmen, ≈ 50 Min. mit dem Auto' },
+          { n: 'Festung Stachelberg', m: 'unterirdische Befestigung bei Trutnov' },
+          { n: 'Aquapark Karpacz (PL)', m: 'großes Hallenbad-Erlebnisbad, ≈ 45 Min. mit dem Auto' },
+        ],
+      },
+      cta: 'Winterziele im Planer',
+      ctaSub: 'Karte, Filter und ein Tipp für einen konkreten Tag — ohne Anmeldung.',
+    },
     lokalita: {
       eyebrow: 'Lage · Svoboda nad Úpou',
       title: 'In den Bergen, nicht am Ende der Welt.',
@@ -842,14 +1011,15 @@ const T = {
           link: 'Im Planer ansehen →' },
       ],
       arrive: [
-        { k: 'Prag', v: 'rund 2 Stunden mit dem Auto' },
-        { k: 'Breslau (PL)', v: 'rund 2 Stunden mit dem Auto' },
-        { k: 'Dresden', v: 'rund 3 Stunden mit dem Auto' },
-        { k: 'Mit der Bahn', v: 'Bahnhof Svoboda nad Úpou, zu Fuß zum Haus' },
-        { k: 'Mit dem Bus', v: 'Haltestelle im Ort, zu Fuß zum Haus' },
-        { k: 'Skibus', v: 'Haltestelle 200 m vom Tor; Tarif beim Betreiber prüfen' },
-        { k: 'Parken', v: 'direkt auf dem Grundstück, hinter dem Tor' },
+        { id: 'praha', k: 'Prag', v: 'rund 2 Stunden mit dem Auto' },
+        { id: 'wroclaw', k: 'Breslau (PL)', v: 'rund 2 Stunden mit dem Auto' },
+        { id: 'dresden', k: 'Dresden', v: 'rund 3 Stunden mit dem Auto' },
+        { id: 'train', k: 'Mit der Bahn', v: 'Bahnhof Svoboda nad Úpou, zu Fuß zum Haus' },
+        { id: 'bus', k: 'Mit dem Bus', v: 'Haltestelle im Ort, zu Fuß zum Haus' },
+        { id: 'skibus', k: 'Skibus', v: 'Haltestelle 200 m vom Tor; Tarif beim Betreiber prüfen' },
+        { id: 'parking', k: 'Parken', v: 'direkt auf dem Grundstück, hinter dem Tor' },
       ],
+      arriveTransitWinter: { id: 'transit', k: 'Bahn & Bus', v: 'Bahnhof und Haltestelle im Ort, zu Fuß zum Haus' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Schneekoppe', snezkaMeta: '1603 m',
@@ -893,7 +1063,7 @@ const T = {
         { name: 'Wellness an der Sauna', desc: 'Der Raum vor der Sauna — Bank zum Abkühlen, Dusche und die Tür in die finnische Sauna. Ganz allein für eure Gruppe.' },
         { name: 'In der Sauna', desc: 'Im Inneren der geheizten finnischen Sauna — helle Holzbänke und der Ofen.' },
         { name: 'Skiraum', desc: 'Ein eigener Skiraum im Untergeschoss — Ständer für Ski und Snowboards und Halterungen für Skischuhe. Die Ausrüstung bleibt unten statt in den Zimmern.' },
-        { name: 'Garten im Winter', desc: 'Der verschneite Garten vom Pavillon zurück zum Haus — hohe Fichten, ausgetretene Pfade und der überdachte Pool.' },
+        { name: 'Garten im Winter', desc: 'Der verschneite Garten vom Pavillon zurück zum Haus — hohe Fichten, ausgetretene Pfade und die Berge über den Dächern.' },
         { name: 'Pavillon mit Grills', desc: 'Derselbe Pavillon wie im Sommer, nur unter Schnee: massives Holzdach, der Grilltresen an der Wand und offene Seiten in den Garten.' },
       ],
       scenesSummer: [
@@ -985,7 +1155,7 @@ const T = {
       desc: 'Cały dom i posesja tylko dla grupy {minHostu}–{maxHostu} osób w Svobodzie nad Úpą. {loznice} sypialni, {koupelny} łazienek, {pozemek} m², sauna, narciarnia. Narty i basen sezonowo.',
       locale: 'pl_PL',
     },
-    nav: { dum: 'Dom', interier: 'Wnętrze', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
+    nav: { dum: 'Dom', interier: 'Wnętrze', loznice: 'Sypialnie', lyzovani: 'Narty', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
       eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
       eyebrowWinter: 'Narty tuż za rogiem · Karkonosze',
@@ -1005,7 +1175,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + narciarnia', v: 'prywatna sauna, narciarnia w domu' },
       parking:        { k: 'Własny parking', v: 'na posesji tuż przy wejściu, za własną bramą' },
     },
-    ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano', teaserMore: 'Przeczytaj recenzje' },
+    ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano', avg: 'średnia z wszystkich platform', teaserMore: 'Przeczytaj recenzje' },
     direct: {
       badge: '<b>Rezerwacja bezpośrednia = najlepsza cena.</b> O 5% taniej niż na platformach. Osobiste podejście i uczciwe warunki anulacji.',
       book: '<b>Rezerwacja bezpośrednia = najlepsza cena.</b> O 5% taniej niż na platformach. Osobiste podejście i uczciwe warunki anulacji.',
@@ -1014,7 +1184,7 @@ const T = {
     statement: {
       eyebrow: 'Cały teren tylko dla was',
       title: 'Za bramą jesteście tylko wy.',
-      lead: 'Nie rezerwujecie pokoi w domu, w którym mieszka jeszcze ktoś inny. Bierzecie całą posesję — dom, ogrodzony park, saunę, altanę, palenisko, a w sezonie letnim także basen. <span class="vr-sm-hide">Żadnej recepcji, żadnych obcych przy śniadaniu, żadnego czekania, aż zwolni się sauna.</span>',
+      lead: 'Nie rezerwujecie pokoi w domu, w którym mieszka jeszcze ktoś inny. Bierzecie całą posesję — dom, ogrodzony park, saunę, altanę i palenisko. <span class="vr-sm-hide">Żadnej recepcji, żadnych obcych przy śniadaniu, żadnego czekania, aż zwolni się sauna.</span>',
       stats: [
         { num: '{pozemek} m²', label: 'ogrodzonego parku tylko dla waszej grupy' },
         { num: '1 stół', label: 'na tyle duży, że siada przy nim cała ekipa naraz' },
@@ -1023,31 +1193,27 @@ const T = {
       ],
     },
     band: { eyebrow: 'Jeden wieczór tutaj' },
+    /* ===================== VYBAVENÍ — JEDEN SEZNAM, DVĚ ŘAZENÍ =====================
+       Oddělený blok „A k tomu celoročně" je zrušen; položky mají jediné znění
+       a pořadí jim dává CSS `order` podle sezóny (viz .vr-amen v site.css):
+         zima: lyžárna → sauna → kuchyně → ohniště → altán → kulečník → apartmá
+         léto: bazén → altán → hřiště → sauna → kuchyně → ohniště → kulečník → apartmá
+       Texty jsou CELOROČNÍ (vrstva A): žádné sezónní slovo. Sezónnost je
+       vlastností DAT (data-season-only v HTML), ne věty v textu — právě proto
+       už nemůže vzniknout další „bazén v mrazu". */
     amenities: {
-      eyebrow: 'Udogodnienia', title: 'Komfort, który trzyma grupę razem', drop: 'Przeciągnij tu zdjęcie',
-      summer: {
-        hero: { tag: 'Wellness', name: 'Zadaszony podgrzewany basen', desc: 'Kryty basen z podgrzewaną wodą — w sezonie letnim czynny w każdą pogodę, także gdy pada. Prosto z wody do sauny.' },
-        cards: [
-          { tag: 'Wellness', name: 'Prywatna sauna', desc: 'Fińska sauna tylko dla waszej grupy. Bez dzielenia, bez okienek czasowych.' },
-          { tag: 'Życie na zewnątrz', name: 'Duża altana', desc: 'Zadaszone miejsce dla całej grupy naraz. Wspólne kolacje na świeżym powietrzu, nawet w deszcz.' },
-          { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, mała ścianka wspinaczkowa i ścianka linowa. Dzieci mają własną przestrzeń w zasięgu wzroku od altany.' },
-        ],
+      eyebrow: 'Wyposażenie', title: 'Komfort, który trzyma grupę razem', drop: 'Przeciągnij tu zdjęcie',
+      items: {
+        pool:     { tag: 'Wellness', name: 'Zadaszony podgrzewany basen', desc: 'Basen pod dachem z podgrzewaną wodą — w sezonie letnim czynny przy każdej pogodzie, nawet gdy pada. Po kąpieli prosto do sauny.' },
+        skiroom:  { tag: 'Narty', name: 'Narciarnia', desc: 'Osobne pomieszczenie tylko na narty i buty: stojaki na narty i deski, wieszaki na buty i zmywalna podłoga. Mokry sprzęt zostaje na dole i nie trafia do pokoi — zimą to pytanie, które dostajemy najczęściej.' },
+        sauna:    { tag: 'Wellness', name: 'Prywatna sauna fińska', desc: 'Sauna fińska tylko dla waszej grupy, z przedsionkiem i prysznicem. Bez dzielenia, bez okienek czasowych.' },
+        kitchen:  { tag: 'Razem', name: 'Kuchnia i stół dla całej grupy', desc: 'W pełni wyposażona kuchnia i duży drewniany stół, przy którym zmieścicie się wszyscy naraz.' },
+        firepit:  { tag: 'Na zewnątrz', name: 'Palenisko ze ścianą gabionową', desc: 'Nowo ukończone otwarte palenisko mieści całą grupę. Po zmroku podświetla się samo — ciepło pod gołym niebem.' },
+        altan:    { tag: 'Na zewnątrz', name: 'Duża altana z grillem', desc: 'Zadaszone miejsce z blatem grillowym i stołem, przy którym zmieści się cała grupa naraz. Dach trzyma, czy pada deszcz, czy śnieg.' },
+        hriste:   { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, mała ścianka wspinaczkowa i ścianka linowa. Dzieci mają swój kąt w zasięgu wzroku od altany.' },
+        billiard: { tag: 'W środku', name: 'Bilard', desc: 'Stół bilardowy w apartamencie Suite — na leniwe popołudnie i na turniej po kolacji.' },
+        lounge:   { tag: 'W środku', name: 'Część dzienna apartamentu', desc: 'Długa kanapa pod belkami i duży stół — apartament Suite ma własną przestrzeń wspólną.' },
       },
-      winter: {
-        hero: { tag: 'Narty', name: 'Narty tuż za rogiem', desc: 'Ośrodek narciarski Černá hora zaledwie 4 km. Skibus zatrzymuje się kawałek od domu — pod wyciągi bez auta i szukania parkingu; warunki przewozu sprawdźcie u przewoźnika. W domu dodatkowo narciarnia na sprzęt.' },
-        cards: [
-          { tag: 'Wellness', name: 'Po nartach do sauny', desc: 'Fińska sauna tylko dla waszej grupy — idealna po dniu na stoku. Bez dzielenia, bez okienek czasowych.' },
-          { tag: 'Życie na zewnątrz', name: 'Zimowe wieczory przy ognisku', desc: 'Nowo ukończone palenisko ze ścianą gabionową po zmroku samo się podświetla — ciepło pod gołym niebem, nawet przy mrozie.' },
-          { tag: 'Życie na zewnątrz', name: 'Altana także pod śniegiem', desc: 'Zadaszona altana z blatem grillowym i stołem dla całej grupy stoi również zimą — pod dachem można grillować, dojście prowadzi tylko przez śnieg.' },
-        ],
-      },
-      extraTitle: 'A do tego przez cały rok',
-      extra: [
-        { name: 'Kuchnia i stół dla całej grupy', desc: 'W pełni wyposażona kuchnia i duży drewniany stół, przy którym siądziecie wszyscy naraz.' },
-        { name: 'Część dzienna apartamentu', desc: 'Długa sofa pod belkami i duży stół — własna część dzienna apartamentu Suite.' },
-        { name: 'Bilard', desc: 'Stół bilardowy w apartamencie Suite — na deszczowe popołudnie albo turniej po kolacji.' },
-        { name: 'Narciarnia', desc: 'Osobne pomieszczenie tylko na narty i buty — stojaki na sprzęt i zmywalna podłoga. Nic nie wędruje do pokoi.' },
-      ],
     },
     bedrooms: {
       eyebrow: 'Sypialnie i łóżka',
@@ -1085,6 +1251,64 @@ const T = {
       winter: { tag: 'Zima', title: 'Narty bez kłopotów', desc: 'Ośrodek Černá hora zaledwie 4 km, narciarnia na sprzęt w domu i prywatna fińska sauna na rozgrzewkę po dniu na stoku.',
         list: ['Ośrodek Černá hora 4 km, przystanek skibusu 200 m', 'Prywatna fińska sauna i podświetlone palenisko', 'Narciarnia na sprzęt'] },
     },
+    /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
+       Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
+       DO TÉTO VĚTVE NIKDY NEPIŠ: ceny skipasů, jízdní řády, provozní a otevírací
+       doby, počty aktuálně otevřených vleků, „skibus zdarma" jako tvrdé tvrzení,
+       „zelené sjezdovky" (všechny tři ve Svobodě jsou MODRÉ), konkrétní dny
+       a časy večerního lyžování ani počet areálů na skipas jako tvrdé číslo —
+       provozovatel si v těchto údajích na vlastním webu protiřečí a zastaralý
+       údaj je horší než žádný (host podle něj plánuje den).
+       Čísla u vleků a sjezdovek jsou INSTALOVANÝ stav, ne garance provozu. */
+    ski: {
+      eyebrow: 'Narty · SkiResort Černá hora – Pec',
+      title: 'Narty stąd',
+      note: 'Podajemy tylko to, co nie zmienia się z sezonu na sezon. Ceny, rozkłady i godziny otwarcia są u operatora.',
+      local: {
+        tag: '1,9 km od domu',
+        name: 'Ośrodek narciarski w samej Svobodzie nad Úpou',
+        desc: 'Najbliższe stoki nie są „gdzieś w górach" — są w tym samym miasteczku co dom. Autem pięć minut, pieszo niecałe pół godziny. To najmniejszy ośrodek resortu i właśnie dlatego pasuje na pierwsze narty dzieci i początkujących, kiedy reszta ekipy jedzie na duże stoki.',
+        specs: [
+          'niebieskie (łatwe) stoki, każdy około 350 m',
+          'wyciągi orczykowe — kolei linowej tu nie ma',
+          'autem od domu — 1,9 km drogą',
+        ],
+        school: 'W ośrodku działa szkółka narciarska, wypożyczalnia sprzętu i taśma dla dzieci.',
+        snow: 'Uczciwie: to najniżej położony ośrodek resortu (mniej więcej 530–600 m), więc jego praca zależy od śniegu i naśnieżania, a sezon bywa krótszy niż wyżej w górach. Zanim oprzecie na nim cały pobyt, sprawdźcie, czy działa.',
+      },
+      resorts: {
+        title: 'Jeden skipas, kilka ośrodków',
+        lead: 'Dom leży w rejonie SkiResortu ČERNÁ HORA – PEC, gdzie według operatora jeden skipas obowiązuje w kilku ośrodkach. Dojazdy autem ze Svobody nad Úpou:',
+      },
+      rows: {
+        cernaHora: 'największy ośrodek resortu',
+        velkaUpa: 'strefa dziecięca przy dolnej stacji kolei',
+        cernyDul: 'górski przejazd przez przełęcz — kręta droga, doliczcie zapas czasu',
+        pec: 'drugi co do wielkości ośrodek, stoki wszystkich trudności',
+        malaUpa: 'prowadzi go inna spółka — sprawdźcie ważność skipasu',
+      },
+      notes: {
+        connect: { t: 'Ośrodki nie łączą się stokami',
+          b: 'Nie liczcie na połączony ośrodek. Jedyne narciarskie połączenie to SkiTour z Černej hory do Pecu — działa tylko w jedną stronę, a na dwóch z czterech odcinków ciągnie was ratrak; z powrotem jedzie się skibusem. Między pozostałymi ośrodkami przejeżdża się autem albo skibusem, łączy je wspólny skipas.' },
+        skibus: { t: 'Da się jeździć bez auta',
+          b: 'Główna linia skibusu SkiResortu zatrzymuje się w samej Svobodzie nad Úpou — m.in. Maršov II, Maršov I, Sokolovna, dworzec autobusowy i hotel PROM. Liczba linii i warunki przewozu zmieniają się z sezonu na sezon, sprawdźcie je u przewoźnika.' },
+        evening: { t: 'Jazda wieczorna',
+          b: 'W sezonie odbywa się na oświetlonych stokach; najdłuższy z nich to Protěž na Černej horze — według operatora 1,6 km. Konkretne dni i godziny się zmieniają, aktualny plan ma operator.' },
+      },
+      plan: {
+        title: 'Kiedy się nie jeździ',
+        lead: 'W większej ekipie zawsze ktoś nie jeździ — a z siedmiu nocy realnie cztery do pięciu są narciarskie. To jest reszta programu.',
+        tiles: [
+          { n: 'Aquacentrum Janské Lázně', m: 'kryty basen, pieszo od domu' },
+          { n: 'Trasy biegowe', m: 'wejścia przy Černej horze, ≈ 4 km autem' },
+          { n: 'Huta szkła Harrachov', m: 'zwiedzanie w cieple, autem ≈ 50 min' },
+          { n: 'Twierdza Stachelberg', m: 'podziemia fortyfikacji koło Trutnova' },
+          { n: 'Aquapark Karpacz (PL)', m: 'duży kryty aquapark, autem ≈ 45 min' },
+        ],
+      },
+      cta: 'Zimowe cele w planerze',
+      ctaSub: 'Mapa, filtry i podpowiedź na konkretny dzień — bez rejestracji.',
+    },
     lokalita: {
       eyebrow: 'Lokalizacja · Svoboda nad Úpou',
       title: 'W górach, a nie na końcu świata.',
@@ -1112,14 +1336,15 @@ const T = {
           link: 'Pokaż w planerze →' },
       ],
       arrive: [
-        { k: 'Praga', v: 'około 2 godziny samochodem' },
-        { k: 'Wrocław', v: 'około 2 godziny samochodem' },
-        { k: 'Drezno', v: 'około 3 godziny samochodem' },
-        { k: 'Pociągiem', v: 'stacja Svoboda nad Úpou, do domu pieszo' },
-        { k: 'Autobusem', v: 'przystanek w miasteczku, do domu pieszo' },
-        { k: 'Skibus', v: 'przystanek 200 m od bramy; taryfę sprawdźcie u przewoźnika' },
-        { k: 'Parking', v: 'na terenie posesji, za bramą' },
+        { id: 'praha', k: 'Praga', v: 'około 2 godziny samochodem' },
+        { id: 'wroclaw', k: 'Wrocław', v: 'około 2 godziny samochodem' },
+        { id: 'dresden', k: 'Drezno', v: 'około 3 godziny samochodem' },
+        { id: 'train', k: 'Pociągiem', v: 'stacja Svoboda nad Úpou, do domu pieszo' },
+        { id: 'bus', k: 'Autobusem', v: 'przystanek w miasteczku, do domu pieszo' },
+        { id: 'skibus', k: 'Skibus', v: 'przystanek 200 m od bramy; taryfę sprawdźcie u przewoźnika' },
+        { id: 'parking', k: 'Parking', v: 'na terenie posesji, za bramą' },
       ],
+      arriveTransitWinter: { id: 'transit', k: 'Pociąg i autobus', v: 'stacja i przystanek w miasteczku, do domu pieszo' },
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Śnieżka', snezkaMeta: '1603 m',
@@ -1163,7 +1388,7 @@ const T = {
         { name: 'Wellness przy saunie', desc: 'Przedsionek sauny — ława do ochłonięcia, prysznic i wejście do sauny fińskiej. Tylko dla waszej grupy.' },
         { name: 'We wnętrzu sauny', desc: 'W środku nagrzanej sauny fińskiej — jasne drewniane ławy i piec.' },
         { name: 'Narciarnia', desc: 'Osobna narciarnia w piwnicy — stojaki na narty i deski oraz uchwyty na buty. Sprzęt zostaje na dole, a nie w pokojach.' },
-        { name: 'Ogród zimą', desc: 'Zaśnieżony ogród od altany po dom — wysokie świerki, wydeptane ścieżki i zadaszony basen.' },
+        { name: 'Ogród zimą', desc: 'Zaśnieżony ogród od altany po dom — wysokie świerki, wydeptane ścieżki i góry nad dachami.' },
         { name: 'Altana z grillami', desc: 'Ta sama altana co latem, tylko pod śniegiem: masywny drewniany dach, blat grillowy przy ścianie i otwarte boki na ogród.' },
       ],
       scenesSummer: [
@@ -1462,9 +1687,16 @@ function reviewText(r) {
   return r.quote || r.quote_cs;
 }
 function platformByKey(k) { return VR_REVIEWS.platforms.find((p) => p.key === k) || {}; }
+/* Citace, které stojí na bazénu (`pool: true`), se v ZIMĚ nezobrazují — bazén
+   v zimě nejede a recenze začínající „Der Pool…" by vyrobila přesně to
+   očekávání, které se při příjezdu rozbije. Vyřazují se z obou míst (spodní
+   sekce i horní pás). Nikdy ne na nulu: i po odfiltrování zbývají čtyři. */
+function reviewsForSeason() {
+  return VR_REVIEWS.items.filter((r) => !(state.season === 'zima' && r.pool));
+}
 function renderReviews() {
   const host = $('#vr-reviews'); if (!host) return; host.innerHTML = '';
-  VR_REVIEWS.items.forEach((r) => {
+  reviewsForSeason().forEach((r) => {
     const p = platformByKey(r.platform);
     const fig = el('figure', { class: 'vr-review' }, [
       el('blockquote', { class: 'vr-review-q', text: reviewText(r) }),
@@ -1650,10 +1882,30 @@ function applyTripCounts() {
     n.textContent = fillFacts(tpl.replace('{n}', String(num)));
   });
 }
+/* Blok „Než dorazíte". V ZIMĚ má jiné priority než v létě (verdikt, bod e):
+   zimní host řeší skibus, parkování a cestu autem — vlak a autobus se slévají
+   do jednoho řádku (nemažou se, vždycky někdo dojíždí zvlášť) a Drážďany
+   vypadnou. Ne však na německé verzi: Sasko je reálný zdrojový trh německých
+   skupin a tam ta vzdálenost rozhoduje nejvíc (verdikt, chyba č. 13 — „mazat
+   Drážďany všude" je chyba, řeší se to variantou, ne mazáním). */
 function renderArrive() {
   const t = tt();
   const host = $('#vr-lok-arrive'); if (!host) return; host.innerHTML = '';
-  ((t.lokalita && t.lokalita.arrive) || []).forEach((r) => {
+  const L = t.lokalita || {};
+  let rows = (L.arrive || []).slice();
+  if (state.season === 'zima') {
+    rows = rows.filter((r) => !(r.id === 'dresden' && state.lang !== 'de'));
+    const tw = L.arriveTransitWinter;
+    if (tw) {
+      const at = rows.findIndex((r) => r.id === 'train');
+      rows = rows.filter((r) => r.id !== 'train' && r.id !== 'bus');
+      if (at >= 0) rows.splice(at, 0, tw);
+    }
+    // Skibus a parkování nahoru; zbytek si drží pořadí (Array#sort je stabilní).
+    const rank = { skibus: 0, parking: 1 };
+    rows.sort((a, b) => (rank[a.id] != null ? rank[a.id] : 9) - (rank[b.id] != null ? rank[b.id] : 9));
+  }
+  rows.forEach((r) => {
     host.appendChild(el('div', { class: 'vr-lok-arrive-row' }, [
       el('dt', { text: r.k }), el('dd', { text: r.v }),
     ]));
@@ -1661,19 +1913,50 @@ function renderArrive() {
 }
 /* Lead sekce Lokalita je SEZÓNNĚ DĚLENÝ SLOT — obě znění (lokalita.lead /
    lokalita.leadWinter) jsou staticky v index.html a přepínají se stylem. */
-/* Živé počty z katalogu průvodce. Selhání je bezbolestné — zůstanou fallback čísla. */
+/* Živé počty z katalogu průvodce. Selhání je bezbolestné — zůstanou fallback čísla.
+   POČTY JSOU SEZÓNNÍ: katalog nese u části cílů pole `seasons` (["summer"] /
+   ["winter"]), a plánovač podle něj filtruje. Kdyby homepage počítala všechny
+   záznamy, ukazovala by v zimě číslo, které plánovač nikdy nezobrazí. Proto se
+   tady používá TÁŽ podmínka jako v assets/planner.js (seasonOk) a počty se
+   přepočítají i při přepnutí sezóny. Žádné číslo o katalogu nesmí být natvrdo
+   v textu ani v <title> — vždycky by bylo v jedné ze sezón špatně. */
+function tripSeasonOk(tr) {
+  const s = tr && tr.seasons;
+  if (!Array.isArray(s) || !s.length) return true;   // bez značky = celoročně
+  return s.indexOf(state.season === 'zima' ? 'winter' : 'summer') >= 0;
+}
+let TRIPS_RAW = null;   // slim katalog {zone, seasons} — drží se kvůli přepnutí sezóny
+function countTrips(trips) {
+  const c = { foot: 0, car: 0, day: 0, total: 0 };
+  trips.filter(tripSeasonOk).forEach((tr) => {
+    if (tr.zone === 'villa') c.foot++;
+    else if (tr.zone === 'near') c.car++;
+    else if (tr.zone === 'far') c.day++;
+  });
+  c.foot += VR_LOCAL_EXTRA.foot; c.car += VR_LOCAL_EXTRA.car; c.day += VR_LOCAL_EXTRA.day;
+  c.total = c.foot + c.car + c.day;
+  return c;
+}
+/* Přepočítá počty pro AKTUÁLNÍ sezónu (volá se i ze setSeason). */
+function applySeasonTripCounts() {
+  if (!Array.isArray(TRIPS_RAW) || !TRIPS_RAW.length) { applyTripCounts(); return; }
+  const c = countTrips(TRIPS_RAW);
+  if (!c.total) { applyTripCounts(); return; }
+  VR_TRIP_COUNTS.foot = c.foot; VR_TRIP_COUNTS.car = c.car;
+  VR_TRIP_COUNTS.day = c.day; VR_TRIP_COUNTS.total = c.total;
+  applyTripCounts();
+}
 function loadTripCounts() {
-  const apply = (c) => {
-    if (!c || !c.total) return;
-    VR_TRIP_COUNTS.foot = c.foot; VR_TRIP_COUNTS.car = c.car;
-    VR_TRIP_COUNTS.day = c.day; VR_TRIP_COUNTS.total = c.total;
-    applyTripCounts();
+  const apply = (list) => {
+    if (!Array.isArray(list) || !list.length) return;
+    TRIPS_RAW = list;
+    applySeasonTripCounts();
   };
   try {
     const raw = localStorage.getItem(TRIPS_CACHE_KEY);
     if (raw) {
       const c = JSON.parse(raw);
-      if (c && Date.now() - c.at < TRIPS_TTL) { apply(c); return; }
+      if (c && Date.now() - c.at < TRIPS_TTL && Array.isArray(c.list)) { apply(c.list); return; }
     }
   } catch (e) {}
   if (typeof fetch !== 'function') return;
@@ -1682,55 +1965,24 @@ function loadTripCounts() {
     .then((d) => {
       const trips = d && (Array.isArray(d) ? d : d.trips);
       if (!Array.isArray(trips) || !trips.length) return;
-      const c = { foot: 0, car: 0, day: 0, total: 0, at: Date.now() };
-      trips.forEach((tr) => {
-        if (tr.zone === 'villa') c.foot++;
-        else if (tr.zone === 'near') c.car++;
-        else if (tr.zone === 'far') c.day++;
-      });
-      c.foot += VR_LOCAL_EXTRA.foot; c.car += VR_LOCAL_EXTRA.car; c.day += VR_LOCAL_EXTRA.day;
-      c.total = c.foot + c.car + c.day;
-      if (!c.foot && !c.car && !c.day) return; // neznámý formát → ponech fallback
-      try { localStorage.setItem(TRIPS_CACHE_KEY, JSON.stringify(c)); } catch (e) {}
-      apply(c);
+      // Do keše jde jen to, co pro počty potřebujeme (zóna + sezónní značka).
+      const list = trips.map((tr) => ({ zone: tr.zone, seasons: tr.seasons }));
+      if (!countTrips(list).total) return; // neznámý formát → ponech fallback
+      try { localStorage.setItem(TRIPS_CACHE_KEY, JSON.stringify({ at: Date.now(), list: list })); } catch (e) {}
+      apply(list);
     })
     .catch(() => {});
 }
 
-/* Vybavení je sezónní. Léto: hero = krytý bazén + sauna / altán / hřiště.
-   Zima: hero = „Lyžování za rohem" + sauna po lyžích / ohniště / altán.
+/* VYBAVENÍ SE UŽ Z JS NEVYKRESLUJE.
+   Od 7/2026 je celý seznam staticky v index.html (#vr-amen) jako JEDEN zdroj
+   položek; sezónní pořadí i velikost karet dává CSS `order` (viz .vr-amen
+   v site.css), sezónně neplatné položky schová [data-season-only].
+   Důvod: text, který ve stránce fyzicky není, se neindexuje — a hlavně tím
+   zmizel oddělený blok „A k tomu celoročně", ve kterém byla zahrabaná LYŽÁRNA.
    BAZÉN JE V ZIMĚ MIMO PROVOZ (majitel 7/2026: „v zimě ho tam vůbec nedávej,
-   ať nemají pocit, že přijedou a budou mít bazén") — v zimním režimu se o něm
-   nesmí objevit žádné tvrzení o provozu; celoroční texty ho uvádějí jako LETNÍ.
-   Všechny fotky jsou naše skutečné (žádné AI/fake ski fotky) — hero zimy používá
-   vr-crossfade obrázek winter-forest.jpg definovaný v HTML. */
-function renderAmenities() {
-  // Hlavní karta i tři sezónní karty jsou staticky v index.html v OBOU zněních
-  // (viz applySeasonBranches) — JS už jen přepíná, která větev je vidět.
-  // Zbývá vykreslit celoroční řadu, která sezónní variantu nemá.
-  renderAmenityExtras();
-}
-
-/* Celoroční vybavení — jeden řádek karet, které nemají sezónní variantu. */
-const AMEN_EXTRA_IMAGES = [
-  { src: 'media/sections/am-kitchen.jpg', w: 1200, h: 900 },
-  { src: 'media/sections/am-lounge.jpg', w: 1600, h: 1000 },
-  { src: 'media/sections/am-billiard.jpg', w: 1200, h: 900 },
-  { src: 'media/sections/am-skiroom.jpg', w: 1600, h: 1068 },
-];
-function renderAmenityExtras() {
-  const t = tt();
-  const host = $('#vr-amen4'); if (!host) return; host.innerHTML = '';
-  const list = (t.amenities && t.amenities.extra) || [];
-  list.forEach((it, i) => {
-    const im = AMEN_EXTRA_IMAGES[i]; if (!im) return;
-    host.appendChild(el('article', {}, [
-      el('img', { src: im.src, alt: it.name, loading: 'lazy', decoding: 'async', width: String(im.w), height: String(im.h) }),
-      el('h3', { text: it.name }),
-      el('p', { text: it.desc }),
-    ]));
-  });
-}
+   ať nemají pocit, že přijedou a budou mít bazén") — jeho karta má proto
+   data-season-only="leto" a v zimě se vůbec nevykreslí. */
 
 /* Ložnice a lůžka — přehledná mřížka karet (Suite jako široká featured karta +
    4 pokoje). Data potvrzena majitelem; u Suite se drží střízlivé „3 ložnice
@@ -1781,9 +2033,13 @@ const INTERIOR = [
   { k: 'room4',    img: 'media/sections/room-4.jpg' + IV,      pano: 'room4',
     gal: ['media/sections/room-4.jpg' + IV, 'media/sections/room-4b.jpg' + IV, 'media/sections/room-4c.jpg' + IV, 'media/sections/bath-room4.jpg'] },
   { k: 'bath4',    img: 'media/sections/bath-room4.jpg',   pano: 'bath4' },   // koupelna Pokoje 4
-  { k: 'sauna',    img: 'media/sections/int-sauna.jpg',    pano: 'sauna' },
-  { k: 'wellness', img: 'media/sections/int-wellness.jpg', pano: 'wellness' },
-  { k: 'bath',     img: 'media/sections/int-bath.jpg',     pano: 'wellness' }, // sprcha je součástí scény wellness
+  /* SAUNA / WELLNESS / SPRCHA U SAUNY tu ZÁMĚRNĚ NEJSOU (verdikt, bod a).
+     Byly zároveň tady i v sekci Vybavení — a am-wellness.jpg s int-wellness.jpg
+     je prakticky týž záběr předsálí sauny. Skutečná duplicita na stránce nebyly
+     sekce, ale FOTKY, takže se přesunuly do vybavení (karta „Privátní finská
+     sauna" používá int-sauna.jpg) a tenhle karusel je teď opravdu jen o tom,
+     kde se spí a kde se koupe. Do 360° prohlídky se scény sauna/wellness
+     nesahalo — tam zůstávají. */
 ];
 /* Štítek místnosti přímo NA fotce (karta i lightbox). Majitel: „bylo by dobrý,
    kdyby u každý na každý fotce bylo přímo označení, co to je za pokoj. Asi by to
@@ -1849,10 +2105,15 @@ function renderBedrooms() {
   buildRoster($('#vr-roster'));
 }
 
+/* ROZPIS LŮŽEK JE ROZHODOVACÍ TABULKA, NE DEKORACE (verdikt, bod a).
+   Organizátor podle něj dělí lidi do pokojů a kopíruje ho do skupinového chatu,
+   takže musí zůstat zřetelně označeným blokem s VLASTNÍ KOTVOU (#rozpis)
+   a položkou v menu (nav.loznice → #loznice). Nikdy ho nerozpouštěj mezi
+   dlaždice vybavení — pak přijde e-mail místo rezervace. */
 function buildRoster(host) {
   if (!host) return;
   const t = tt(); host.innerHTML = '';
-  host.appendChild(el('h3', { class: 'vr-roster-title', 'data-t': 'interior.rosterTitle', text: (t.interior && t.interior.rosterTitle) || '' }));
+  host.appendChild(el('h3', { id: 'rozpis', class: 'vr-roster-title', 'data-t': 'interior.rosterTitle', text: (t.interior && t.interior.rosterTitle) || '' }));
   const list = el('dl', { class: 'vr-roster-list' });
   (t.bedrooms.rooms || []).forEach((r, i) => {
     list.appendChild(el('div', { class: 'vr-roster-row' }, [
@@ -2658,15 +2919,22 @@ function applySeasonButtons() {
    řídí CSS podle .vr-root[data-season]; JS k tomu jen doplní hidden +
    aria-hidden, aby čtečka obrazovky nepředčítala obě verze.
 
-   KONTROLNÍ LIST SEZÓNNĚ DĚLENÝCH SLOTŮ (strop je ~12–15, teď jich je 7):
+   KONTROLNÍ LIST SEZÓNNĚ DĚLENÝCH SLOTŮ (strop je ~12–15, teď jich je 6):
      1. hero.eyebrow      / hero.eyebrowWinter
      2. hero.sub          / hero.subWinter
      3. facts.wellnessSummer / facts.wellnessWinter   (rychlá fakta)
-     4. amenities.summer.hero / amenities.winter.hero (hlavní karta vybavení)
-     5. amenities.summer.cards / amenities.winter.cards (tři karty vybavení)
-     6. lokalita.lead     / lokalita.leadWinter
-     7. sezony.summer     / sezony.winter  (karty sezón — vidět jsou VŽDY obě)
-   Přidáváš osmý? Spočítej si: 1 slot = 4 překlady, z toho dva (DE, PL)
+     4. lokalita.lead     / lokalita.leadWinter
+     5. lokalita.arrive   / lokalita.arriveTransitWinter  (blok „Než dorazíte")
+     6. sezony.summer     / sezony.winter  (karty sezón — vidět jsou VŽDY obě)
+   Sloty pro hlavní kartu a tři karty vybavení ZANIKLY: vybavení je teď jeden
+   seznam s jedním zněním a sezónnost mu dává pořadí v CSS. To je směr, kterým
+   se má jít u všeho dalšího — sezónnost jako vlastnost dat, ne druhá věta.
+
+   EXKLUZIVNÍ SEKCE (vrstva C, právě jedna na sezónu, víc jich být NESMÍ):
+     zima → #lyzovani  „Lyžování odsud" (+ podblok „Když se nelyžuje")
+     léto → #vylety    „Hory začínají za dveřmi"
+
+   Přidáváš sedmý slot? Spočítej si: 1 slot = 4 překlady, z toho dva (DE, PL)
    si nikdy nepřečteš. Nad ~10 se to musí postavit z dat, ne psát do slovníku.
    ========================================================================== */
 function applySeasonBranches() {
@@ -2696,61 +2964,35 @@ function renderDirectBook() {
   if (side) side.innerHTML = shield + '<span>' + t.direct.sidebar + '</span>';
 }
 
-/* Rotující ukázka recenzí pod hodnocením — odkazuje dolů na #recenze. */
-let teaserTimer = null, teaserIdx = 0, teaserList = [];
-function teaserTrim(s) {
-  s = String(s || '').replace(/\s+/g, ' ').trim();
-  const MAX = 120;
-  if (s.length <= MAX) return s;
-  let cut = s.slice(0, MAX);
-  const sp = cut.lastIndexOf(' ');
-  if (sp > 60) cut = cut.slice(0, sp);
-  return cut.replace(/[…,;:.\-\s]+$/, '') + '…';
+/* HORNÍ PÁS = SIGNÁL, SPODNÍ SEKCE = DŮKAZ.
+   Pás pod heroem dřív rotoval doslovné citace hostů — tytéž, které jsou o kus
+   níž v sekci #recenze. Byla to jediná skutečná duplicita v recenzích, a ještě
+   se u ní musel točit časovač. Verdikt: nahoře ČÍSLA (hvězdy, počet, průměr
+   napříč platformami), dole CITACE se jmény a zdroji. Dvě různé práce, každá
+   na jednom místě. */
+function ratingAvg() {
+  let sum = 0, n = 0;
+  VR_REVIEWS.platforms.forEach((p) => {
+    if (!p.count) return;
+    sum += (p.outOf === 5 ? p.rating : p.rating / 2) * p.count;   // vše na škálu 0–5
+    n += p.count;
+  });
+  return { avg: n ? sum / n : 0, count: n };
 }
-function buildTeaserList() {
-  teaserList = VR_REVIEWS.items.map((r) => {
-    const p = platformByKey(r.platform);
-    return { q: teaserTrim(reviewText(r)), a: r.author, source: p.name || r.platform, url: p.url || '', year: r.year || '' };
-  }).filter((x) => x.q);
-}
-function paintTeaser() {
+function renderTrustSummary() {
   const host = $('#vr-teaser'); if (!host) return;
   const t = tt();
-  const item = teaserList[teaserIdx] || null;
+  const r = ratingAvg();
   host.innerHTML = '';
-  if (!item) { host.style.display = 'none'; return; }
+  if (!r.count) { host.style.display = 'none'; return; }
   host.style.display = '';
-  host.appendChild(el('blockquote', { class: 'vr-quote-q', text: item.q }));
-  const srcLabel = item.source + (item.year ? ' · ' + item.year : '');
-  const cap = el('div', { class: 'vr-quote-cap' }, [
-    el('span', { class: 'vr-quote-author', text: '— ' + item.a }),
-    item.url
-      ? el('a', { class: 'vr-quote-source', href: item.url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': srcLabel }, [
-          el('span', { text: srcLabel }), el('span', { class: 'vr-rating-arrow', 'aria-hidden': 'true', text: '↗' }),
-        ])
-      : el('span', { class: 'vr-quote-source', text: srcLabel }),
-  ]);
-  host.appendChild(cap);
+  const dec = state.lang === 'en' ? '.' : ',';
+  host.appendChild(el('div', { class: 'vr-trustsum' }, [
+    el('b', { class: 'vr-trustsum-n', text: r.avg.toFixed(1).replace('.', dec) }),
+    el('i', { class: 'vr-star', 'aria-hidden': 'true', text: '★' }),
+    el('span', { class: 'vr-trustsum-l', text: t.ratings.avg + ' · ' + r.count + ' ' + t.ratings.reviewsWord }),
+  ]));
   host.appendChild(el('a', { class: 'vr-quote-more', href: '#recenze', text: t.ratings.teaserMore + ' →' }));
-}
-function renderTeaser() {
-  buildTeaserList();
-  if (teaserIdx >= teaserList.length) teaserIdx = 0;
-  paintTeaser();
-}
-function startTeaserRotation() {
-  const host = $('#vr-teaser'); if (!host) return;
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce || teaserTimer) return; // no auto-rotation under reduced motion
-  teaserTimer = setInterval(() => {
-    if (!teaserList.length) return;
-    host.setAttribute('data-fade', 'true');
-    setTimeout(() => {
-      teaserIdx = (teaserIdx + 1) % teaserList.length;
-      paintTeaser();
-      host.setAttribute('data-fade', 'false');
-    }, 350);
-  }, 6000);
 }
 
 /* Patička — kontakt: e-mail (mailto), „Pavel — váš hostitel", region a telefon
@@ -2846,10 +3088,10 @@ function setLang(lang) {
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); applySeasonButtons(); setTexts();
-  renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderRatings(); renderReviews(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
-  renderDirectBook(); renderTeaser(); renderFooterContact();
+  renderDirectBook(); renderTrustSummary(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
   if ($('#vr-pay-label')) $('#vr-pay-label').textContent = bookSending ? tt().book.sending : tt().book.pay;
@@ -2883,6 +3125,12 @@ function setSeason(season) {
   state.galFilter = season === 'zima' ? 'zima' : 'all';
   renderGallery();
   if (state.lb >= 0) lbSet(-1);
+  // Sezónní jsou i počty cílů v katalogu (zimní a letní se liší) a blok
+  // „Než dorazíte" (v zimě nahoru skibus a parkování, vlak+autobus na jeden řádek).
+  applySeasonTripCounts();
+  renderArrive();
+  renderReviews();  // v zimě se vynechávají citace, které stojí na bazénu
+  renderTrustSummary();
   applyLangLinks(); // keep ?season on subpage links (průvodce / podmínky) in sync
   syncUrl();
 }
@@ -3274,16 +3522,16 @@ function init() {
   applyThemeColor();
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); applySeasonBranches(); setTexts();
-  renderRatings(); renderReviews(); renderAmenities(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderRatings(); renderReviews(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   setupPanoGroupKeys();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
-  renderDirectBook(); renderTeaser(); renderFooterContact();
+  renderDirectBook(); renderTrustSummary(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   loadAvailability();
   loadTripCounts();  // živé počty výletů z trips.json (fallback = VR_TRIP_COUNTS)
 
-  startReveal(); startRaf(); startScrollSpy(); startTeaserRotation();
+  startReveal(); startRaf(); startScrollSpy();
 
   // Background-preload the OFF-season hero image once the page is idle, so the
   // first Léto/Zima toggle crossfades instantly. (Only the current season is
