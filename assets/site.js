@@ -172,7 +172,7 @@ const T = {
       desc: 'Celý dům i pozemek jen pro vaši skupinu {minHostu}–{maxHostu} osob ve Svobodě nad Úpou. {loznice} ložnic, {koupelny} koupelen, {pozemek} m² pozemku, sauna, lyžárna. Lyžování i bazén sezónně.',
       locale: 'cs_CZ',
     },
-    nav: { dum: 'Dům', interier: 'Interiér', loznice: 'Ložnice', lyzovani: 'Lyžování', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', ohniste: 'Ohniště', sezony: 'Sezóny', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
+    nav: { dum: 'Dům', loznice: 'Interiér', lyzovani: 'Lyžování', vybaveni: 'Vybavení', galerie: 'Galerie', ohniste: 'Ohniště', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
     hero: {
       eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
       eyebrowWinter: 'Lyžování za rohem · Krkonoše',
@@ -266,13 +266,6 @@ const T = {
       eyebrow: 'Vaše parta, ať je jakkoli velká',
       big: 'Šest kamarádů na motorkách, nebo sraz dvaceti dvou. Místo si pokaždé vezme celou partu.',
       desc: 'Nestavíme to na čísle. Pohodlně tu přespí až {maxHostu} lidí, ale stejně dobře sem sednou rodina, parta přátel i menší skupina — celý dům a celý pozemek je vždycky jen váš.',
-    },
-    sezony: {
-      eyebrow: 'Léto vs. Zima', title: 'Co vás čeká v každé sezóně', note: 'Přepněte sezónu nahoře a celý web se promění.',
-      summer: { tag: 'Léto', title: 'Dlouhé večery venku', desc: 'Bazén, altán, ohniště a velký pozemek pro děti i dospělé. Turistika a výlety přímo od domu.',
-        list: ['Vyhřívaný bazén, sauna a altán', 'Ohniště a dlouhé večery na pozemku', 'Turistika a výlety přímo od domu'] },
-      winter: { tag: 'Zima', title: 'Lyžovačka bez starostí', desc: 'Ski Resort Černá hora jen 4 km, lyžárna na vybavení přímo v domě a privátní finská sauna na zahřátí po dni na sjezdovce.',
-        list: ['Ski Resort Černá hora 4 km, skibus 200 m od brány', 'Privátní finská sauna a nasvícené ohniště', 'Lyžárna na uskladnění vybavení'] },
     },
     /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
        Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
@@ -470,9 +463,6 @@ const T = {
       errRate: 'Přijali jsme příliš mnoho žádostí. Zkuste to prosím později nebo nám napište e-mail.',
       errGeneric: 'Odeslání se nezdařilo. Zkuste to prosím znovu, nebo nám napište na rezervace@villarudolf.com.',
     },
-    recenze: {
-      eyebrow: 'Recenze', title: 'Co říkají hosté', note: 'Skutečné recenze z Airbnb, Booking.com a Google.',
-    },
     video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', play: 'Přehrát video', playFull: 'Přehrát celé video se zvukem' },
     share: { eyebrow: 'Ze života vily', title: 'Jak to u nás vypadá', body: 'Nakoukněte do každodenního života vily na našem Instagramu — proměny ročních období, večery u ohně i momenty našich hostů. A jestli jste u nás byli, označte @villarudolfretreat a #villarudolf, ať vaše fotky uvidí i další.', ig: 'Sledovat na Instagramu' },
     cta: {
@@ -506,7 +496,7 @@ const T = {
       desc: 'Whole house and grounds for a group of {minHostu}–{maxHostu} in Svoboda nad Úpou, Krkonoše. {loznice} bedrooms, {koupelny} bathrooms, {pozemek} m², sauna, ski room. Skiing and pool in season.',
       locale: 'en_GB',
     },
-    nav: { dum: 'The House', interier: 'Interior', loznice: 'Bedrooms', lyzovani: 'Skiing', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', ohniste: 'Fire Pit', sezony: 'Seasons', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
+    nav: { dum: 'The House', loznice: 'Interior', lyzovani: 'Skiing', vybaveni: 'Amenities', galerie: 'Gallery', ohniste: 'Fire Pit', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
     hero: {
       eyebrow: 'The whole house, just for your group · Krkonoše',
       eyebrowWinter: 'Skiing just around the corner · Krkonoše',
@@ -594,13 +584,6 @@ const T = {
       eyebrow: 'Your group, whatever its size',
       big: 'Six friends on motorbikes, or a reunion of twenty-two. The place always takes the whole party.',
       desc: 'It isn’t about the number. Up to {maxHostu} sleep here in comfort, but a family, a circle of friends or a smaller group fit just as well — the whole house and grounds are always yours alone.',
-    },
-    sezony: {
-      eyebrow: 'Summer vs. Winter', title: 'What each season brings', note: 'Switch season above and the whole site transforms.',
-      summer: { tag: 'Summer', title: 'Long evenings outside', desc: 'Pool, gazebo, fire pit and a large grounds for kids and adults alike. Hiking and trips straight from the house.',
-        list: ['Heated pool, sauna and gazebo', 'Fire pit and long evenings on the grounds', 'Hiking and trips straight from the house'] },
-      winter: { tag: 'Winter', title: 'Skiing without the hassle', desc: 'Ski Resort Černá hora just 4 km away, a ski room for your gear in the house, and a private Finnish sauna to warm up after a day on the slopes.',
-        list: ['Ski Resort Černá hora 4 km, ski-bus stop 200 m', 'Private Finnish sauna and a lit fire pit', 'Ski room for your gear'] },
     },
     /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
        Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
@@ -796,9 +779,6 @@ const T = {
       errRate: 'We received too many requests. Please try again later or email us.',
       errGeneric: 'Sending failed. Please try again, or email us at rezervace@villarudolf.com.',
     },
-    recenze: {
-      eyebrow: 'Reviews', title: 'What guests say', note: 'Real reviews from Airbnb, Booking.com and Google.',
-    },
     video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', play: 'Play video', playFull: 'Play the full video with sound' },
     share: { eyebrow: 'Life at the villa', title: 'See what it’s really like', body: 'Take a look at everyday life at the villa on our Instagram — the change of seasons, evenings by the fire and moments from our guests. And if you’ve stayed with us, tag @villarudolfretreat and #villarudolf so others can see your photos too.', ig: 'Follow on Instagram' },
     cta: {
@@ -832,7 +812,7 @@ const T = {
       desc: 'Ganzes Haus und Grundstück nur für eure Gruppe von {minHostu}–{maxHostu} in Svoboda nad Úpou. {loznice} Schlafzimmer, {koupelny} Bäder, {pozemek} m², Sauna, Skiraum. Ski und Pool saisonal.',
       locale: 'de_DE',
     },
-    nav: { dum: 'Das Haus', interier: 'Innen', loznice: 'Schlafzimmer', lyzovani: 'Skifahren', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', ohniste: 'Feuerstelle', sezony: 'Jahreszeiten', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
+    nav: { dum: 'Das Haus', loznice: 'Innenräume', lyzovani: 'Skifahren', vybaveni: 'Ausstattung', galerie: 'Galerie', ohniste: 'Feuerstelle', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
     hero: {
       eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
       eyebrowWinter: 'Skifahren gleich um die Ecke · Riesengebirge',
@@ -920,13 +900,6 @@ const T = {
       eyebrow: 'Eure Gruppe, egal wie groß',
       big: 'Sechs Freunde auf Motorrädern oder ein Treffen mit zweiundzwanzig. Der Ort fasst immer die ganze Runde.',
       desc: 'Es geht nicht um die Zahl. Bis zu {maxHostu} schlafen hier bequem, aber eine Familie, ein Freundeskreis oder eine kleinere Gruppe passen genauso gut — das ganze Haus und Grundstück gehören immer nur euch.',
-    },
-    sezony: {
-      eyebrow: 'Sommer vs. Winter', title: 'Was jede Jahreszeit bietet', note: 'Wechselt oben die Jahreszeit — die ganze Seite verwandelt sich.',
-      summer: { tag: 'Sommer', title: 'Lange Abende draußen', desc: 'Pool, Pavillon, Feuerstelle und ein großes Grundstück für Kinder wie Erwachsene. Wandern und Ausflüge direkt vom Haus.',
-        list: ['Beheizter Pool, Sauna und Pavillon', 'Feuerstelle und lange Abende auf dem Grundstück', 'Wandern und Ausflüge direkt vom Haus'] },
-      winter: { tag: 'Winter', title: 'Skifahren ohne Stress', desc: 'Skigebiet Černá hora nur 4 km entfernt, ein Skiraum für die Ausrüstung im Haus und eine private finnische Sauna zum Aufwärmen nach einem Tag auf der Piste.',
-        list: ['Skigebiet Černá hora 4 km, Skibus-Haltestelle 200 m', 'Private finnische Sauna und beleuchtete Feuerstelle', 'Skiraum für die Ausrüstung'] },
     },
     /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
        Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
@@ -1122,9 +1095,6 @@ const T = {
       errRate: 'Wir haben zu viele Anfragen erhalten. Bitte versucht es später erneut oder schreibt uns eine E-Mail.',
       errGeneric: 'Senden fehlgeschlagen. Bitte versucht es erneut oder schreibt an rezervace@villarudolf.com.',
     },
-    recenze: {
-      eyebrow: 'Bewertungen', title: 'Was Gäste sagen', note: 'Echte Bewertungen von Airbnb, Booking.com und Google.',
-    },
     video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', play: 'Video abspielen', playFull: 'Ganzes Video mit Ton abspielen' },
     share: { eyebrow: 'Leben in der Villa', title: 'So sieht es bei uns aus', body: 'Werfen Sie auf unserem Instagram einen Blick in den Alltag der Villa — der Wechsel der Jahreszeiten, Abende am Feuer und Momente unserer Gäste. Und wenn Sie bei uns waren, markieren Sie @villarudolfretreat und #villarudolf, damit auch andere Ihre Fotos sehen.', ig: 'Auf Instagram folgen' },
     cta: {
@@ -1158,7 +1128,7 @@ const T = {
       desc: 'Cały dom i posesja tylko dla grupy {minHostu}–{maxHostu} osób w Svobodzie nad Úpą. {loznice} sypialni, {koupelny} łazienek, {pozemek} m², sauna, narciarnia. Narty i basen sezonowo.',
       locale: 'pl_PL',
     },
-    nav: { dum: 'Dom', interier: 'Wnętrze', loznice: 'Sypialnie', lyzovani: 'Narty', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', ohniste: 'Palenisko', sezony: 'Sezony', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
+    nav: { dum: 'Dom', loznice: 'Wnętrza', lyzovani: 'Narty', vybaveni: 'Udogodnienia', galerie: 'Galeria', ohniste: 'Palenisko', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
     hero: {
       eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
       eyebrowWinter: 'Narty tuż za rogiem · Karkonosze',
@@ -1246,13 +1216,6 @@ const T = {
       eyebrow: 'Wasza grupa, niezależnie od wielkości',
       big: 'Sześciu kolegów na motocyklach albo zjazd dwudziestu dwóch. Miejsce zawsze pomieści całą ekipę.',
       desc: 'Nie chodzi o liczbę. Wygodnie śpi tu do {maxHostu} osób, ale rodzina, grono przyjaciół czy mniejsza grupa zmieszczą się równie dobrze — cały dom i posesja są zawsze tylko wasze.',
-    },
-    sezony: {
-      eyebrow: 'Lato vs. Zima', title: 'Co czeka w każdym sezonie', note: 'Przełącz sezon u góry, a cała strona się zmieni.',
-      summer: { tag: 'Lato', title: 'Długie wieczory na zewnątrz', desc: 'Basen, altana, palenisko i duża posesja dla dzieci i dorosłych. Wędrówki i wycieczki prosto z domu.',
-        list: ['Podgrzewany basen, sauna i altana', 'Palenisko i długie wieczory na posesji', 'Wędrówki i wycieczki prosto z domu'] },
-      winter: { tag: 'Zima', title: 'Narty bez kłopotów', desc: 'Ośrodek Černá hora zaledwie 4 km, narciarnia na sprzęt w domu i prywatna fińska sauna na rozgrzewkę po dniu na stoku.',
-        list: ['Ośrodek Černá hora 4 km, przystanek skibusu 200 m', 'Prywatna fińska sauna i podświetlone palenisko', 'Narciarnia na sprzęt'] },
     },
     /* ===================== JEN ZIMA — „Lyžování odsud" (#lyzovani) =====================
        Zdroj: strukturální rešerše okolních areálů, ověřeno 7/2026.
@@ -1447,9 +1410,6 @@ const T = {
       errEmail: 'Sprawdź adres e-mail.',
       errRate: 'Otrzymaliśmy zbyt wiele próśb. Spróbuj później lub napisz do nas e-mail.',
       errGeneric: 'Wysłanie nie powiodło się. Spróbuj ponownie lub napisz na rezervace@villarudolf.com.',
-    },
-    recenze: {
-      eyebrow: 'Recenzje', title: 'Co mówią goście', note: 'Prawdziwe recenzje z Airbnb, Booking.com i Google.',
     },
     video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', play: 'Odtwórz wideo', playFull: 'Odtwórz całe wideo z dźwiękiem' },
     share: { eyebrow: 'Życie w willi', title: 'Zobacz, jak jest u nas naprawdę', body: 'Zajrzyj do codziennego życia willi na naszym Instagramie — zmiana pór roku, wieczory przy ogniu i chwile naszych gości. A jeśli u nas byliście, oznaczcie @villarudolfretreat i #villarudolf, żeby wasze zdjęcia zobaczyli też inni.', ig: 'Obserwuj na Instagramie' },
@@ -1693,29 +1653,14 @@ function reviewText(r) {
 function platformByKey(k) { return VR_REVIEWS.platforms.find((p) => p.key === k) || {}; }
 /* Citace, které stojí na bazénu (`pool: true`), se v ZIMĚ nezobrazují — bazén
    v zimě nejede a recenze začínající „Der Pool…" by vyrobila přesně to
-   očekávání, které se při příjezdu rozbije. Vyřazují se z obou míst (spodní
-   sekce i horní pás). Nikdy ne na nulu: i po odfiltrování zbývají čtyři. */
+   očekávání, které se při příjezdu rozbije. Nikdy ne na nulu: i po odfiltrování
+   zbývají čtyři, a pojezd si sadu stejně několikrát zopakuje. */
 function reviewsForSeason() {
   return VR_REVIEWS.items.filter((r) => !(state.season === 'zima' && r.pool));
 }
-function renderReviews() {
-  const host = $('#vr-reviews'); if (!host) return; host.innerHTML = '';
-  reviewsForSeason().forEach((r) => {
-    const p = platformByKey(r.platform);
-    const fig = el('figure', { class: 'vr-review' }, [
-      el('blockquote', { class: 'vr-review-q', text: reviewText(r) }),
-      el('figcaption', { class: 'vr-review-cap' }, [
-        el('span', { class: 'vr-review-author', text: r.author }),
-        el('a', { class: 'vr-review-badge', href: p.url || '#', target: '_blank', rel: 'noopener noreferrer',
-          'aria-label': (p.name || r.platform) + ' — ' + (r.author) }, [
-          el('span', { text: p.name || r.platform }),
-          el('span', { class: 'vr-rating-arrow', 'aria-hidden': 'true', text: '↗' }),
-        ]),
-      ]),
-    ]);
-    host.appendChild(fig);
-  });
-}
+/* Spodní sekce „Co říkají hosté" (#recenze) BYLA ZRUŠENA (7/2026, majitel):
+   duplikovala pás pod heroem a stejně odkazovala na platformy. Jediné místo,
+   kde recenze na webu žijí, je teď pojezd v pásu — viz renderTrustBand(). */
 
 /* ---------- Video: click-to-play FULLSCREEN lightbox (cookie-free až do otevření) ----------
    Po kliknutí na náhled se karta plynule (FLIP transform, bez knihoven) zvětší přes
@@ -2425,12 +2370,10 @@ function renderScene() {
   scrollThumbIntoView(true);
 }
 
-/* Sekce Sezóny je teď „Léto vs. Zima" srovnání — obě karty vždy plně viditelné,
-   každá s vlastní sezónní tónovanou linkou a seznamem, co je v ní zahrnuté. */
-/* Karty sezón jsou staticky v index.html (klíče sezony.summer.* / sezony.winter.*),
-   aby zimní i letní text byl ve zdroji stránky. Obě jsou vidět vždycky — sekce
-   je právě o porovnání. */
-
+/* Sekce „Co vás čeká v každé sezóně" (#sezony) ZANIKLA (7/2026, majitel):
+   „Ti, co přijedou na léto, hledají léto, ti, co na zimu, hledají zimu."
+   Sezónnost drží celý web sám (data-season) — druhá sekce o tomtéž nebyla
+   k ničemu. Nezakládej ji znovu. */
 
 function renderTrips() {
   const t = tt();
@@ -3002,11 +2945,15 @@ function applySeasonButtons() {
      2. hero.sub          / hero.subWinter
      3. facts.wellnessSummer / facts.wellnessWinter   (rychlá fakta)
      4. lokalita.lead     / lokalita.leadWinter
-     5. lokalita.arrive   / lokalita.arriveTransitWinter  (blok „Než dorazíte")
-     6. sezony.summer     / sezony.winter  (karty sezón — vidět jsou VŽDY obě)
-   Sloty pro hlavní kartu a tři karty vybavení ZANIKLY: vybavení je teď jeden
-   seznam s jedním zněním a sezónnost mu dává pořadí v CSS. To je směr, kterým
-   se má jít u všeho dalšího — sezónnost jako vlastnost dat, ne druhá věta.
+     5. lokalita.arrive   / lokalita.arriveTransitWinter + arriveCarSummer
+                            (blok „Než dorazíte")
+     6. lokalita.doorstepSummer / lokalita.doorstep    (pás čísel „od dveří" —
+        v létě nikoho nezajímá skibus ani sjezdovka, v zimě jsou to ta hlavní
+        čísla; proto dvě sady, ne jedna okleštěná)
+   Slot pro karty sezón ZANIKL se sekcí #sezony (majitel ji zrušil). Sloty pro
+   hlavní kartu a tři karty vybavení ZANIKLY taky: vybavení je teď jeden seznam
+   s jedním zněním a sezónnost mu dává pořadí v CSS. To je směr, kterým se má
+   jít u všeho dalšího — sezónnost jako vlastnost dat, ne druhá věta.
 
    EXKLUZIVNÍ SEKCE (vrstva C, právě jedna na sezónu, víc jich být NESMÍ):
      zima → #lyzovani  „Lyžování odsud" (+ podblok „Když se nelyžuje")
@@ -3247,7 +3194,7 @@ function setLang(lang) {
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); applySeasonButtons(); setTexts();
-  renderRatings(); renderReviews(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderRatings(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   applyStripAria();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
@@ -3289,8 +3236,7 @@ function setSeason(season) {
   // „Než dorazíte" (v zimě nahoru skibus a parkování, vlak+autobus na jeden řádek).
   applySeasonTripCounts();
   renderArrive();
-  renderReviews();  // v zimě se vynechávají citace, které stojí na bazénu
-  renderTrustBand();
+  renderTrustBand();  // v zimě se z pojezdu vynechávají citace, které stojí na bazénu
   applyLangLinks(); // keep ?season on subpage links (průvodce / podmínky) in sync
   syncUrl();
 }
@@ -3690,7 +3636,7 @@ function init() {
   applyThemeColor();
   state.galFilter = state.season === 'zima' ? 'zima' : 'all';
   applyLangButtons(); applySeasonButtons(); applySeasonBranches(); setTexts();
-  renderRatings(); renderReviews(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderRatings(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   setupPanoGroupKeys(); setupThumbStrip(); applyStripAria();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();

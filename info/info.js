@@ -7,7 +7,7 @@
   var T = {
     cs: {
       htmlLang: 'cs',
-      navDum: 'Dům', navVybaveni: 'Vybavení', navGalerie: 'Galerie', navRecenze: 'Recenze', navLokalita: 'Lokalita', navVylety: 'Výlety', navBook: 'Rezervovat',
+      navDum: 'Dům', navVybaveni: 'Vybavení', navGalerie: 'Galerie', navLoznice: 'Interiér', navLokalita: 'Lokalita', navVylety: 'Výlety', navBook: 'Rezervovat',
       brandBadge: 'Praktické info',
       eyebrow: 'Villa Rudolf · Krkonoše',
       title: 'Praktické informace',
@@ -59,7 +59,7 @@
 
     en: {
       htmlLang: 'en',
-      navDum: 'The House', navVybaveni: 'Amenities', navGalerie: 'Gallery', navRecenze: 'Reviews', navLokalita: 'Location', navVylety: 'Trips', navBook: 'Book',
+      navDum: 'The House', navVybaveni: 'Amenities', navGalerie: 'Gallery', navLoznice: 'Interior', navLokalita: 'Location', navVylety: 'Trips', navBook: 'Book',
       brandBadge: 'Guest info',
       eyebrow: 'Villa Rudolf · Giant Mountains',
       title: 'Practical information',
@@ -111,7 +111,7 @@
 
     de: {
       htmlLang: 'de',
-      navDum: 'Das Haus', navVybaveni: 'Ausstattung', navGalerie: 'Galerie', navRecenze: 'Bewertungen', navLokalita: 'Lage', navVylety: 'Ausflüge', navBook: 'Buchen',
+      navDum: 'Das Haus', navVybaveni: 'Ausstattung', navGalerie: 'Galerie', navLoznice: 'Innenräume', navLokalita: 'Lage', navVylety: 'Ausflüge', navBook: 'Buchen',
       brandBadge: 'Gäste-Info',
       eyebrow: 'Villa Rudolf · Riesengebirge',
       title: 'Praktische Informationen',
@@ -163,7 +163,7 @@
 
     pl: {
       htmlLang: 'pl',
-      navDum: 'Dom', navVybaveni: 'Udogodnienia', navGalerie: 'Galeria', navRecenze: 'Recenzje', navLokalita: 'Lokalizacja', navVylety: 'Wycieczki', navBook: 'Rezerwuj',
+      navDum: 'Dom', navVybaveni: 'Udogodnienia', navGalerie: 'Galeria', navLoznice: 'Wnętrza', navLokalita: 'Lokalizacja', navVylety: 'Wycieczki', navBook: 'Rezerwuj',
       brandBadge: 'Info dla gości',
       eyebrow: 'Villa Rudolf · Karkonosze',
       title: 'Informacje praktyczne',

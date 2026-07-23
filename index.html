@@ -45,13 +45,14 @@
       <a href="#top" class="vr-brand"><b>VILLA RUDOLF</b><i>KRKONOŠE</i></a>
       <nav class="vr-navlinks" aria-label="Sekce">
         <!-- V zimě přibývá odskok na „Lyžování odsud"; aby se lišta na užších
-             obrazovkách nepřeplnila, dvě nejméně kritické položky (Recenze,
-             Galerie) se pod 1200 px schovají — v mobilním menu zůstávají obě. -->
+             obrazovkách nepřeplnila, nejméně kritická položka (Galerie) se
+             pod 1200 px schová — v mobilním menu zůstává.
+             Položka „Recenze" ZANIKLA se sekcí #recenze (7/2026) — recenze
+             teď žijí v pásu pod heroem, hned nad ohybem. -->
         <a href="#lyzovani" data-season-only="zima" data-t="nav.lyzovani">Lyžování</a>
         <a href="#dum" data-t="nav.dum">Dům</a>
-        <a href="#loznice" data-t="nav.loznice">Ložnice</a>
+        <a href="#loznice" data-t="nav.loznice">Interiér</a>
         <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
-        <a href="#recenze" class="vr-nav-opt" data-t="nav.recenze">Recenze</a>
         <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
         <a href="#galerie" class="vr-nav-opt" data-t="nav.galerie">Galerie</a>
         <a href="vylety/" data-langlink="vylety/" data-t="nav.vylety">Výlety</a>
@@ -79,9 +80,8 @@
   <div class="vr-mob" id="vr-mob" data-open="false">
     <a href="#lyzovani" data-season-only="zima" data-t="nav.lyzovani">Lyžování</a>
     <a href="#dum" data-t="nav.dum">Dům</a>
-    <a href="#loznice" data-t="nav.loznice">Ložnice</a>
+    <a href="#loznice" data-t="nav.loznice">Interiér</a>
     <a href="#vybaveni" data-t="nav.vybaveni">Vybavení</a>
-    <a href="#recenze" data-t="nav.recenze">Recenze</a>
     <a href="#lokalita" data-t="nav.lokalita">Lokalita</a>
     <a href="#galerie" data-t="nav.galerie">Galerie</a>
     <a href="vylety/" data-langlink="vylety/" data-t="nav.vylety">Výlety</a>
@@ -564,65 +564,16 @@
     </div>
   </section>
 
-  <!-- ===================== Seasons — Léto vs. Zima comparison ===================== -->
-  <!-- Slimmed: the whole site now switches season, so this is a plain side-by-side
-       comparison of what each season includes. Both cards always fully visible. -->
-  <section id="sezony" class="sec-sezony">
-    <div class="vr-wrap">
-      <div class="vr-reveal vr-sec-head">
-        <div style="max-width:700px">
-          <span class="vr-eyebrow" data-t="sezony.eyebrow">Léto vs. Zima</span>
-          <h2 class="vr-h2" data-t="sezony.title">Co vás čeká v každé sezóně</h2>
-        </div>
-        <span class="vr-sec-note" data-t="sezony.note">Přepněte sezónu nahoře a celý web se promění.</span>
-      </div>
-      <div class="vr-sez vr-reveal">
-        <!-- SEZÓNNĚ DĚLENÝ SLOT 7 — karty sezón. Tady jsou obě vidět VŽDY
-             (sekce je právě o porovnání), takže se nic neschovává; texty jen
-             musí být ve zdroji stránky, ne až z JS. -->
-        <article class="summer" id="sez-sum" data-on="true">
-          <img src="media/photos/season-summer.jpg" alt="Léto ve Villa Rudolf" loading="lazy">
-          <div class="vr-sez-body">
-            <span class="vr-tag" id="sez-sum-tag" data-t="sezony.summer.tag">Léto</span>
-            <h3 id="sez-sum-title" data-t="sezony.summer.title">Dlouhé večery venku</h3>
-            <p id="sez-sum-desc" data-t="sezony.summer.desc">Bazén, altán, ohniště a velký pozemek pro děti i dospělé. Turistika a výlety přímo od domu.</p>
-            <ul class="vr-sez-list" id="sez-sum-list">
-              <li data-t="sezony.summer.list.0">Vyhřívaný bazén, sauna a altán</li>
-              <li data-t="sezony.summer.list.1">Ohniště a dlouhé večery na pozemku</li>
-              <li data-t="sezony.summer.list.2">Turistika a výlety přímo od domu</li>
-            </ul>
-          </div>
-        </article>
-        <article class="winter" id="sez-win" data-on="true">
-          <img src="media/photos/season-winter.jpg" alt="Zima ve Villa Rudolf" loading="lazy">
-          <div class="vr-sez-body">
-            <span class="vr-tag" id="sez-win-tag" data-t="sezony.winter.tag">Zima</span>
-            <h3 id="sez-win-title" data-t="sezony.winter.title">Lyžovačka bez starostí</h3>
-            <p id="sez-win-desc" data-t="sezony.winter.desc">Ski Resort Černá hora jen 4 km, lyžárna na vybavení přímo v domě a privátní finská sauna na zahřátí po dni na sjezdovce.</p>
-            <ul class="vr-sez-list" id="sez-win-list">
-              <li data-t="sezony.winter.list.0">Ski Resort Černá hora 4 km, skibus 200 m od brány</li>
-              <li data-t="sezony.winter.list.1">Privátní finská sauna a nasvícené ohniště</li>
-              <li data-t="sezony.winter.list.2">Lyžárna na uskladnění vybavení</li>
-            </ul>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
+  <!-- SEKCE „Co vás čeká v každé sezóně" (#sezony) BYLA ZRUŠENA (7/2026, majitel):
+       „Ti, co přijedou na léto, hledají léto, ti, co na zimu, hledají zimu."
+       Celý web se přepíná sezónou, srovnávací tabulka jen zdržovala. Znovu ji
+       nezakládej — sezónnost patří do dat, ne do další sekce.
 
-  <!-- ===================== Reviews ===================== -->
-  <section id="recenze" class="sec-recenze">
-    <div class="vr-wrap">
-      <div class="vr-reveal vr-sec-head">
-        <div style="max-width:700px">
-          <span class="vr-eyebrow" data-t="recenze.eyebrow">Recenze</span>
-          <h2 class="vr-h2" data-t="recenze.title">Co říkají hosté</h2>
-        </div>
-        <span class="vr-sec-note" data-t="recenze.note">Skutečné recenze z Airbnb, Booking.com a Google.</span>
-      </div>
-      <div class="vr-reviews vr-reveal" id="vr-reviews"></div>
-    </div>
-  </section>
+       SEKCE „Co říkají hosté" (#recenze) BYLA ZRUŠENA (7/2026, majitel):
+       „Recenze na platformách jsou mnohem cennější než ty, co já tam mám
+       uvedený." Šest vybraných citací duplikovalo pás pod heroem a stejně
+       odkazovalo pryč. Recenze na webu ZŮSTÁVAJÍ — jako nekonečný pojezd
+       v pásu pod heroem (.vr-revmarq), kde každá karta vede na platformu. -->
 
   <!-- ===================== Location — „V horách, ne na konci světa" =====================
        Pás „od dveří" (čísla) → kreslená mapa (statické inline SVG, žádné dlaždice
