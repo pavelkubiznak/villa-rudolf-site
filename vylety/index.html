@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="../media/trips/snezka-cablecar.jpg">
-<link rel="stylesheet" href="../assets/site.css?v=39">
+<link rel="stylesheet" href="../assets/site.css?v=41">
 <link rel="stylesheet" href="vylety.css?v=31">
 <link rel="stylesheet" href="../assets/planner.css?v=31">
 <script type="application/ld+json">
@@ -62,6 +62,9 @@
   ]
 }
 </script>
+<!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
+     s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
+<script src="../assets/season.js?v=41"></script>
 </head>
 <body>
 
@@ -89,6 +92,9 @@
 </noscript>
 
 <div class="vr-root vyl-root" data-season="leto">
+<script>/* Sezóna do DOM ještě před vykreslením — dědí se z hlavního webu
+     (?season → datum → volba v rámci návštěvy), viz assets/season.js. */
+(function(){try{var r=document.currentScript.parentNode;var s=window.VRSeason&&window.VRSeason.resolve();if(s)r.setAttribute('data-season',s);}catch(e){}})();</script>
 
   <!-- ===================== Nav ===================== -->
   <header class="vr-nav" data-scrolled="false">
@@ -104,8 +110,8 @@
       </nav>
       <div class="vr-navright">
         <div class="vr-seg vr-nav-season" role="group" aria-label="Sezóna">
-          <button class="vr-segbtn" data-season="leto" data-active="true" aria-pressed="true" data-t="hero.summer">Léto</button>
-          <button class="vr-segbtn" data-season="zima" aria-pressed="false" data-t="hero.winter">Zima</button>
+          <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Léto</a>
+          <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Zima</a>
         </div>
         <div class="vr-langs" role="group" aria-label="Jazyk / Language">
           <button class="vr-lang" data-lang="cs" data-active="true">CS</button>
@@ -131,8 +137,8 @@
     <a href="../#lokalita" data-langlink="../#lokalita" data-t="nav.lokalita">Lokalita</a>
     <a href="../#rezervace" data-langlink="../#rezervace" class="vr-mob-cta" data-t="nav.cta">Rezervovat termín</a>
     <div class="vr-seg vr-mob-season" role="group" aria-label="Sezóna">
-      <button class="vr-segbtn" data-season="leto" data-active="true" aria-pressed="true" data-t="hero.summer">Léto</button>
-      <button class="vr-segbtn" data-season="zima" aria-pressed="false" data-t="hero.winter">Zima</button>
+      <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Léto</a>
+      <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Zima</a>
     </div>
     <a class="vr-mob-2nd" href="../info/" data-langlink="../info/" data-t="nav.info">Praktické info</a>
     <div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">
@@ -157,8 +163,8 @@
       <div class="vyl-hero-toggle">
         <span class="vyl-toggle-lbl" data-t="hero.seasonHint">Vyberte sezónu:</span>
         <div class="vr-seg" role="group" aria-label="Sezóna">
-          <button class="vr-segbtn" data-season="leto" data-active="true" aria-pressed="true" data-t="hero.summer">Léto</button>
-          <button class="vr-segbtn" data-season="zima" aria-pressed="false" data-t="hero.winter">Zima</button>
+          <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Léto</a>
+          <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Zima</a>
         </div>
         <a class="vyl-skip" href="#planovac" data-t="hero.skip">Přeskočit na plánovač ↓</a>
       </div>
@@ -601,8 +607,8 @@
   <a class="vr-stickycta" id="vr-stickycta" href="../#rezervace" data-langlink="../#rezervace" data-t="nav.cta">Rezervovat termín</a>
 
 </div>
-<script src="../assets/planner.js?v=31" defer></script>
-<script src="vylety.js?v=31" defer></script>
+<script src="../assets/planner.js?v=41" defer></script>
+<script src="vylety.js?v=41" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

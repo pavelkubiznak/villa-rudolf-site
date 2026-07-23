@@ -272,14 +272,14 @@
     mob.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { toggleMob(false); }); });
   })();
 
-  /* Sezóna dědí z webu — ?season → localStorage vrSeason → léto (stejná logika jako index/site.js). */
+  /* Sezóna dědí z webu — ?season → DATUM → volba v rámci návštěvy.
+     Jediný zdroj pravdy je assets/season.js (i hranice sezón). */
   var season = 'leto';
   (function () {
-    var q = (qs.get('season') || '').toLowerCase();
-    if (q === 'leto' || q === 'zima') season = q;
-    else { try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') season = s; } catch (e) {} }
+    if (window.VRSeason) season = window.VRSeason.resolve(location.search);
+    else { var q = (qs.get('season') || '').toLowerCase(); if (q === 'leto' || q === 'zima') season = q; }
     var root = document.querySelector('.pi-root'); if (root) root.setAttribute('data-season', season);
-    try { localStorage.setItem('vrSeason', season); } catch (e) {}
+    if (window.VRSeason) window.VRSeason.remember(season);
     var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', season === 'zima' ? '#eef2f6' : '#0E1311');
   })();
 

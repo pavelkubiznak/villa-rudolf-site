@@ -414,13 +414,13 @@
   var token = qs.get('t') || '';
   var MOUNT = null;      // element, do kterého se plánovač renderuje
 
-  /* Sezóna dědí z webu — ?season → localStorage vrSeason → léto (stejná logika jako index/site.js).
+  /* Sezóna dědí z webu — ?season → DATUM → volba v rámci návštěvy.
+     Logiku i hranice sezón drží assets/season.js (jedno místo pro celý web).
      Aplikuje se hned, aby i loading stav a celý průvodce ladil se zimním/letním tématem. */
   function resolveSeason() {
+    if (window.VRSeason) return window.VRSeason.resolve(location.search);
     var q = (qs.get('season') || '').toLowerCase();
-    if (q === 'leto' || q === 'zima') return q;
-    try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') return s; } catch (e) {}
-    return 'leto';
+    return (q === 'leto' || q === 'zima') ? q : 'leto';
   }
   S.season = resolveSeason();
 

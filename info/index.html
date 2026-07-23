@@ -21,6 +21,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="info.css?v=33">
+<!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
+     s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
+<script src="../assets/season.js?v=41"></script>
 </head>
 <body>
 
@@ -43,6 +46,9 @@
 </svg>
 
 <div class="pi-root" data-season="leto">
+<script>/* Sezóna do DOM ještě před vykreslením — dědí se z hlavního webu
+     (?season → datum → volba v rámci návštěvy), viz assets/season.js. */
+(function(){try{var r=document.currentScript.parentNode;var s=window.VRSeason&&window.VRSeason.resolve();if(s)r.setAttribute('data-season',s);}catch(e){}})();</script>
 
   <!-- ===== Sjednocená hlavní navigace (shodná s homepage .vr-nav) ===== -->
   <header class="vr-nav">
@@ -342,6 +348,6 @@
   </div>
 </div>
 
-<script src="info.js?v=33" defer></script>
+<script src="info.js?v=41" defer></script>
 </body>
 </html>

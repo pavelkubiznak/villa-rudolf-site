@@ -201,12 +201,12 @@
     if (T[nav]) return nav;
     return 'cs';
   }
-  /* Sezóna: ?season= → localStorage vrSeason → leto. */
+  /* Sezóna: ?season= → DATUM → uložená volba (jen v rámci návštěvy).
+     Logiku i hranice sezón drží assets/season.js — jedno místo pro celý web. */
   function resolveSeason(qs) {
+    if (window.VRSeason) return window.VRSeason.resolve(location.search);
     var q = (qs.get('season') || '').toLowerCase();
-    if (q === 'leto' || q === 'zima') return q;
-    try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') return s; } catch (e) {}
-    return 'leto';
+    return (q === 'leto' || q === 'zima') ? q : 'leto';
   }
 
   /* Počty cílů — dokud plánovač nenačte katalog, platí fallback; pak se
@@ -238,9 +238,11 @@
   }
   function applySeasonButtons() {
     $all('.vr-segbtn').forEach(function (b) {
-      var on = b.getAttribute('data-season') === state.season;
+      var sn = b.getAttribute('data-season');
+      var on = sn === state.season;
       b.setAttribute('data-active', on ? 'true' : 'false');
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+      if (b.tagName === 'A') b.setAttribute('href', '?season=' + sn + '&lang=' + state.lang);
     });
   }
   /* data-langlink → přidej ?lang&season (a zachovej případný #hash), ať jsou
@@ -272,7 +274,7 @@
     if (!T[lang] || state.lang === lang) return;
     state.lang = lang;
     try { localStorage.setItem('vrLang', lang); } catch (e) {}
-    applyLangButtons(); setTexts(); applyMeta(); applyLangLinks(); syncUrl();
+    applyLangButtons(); applySeasonButtons(); setTexts(); applyMeta(); applyLangLinks(); syncUrl();
     if (window.VRPlanner) window.VRPlanner.setLang(lang);
   }
   function eagerLoadSeason(season) {
@@ -282,7 +284,8 @@
   function setSeason(season) {
     if ((season !== 'leto' && season !== 'zima') || state.season === season) return;
     state.season = season;
-    try { localStorage.setItem('vrSeason', season); } catch (e) {}
+    if (window.VRSeason) window.VRSeason.remember(season);
+    else { try { sessionStorage.setItem('vrSeason', season); } catch (e) {} }
     eagerLoadSeason(season);
     $('.vr-root').setAttribute('data-season', season);
     applyThemeColor(); applySeasonButtons(); applyLangLinks(); syncUrl();
@@ -392,10 +395,17 @@
     state.lang = resolveLang(qs);
     state.season = resolveSeason(qs);
     try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
-    try { localStorage.setItem('vrSeason', state.season); } catch (e) {}
+    if (window.VRSeason) window.VRSeason.remember(state.season);
 
     $all('.vr-lang').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });
-    $all('.vr-segbtn').forEach(function (b) { b.addEventListener('click', function () { setSeason(b.getAttribute('data-season')); }); });
+    // Přepínač sezóny je odkaz — kliknutí přepne bez reloadu, modifikátory nechme projít.
+    $all('.vr-segbtn').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button > 0) return;
+        e.preventDefault();
+        setSeason(b.getAttribute('data-season'));
+      });
+    });
     $('#vr-burger').addEventListener('click', function () { toggleMob(); });
     $all('#vr-mob a').forEach(function (a) { a.addEventListener('click', function () { toggleMob(false); }); });
 

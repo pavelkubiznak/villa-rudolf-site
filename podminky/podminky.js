@@ -172,11 +172,11 @@
     var nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
     return T[nav] ? nav : 'cs';
   }
+  /* Sezóna dědí z webu — ?season → DATUM → volba v rámci návštěvy (assets/season.js). */
   function resolveSeason() {
+    if (window.VRSeason) return window.VRSeason.resolve(location.search);
     var q = (qs.get('season') || '').toLowerCase();
-    if (q === 'leto' || q === 'zima') return q;
-    try { var s = localStorage.getItem('vrSeason'); if (s === 'leto' || s === 'zima') return s; } catch (e) {}
-    return 'leto';
+    return (q === 'leto' || q === 'zima') ? q : 'leto';
   }
 
   /* Odkaz na hlavní web se nese jazyk + sezónu, aby se dědičnost nerozbila. */
@@ -267,7 +267,7 @@
   state.lang = resolveLang();
   state.season = resolveSeason();
   try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
-  try { localStorage.setItem('vrSeason', state.season); } catch (e) {}
+  if (window.VRSeason) window.VRSeason.remember(state.season);
   document.querySelector('.pd-root').setAttribute('data-season', state.season);
   var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.season === 'zima' ? '#eef2f6' : '#0E1311');
   render();

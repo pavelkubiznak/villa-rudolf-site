@@ -18,9 +18,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="podminky.css?v=23">
+<!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
+     s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
+<script src="../assets/season.js?v=41"></script>
 </head>
 <body>
 <div class="pd-root" data-season="leto">
+<script>/* Sezóna do DOM ještě před vykreslením — dědí se z hlavního webu
+     (?season → datum → volba v rámci návštěvy), viz assets/season.js. */
+(function(){try{var r=document.currentScript.parentNode;var s=window.VRSeason&&window.VRSeason.resolve();if(s)r.setAttribute('data-season',s);}catch(e){}})();</script>
   <div id="app">
     <noscript>
       <div style="max-width:820px;margin:0 auto;padding:40px 18px;font-family:'Archivo',sans-serif;color:#F0EBE1">
@@ -32,7 +38,7 @@
     </noscript>
   </div>
 </div>
-<script src="podminky.js?v=23" defer></script>
+<script src="podminky.js?v=41" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>
