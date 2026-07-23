@@ -196,7 +196,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + lyžárna', v: 'privátní sauna, lyžárna přímo v domě' },
       parking:        { k: 'Vlastní parkoviště', v: 'na pozemku hned u vchodu, za vlastní bránou' },
     },
-    ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno', avg: 'průměr napříč platformami', teaserMore: 'Přečíst recenze' },
+    ratings: { eyebrow: 'Hodnocení hostů', reviewsWord: 'recenzí', verified: 'ověřeno', avg: 'průměr napříč platformami', allReviews: 'Zobrazit všechny recenze' },
     direct: {
       badge: '<b>Přímá rezervace = nejlepší cena.</b> O 5 % výhodněji než na platformách. Osobní přístup a férové storno podmínky.',
       book: '<b>Přímá rezervace = nejlepší cena.</b> O 5 % výhodněji než na platformách. Osobní přístup a férové storno podmínky.',
@@ -253,7 +253,7 @@ const T = {
     },
     interior: {
       hint: 'Táhněte myší nebo prstem · klepnutím zvětšíte',
-      open360: 'Prohlédnout ve 360°',
+      open360: 'Otevřít ve 360° prohlídce domu',
       rosterTitle: 'Rozpis lůžek',
       items: { kitchen: 'Kuchyně a jídelna', suite: 'Apartmá Suite', room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4', sauna: 'Finská sauna', wellness: 'Wellness a sprcha', bath: 'Sprcha u sauny', bath2: 'Koupelna – Pokoj 2', bath3: 'Koupelna – Pokoj 3', bath4: 'Koupelna – Pokoj 4' },
     },
@@ -472,7 +472,7 @@ const T = {
     recenze: {
       eyebrow: 'Recenze', title: 'Co říkají hosté', note: 'Skutečné recenze z Airbnb, Booking.com a Google.',
     },
-    video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', play: 'Přehrát video' },
+    video: { eyebrow: 'Video', title: 'Prohlédněte si vilu na videu', summer: 'Dům, zahrada, bazén a příjezd', winter: 'Prohlídka domu, sauna a skibus', play: 'Přehrát video', playFull: 'Přehrát celé video se zvukem' },
     share: { eyebrow: 'Ze života vily', title: 'Jak to u nás vypadá', body: 'Nakoukněte do každodenního života vily na našem Instagramu — proměny ročních období, večery u ohně i momenty našich hostů. A jestli jste u nás byli, označte @villarudolfretreat a #villarudolf, ať vaše fotky uvidí i další.', ig: 'Sledovat na Instagramu' },
     cta: {
       eyebrow: 'Rezervace', title: 'Rezervujte celý dům pro svou skupinu',
@@ -525,7 +525,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + ski room', v: 'private sauna, ski room inside the house' },
       parking:        { k: 'Private parking', v: 'on the grounds by the door, behind your own gate' },
     },
-    ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified', avg: 'average across platforms', teaserMore: 'Read the reviews' },
+    ratings: { eyebrow: 'Guest ratings', reviewsWord: 'reviews', verified: 'verified', avg: 'average across platforms', allReviews: 'Show all reviews' },
     direct: {
       badge: '<b>Book direct = best price.</b> 5% better than the platforms. Personal service and fair cancellation terms.',
       book: '<b>Book direct = best price.</b> 5% better than the platforms. Personal service and fair cancellation terms.',
@@ -580,7 +580,7 @@ const T = {
     },
     interior: {
       hint: 'Drag with mouse or finger · tap to enlarge',
-      open360: 'View in 360°',
+      open360: 'Open in the 360° house tour',
       rosterTitle: 'Bed layout',
       items: { kitchen: 'Kitchen & dining', suite: 'Apartment Suite', room1: 'Bedroom 1', room2: 'Bedroom 2', room3: 'Bedroom 3', room4: 'Bedroom 4', sauna: 'Finnish sauna', wellness: 'Wellness & shower', bath: 'Shower by the sauna', bath2: 'Bathroom – Room 2', bath3: 'Bathroom – Room 3', bath4: 'Bathroom – Room 4' },
     },
@@ -797,7 +797,7 @@ const T = {
     recenze: {
       eyebrow: 'Reviews', title: 'What guests say', note: 'Real reviews from Airbnb, Booking.com and Google.',
     },
-    video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', play: 'Play video' },
+    video: { eyebrow: 'Video', title: 'See the villa on video', summer: 'House, garden, pool & arrival', winter: 'House tour, sauna & ski bus', play: 'Play video', playFull: 'Play the full video with sound' },
     share: { eyebrow: 'Life at the villa', title: 'See what it’s really like', body: 'Take a look at everyday life at the villa on our Instagram — the change of seasons, evenings by the fire and moments from our guests. And if you’ve stayed with us, tag @villarudolfretreat and #villarudolf so others can see your photos too.', ig: 'Follow on Instagram' },
     cta: {
       eyebrow: 'Booking', title: 'Book the whole house for your group',
@@ -850,7 +850,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + Skiraum', v: 'private Sauna, Skiraum direkt im Haus' },
       parking:        { k: 'Eigener Parkplatz', v: 'auf dem Grundstück direkt am Eingang, hinter dem eigenen Tor' },
     },
-    ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft', avg: 'Durchschnitt über alle Plattformen', teaserMore: 'Bewertungen lesen' },
+    ratings: { eyebrow: 'Gästebewertungen', reviewsWord: 'Bewertungen', verified: 'geprüft', avg: 'Durchschnitt über alle Plattformen', allReviews: 'Alle Bewertungen ansehen' },
     direct: {
       badge: '<b>Direkt buchen = bester Preis.</b> 5 % günstiger als über die Plattformen. Persönlicher Service und faire Stornobedingungen.',
       book: '<b>Direkt buchen = bester Preis.</b> 5 % günstiger als über die Plattformen. Persönlicher Service und faire Stornobedingungen.',
@@ -905,7 +905,7 @@ const T = {
     },
     interior: {
       hint: 'Mit Maus oder Finger ziehen · zum Vergrößern tippen',
-      open360: 'In 360° ansehen',
+      open360: 'In der 360°-Haustour öffnen',
       rosterTitle: 'Bettenaufteilung',
       items: { kitchen: 'Küche & Essbereich', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Dusche an der Sauna', bath2: 'Bad – Zimmer 2', bath3: 'Bad – Zimmer 3', bath4: 'Bad – Zimmer 4' },
     },
@@ -1122,7 +1122,7 @@ const T = {
     recenze: {
       eyebrow: 'Bewertungen', title: 'Was Gäste sagen', note: 'Echte Bewertungen von Airbnb, Booking.com und Google.',
     },
-    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', play: 'Video abspielen' },
+    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', play: 'Video abspielen', playFull: 'Ganzes Video mit Ton abspielen' },
     share: { eyebrow: 'Leben in der Villa', title: 'So sieht es bei uns aus', body: 'Werfen Sie auf unserem Instagram einen Blick in den Alltag der Villa — der Wechsel der Jahreszeiten, Abende am Feuer und Momente unserer Gäste. Und wenn Sie bei uns waren, markieren Sie @villarudolfretreat und #villarudolf, damit auch andere Ihre Fotos sehen.', ig: 'Auf Instagram folgen' },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
@@ -1175,7 +1175,7 @@ const T = {
       wellnessWinter: { k: 'Sauna + narciarnia', v: 'prywatna sauna, narciarnia w domu' },
       parking:        { k: 'Własny parking', v: 'na posesji tuż przy wejściu, za własną bramą' },
     },
-    ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano', avg: 'średnia z wszystkich platform', teaserMore: 'Przeczytaj recenzje' },
+    ratings: { eyebrow: 'Oceny gości', reviewsWord: 'recenzji', verified: 'zweryfikowano', avg: 'średnia z wszystkich platform', allReviews: 'Zobacz wszystkie opinie' },
     direct: {
       badge: '<b>Rezerwacja bezpośrednia = najlepsza cena.</b> O 5% taniej niż na platformach. Osobiste podejście i uczciwe warunki anulacji.',
       book: '<b>Rezerwacja bezpośrednia = najlepsza cena.</b> O 5% taniej niż na platformach. Osobiste podejście i uczciwe warunki anulacji.',
@@ -1230,7 +1230,7 @@ const T = {
     },
     interior: {
       hint: 'Przeciągnij myszą lub palcem · dotknij, aby powiększyć',
-      open360: 'Zobacz w 360°',
+      open360: 'Otwórz w spacerze 360° po domu',
       rosterTitle: 'Rozkład łóżek',
       items: { kitchen: 'Kuchnia i jadalnia', suite: 'Apartament Suite', room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4', sauna: 'Sauna fińska', wellness: 'Wellness i prysznic', bath: 'Prysznic przy saunie', bath2: 'Łazienka – Pokój 2', bath3: 'Łazienka – Pokój 3', bath4: 'Łazienka – Pokój 4' },
     },
@@ -1447,7 +1447,7 @@ const T = {
     recenze: {
       eyebrow: 'Recenzje', title: 'Co mówią goście', note: 'Prawdziwe recenzje z Airbnb, Booking.com i Google.',
     },
-    video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', play: 'Odtwórz wideo' },
+    video: { eyebrow: 'Wideo', title: 'Zobacz willę na wideo', summer: 'Dom, ogród, basen i przyjazd', winter: 'Zwiedzanie domu, sauna i skibus', play: 'Odtwórz wideo', playFull: 'Odtwórz całe wideo z dźwiękiem' },
     share: { eyebrow: 'Życie w willi', title: 'Zobacz, jak jest u nas naprawdę', body: 'Zajrzyj do codziennego życia willi na naszym Instagramie — zmiana pór roku, wieczory przy ogniu i chwile naszych gości. A jeśli u nas byliście, oznaczcie @villarudolfretreat i #villarudolf, żeby wasze zdjęcia zobaczyli też inni.', ig: 'Obserwuj na Instagramie' },
     cta: {
       eyebrow: 'Rezerwacja', title: 'Zarezerwuj cały dom dla swojej grupy',
@@ -2964,12 +2964,21 @@ function renderDirectBook() {
   if (side) side.innerHTML = shield + '<span>' + t.direct.sidebar + '</span>';
 }
 
-/* HORNÍ PÁS = SIGNÁL, SPODNÍ SEKCE = DŮKAZ.
-   Pás pod heroem dřív rotoval doslovné citace hostů — tytéž, které jsou o kus
-   níž v sekci #recenze. Byla to jediná skutečná duplicita v recenzích, a ještě
-   se u ní musel točit časovač. Verdikt: nahoře ČÍSLA (hvězdy, počet, průměr
-   napříč platformami), dole CITACE se jmény a zdroji. Dvě různé práce, každá
-   na jednom místě. */
+/* HORNÍ PÁS = ČÍSLA **A** ŽIVÝ HLAS HOSTŮ.
+   Pás pod heroem chvíli ukazoval jen statický souhrn (průměr + počet), protože
+   porota označila rotující citace za duplicitu se sekcí #recenze. Majitel to
+   vrátil zpět: „jak tam projížděly ty reference, to bylo dobrý. Já akorát to
+   chtěl dodat tlačítko ‚ukázat všechny reference'." Pás proto drží OBOJE:
+     · nahoře ČÍSLA — hodnocení platforem (#vr-ratings) a průměr napříč nimi,
+     · pod nimi se v klidném rytmu STŘÍDAJÍ SKUTEČNÉ CITACE hostů,
+       u každé je vidět ZDROJ (Google / Airbnb / Booking.com) jako proklik
+       na profil platformy — přesně to, co se majiteli líbilo,
+     · pod citací decentní ghost tlačítko na #recenze s úplným výpisem
+       (ZÁMĚRNĚ ne jantarová plocha — hlavní CTA je „Rezervovat termín").
+   Rotace: pauza při hoveru i fokusu, na skryté záložce stojí, při
+   prefers-reduced-motion se nespustí vůbec (zůstane první citace + tlačítko).
+   Citace stojící na bazénu (`pool: true`) v zimě vypadnou — viz
+   reviewsForSeason(); i po odfiltrování zbývají čtyři, nikdy nula. */
 function ratingAvg() {
   let sum = 0, n = 0;
   VR_REVIEWS.platforms.forEach((p) => {
@@ -2979,20 +2988,92 @@ function ratingAvg() {
   });
   return { avg: n ? sum / n : 0, count: n };
 }
-function renderTrustSummary() {
+function prefersReduced() {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
+/* Citace v pásu se krátí, ať se rotující blok nepřelévá přes několik výšek
+   a text nenadskakuje. Zkrácení je vyznačené „…", smysl se nemění. */
+const TEASER_MS = 6500;
+let teaserTimer = null, teaserIdx = 0, teaserList = [], teaserPaused = false;
+function teaserTrim(s) {
+  s = String(s || '').replace(/\s+/g, ' ').trim();
+  const MAX = 150;
+  if (s.length <= MAX) return s;
+  let cut = s.slice(0, MAX);
+  const sp = cut.lastIndexOf(' ');
+  if (sp > 70) cut = cut.slice(0, sp);
+  return cut.replace(/[…,;:.\-\s]+$/, '') + '…';
+}
+function buildTeaserList() {
+  teaserList = reviewsForSeason().map((r) => {
+    const p = platformByKey(r.platform);
+    return { q: teaserTrim(reviewText(r)), a: r.author, source: p.name || r.platform, url: p.url || '' };
+  }).filter((x) => x.q);
+  if (teaserIdx >= teaserList.length) teaserIdx = 0;
+}
+/* Vykreslí JEDNU citaci do rotujícího bloku (#vr-teaser-q). */
+function paintTeaserQuote() {
+  const host = $('#vr-teaser-q'); if (!host) return;
+  const item = teaserList[teaserIdx] || null;
+  host.innerHTML = '';
+  if (!item) { host.style.display = 'none'; return; }
+  host.style.display = '';
+  host.appendChild(el('blockquote', { class: 'vr-quote-q', text: item.q }));
+  host.appendChild(el('div', { class: 'vr-quote-cap' }, [
+    el('span', { class: 'vr-quote-author', text: '— ' + item.a }),
+    item.url
+      ? el('a', {
+          class: 'vr-quote-source', href: item.url, target: '_blank', rel: 'noopener noreferrer',
+          'aria-label': item.source,
+        }, [el('span', { text: item.source }), el('span', { class: 'vr-rating-arrow', 'aria-hidden': 'true', text: '↗' })])
+      : el('span', { class: 'vr-quote-source', text: item.source }),
+  ]));
+}
+function renderTrustBand() {
   const host = $('#vr-teaser'); if (!host) return;
   const t = tt();
   const r = ratingAvg();
   host.innerHTML = '';
-  if (!r.count) { host.style.display = 'none'; return; }
+  buildTeaserList();
+  if (!r.count && !teaserList.length) { host.style.display = 'none'; return; }
   host.style.display = '';
-  const dec = state.lang === 'en' ? '.' : ',';
-  host.appendChild(el('div', { class: 'vr-trustsum' }, [
-    el('b', { class: 'vr-trustsum-n', text: r.avg.toFixed(1).replace('.', dec) }),
-    el('i', { class: 'vr-star', 'aria-hidden': 'true', text: '★' }),
-    el('span', { class: 'vr-trustsum-l', text: t.ratings.avg + ' · ' + r.count + ' ' + t.ratings.reviewsWord }),
-  ]));
-  host.appendChild(el('a', { class: 'vr-quote-more', href: '#recenze', text: t.ratings.teaserMore + ' →' }));
+  if (r.count) {
+    const dec = state.lang === 'en' ? '.' : ',';
+    host.appendChild(el('div', { class: 'vr-trustsum' }, [
+      el('b', { class: 'vr-trustsum-n', text: r.avg.toFixed(1).replace('.', dec) }),
+      el('i', { class: 'vr-star', 'aria-hidden': 'true', text: '★' }),
+      el('span', { class: 'vr-trustsum-l', text: t.ratings.avg + ' · ' + r.count + ' ' + t.ratings.reviewsWord }),
+    ]));
+  }
+  // Rotující citace. aria-live nechybí schválně: střídání je dekorace pro oči,
+  // čtečka dostane celý výpis o kus níž v #recenze (kam vede tlačítko pod ním).
+  host.appendChild(el('div', { class: 'vr-quote-rot', id: 'vr-teaser-q', 'data-fade': 'false' }));
+  paintTeaserQuote();
+  host.appendChild(el('a', { class: 'vr-quote-more', href: '#recenze', text: t.ratings.allReviews }));
+  startTeaserRotation();
+}
+function startTeaserRotation() {
+  const host = $('#vr-teaser'); if (!host) return;
+  if (!host.dataset.wired) {
+    host.dataset.wired = '1';
+    // pauza při čtení: myš nad pásem i fokus uvnitř (klávesnice) rotaci zastaví
+    host.addEventListener('mouseenter', () => { teaserPaused = true; });
+    host.addEventListener('mouseleave', () => { teaserPaused = false; });
+    host.addEventListener('focusin', () => { teaserPaused = true; });
+    host.addEventListener('focusout', () => { teaserPaused = false; });
+  }
+  if (prefersReduced() || teaserTimer) return;   // bez animace: zůstane první citace
+  teaserTimer = setInterval(() => {
+    if (teaserPaused || document.hidden || teaserList.length < 2) return;
+    const q = $('#vr-teaser-q'); if (!q) return;
+    q.setAttribute('data-fade', 'true');
+    setTimeout(() => {
+      teaserIdx = (teaserIdx + 1) % teaserList.length;
+      paintTeaserQuote();
+      const q2 = $('#vr-teaser-q'); if (q2) q2.setAttribute('data-fade', 'false');
+    }, 340);
+  }, TEASER_MS);
 }
 
 /* Patička — kontakt: e-mail (mailto), „Pavel — váš hostitel", region a telefon
@@ -3091,7 +3172,7 @@ function setLang(lang) {
   renderRatings(); renderReviews(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
-  renderDirectBook(); renderTrustSummary(); renderFooterContact();
+  renderDirectBook(); renderTrustBand(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
   if ($('#vr-pay-label')) $('#vr-pay-label').textContent = bookSending ? tt().book.sending : tt().book.pay;
@@ -3130,7 +3211,7 @@ function setSeason(season) {
   applySeasonTripCounts();
   renderArrive();
   renderReviews();  // v zimě se vynechávají citace, které stojí na bazénu
-  renderTrustSummary();
+  renderTrustBand();
   applyLangLinks(); // keep ?season on subpage links (průvodce / podmínky) in sync
   syncUrl();
 }
@@ -3526,7 +3607,7 @@ function init() {
   setupPanoGroupKeys();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
-  renderDirectBook(); renderTrustSummary(); renderFooterContact();
+  renderDirectBook(); renderTrustBand(); renderFooterContact();
   applyMeta(); applyLangLinks(); syncUrl();
   loadAvailability();
   loadTripCounts();  // živé počty výletů z trips.json (fallback = VR_TRIP_COUNTS)
