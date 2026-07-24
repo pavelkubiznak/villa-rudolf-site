@@ -299,9 +299,32 @@ a{color:var(--ember-2)}
 .uby-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
 .uby-actions .btn[aria-disabled="true"]{opacity:.55}
 
+/* ===== Systém D: jazyk zprávy + sekce Problémy ===== */
+/* značka jazyka u zprávy v timeline (např. · DE) */
+.msg-lang{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.03em}
+
+/* sekce Problémy — konfigurační díry napříč pobyty */
+.panel-problems{margin:14px 0 4px}
+.problems{display:flex;flex-direction:column;gap:8px}
+.prob{display:flex;align-items:center;gap:12px;border:1px solid var(--line-2);border-left-width:4px;
+  border-radius:var(--radius-sm);padding:11px 13px;background:var(--card)}
+.prob-main{flex:1 1 auto;min-width:0}
+.prob-t{font-weight:600;font-size:14.5px;color:var(--text)}
+.prob-d{color:var(--muted);font-size:13px;margin-top:2px}
+.prob .btn{flex:0 0 auto}
+.prob-warn{border-left-color:var(--warn);background:color-mix(in oklab,var(--warn),transparent 92%)}
+.prob-soon{border-left-color:var(--ember);background:color-mix(in oklab,var(--ember),transparent 92%)}
+.prob-red{border-left-color:var(--err);background:color-mix(in oklab,var(--err),transparent 91%)}
+.prob-ok{display:flex;align-items:center;gap:9px;border:1px solid color-mix(in oklab,var(--ok),transparent 60%);
+  border-radius:var(--radius-sm);padding:11px 13px;background:color-mix(in oklab,var(--ok),transparent 92%);
+  color:var(--ok);font-size:14px;font-weight:600}
+.prob-ok-i{font-size:16px}
+
 @media(max-width:420px){
   .row2{grid-template-columns:1fr}
   .task{flex-direction:column;align-items:stretch}
   .task-actions{flex-direction:row}
   .uby-actions .btn{flex:1 1 auto}
+  .prob{flex-direction:column;align-items:stretch}
+  .prob .btn{align-self:flex-start}
 }

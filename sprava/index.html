@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="sprava.css?v=5">
+<link rel="stylesheet" href="sprava.css?v=6">
 </head>
 <body>
 
@@ -54,6 +54,12 @@
 
   <p class="loadline" id="loadline">Načítám pobyty a kalendář…</p>
 
+  <!-- PROBLÉMY (konfigurační díry: chybí telefon / kód / nespárováno) -->
+  <section class="panel panel-problems" id="problems-panel" hidden>
+    <div class="panel-head"><h2 class="panel-title">Problémy</h2></div>
+    <div class="problems" id="problems"></div>
+  </section>
+
   <!-- DNES -->
   <section class="panel panel-today" id="today-panel" hidden>
     <div class="panel-head">
@@ -88,6 +94,6 @@
   </div>
 </div>
 
-<script src="sprava.js?v=5" defer></script>
+<script src="sprava.js?v=6" defer></script>
 </body>
 </html>
