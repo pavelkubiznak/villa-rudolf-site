@@ -2521,7 +2521,7 @@ let planFloor = 'ground';
 /* Hotspot: lab = klíč do plan.r, x/y v ‰ šířky renderu, act = akce po kliknutí
    (null = jen popisek — hala, WC, technické zázemí). */
 const PLAN_DATA = {
-  ground: { img: 'media/plan/ground.jpg', w: 1600, h: 1535, spots: [
+  ground: { img: 'media/plan/ground.webp', w: 1600, h: 1535, spots: [
     { lab: 'kitchen', x: 323, y: 319, act: 'int:kitchen' },
     { lab: 'room2',   x: 486, y: 185, act: 'int:room2' },
     { lab: 'bath',    x: 665, y: 150, act: 'int:bath2' },
@@ -2531,7 +2531,7 @@ const PLAN_DATA = {
     { lab: 'bath',    x: 296, y: 536 },
     { lab: 'hall',    x: 498, y: 485 },
   ] },
-  floor1: { img: 'media/plan/floor1.jpg', w: 1600, h: 1343, spots: [
+  floor1: { img: 'media/plan/floor1.webp', w: 1600, h: 1343, spots: [
     { lab: 'aptLiving', x: 590, y: 239, act: 'apt:apt-living' },
     { lab: 'aptBedA',   x: 360, y: 314, act: 'apt:apt-bed-a' },
     { lab: 'aptKitchen',x: 854, y: 331, act: 'apt:apt-kitchen' },
@@ -2542,12 +2542,12 @@ const PLAN_DATA = {
     { lab: 'wc',        x: 709, y: 511 },
     { lab: 'hall',      x: 509, y: 513 },
   ] },
-  attic: { img: 'media/plan/attic.jpg', w: 1600, h: 1355, spots: [
+  attic: { img: 'media/plan/attic.webp', w: 1600, h: 1355, spots: [
     { lab: 'aptBedB',  x: 708, y: 248, act: 'apt:apt-bed-b' },
     { lab: 'aptBedC',  x: 309, y: 519, act: 'apt:apt-bed-c' },
     { lab: 'corridor', x: 541, y: 400 },
   ] },
-  basement: { img: 'media/plan/basement.jpg', w: 1600, h: 2031, orient: true, spots: [
+  basement: { img: 'media/plan/basement.webp', w: 1600, h: 2031, orient: true, spots: [
     { lab: 'ski',   x: 636, y: 371, act: 'gal:ski' },
     { lab: 'sauna', x: 444, y: 856, act: 'gal:sauna' },
   ] },
@@ -2616,11 +2616,19 @@ function planFigureHTML(key, floor, t) {
     + spots + orient + '</figure>';
 }
 
+/* Přepínač pater má dvě podoby (obě jsou tablist s role="tab"):
+   A = textové taby, B = řada čtyř plovoucích modelů (majitelův návrh, nasazeno).
+   Volba je 'b'; pro porovnání jde přepnout ?planvar=a. */
+function planVariant() {
+  try { const q = new URLSearchParams(location.search).get('planvar'); if (q === 'a' || q === 'b') return q; } catch (e) {}
+  return 'b';
+}
+
 function planSelect(k) {
   if (PLAN_KEYS.indexOf(k) < 0) return;
   planFloor = k;
   const host = $('#vr-plan'); if (!host) return;
-  $all('.vr-plan-tab', host).forEach((b) => {
+  $all('[role="tab"]', host).forEach((b) => {
     const on = b.getAttribute('data-floor') === k;
     b.setAttribute('aria-selected', on ? 'true' : 'false');
     b.setAttribute('tabindex', on ? '0' : '-1');
@@ -2630,34 +2638,59 @@ function planSelect(k) {
   });
 }
 
+/* Varianta A — textové taby (stejný jazyk jako .vrp-group). */
+function planTabsHTML(p) {
+  let h = '<div class="vr-plan-tabs" role="tablist" aria-label="' + planEsc(p.levelsLabel || '') + '">';
+  PLAN_KEYS.forEach((k) => {
+    const on = k === planFloor;
+    h += '<button class="vr-plan-tab" type="button" role="tab" id="vr-plan-tab-' + k + '" data-floor="' + k + '"'
+      + ' aria-selected="' + (on ? 'true' : 'false') + '" aria-controls="vr-plan-panel-' + k + '" tabindex="' + (on ? '0' : '-1') + '">'
+      + planEsc((p.floors && p.floors[k]) || k) + '</button>';
+  });
+  return h + '</div>';
+}
+
+/* Varianta B — čtyři vyříznuté rendery vedle sebe jako plovoucí modely.
+   Náhled = jen patro (bez chipů); klik ho vybere a zvětší dole do aktivního
+   stavu s klikacími chipy. Popisek pod každým modelem. */
+function planThumbsHTML(p) {
+  let h = '<div class="vr-plan-thumbs" role="tablist" aria-label="' + planEsc(p.levelsLabel || '') + '">';
+  PLAN_KEYS.forEach((k) => {
+    const on = k === planFloor;
+    h += '<button class="vr-plan-thumb" type="button" role="tab" id="vr-plan-tab-' + k + '" data-floor="' + k + '"'
+      + ' aria-selected="' + (on ? 'true' : 'false') + '" aria-controls="vr-plan-panel-' + k + '" tabindex="' + (on ? '0' : '-1') + '">'
+      + '<span class="vr-plan-thumb-fig"><img class="vr-plan-thumb-img" src="' + PLAN_DATA[k].img + '" alt="" loading="lazy" decoding="async" width="' + PLAN_DATA[k].w + '" height="' + PLAN_DATA[k].h + '"></span>'
+      + '<span class="vr-plan-thumb-lab">' + planEsc((p.floors && p.floors[k]) || k) + '</span></button>';
+  });
+  return h + '</div>';
+}
+
 function renderPlan() {
   const host = $('#vr-plan'); if (!host) return;
   const t = tt(); const p = t.plan || {};
   if (PLAN_KEYS.indexOf(planFloor) < 0) planFloor = 'ground';
+  const variant = planVariant();
+  host.setAttribute('data-variant', variant);
   let html = '<div class="vr-plan-head">'
     + '<span class="vr-eyebrow" data-t="plan.eyebrow">' + planEsc(p.eyebrow || '') + '</span>'
     + '<h3 class="vr-plan-title" data-t="plan.title">' + planEsc(p.title || '') + '</h3>'
     + '<p class="vr-plan-note" data-t="plan.note">' + planEsc(p.note || '') + '</p>'
     + '</div>';
-  html += '<div class="vr-plan-tabs" role="tablist" aria-label="' + planEsc(p.levelsLabel || '') + '">';
-  PLAN_KEYS.forEach((k) => {
-    const on = k === planFloor;
-    html += '<button class="vr-plan-tab" type="button" role="tab" id="vr-plan-tab-' + k + '" data-floor="' + k + '"'
-      + ' aria-selected="' + (on ? 'true' : 'false') + '" aria-controls="vr-plan-panel-' + k + '" tabindex="' + (on ? '0' : '-1') + '">'
-      + planEsc((p.floors && p.floors[k]) || k) + '</button>';
-  });
-  html += '</div><div class="vr-plan-stage">';
+  if (variant === 'b') html += '<div class="vr-plan-b">';
+  html += (variant === 'b') ? planThumbsHTML(p) : planTabsHTML(p);
+  html += '<div class="vr-plan-stage">';
   PLAN_KEYS.forEach((k) => {
     const on = k === planFloor;
     html += '<div class="vr-plan-panel" role="tabpanel" id="vr-plan-panel-' + k + '" aria-labelledby="vr-plan-tab-' + k + '"' + (on ? '' : ' hidden') + '>'
       + planFigureHTML(k, PLAN_DATA[k], t) + '</div>';
   });
   html += '</div><p class="vr-plan-hint" data-t="plan.hint">' + planEsc(p.hint || '') + '</p>';
+  if (variant === 'b') html += '</div>';
   host.innerHTML = html;
 
-  const tabs = $all('.vr-plan-tab', host);
+  const tabs = $all('[role="tab"]', host);
   tabs.forEach((b) => b.addEventListener('click', () => planSelect(b.getAttribute('data-floor'))));
-  const tablist = $('.vr-plan-tabs', host);
+  const tablist = $('[role="tablist"]', host);
   if (tablist) tablist.addEventListener('keydown', (e) => {
     if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].indexOf(e.key) < 0) return;
     let i = tabs.indexOf(document.activeElement); if (i < 0) i = 0;
