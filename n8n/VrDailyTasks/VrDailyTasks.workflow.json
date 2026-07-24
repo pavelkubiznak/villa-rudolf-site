@@ -1,0 +1,153 @@
+{
+  "id": "VrDailyTasks001",
+  "name": "VrDailyTasks",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 7 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Každý den 07:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://fpknbrzbqpalguajskut.supabase.co/rest/v1/vr_bookings",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,uidh,first_name,last_name,phone,email,lang,arrival,departure,adults,children,platform,notes,door_code,vr_msglog(msg_key,sent_at),vr_persons(birth_date,citizenship)"
+            },
+            {
+              "name": "order",
+              "value": "arrival"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Načíst pobyty (service-role)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        300
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "VrSupaService01",
+          "name": "Supabase service-role (VR)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// viz VrDailyTasks.code.js (jediný zdroj pravdy)"
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Spočítat úkoly",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "pavel.kubiznak@gmail.com",
+        "toEmail": "pavel.kubiznak@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "E-mail Pavlovi",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        940,
+        300
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "VrSmtpGmail0001",
+          "name": "Gmail SMTP (Villa Rudolf)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Každý den 07:30": {
+      "main": [
+        [
+          {
+            "node": "Načíst pobyty (service-role)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Načíst pobyty (service-role)": {
+      "main": [
+        [
+          {
+            "node": "Spočítat úkoly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spočítat úkoly": {
+      "main": [
+        [
+          {
+            "node": "E-mail Pavlovi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
