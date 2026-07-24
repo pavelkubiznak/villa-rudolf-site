@@ -1,8 +1,11 @@
 User-agent: *
 Allow: /
 
-# /pruvodce/ and /checkin/ are guest-only tools (also noindex via meta) — keep them out of search.
+# /pruvodce/, /checkin/, /registrace/ are guest-only tools (also noindex via meta) — keep them out of search.
+# /sprava/ is the private owner control page (noindex; token-gated).
 Disallow: /pruvodce/
 Disallow: /checkin/
+Disallow: /registrace/
+Disallow: /sprava/
 
 Sitemap: https://villarudolf.com/sitemap.xml
