@@ -27,6 +27,10 @@
   var bookings = [];   // z vr_admin_list_bookings
   var stays = [];       // sloučený pohled
   var expandedStays = false;
+  var adminConfig = {}; // ubyport_* konfigurace ubytovatele (Nastavení)
+
+  var DEPOSIT_CZK = 5000;             // vratná kauce (Kč)
+  var REVOLUT_URL = 'https://revolut.me/pavelhuqh';
 
   /* ============ DOM helpers ============ */
   var $ = function (id) { return document.getElementById(id); };
@@ -197,6 +201,10 @@
   TPL.registration =
 'Dobrý den, {JMENO}, posílám slíbený odkaz na registraci — vyřídíte ji za pár minut už teď: {REGISTRACNI_LINK} — ať po příjezdu jen odpočíváte. Kdyby cokoliv, jsem na telefonu.\nPavel';
 
+  // KAUCE — vratná jistota (volitelný krok, zapíná se přepínačem v detailu)
+  TPL.deposit =
+'Dobrý den, {JMENO}, ještě jedna praktická věc k pobytu {TERMIN}. Vybíráme vratnou kauci {KAUCE} Kč — je to jen jistota pro případ škody, po odjezdu a rychlé kontrole domu vám ji obratem vracíme zpět v plné výši. Pošlete ji prosím pohodlně kartou přes Revolut: ' + REVOLUT_URL + ' ({KAUCE} Kč). Díky moc a těšíme se na vás!\nPavel';
+
   // BONUS (den příjezdu) — doslova
   TPL.doorcode =
 'Dobrý den {JMENO}, dům je připravený a od 15:00 jen váš! 🔑 Kód ke dveřím: {KOD_DVERI} — nechte ho prosím jen ve vaší skupině. Šťastnou cestu, a kdybyste cokoliv potřebovali, jsem na telefonu. Pavel';
@@ -252,6 +260,7 @@
       .replace(/\{CASTKA\}/g, ctx.castka)
       .replace(/\{KOD_DVERI\}/g, ctx.kod)
       .replace(/\{WIFI_HESLO\}/g, WIFI)
+      .replace(/\{KAUCE\}/g, DEPOSIT_CZK.toLocaleString('cs-CZ'))
       .replace(/\{REGISTRACNI_LINK\}/g, ctx.regLink || '{REGISTRACNI_LINK}');
   }
 
@@ -266,6 +275,27 @@
     { key: 'predeparture', title: 'Prosby před odjezdem', from: 'departure', off: -1, when: 'odjezd −24 h' },
     { key: 'review', title: 'Poděkování + recenze', from: 'departure', off: 0, when: 'ráno odjezdu' }
   ];
+  // Volitelné kroky kauce (zapínají se přepínačem v detailu; stav v vr_msglog
+  // pod klíčem 'deposit_enabled'). deposit_charge = zpráva hostovi (Revolut),
+  // deposit_return = jen připomínka majiteli po odjezdu (bez zprávy hostovi).
+  var DEPOSIT_STEPS = [
+    { key: 'deposit_charge', title: 'Kauce — výběr (' + DEPOSIT_CZK.toLocaleString('cs-CZ') + ' Kč)', from: 'arrival', off: -7, when: 'T−7 / samostatně', deposit: 'charge', after: 'welcome' },
+    { key: 'deposit_return', title: 'Vrátit kauci (' + DEPOSIT_CZK.toLocaleString('cs-CZ') + ' Kč)', from: 'departure', off: 1, when: 'po odjezdu', deposit: 'return', ownerTask: true, after: 'review' }
+  ];
+  function depositEnabled(b) {
+    return (b.msglog || []).some(function (m) { return m.msg_key === 'deposit_enabled'; });
+  }
+  // Efektivní sekvence pro daný pobyt: základ + (volitelně) kroky kauce vložené
+  // za příslušné kotvy. Klíč 'deposit_enabled' NENÍ zpráva → do sekvence nepatří.
+  function sequenceFor(b) {
+    if (!depositEnabled(b)) return SEQUENCE.slice();
+    var out = [];
+    SEQUENCE.forEach(function (msg) {
+      out.push(msg);
+      DEPOSIT_STEPS.forEach(function (d) { if (d.after === msg.key) out.push(d); });
+    });
+    return out;
+  }
   function schedDate(msg, b) {
     return addDaysISO(msg.from === 'departure' ? b.departure : b.arrival, msg.off);
   }
@@ -283,6 +313,8 @@
     }
     if (msg.key === 'doorcode') return [{ text: fill(TPL.doorcode, ctx), needsCode: !booking.door_code }];
     if (msg.key === 'day2') return [{ text: fill(TPL.day2, ctx) }];
+    if (msg.key === 'deposit_charge') return [{ text: fill(TPL.deposit, ctx) }];
+    if (msg.key === 'deposit_return') return [{ text: '', ownerTask: true }];
     if (msg.key === 'predeparture') return [{ text: fill(TPL.predeparture, ctx) }];
     if (msg.key === 'review') {
       var rv = reviewVariant(booking.platform);
@@ -343,6 +375,11 @@
       throw new Error((res.data && res.data.message) || 'load_failed');
     });
   }
+  function loadConfig() {
+    return rpc('vr_admin_get_config', {}).then(function (res) {
+      return (res.data && res.data.ok && res.data.config) ? res.data.config : {};
+    }).catch(function () { return {}; });
+  }
 
   function buildStays() {
     var today = isoToday();
@@ -387,7 +424,7 @@
         var b = s.booking;
         var sent = {};
         (b.msglog || []).forEach(function (m) { sent[m.msg_key] = true; });
-        SEQUENCE.forEach(function (msg) {
+        sequenceFor(b).forEach(function (msg) {
           if (sent[msg.key]) return;
           var d = schedDate(msg, b);
           if (d > today) return; // budoucí
@@ -438,24 +475,43 @@
       }
       var b = t.booking, ctx = buildCtx(b);
       var parts = buildParts(t.msg, ctx, b);
-      row.className = 'task' + (t.overdue ? ' overdue' : '');
+      var ownerTask = !!t.msg.ownerTask;
+      row.className = 'task' + (t.overdue ? ' overdue' : '') + (ownerTask ? ' owner' : '');
       row.innerHTML =
         '<div class="task-main"><div class="task-name">' + esc(guestName(b)) + '</div>' +
-        '<div class="task-what">' + esc(t.msg.title) + '</div>' +
+        '<div class="task-what">' + (ownerTask ? '🔁 ' : '') + esc(t.msg.title) + '</div>' +
         '<span class="task-when ' + (t.overdue ? 'overdue' : 'today') + '">' +
         (t.overdue ? 'po termínu' : 'dnes') + '</span></div>' +
         '<div class="task-actions"></div>';
       var act = row.querySelector('.task-actions');
-      var canWa = b.phone && parts[0].text && !parts[0].needsToken && !parts[0].needsCode;
-      var wa = document.createElement('a');
-      wa.className = 'btn btn-sm btn-wa';
-      wa.textContent = 'WhatsApp';
-      if (canWa) { wa.href = waLink(b.phone, parts[0].text); wa.target = '_blank'; wa.rel = 'noopener'; }
-      else { wa.setAttribute('aria-disabled', 'true'); wa.classList.add('btn'); wa.style.opacity = '.45'; wa.style.pointerEvents = 'none'; }
+      if (ownerTask) {
+        // Úkol jen pro majitele (vratka kauce) — bez zprávy hostovi.
+        var done = document.createElement('button');
+        done.className = 'btn btn-sm btn-primary'; done.textContent = 'Hotovo';
+        done.onclick = function () {
+          done.disabled = true;
+          rpc('vr_admin_msg_log', { p_booking_id: b.id, p_msg_key: t.msg.key, p_sent: true }).then(function (res) {
+            if (res.data && res.data.ok) {
+              b.msglog = (b.msglog || []).filter(function (m) { return m.msg_key !== t.msg.key; });
+              b.msglog.push({ msg_key: t.msg.key, sent_at: new Date().toISOString() });
+              toast('Označeno jako hotové.'); renderToday(); renderStays();
+            } else { done.disabled = false; toast('Nepodařilo se uložit.'); }
+          }).catch(function () { done.disabled = false; toast('Nepodařilo se uložit.'); });
+        };
+        act.appendChild(done);
+      } else {
+        var canWa = b.phone && parts[0].text && !parts[0].needsToken && !parts[0].needsCode;
+        var wa = document.createElement('a');
+        wa.className = 'btn btn-sm btn-wa';
+        wa.textContent = 'WhatsApp';
+        if (canWa) { wa.href = waLink(b.phone, parts[0].text); wa.target = '_blank'; wa.rel = 'noopener'; }
+        else { wa.setAttribute('aria-disabled', 'true'); wa.classList.add('btn'); wa.style.opacity = '.45'; wa.style.pointerEvents = 'none'; }
+        act.appendChild(wa);
+      }
       var open = document.createElement('button');
       open.className = 'btn btn-sm btn-outline'; open.textContent = 'Detail';
       open.onclick = function () { openDetail(t.stay); };
-      act.appendChild(wa); act.appendChild(open);
+      act.appendChild(open);
       wrap.appendChild(row);
     });
   }
@@ -491,11 +547,14 @@
       var body;
       if (b) {
         var p = b.persons || {};
-        var sentCount = (b.msglog || []).length;
-        var progress = SEQUENCE.map(function (msg) {
+        var seq = sequenceFor(b);
+        var sentCount = seq.filter(function (msg) {
+          return (b.msglog || []).some(function (m) { return m.msg_key === msg.key; });
+        }).length;
+        var progress = seq.map(function (msg) {
           var isSent = (b.msglog || []).some(function (m) { return m.msg_key === msg.key; });
           var due = !isSent && schedDate(msg, b) <= today;
-          return '<span class="pdot ' + (isSent ? 'done' : (due ? 'due' : '')) + '" title="' + esc(msg.title) + '"></span>';
+          return '<span class="pdot ' + (isSent ? 'done' : (due ? 'due' : '')) + (msg.deposit ? ' dep' : '') + '" title="' + esc(msg.title) + '"></span>';
         }).join('');
         var meta = [];
         if (b.phone) meta.push('📞 ' + esc(b.phone));
@@ -507,7 +566,7 @@
           '<div class="stay-guest-nm">' + esc(guestName(b)) + '</div>' +
           '<div class="stay-guest-meta">' + meta.join('<span class="dot"></span>') + '</div>' +
           '<div class="progress">' + progress + '</div>' +
-          '<div class="status paired">🔗 spárováno · ' + sentCount + '/' + SEQUENCE.length + ' zpráv</div>' +
+          '<div class="status paired">🔗 spárováno · ' + sentCount + '/' + seq.length + ' zpráv</div>' +
           '<div class="stay-actions"></div></div>';
       } else {
         body =
@@ -701,13 +760,22 @@
       '<input id="d-door" maxlength="40" value="' + esc(b.door_code || '') + '" placeholder="např. 1975"></div>' +
       '<button type="button" class="btn btn-primary" id="d-door-save">Uložit</button></div></div>' +
 
+      '<div class="block"><h3 class="block-h">Kauce</h3>' +
+      '<label class="switch"><input type="checkbox" id="d-deposit"' + (depositEnabled(b) ? ' checked' : '') + '>' +
+      '<span class="switch-track"></span><span class="switch-lbl">Vybírat vratnou kauci ' + DEPOSIT_CZK.toLocaleString('cs-CZ') + ' Kč u tohoto pobytu</span></label>' +
+      '<p class="hint">Zapnutím přibude do sekvence krok „Kauce — výběr" (zpráva hostovi s Revolut linkem) a po odjezdu připomínka „Vrátit kauci" (jen pro tebe, hostovi se nic neposílá).</p>' +
+      '</div>' +
+
       '<div class="block"><h3 class="block-h">Sekvence zpráv</h3><div class="tl" id="d-tl"></div></div>' +
 
-      '<div class="block"><h3 class="block-h">Registrace — přehled osob</h3><div id="d-persons"><p class="persons-empty">Načítám…</p></div></div>';
+      '<div class="block"><h3 class="block-h">Registrace — přehled osob</h3><div id="d-persons"><p class="persons-empty">Načítám…</p></div></div>' +
+
+      '<div class="block"><h3 class="block-h">Hlášení cizinců (Ubyport)</h3><div id="d-ubyport"><p class="persons-empty">Načítám…</p></div></div>';
 
     openOverlay();
 
     $('d-edit').addEventListener('click', function () { openEditor({ stay: stay, booking: b }); });
+    $('d-deposit').addEventListener('click', function () { toggleDeposit(b, stay, $('d-deposit')); });
     if (token) {
       // copy handlers
       Array.prototype.forEach.call(body.querySelectorAll('.copybtn'), function (btn) {
@@ -777,38 +845,47 @@
     var tl = $('d-tl');
     tl.innerHTML = '';
 
-    SEQUENCE.forEach(function (msg) {
+    sequenceFor(b).forEach(function (msg) {
       var d = schedDate(msg, b);
       var isSent = !!sent[msg.key];
       var due = !isSent && d <= today;
       var parts = buildParts(msg, ctx, b);
+      var ownerTask = !!msg.ownerTask;
 
       var el = document.createElement('div');
-      el.className = 'msg' + (isSent ? ' done' : (due ? ' due' : ''));
-      var tag = isSent ? '<span class="msg-tag done">odesláno</span>' : (due ? '<span class="msg-tag due">na řadě</span>' : '<span class="msg-tag">' + esc(fmtDay(d)) + '</span>');
+      el.className = 'msg' + (isSent ? ' done' : (due ? ' due' : '')) + (msg.deposit ? ' dep' : '');
+      var doneWord = ownerTask ? 'hotovo' : 'odesláno';
+      var tag = isSent ? '<span class="msg-tag done">' + doneWord + '</span>' : (due ? '<span class="msg-tag due">na řadě</span>' : '<span class="msg-tag">' + esc(fmtDay(d)) + '</span>');
       var variant = parts[0] && parts[0].variantLabel ? ' · varianta ' + esc(parts[0].variantLabel) : '';
       var head =
         '<div class="msg-head">' +
         '<span class="msg-when">' + esc(msg.when) + '</span>' +
         '<span class="msg-title">' + esc(msg.title) + '</span>' + tag + '</div>';
 
-      var partsHtml = parts.map(function (p, idx) {
-        var warn = '';
-        if (p.needsToken) warn = '<div class="notice">Odkaz na registraci není k dispozici (token hosta chybí na tomto zařízení). Vygenerujte nový odkaz výše.</div>';
-        if (p.needsCode) warn = '<div class="notice">Zatím není vyplněný kód ke dveřím — doplňte ho výše, ať se dosadí do zprávy.</div>';
-        var canWa = b.phone && p.text && !p.needsToken && !p.needsCode;
-        var waHtml = canWa
-          ? '<a class="btn btn-sm btn-wa" href="' + esc(waLink(b.phone, p.text)) + '" target="_blank" rel="noopener">Otevřít ve WhatsApp</a>'
-          : '<button class="btn btn-sm btn-wa" disabled title="' + (b.phone ? 'chybí údaj' : 'chybí telefon') + '">Otevřít ve WhatsApp</button>';
-        return (p.label ? '<div class="msg-when" style="margin:6px 0 4px">' + esc(p.label) + variant + '</div>' : (variant ? '<div class="msg-when" style="margin:6px 0 4px">' + variant.replace(/^ · /, '') + '</div>' : '')) +
-          warn +
-          '<div class="msg-preview">' + esc(p.text) + '</div>' +
-          '<div class="msg-actions">' + waHtml +
-          '<button class="btn btn-sm btn-outline copybtn" data-copy="' + esc(p.text).replace(/"/g, '&quot;') + '">Kopírovat text</button></div>';
-      }).join('');
+      var partsHtml;
+      if (ownerTask) {
+        // deposit_return: úkol jen pro majitele, žádná zpráva hostovi.
+        partsHtml = '<div class="notice">Připomínka jen pro tebe — hostovi se nic neposílá. Vratku ' +
+          esc(DEPOSIT_CZK.toLocaleString('cs-CZ')) + ' Kč pošli ručně přes Revolut (' + esc(REVOLUT_URL) + ').</div>';
+      } else {
+        partsHtml = parts.map(function (p, idx) {
+          var warn = '';
+          if (p.needsToken) warn = '<div class="notice">Odkaz na registraci není k dispozici (token hosta chybí na tomto zařízení). Vygenerujte nový odkaz výše.</div>';
+          if (p.needsCode) warn = '<div class="notice">Zatím není vyplněný kód ke dveřím — doplňte ho výše, ať se dosadí do zprávy.</div>';
+          var canWa = b.phone && p.text && !p.needsToken && !p.needsCode;
+          var waHtml = canWa
+            ? '<a class="btn btn-sm btn-wa" href="' + esc(waLink(b.phone, p.text)) + '" target="_blank" rel="noopener">Otevřít ve WhatsApp</a>'
+            : '<button class="btn btn-sm btn-wa" disabled title="' + (b.phone ? 'chybí údaj' : 'chybí telefon') + '">Otevřít ve WhatsApp</button>';
+          return (p.label ? '<div class="msg-when" style="margin:6px 0 4px">' + esc(p.label) + variant + '</div>' : (variant ? '<div class="msg-when" style="margin:6px 0 4px">' + variant.replace(/^ · /, '') + '</div>' : '')) +
+            warn +
+            '<div class="msg-preview">' + esc(p.text) + '</div>' +
+            '<div class="msg-actions">' + waHtml +
+            '<button class="btn btn-sm btn-outline copybtn" data-copy="' + esc(p.text).replace(/"/g, '&quot;') + '">Kopírovat text</button></div>';
+        }).join('');
+      }
 
       var footer =
-        '<label class="msg-sent"><input type="checkbox" ' + (isSent ? 'checked' : '') + ' data-key="' + esc(msg.key) + '"> odesláno</label>';
+        '<label class="msg-sent"><input type="checkbox" ' + (isSent ? 'checked' : '') + ' data-key="' + esc(msg.key) + '"> ' + doneWord + '</label>';
 
       el.innerHTML = head + partsHtml + footer;
       tl.appendChild(el);
@@ -893,7 +970,9 @@
   function loadPersons(b) {
     rpc('vr_admin_persons', { p_booking_id: b.id }).then(function (res) {
       var persons = (res.data && res.data.persons) || [];
+      b._persons = persons;              // uchováme vč. čísel dokladů pro Ubyport export
       renderPersons(persons);
+      renderUbyport(b);
     }).catch(function () { $('d-persons').innerHTML = '<p class="persons-empty">Nepodařilo se načíst.</p>'; });
   }
 
@@ -918,6 +997,244 @@
     }).join('') + '</div>';
   }
 
+  /* ============ KAUCE: přepínač ============ */
+  function toggleDeposit(b, stay, cb) {
+    var on = cb.checked;
+    cb.disabled = true;
+    rpc('vr_admin_msg_log', { p_booking_id: b.id, p_msg_key: 'deposit_enabled', p_sent: on }).then(function (res) {
+      cb.disabled = false;
+      if (!(res.data && res.data.ok)) { cb.checked = !on; toast('Nepodařilo se uložit.'); return; }
+      b.msglog = (b.msglog || []).filter(function (m) { return m.msg_key !== 'deposit_enabled'; });
+      if (on) b.msglog.push({ msg_key: 'deposit_enabled', sent_at: new Date().toISOString() });
+      toast(on ? 'Kauce zapnuta.' : 'Kauce vypnuta.');
+      renderTimeline(stay, b, buildCtx(b)); renderToday(); renderStays();
+    }).catch(function () { cb.disabled = false; cb.checked = !on; toast('Nepodařilo se uložit.'); });
+  }
+
+  /* ============ UBYPORT (hlášení cizinců) ============ */
+  // Číselník státního občanství: ISO 3166-1 alpha-2 → alpha-3 (kód dle číselníku
+  // Ubyport = ISO alpha-3, viz UNL spec). Pokrývá běžné země hostů; neznámé → warn.
+  var ISO2TO3 = {
+    CZ:'CZE', SK:'SVK', DE:'DEU', PL:'POL', AT:'AUT', NL:'NLD', GB:'GBR', UK:'GBR', UA:'UKR',
+    US:'USA', BE:'BEL', FR:'FRA', ES:'ESP', IT:'ITA', PT:'PRT', IE:'IRL', LU:'LUX', CH:'CHE',
+    LI:'LIE', DK:'DNK', SE:'SWE', NO:'NOR', FI:'FIN', IS:'ISL', EE:'EST', LV:'LVA', LT:'LTU',
+    HU:'HUN', RO:'ROU', BG:'BGR', GR:'GRC', HR:'HRV', SI:'SVN', RS:'SRB', BA:'BIH', ME:'MNE',
+    MK:'MKD', AL:'ALB', MD:'MDA', BY:'BLR', RU:'RUS', TR:'TUR', CY:'CYP', MT:'MLT', CA:'CAN',
+    AU:'AUS', NZ:'NZL', JP:'JPN', CN:'CHN', KR:'KOR', IN:'IND', IL:'ISR', ZA:'ZAF', BR:'BRA',
+    MX:'MEX', AR:'ARG', AE:'ARE', SA:'SAU', EG:'EGY', MA:'MAR', TH:'THA', VN:'VNM', SG:'SGP',
+    HK:'HKG', TW:'TWN', ID:'IDN', PH:'PHL', MY:'MYS', GE:'GEO', AM:'ARM', AZ:'AZE', KZ:'KAZ'
+  };
+  function ubyCountry(cit) {
+    var c = String(cit || '').toUpperCase();
+    if (ISO2TO3[c]) return { code: ISO2TO3[c], ok: true };
+    if (/^[A-Z]{3}$/.test(c)) return { code: c, ok: true };  // už alpha-3
+    return { code: c, ok: false };
+  }
+
+  // Windows-1250 (CP1250) enkodér — UNL soubor musí být v CP1250 dle spec.
+  // Byte→unicode tabulka: default identita (Latin-1), přepsané jen odlišné sloty.
+  var CP1250 = (function () {
+    var hi = {}; for (var bb = 0x80; bb <= 0xFF; bb++) hi[bb] = bb;
+    var ov = {
+      0x80:0x20AC,0x82:0x201A,0x84:0x201E,0x85:0x2026,0x86:0x2020,0x87:0x2021,0x89:0x2030,
+      0x8A:0x0160,0x8B:0x2039,0x8C:0x015A,0x8D:0x0164,0x8E:0x017D,0x8F:0x0179,
+      0x91:0x2018,0x92:0x2019,0x93:0x201C,0x94:0x201D,0x95:0x2022,0x96:0x2013,0x97:0x2014,
+      0x99:0x2122,0x9A:0x0161,0x9B:0x203A,0x9C:0x015B,0x9D:0x0165,0x9E:0x017E,0x9F:0x017A,
+      0xA1:0x02C7,0xA2:0x02D8,0xA3:0x0141,0xA5:0x0104,0xAA:0x015E,0xAF:0x017B,
+      0xB2:0x02DB,0xB3:0x0142,0xB9:0x0105,0xBA:0x015F,0xBC:0x013D,0xBD:0x02DD,0xBE:0x013E,0xBF:0x017C,
+      0xC0:0x0154,0xC3:0x0102,0xC5:0x0139,0xC6:0x0106,0xC8:0x010C,0xCA:0x0118,0xCC:0x011A,0xCF:0x010E,
+      0xD0:0x0110,0xD1:0x0143,0xD2:0x0147,0xD5:0x0150,0xD8:0x0158,0xD9:0x016E,0xDB:0x0170,0xDE:0x0162,
+      0xE0:0x0155,0xE3:0x0103,0xE5:0x013A,0xE6:0x0107,0xE8:0x010D,0xEA:0x0119,0xEC:0x011B,0xEF:0x010F,
+      0xF0:0x0111,0xF1:0x0144,0xF2:0x0148,0xF5:0x0151,0xF8:0x0159,0xF9:0x016F,0xFB:0x0171,0xFE:0x0163,0xFF:0x02D9
+    };
+    for (var k in ov) hi[k] = ov[k];
+    var rev = {};
+    for (var bb2 = 0x80; bb2 <= 0xFF; bb2++) rev[hi[bb2]] = bb2;
+    return rev;   // unicode codepoint -> CP1250 byte
+  })();
+  function toCp1250Bytes(str) {
+    str = String(str == null ? '' : str);
+    var out = [];
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charCodeAt(i);
+      if (c <= 0x7f) { out.push(c); continue; }
+      if (CP1250[c] != null) { out.push(CP1250[c]); continue; }
+      var ch = str[i].normalize('NFD').replace(/[̀-ͯ]/g, '');
+      out.push(ch && ch.charCodeAt(0) <= 0x7f ? ch.charCodeAt(0) : 0x3f); // fallback '?'
+    }
+    return new Uint8Array(out);
+  }
+
+  function ubyField(s) { return String(s == null ? '' : s).replace(/[|\r\n]/g, ' ').trim(); }
+  function ubyDate(iso) {
+    if (!iso) return '';
+    var p = String(iso).slice(0, 10).split('-');
+    return p.length === 3 ? (p[2] + '.' + p[1] + '.' + p[0]) : '';
+  }
+  function ubyNow() {
+    var d = new Date(), z = function (n) { return String(n).padStart(2, '0'); };
+    return z(d.getDate()) + '.' + z(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' +
+      z(d.getHours()) + ':' + z(d.getMinutes()) + ':' + z(d.getSeconds());
+  }
+  function foreignersOf(b) {
+    return (b._persons || []).filter(function (p) { return (p.citizenship || 'CZ').toUpperCase() !== 'CZ'; });
+  }
+  function ubyValidate(foreigners) {
+    var issues = [];
+    foreigners.forEach(function (p) {
+      var probs = [];
+      if (!p.doc_number) probs.push('chybí číslo dokladu');
+      if (!p.birth_date) probs.push('chybí datum narození');
+      if (!ubyCountry(p.citizenship).ok) probs.push('neznámý kód země „' + (p.citizenship || '?') + '"');
+      if (probs.length) issues.push({ name: (p.first_name + ' ' + p.last_name).trim(), probs: probs });
+    });
+    return issues;
+  }
+  function ubyHeaderLine() {
+    var c = adminConfig || {};
+    return ['A', '2',
+      ubyField(c.ubyport_idub), ubyField(c.ubyport_zkratka), ubyField(c.ubyport_name),
+      ubyField(c.ubyport_kontakt), ubyField(c.ubyport_okres), ubyField(c.ubyport_obec),
+      ubyField(c.ubyport_cast), ubyField(c.ubyport_ulice), ubyField(c.ubyport_cislo_domovni),
+      ubyField(c.ubyport_cislo_orientacni), ubyField(c.ubyport_psc), ubyNow(), '', ''
+    ].join('|');
+  }
+  function ubyGuestLine(p) {
+    var c = adminConfig || {};
+    var ucel = ubyField(c.ubyport_ucel_default) || '10';   // 10 = TURISTIKA
+    var bydliste = [ubyField(p.residence_city), (p.residence_country ? ubyCountry(p.residence_country).code : '')]
+      .filter(function (x) { return x; }).join(', ');
+    return ['U',
+      ubyDate(p.stay_from), ubyDate(p.stay_to),
+      ubyField(p.last_name), ubyField(p.first_name), '',
+      ubyDate(p.birth_date), '', '',
+      ubyCountry(p.citizenship).code,
+      bydliste, ubyField(p.doc_number), '', ucel, '', ''
+    ].join('|');
+  }
+  function buildUnl(b) {
+    var foreigners = foreignersOf(b);
+    var lines = [ubyHeaderLine()];
+    foreigners.forEach(function (p) { lines.push(ubyGuestLine(p)); });
+    return toCp1250Bytes(lines.join('\r\n'));
+  }
+  function unlFilename(b) {
+    var idub = ubyField((adminConfig || {}).ubyport_idub) || 'IDUB';
+    var d = new Date(), z = function (n) { return String(n).padStart(2, '0'); };
+    return idub + '_' + d.getFullYear() + '_' + z(d.getMonth() + 1) + '_' + z(d.getDate()) +
+      '_' + z(d.getHours()) + z(d.getMinutes()) + '_villarudolf.unl';
+  }
+  function downloadUnl(b) {
+    if (!ubyField((adminConfig || {}).ubyport_idub)) { toast('Doplňte IDUB v Nastavení.'); return; }
+    var bytes = buildUnl(b);
+    var blob = new Blob([bytes], { type: 'application/octet-stream' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = unlFilename(b);
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+    toast('UNL soubor stažen.');
+  }
+  function ubyPlainText(b) {
+    var fs = foreignersOf(b);
+    if (!fs.length) return '';
+    return fs.map(function (p) {
+      return [
+        'Příjmení a jméno: ' + (p.last_name || '') + ' ' + (p.first_name || ''),
+        'Datum narození: ' + (ubyDate(p.birth_date) || '—'),
+        'Státní občanství: ' + ubyCountry(p.citizenship).code + ' (' + (p.citizenship || '?') + ')',
+        'Číslo dokladu: ' + (p.doc_number || '—'),
+        'Bydliště: ' + [p.residence_city, p.residence_country].filter(Boolean).join(', '),
+        'Ubytován od–do: ' + (ubyDate(p.stay_from) || '?') + ' – ' + (ubyDate(p.stay_to) || '?'),
+        'Účel pobytu: ' + ((adminConfig || {}).ubyport_ucel_default || '10') + ' (turistika)'
+      ].join('\n');
+    }).join('\n\n');
+  }
+  function copyForeigners(b) {
+    var t = ubyPlainText(b);
+    if (!t) { toast('Žádní cizinci k zkopírování.'); return; }
+    copyText(t); toast('Seznam cizinců zkopírován.');
+  }
+  function renderUbyport(b) {
+    var wrap = $('d-ubyport'); if (!wrap) return;
+    var fs = foreignersOf(b);
+    var hasIdub = !!ubyField((adminConfig || {}).ubyport_idub);
+    if (!fs.length) {
+      wrap.innerHTML = '<p class="persons-empty">Žádní registrovaní cizinci — hlášení Ubyport se tohoto pobytu netýká. (Hlásí se jen ubytovaní cizinci; občané ČR ne.)</p>';
+      return;
+    }
+    var issues = ubyValidate(fs);
+    var issuesHtml = '';
+    if (issues.length) {
+      issuesHtml = '<div class="uby-warn"><b>⚠️ Před odesláním zkontrolujte:</b><ul>' +
+        issues.map(function (it) {
+          return '<li>' + esc(it.name || 'osoba') + ' — ' + esc(it.probs.join(', ')) + '</li>';
+        }).join('') + '</ul></div>';
+    }
+    var idubHtml = hasIdub ? '' :
+      '<div class="uby-warn"><b>Doplňte IDUB v Nastavení</b> — bez identifikátoru ubytovatele (z vašeho účtu Ubyport) nelze soubor vygenerovat. Adresa vily je předvyplněná.</div>';
+    wrap.innerHTML =
+      '<p class="uby-count">Registrovaní cizinci k nahlášení: <b>' + fs.length + '</b></p>' +
+      issuesHtml + idubHtml +
+      '<div class="uby-actions">' +
+      '<button type="button" class="btn btn-sm btn-primary" id="uby-dl"' + (hasIdub ? '' : ' aria-disabled="true"') + '>Stáhnout hlášení Ubyport (UNL)</button>' +
+      '<button type="button" class="btn btn-sm btn-outline" id="uby-copy">Zkopírovat seznam cizinců</button>' +
+      '</div>' +
+      '<p class="hint">Soubor je v oficiálním formátu UNL (CP1250), účel pobytu 10 = turistika. Nahrajete ho ve svém účtu Ubyport (modul UpLoad). Kopie jako text slouží pro ruční zadání.</p>';
+    $('uby-dl').addEventListener('click', function () { downloadUnl(b); });
+    $('uby-copy').addEventListener('click', function () { copyForeigners(b); });
+  }
+
+  /* ============ NASTAVENÍ (Ubyport konfigurace ubytovatele) ============ */
+  var SETTINGS_FIELDS = [
+    ['ubyport_idub', 'IDUB (identifikátor ubytovatele)', 'z vašeho účtu Ubyport'],
+    ['ubyport_zkratka', 'Zkratka', 'z Ubyport (nepovinné)'],
+    ['ubyport_name', 'Název ubytovacího zařízení', 'Villa Rudolf'],
+    ['ubyport_kontakt', 'Kontakt', 'telefon / e-mail'],
+    ['ubyport_okres', 'Okres', 'Trutnov'],
+    ['ubyport_obec', 'Obec', 'Svoboda nad Úpou'],
+    ['ubyport_cast', 'Část obce', 'nepovinné'],
+    ['ubyport_ulice', 'Ulice', 'Luční'],
+    ['ubyport_cislo_domovni', 'Číslo domovní', '519'],
+    ['ubyport_cislo_orientacni', 'Číslo orientační', 'nepovinné'],
+    ['ubyport_psc', 'PSČ', '54224'],
+    ['ubyport_ucel_default', 'Účel pobytu (kód)', '10 = turistika']
+  ];
+  function openSettings() {
+    $('sheet-title').textContent = 'Nastavení — Ubyport';
+    var c = adminConfig || {};
+    $('sheet-body').innerHTML =
+      '<form id="set-form" autocomplete="off">' +
+      '<p class="hint">Údaje ubytovatele do hlavičky hlášení cizinců (Ubyport). <b>IDUB</b> získáte ve svém účtu Ubyport (Služba cizinecké policie); ostatní je předvyplněné adresou vily.</p>' +
+      SETTINGS_FIELDS.map(function (f) {
+        return '<div class="field"><label>' + esc(f[1]) + '</label>' +
+          '<input id="set-' + f[0] + '" maxlength="200" value="' + esc(c[f[0]] || '') + '" placeholder="' + esc(f[2]) + '"></div>';
+      }).join('') +
+      '<p class="form-err" id="set-err" hidden></p>' +
+      '<button type="submit" class="btn btn-primary" id="set-save" style="width:100%">Uložit nastavení</button>' +
+      '</form>';
+    openOverlay();
+    $('set-form').addEventListener('submit', function (ev) { ev.preventDefault(); saveSettings(); });
+  }
+  function saveSettings() {
+    var btn = $('set-save'); btn.disabled = true; btn.textContent = 'Ukládám…';
+    var err = $('set-err'); err.hidden = true;
+    var ops = SETTINGS_FIELDS.map(function (f) {
+      var val = $('set-' + f[0]).value.trim();
+      return rpc('vr_admin_set_config', { p_key: f[0], p_value: val }).then(function (res) {
+        if (res.data && res.data.ok) adminConfig[f[0]] = val || undefined;
+        return res.data && res.data.ok;
+      });
+    });
+    Promise.all(ops).then(function (results) {
+      btn.disabled = false; btn.textContent = 'Uložit nastavení';
+      if (results.every(Boolean)) { toast('Nastavení uloženo.'); closeOverlay(); }
+      else { err.textContent = 'Některé pole se nepodařilo uložit.'; err.hidden = false; }
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = 'Uložit nastavení';
+      err.textContent = 'Uložení se nepodařilo.'; err.hidden = false;
+    });
+  }
+
   function copyText(t) {
     if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).catch(function () {}); return; }
     var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
@@ -927,8 +1244,8 @@
   /* ============ Reload ============ */
   function reload() {
     $('loadline').hidden = false; $('loadline').textContent = 'Načítám pobyty a kalendář…';
-    return Promise.all([loadCalendar(), loadBookings()]).then(function (r) {
-      calendar = r[0]; bookings = r[1];
+    return Promise.all([loadCalendar(), loadBookings(), loadConfig()]).then(function (r) {
+      calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {};
       buildStays();
       $('loadline').hidden = true;
       renderToday(); renderStays();
@@ -976,6 +1293,7 @@
       });
     });
     $('btn-refresh').addEventListener('click', function () { reload(); });
+    $('btn-settings').addEventListener('click', function () { openSettings(); });
     $('btn-lock').addEventListener('click', function () { lockOut(); $('lock-input').value = ''; });
     $('sheet-close').addEventListener('click', closeOverlay);
     $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeOverlay(); });

@@ -248,8 +248,43 @@ a{color:var(--ember-2)}
   opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ===== Systém C: kauce, owner úkoly, Ubyport ===== */
+/* úkol jen pro majitele (vratka kauce) */
+.task.owner{border-color:color-mix(in oklab,var(--ember),transparent 60%);
+  background:color-mix(in oklab,var(--ember),transparent 93%)}
+/* deposit tečka v progress + krok v sekvenci */
+.pdot.dep{background:color-mix(in oklab,var(--ember),var(--line-2) 40%)}
+.pdot.dep.done{background:var(--ember)}
+.pdot.dep.due{background:var(--ember-2)}
+.msg.dep .msg-title::after{content:"kauce";margin-left:8px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.03em;padding:2px 7px;border-radius:20px;
+  background:color-mix(in oklab,var(--ember),transparent 80%);color:var(--ember-2)}
+
+/* přepínač (switch) */
+.switch{display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none;margin-bottom:8px}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.switch-track{flex:0 0 auto;width:44px;height:26px;border-radius:20px;background:var(--field);
+  border:1px solid var(--line-2);position:relative;transition:background .18s,border-color .18s}
+.switch-track::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--muted);transition:transform .18s,background .18s}
+.switch input:checked + .switch-track{background:color-mix(in oklab,var(--ember),transparent 55%);border-color:var(--ember)}
+.switch input:checked + .switch-track::after{transform:translateX(18px);background:var(--ember)}
+.switch input:focus-visible + .switch-track{outline:2px solid var(--ember);outline-offset:2px}
+.switch-lbl{font-size:14px;color:var(--text);line-height:1.35}
+
+/* Ubyport blok */
+.uby-count{font-size:14px;color:var(--text);margin:0 0 10px}
+.uby-warn{background:color-mix(in oklab,var(--warn),transparent 86%);
+  border:1px solid color-mix(in oklab,var(--warn),transparent 55%);border-radius:var(--radius-sm);
+  padding:10px 12px;font-size:13px;color:var(--text);margin-bottom:12px}
+.uby-warn ul{margin:6px 0 0;padding-left:18px}
+.uby-warn li{margin:3px 0}
+.uby-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.uby-actions .btn[aria-disabled="true"]{opacity:.55}
+
 @media(max-width:420px){
   .row2{grid-template-columns:1fr}
   .task{flex-direction:column;align-items:stretch}
   .task-actions{flex-direction:row}
+  .uby-actions .btn{flex:1 1 auto}
 }
