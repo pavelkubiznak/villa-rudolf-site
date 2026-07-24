@@ -267,6 +267,30 @@ const T = {
       rosterNote: '{luzka} lůžek — {luzkaDetail} přistýlky. Rozpis, podle kterého rozdělíte partu do pokojů.',
       items: { kitchen: 'Kuchyně a jídelna', suite: 'Apartmá Suite', room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4', sauna: 'Finská sauna', wellness: 'Wellness a sprcha', bath: 'Sprcha u sauny', bath2: 'Koupelna – Pokoj 2', bath3: 'Koupelna – Pokoj 3', bath4: 'Koupelna – Pokoj 4' },
     },
+    /* ===================== Plán domu (interaktivní půdorysy) =====================
+       Vlastní zjednodušené schéma domu (překresleno z podkladů, NE originály),
+       čtyři patra jako přepínatelné půdorysy. Klik na místnost otevře její fotky
+       (stejný lightbox jako karusel). Popisky jsou GUEST jména (Pokoj 1–4,
+       Apartmá…), ne technická čísla z podkladů — host chce vědět „kde je pokoj 1". */
+    plan: {
+      eyebrow: 'Plán domu',
+      title: 'Kde co v domě najdete',
+      note: 'Klepněte na místnost — ukážeme vám její fotky. Nahoře přepnete patro.',
+      hint: 'Klepnutím na pojmenovanou místnost otevřete její fotky · nahoře přepnete patro',
+      levelsLabel: 'Patra domu',
+      floors: { basement: 'Suterén', ground: 'Přízemí', floor1: '1. patro', attic: 'Podkroví' },
+      r: {
+        hall: 'Vstupní hala', corridor: 'Chodba', stairs: 'Schodiště', storage: 'Sklad',
+        kitchen: 'Kuchyň s jídelnou', bath: 'Koupelna', wc: 'WC',
+        room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4',
+        sauna: 'Sauna a wellness', ski: 'Lyžárna', boiler: 'Technická místnost',
+        aptLiving: 'Apartmá — obývací část', aptKitchen: 'Kuchyňka apartmá',
+        aptHall: 'Chodbička apartmá', aptBath: 'Koupelna apartmá', aptWc: 'WC apartmá',
+        aptBedA: 'Apartmá — ložnice A', aptBedB: 'Apartmá — ložnice B', aptBedC: 'Apartmá — ložnice C',
+      },
+      open: 'Otevřít fotky',
+      orient: 'Orientační plán',
+    },
     ohniste: {
       eyebrow: 'Nová dominanta', caption: 'Detail ohniště a gabionové stěny',
       title: 'Ohniště s gabionovou stěnou, které večer ožívá',
@@ -616,6 +640,25 @@ const T = {
       rosterNote: '{luzka} beds — {luzkaDetail} extra beds. The layout you’ll split the group by.',
       items: { kitchen: 'Kitchen & dining', suite: 'Apartment Suite', room1: 'Bedroom 1', room2: 'Bedroom 2', room3: 'Bedroom 3', room4: 'Bedroom 4', sauna: 'Finnish sauna', wellness: 'Wellness & shower', bath: 'Shower by the sauna', bath2: 'Bathroom – Room 2', bath3: 'Bathroom – Room 3', bath4: 'Bathroom – Room 4' },
     },
+    plan: {
+      eyebrow: 'House plan',
+      title: 'Where everything is',
+      note: 'Tap a room — we’ll show you its photos. Switch floors above.',
+      hint: 'Tap a labelled room to open its photos · switch floors above',
+      levelsLabel: 'House floors',
+      floors: { basement: 'Basement', ground: 'Ground floor', floor1: 'First floor', attic: 'Attic' },
+      r: {
+        hall: 'Entrance hall', corridor: 'Corridor', stairs: 'Stairs', storage: 'Storage',
+        kitchen: 'Kitchen & dining', bath: 'Bathroom', wc: 'WC',
+        room1: 'Room 1', room2: 'Room 2', room3: 'Room 3', room4: 'Room 4',
+        sauna: 'Sauna & wellness', ski: 'Ski room', boiler: 'Utility room',
+        aptLiving: 'Apartment — living area', aptKitchen: 'Apartment kitchenette',
+        aptHall: 'Apartment hallway', aptBath: 'Apartment bathroom', aptWc: 'Apartment WC',
+        aptBedA: 'Apartment — bedroom A', aptBedB: 'Apartment — bedroom B', aptBedC: 'Apartment — bedroom C',
+      },
+      open: 'Open photos',
+      orient: 'Reference plan',
+    },
     ohniste: {
       eyebrow: 'New centrepiece', caption: 'Detail of the fire pit and gabion wall',
       title: 'A fire pit with a gabion wall that comes alive at night',
@@ -942,6 +985,25 @@ const T = {
       rosterNote: '{luzka} Betten — {luzkaDetail} Zustellbetten. Die Aufteilung, nach der ihr die Gruppe verteilt.',
       items: { kitchen: 'Küche & Essbereich', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Dusche an der Sauna', bath2: 'Bad – Zimmer 2', bath3: 'Bad – Zimmer 3', bath4: 'Bad – Zimmer 4' },
     },
+    plan: {
+      eyebrow: 'Grundriss',
+      title: 'Wo im Haus was liegt',
+      note: 'Tippen Sie auf einen Raum — wir zeigen die Fotos. Etage oben wechseln.',
+      hint: 'Auf einen beschrifteten Raum tippen für Fotos · Etage oben wechseln',
+      levelsLabel: 'Etagen',
+      floors: { basement: 'Untergeschoss', ground: 'Erdgeschoss', floor1: '1. Etage', attic: 'Dachgeschoss' },
+      r: {
+        hall: 'Eingangshalle', corridor: 'Flur', stairs: 'Treppe', storage: 'Abstellraum',
+        kitchen: 'Küche mit Essbereich', bath: 'Bad', wc: 'WC',
+        room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4',
+        sauna: 'Sauna & Wellness', ski: 'Skiraum', boiler: 'Technikraum',
+        aptLiving: 'Apartment — Wohnbereich', aptKitchen: 'Apartment-Küche',
+        aptHall: 'Apartment-Flur', aptBath: 'Apartment-Bad', aptWc: 'Apartment-WC',
+        aptBedA: 'Apartment — Schlafzimmer A', aptBedB: 'Apartment — Schlafzimmer B', aptBedC: 'Apartment — Schlafzimmer C',
+      },
+      open: 'Fotos öffnen',
+      orient: 'Orientierungsplan',
+    },
     ohniste: {
       eyebrow: 'Neues Herzstück', caption: 'Detail der Feuerstelle und Gabionenwand',
       title: 'Eine Feuerstelle mit Gabionenwand, die abends zum Leben erwacht',
@@ -1267,6 +1329,25 @@ const T = {
       rosterTitle: 'Gdzie będziecie spać',
       rosterNote: '{luzka} miejsc do spania — {luzkaDetail} dostawki. Rozkład, według którego podzielicie grupę.',
       items: { kitchen: 'Kuchnia i jadalnia', suite: 'Apartament Suite', room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4', sauna: 'Sauna fińska', wellness: 'Wellness i prysznic', bath: 'Prysznic przy saunie', bath2: 'Łazienka – Pokój 2', bath3: 'Łazienka – Pokój 3', bath4: 'Łazienka – Pokój 4' },
+    },
+    plan: {
+      eyebrow: 'Plan domu',
+      title: 'Gdzie co znajdziecie',
+      note: 'Kliknij pomieszczenie — pokażemy zdjęcia. Piętro zmienisz powyżej.',
+      hint: 'Kliknij oznaczone pomieszczenie, aby otworzyć zdjęcia · piętro zmienisz powyżej',
+      levelsLabel: 'Piętra domu',
+      floors: { basement: 'Suterena', ground: 'Parter', floor1: '1. piętro', attic: 'Poddasze' },
+      r: {
+        hall: 'Hol wejściowy', corridor: 'Korytarz', stairs: 'Schody', storage: 'Schowek',
+        kitchen: 'Kuchnia z jadalnią', bath: 'Łazienka', wc: 'WC',
+        room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4',
+        sauna: 'Sauna i wellness', ski: 'Narciarnia', boiler: 'Pomieszczenie techniczne',
+        aptLiving: 'Apartament — część dzienna', aptKitchen: 'Aneks kuchenny apartamentu',
+        aptHall: 'Korytarzyk apartamentu', aptBath: 'Łazienka apartamentu', aptWc: 'WC apartamentu',
+        aptBedA: 'Apartament — sypialnia A', aptBedB: 'Apartament — sypialnia B', aptBedC: 'Apartament — sypialnia C',
+      },
+      open: 'Otwórz zdjęcia',
+      orient: 'Plan orientacyjny',
     },
     ohniste: {
       eyebrow: 'Nowy element', caption: 'Detal paleniska i ściany gabionowej',
@@ -2412,6 +2493,190 @@ function setupCarousel(track) {
   });
 }
 
+/* ===================== Interaktivní půdorysy domu (Plán domu) =====================
+   PODKLAD: 3D axonometrické rendery od Jiřího Hanouska (majitel má od autora
+   POVOLENÍ je použít). Zpracované pro web: oříznutá textová legenda + patička,
+   ODSTRANĚNÝ vodoznak „JIŘÍ HANOUSEK / REALITNÍ SLUŽBY PRO NÁROČNÉ" (LaMa
+   inpainting; masku vodoznaku jsme našli přes shodu napříč všemi 4 patry — jediná
+   struktura společná všem renderům), odstraněná původní čísla místností, zmenšeno
+   na 1600 px. Nasazují se JEN tyto zpracované verze, originály ne.
+
+   Přes render leží NAŠE popisky (guest jména) a klikací hotspoty. Souřadnice jsou
+   v ‰ ŠÍŘKY renderu (x 0–1000, y 0–Hpm, Hpm = h/w·1000), takže sedí bez ohledu na
+   zobrazenou velikost.
+
+   POZOR — čísla v původních renderech NEJSOU naše názvy. Závazné mapování majitele:
+   Přízemí:  04=Pokoj 1, 05=jeho koupelna, 03=Kuchyň, 06=Pokoj 2, 07=jeho koupelna,
+             08=Pokoj 3, 09=jeho koupelna, 01=hala.
+   1. patro: 08=Pokoj 4, 09=jeho koupelna, 06=Apartmá obývací, 07=Apartmá ložnice A,
+             05=kuchyňka ap., 04=koupelna ap., 03=WC ap., 02=chodbička, 01=hala.
+   Podkroví: 02=Apartmá ložnice B, 03=Apartmá ložnice C, 01=chodba.
+   Suterén:  render je STARÝ stav — 01+02 jsou dnes SPOJENÉ = „Sauna a wellness",
+             v místnosti 03 je u kotle „Lyžárna". Proto u suterénu poznámka
+             „orientační plán". */
+
+const PLAN_KEYS = ['ground', 'floor1', 'attic', 'basement'];
+let planFloor = 'ground';
+
+/* Hotspot: lab = klíč do plan.r, x/y v ‰ šířky renderu, act = akce po kliknutí
+   (null = jen popisek — hala, WC, technické zázemí). */
+const PLAN_DATA = {
+  ground: { img: 'media/plan/ground.jpg', w: 1600, h: 1535, spots: [
+    { lab: 'kitchen', x: 323, y: 319, act: 'int:kitchen' },
+    { lab: 'room2',   x: 486, y: 185, act: 'int:room2' },
+    { lab: 'bath',    x: 665, y: 150, act: 'int:bath2' },
+    { lab: 'room3',   x: 722, y: 326, act: 'int:room3' },
+    { lab: 'bath',    x: 790, y: 451, act: 'int:bath3' },
+    { lab: 'room1',   x: 398, y: 733, act: 'int:room1' },
+    { lab: 'bath',    x: 296, y: 536 },
+    { lab: 'hall',    x: 498, y: 485 },
+  ] },
+  floor1: { img: 'media/plan/floor1.jpg', w: 1600, h: 1343, spots: [
+    { lab: 'aptLiving', x: 590, y: 239, act: 'apt:apt-living' },
+    { lab: 'aptBedA',   x: 360, y: 314, act: 'apt:apt-bed-a' },
+    { lab: 'aptKitchen',x: 854, y: 331, act: 'apt:apt-kitchen' },
+    { lab: 'room4',     x: 254, y: 453, act: 'int:room4' },
+    { lab: 'bath',      x: 408, y: 685, act: 'int:bath4' },
+    { lab: 'corridor',  x: 597, y: 424 },
+    { lab: 'bath',      x: 766, y: 439 },
+    { lab: 'wc',        x: 709, y: 511 },
+    { lab: 'hall',      x: 509, y: 513 },
+  ] },
+  attic: { img: 'media/plan/attic.jpg', w: 1600, h: 1355, spots: [
+    { lab: 'aptBedB',  x: 708, y: 248, act: 'apt:apt-bed-b' },
+    { lab: 'aptBedC',  x: 309, y: 519, act: 'apt:apt-bed-c' },
+    { lab: 'corridor', x: 541, y: 400 },
+  ] },
+  basement: { img: 'media/plan/basement.jpg', w: 1600, h: 2031, orient: true, spots: [
+    { lab: 'ski',   x: 636, y: 371, act: 'gal:ski' },
+    { lab: 'sauna', x: 444, y: 856, act: 'gal:sauna' },
+  ] },
+};
+
+/* Galerie pro místnosti mimo interiérový karusel (sauna+wellness, lyžárna). */
+const PLAN_GAL = {
+  sauna: { imgs: ['media/sections/int-sauna.jpg', 'media/gallery/18-sauna-inside.jpg', 'media/gallery/sauna-hall.jpg', 'media/sections/am-wellness.jpg', 'media/sections/int-wellness.jpg'], pano: 'wellness', tag: 'Sauna & wellness', nameKey: 'sauna' },
+  ski:   { imgs: ['media/sections/am-skiroom.jpg'], pano: 'skiroom', tag: 'Ski room', nameKey: 'ski' },
+};
+
+function planEsc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function planOpenInterior(key) {
+  const idx = INTERIOR.findIndex((it) => it.k === key); if (idx < 0) return;
+  const it = INTERIOR[idx];
+  if (it.gal && it.gal.length > 1) { const g = interiorLbFor(idx); lbOpen(g.list, g.start); return; }
+  const name = (tt().interior && tt().interior.items && tt().interior.items[key]) || '';
+  lbOpen([{ src: it.img, pano: it.pano, name: name, tag: roomTag(it.img, key) }], 0);
+}
+/* Apartmá: všechny místnosti apartmá ukazují fotky apartmá (karta „suite"),
+   ale tlačítko do 360° míří na KONKRÉTNÍ scénu té místnosti (pano override). */
+function planOpenApt(pano) {
+  const idx = INTERIOR.findIndex((it) => it.k === 'suite'); if (idx < 0) return;
+  const it = INTERIOR[idx];
+  const name = (tt().interior && tt().interior.items && tt().interior.items.suite) || '';
+  const src = (it.gal && it.gal.length) ? it.gal : [it.img];
+  lbOpen(src.map((s) => ({ src: s, pano: pano, name: name, tag: ROOM_EN.suite })), 0);
+}
+function planOpenGal(key) {
+  const g = PLAN_GAL[key]; if (!g) return;
+  const name = (tt().plan && tt().plan.r && tt().plan.r[g.nameKey]) || '';
+  lbOpen(g.imgs.map((s) => ({ src: s, pano: g.pano, name: name, tag: g.tag })), 0);
+}
+function planDoAct(act) {
+  if (!act) return;
+  const i = act.indexOf(':'); if (i < 0) return;
+  const kind = act.slice(0, i), val = act.slice(i + 1);
+  if (kind === 'int') planOpenInterior(val);
+  else if (kind === 'apt') planOpenApt(val);
+  else if (kind === 'gal') planOpenGal(val);
+}
+
+function planSpotHTML(sp, floor, t) {
+  const rr = (t.plan && t.plan.r) || {};
+  const name = rr[sp.lab] || sp.lab;
+  const Hpm = floor.h / floor.w * 1000;
+  const left = (sp.x / 10).toFixed(2);
+  const top = (sp.y / Hpm * 100).toFixed(2);
+  const style = 'left:' + left + '%;top:' + top + '%';
+  if (sp.act) {
+    const openTxt = (t.plan && t.plan.open) || 'Open';
+    return '<button type="button" class="vr-plan-spot is-click" style="' + style + '" data-act="' + sp.act + '" aria-label="' + planEsc(name + ' — ' + openTxt) + '">'
+      + '<span class="vr-plan-dot" aria-hidden="true"></span><span class="vr-plan-name">' + planEsc(name) + '</span></button>';
+  }
+  return '<span class="vr-plan-spot is-static" style="' + style + '"><span class="vr-plan-name">' + planEsc(name) + '</span></span>';
+}
+
+function planFigureHTML(key, floor, t) {
+  const alt = (t.plan && t.plan.floors && t.plan.floors[key]) || '';
+  const spots = floor.spots.map((s) => planSpotHTML(s, floor, t)).join('');
+  const orient = (floor.orient && t.plan && t.plan.orient)
+    ? '<span class="vr-plan-orient">' + planEsc(t.plan.orient) + '</span>' : '';
+  return '<figure class="vr-plan-fig" style="aspect-ratio:' + floor.w + '/' + floor.h + '">'
+    + '<img class="vr-plan-img" src="' + floor.img + '" alt="' + planEsc(alt) + '" loading="lazy" decoding="async" width="' + floor.w + '" height="' + floor.h + '">'
+    + spots + orient + '</figure>';
+}
+
+function planSelect(k) {
+  if (PLAN_KEYS.indexOf(k) < 0) return;
+  planFloor = k;
+  const host = $('#vr-plan'); if (!host) return;
+  $all('.vr-plan-tab', host).forEach((b) => {
+    const on = b.getAttribute('data-floor') === k;
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+    b.setAttribute('tabindex', on ? '0' : '-1');
+  });
+  $all('.vr-plan-panel', host).forEach((pn) => {
+    if (pn.id === 'vr-plan-panel-' + k) pn.removeAttribute('hidden'); else pn.setAttribute('hidden', '');
+  });
+}
+
+function renderPlan() {
+  const host = $('#vr-plan'); if (!host) return;
+  const t = tt(); const p = t.plan || {};
+  if (PLAN_KEYS.indexOf(planFloor) < 0) planFloor = 'ground';
+  let html = '<div class="vr-plan-head">'
+    + '<span class="vr-eyebrow" data-t="plan.eyebrow">' + planEsc(p.eyebrow || '') + '</span>'
+    + '<h3 class="vr-plan-title" data-t="plan.title">' + planEsc(p.title || '') + '</h3>'
+    + '<p class="vr-plan-note" data-t="plan.note">' + planEsc(p.note || '') + '</p>'
+    + '</div>';
+  html += '<div class="vr-plan-tabs" role="tablist" aria-label="' + planEsc(p.levelsLabel || '') + '">';
+  PLAN_KEYS.forEach((k) => {
+    const on = k === planFloor;
+    html += '<button class="vr-plan-tab" type="button" role="tab" id="vr-plan-tab-' + k + '" data-floor="' + k + '"'
+      + ' aria-selected="' + (on ? 'true' : 'false') + '" aria-controls="vr-plan-panel-' + k + '" tabindex="' + (on ? '0' : '-1') + '">'
+      + planEsc((p.floors && p.floors[k]) || k) + '</button>';
+  });
+  html += '</div><div class="vr-plan-stage">';
+  PLAN_KEYS.forEach((k) => {
+    const on = k === planFloor;
+    html += '<div class="vr-plan-panel" role="tabpanel" id="vr-plan-panel-' + k + '" aria-labelledby="vr-plan-tab-' + k + '"' + (on ? '' : ' hidden') + '>'
+      + planFigureHTML(k, PLAN_DATA[k], t) + '</div>';
+  });
+  html += '</div><p class="vr-plan-hint" data-t="plan.hint">' + planEsc(p.hint || '') + '</p>';
+  host.innerHTML = html;
+
+  const tabs = $all('.vr-plan-tab', host);
+  tabs.forEach((b) => b.addEventListener('click', () => planSelect(b.getAttribute('data-floor'))));
+  const tablist = $('.vr-plan-tabs', host);
+  if (tablist) tablist.addEventListener('keydown', (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].indexOf(e.key) < 0) return;
+    let i = tabs.indexOf(document.activeElement); if (i < 0) i = 0;
+    if (e.key === 'ArrowLeft') i = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'ArrowRight') i = (i + 1) % tabs.length;
+    else if (e.key === 'Home') i = 0; else i = tabs.length - 1;
+    planSelect(tabs[i].getAttribute('data-floor')); tabs[i].focus(); e.preventDefault();
+  });
+  host.addEventListener('click', (e) => {
+    const g = e.target.closest && e.target.closest('.vr-plan-spot.is-click'); if (!g) return;
+    planDoAct(g.getAttribute('data-act'));
+  });
+  host.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    const g = e.target.closest && e.target.closest('.vr-plan-spot.is-click'); if (!g) return;
+    e.preventDefault(); planDoAct(g.getAttribute('data-act'));
+  });
+}
+
 /* Skok z lightboxu do 360°: interiérové scény žijí jen v ZIMNÍ sadě, takže
    přepneme na zimu, zrušíme filtr skupin (ať je scéna vidět i v pruhu),
    nastavíme scénu, doskrolujeme k prohlídce a načteme pano.
@@ -3451,7 +3716,7 @@ function setLang(lang) {
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); applySeasonButtons(); setTexts();
-  renderRatings(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderRatings(); renderBedrooms(); renderPlan(); renderPanoGroups(); renderThumbs(); renderScene();
   applyStripAria();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
@@ -3893,7 +4158,7 @@ function init() {
   document.querySelector('.vr-root').setAttribute('data-season', state.season);
   applyThemeColor();
   applyLangButtons(); applySeasonButtons(); applySeasonBranches(); setTexts();
-  renderRatings(); renderBedrooms(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderRatings(); renderBedrooms(); renderPlan(); renderPanoGroups(); renderThumbs(); renderScene();
   setupPanoGroupKeys(); setupThumbStrip(); applyStripAria();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
