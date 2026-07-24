@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Villa Rudolf – registrace hostů</title>
+<link rel="canonical" href="https://villarudolf.com/registrace/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Villa Rudolf">
+<meta property="og:title" content="Villa Rudolf – registrace hostů">
+<meta property="og:description" content="Předregistrace hostů Villa Rudolf — po osobách, pro zákonnou evidenci ubytovaných.">
+<meta property="og:url" content="https://villarudolf.com/registrace/">
+<meta name="theme-color" content="#0E1311">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="registrace.css?v=1">
+</head>
+<body>
+<div class="vp-root">
+  <div class="vp-wrap">
+
+    <header class="vp-header">
+      <a class="vp-brand" href="../">
+        <span class="nm">Villa Rudolf</span>
+        <span class="bd" data-i18n="brandBadge">Registrace hostů</span>
+      </a>
+      <nav class="vp-langs" id="langs" aria-label="Jazyk / Language">
+        <button type="button" class="vp-lang" data-lang="cs">CS</button>
+        <button type="button" class="vp-lang" data-lang="en">EN</button>
+        <button type="button" class="vp-lang" data-lang="de">DE</button>
+        <button type="button" class="vp-lang" data-lang="pl">PL</button>
+      </nav>
+    </header>
+
+    <main class="vp-main">
+      <section class="vp-hero">
+        <p class="vp-eyebrow" data-i18n="eyebrow">Villa Rudolf · Krkonoše</p>
+        <h1 class="vp-title" id="hTitle" data-i18n="title">Registrace hostů</h1>
+        <p class="vp-intro" id="hIntro" data-i18n="introFridge">Zaregistrujte prosím každou osobu ve skupině. Slouží to k zákonné evidenci ubytovaných a k místnímu poplatku.</p>
+      </section>
+
+      <!-- ===== FRIDGE: mimo pobyt ===== -->
+      <section class="vp-closed" id="closedView" hidden>
+        <div class="vp-closed-ic" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        </div>
+        <h2 class="vp-closed-t" data-i18n="closedTitle">Registrace zatím není otevřená</h2>
+        <p class="vp-closed-b" data-i18n="closedBody">Registrace se otevírá v den příjezdu. Použijte prosím odkaz, který jste dostali ve zprávě k pobytu.</p>
+      </section>
+
+      <!-- ===== SEZNAM zaregistrovaných (jen s tokenem) ===== -->
+      <section class="vp-list-sec" id="listSection" hidden>
+        <div class="vp-list-head">
+          <h2 class="vp-h2" data-i18n="listTitle">Zaregistrovaní</h2>
+          <span class="vp-count" id="listCount"></span>
+        </div>
+        <div class="vp-list" id="list" aria-live="polite"></div>
+        <p class="vp-list-empty" id="listEmpty" data-i18n="listEmpty" hidden>Zatím nikdo. Přidejte první osobu níže.</p>
+      </section>
+
+      <!-- ===== FORMULÁŘ přidání osoby ===== -->
+      <section class="vp-form-sec" id="formSection" hidden>
+        <h2 class="vp-h2" data-i18n="formTitle">Přidat osobu</h2>
+
+        <form class="vp-form" id="form" novalidate autocomplete="off">
+          <!-- honeypot -->
+          <div class="vp-hp" aria-hidden="true">
+            <label>Company website
+              <input type="text" id="hp" name="company_website" tabindex="-1" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="vp-row2">
+            <label class="vp-field">
+              <span class="vp-lbl" data-i18n="fFirst">Jméno <em>*</em></span>
+              <input type="text" id="f-first" autocomplete="off" required maxlength="100">
+            </label>
+            <label class="vp-field">
+              <span class="vp-lbl" data-i18n="fLast">Příjmení <em>*</em></span>
+              <input type="text" id="f-last" autocomplete="off" required maxlength="100">
+            </label>
+          </div>
+
+          <label class="vp-field">
+            <span class="vp-lbl" data-i18n="fBirth">Datum narození</span>
+            <input type="date" id="f-birth">
+          </label>
+
+          <label class="vp-field">
+            <span class="vp-lbl" data-i18n="fCitizenship">Občanství <em>*</em></span>
+            <select id="f-cit"></select>
+          </label>
+
+          <label class="vp-field">
+            <span class="vp-lbl">
+              <span data-i18n="fDoc">Číslo dokladu</span>
+              <em id="docStar">*</em>
+              <span class="vp-lbl-opt" id="docOpt" data-i18n="fDocOptional" hidden>(nepovinné)</span>
+            </span>
+            <input type="text" id="f-doc" autocomplete="off" maxlength="40" inputmode="latin" autocapitalize="characters" spellcheck="false">
+            <span class="vp-hint" id="docHint" data-i18n="docHintCz">Cestovní pas nebo občanský průkaz. U českých občanů nepovinné.</span>
+            <div class="vp-docwarn" id="docWarn" hidden>
+              <p id="docWarnMsg"></p>
+              <div class="vp-docwarn-btns">
+                <button type="button" class="vp-docwarn-fix" id="docWarnFix" data-i18n="docWarnFix">Opravit</button>
+                <button type="button" class="vp-docwarn-ok" id="docWarnOk" data-i18n="docWarnContinue">Je to správně, pokračovat</button>
+              </div>
+            </div>
+          </label>
+
+          <div class="vp-row2">
+            <label class="vp-field">
+              <span class="vp-lbl" data-i18n="fResCity">Bydliště – město</span>
+              <input type="text" id="f-city" autocomplete="off" maxlength="120">
+            </label>
+            <label class="vp-field">
+              <span class="vp-lbl" data-i18n="fResCountry">Bydliště – země</span>
+              <select id="f-rescnt"></select>
+            </label>
+          </div>
+
+          <div class="vp-field">
+            <span class="vp-lbl" data-i18n="fStay">Termín pobytu <em>*</em></span>
+            <div class="vp-dates">
+              <label class="vp-datecol">
+                <span class="vp-sub" data-i18n="fFrom">Od</span>
+                <input type="date" id="f-from" required>
+              </label>
+              <label class="vp-datecol">
+                <span class="vp-sub" data-i18n="fTo">Do</span>
+                <input type="date" id="f-to" required>
+              </label>
+            </div>
+            <span class="vp-hint" data-i18n="stayHint">Předvyplněno termínem pobytu — upravte, pokud přijíždíte nebo odjíždíte jindy.</span>
+          </div>
+
+          <p class="vp-err" id="err" role="alert" hidden></p>
+
+          <button type="submit" class="vp-submit" id="submit">
+            <span class="vp-submit-label" data-i18n="submit">Přidat osobu</span>
+            <span class="vp-spin" aria-hidden="true"></span>
+          </button>
+          <p class="vp-ok" id="okToast" role="status" hidden></p>
+          <p class="vp-addhint" data-i18n="addHint">Po přidání zůstane formulář otevřený — rovnou zadejte další osobu.</p>
+        </form>
+      </section>
+
+      <!-- ===== GDPR ===== -->
+      <section class="vp-gdpr" id="gdprSection" hidden>
+        <h2 class="vp-gdpr-t" data-i18n="gdprTitle">Ochrana údajů</h2>
+        <p class="vp-gdpr-b" data-i18n="gdprBody">Údaje sbíráme jen kvůli zákonné evidenci ubytovaných a místnímu poplatku. Leží v zabezpečené databázi v EU. Čísla dokladů nevidí nikdo další z vaší skupiny — v přehledu se ukazuje jen, že je doklad vyplněný.</p>
+        <p class="vp-gdpr-c">
+          <a href="../podminky/" data-i18n="gdprLink">Podmínky a ochrana údajů</a>
+          <span aria-hidden="true">·</span>
+          <a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="vp-footer">
+      <span>Villa Rudolf · Krkonoše</span>
+      <a class="vp-terms" data-i18n="gdprLink" href="../podminky/">Podmínky a ochrana údajů</a>
+    </footer>
+
+  </div>
+</div>
+<script src="registrace.js?v=1" defer></script>
+</body>
+</html>
