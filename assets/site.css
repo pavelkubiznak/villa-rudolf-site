@@ -1100,6 +1100,13 @@ button.vr-plan-spot.vr-plan-pulse .vr-plan-dot{background:#10150f}
   .vr-vid-label{margin-right:0;flex-basis:100%}
 }
 @media(prefers-reduced-motion:reduce){.vr-vid-sound,.vr-vid-start,.vr-vid-yt{transition:none}}
+/* Zimní světlé téma: podklad videa je světlý (var(--vr-bg)), texty lišty
+   musí ztmavnout — jinak bílá na bílé. Léto zůstává beze změny. */
+.vr-root[data-season="zima"] .vr-vid-label{color:var(--vr-text)}
+.vr-root[data-season="zima"] .vr-vid-yt{color:rgba(23,36,46,.66)}
+.vr-root[data-season="zima"] .vr-vid-yt:hover{color:var(--vr-text)}
+.vr-root[data-season="zima"] .vr-vid-sound{color:var(--vr-text);border-color:rgba(23,36,46,.35)}
+.vr-root[data-season="zima"] .vr-vid-sound:hover{border-color:var(--vr-ember)}
 
 /* ---------- Guest photo sharing ---------- */
 .sec-sdilet{padding:clamp(56px,9vh,110px) 0;background:var(--vr-bg-deep);border-top:1px solid var(--vr-line);transition:background .6s ease}
