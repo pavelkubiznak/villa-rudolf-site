@@ -1034,7 +1034,7 @@ button.vr-plan-spot.vr-plan-pulse .vr-plan-dot{background:#10150f}
    táž řeč jako .vrp-stage, ale gradient leží JEN v odsazení, nikdy přes obraz
    (jinak by ztmavil titulky i ovládací lištu přehrávače). */
 .vr-vidstage{position:relative;width:100%;margin-top:clamp(20px,2.6vw,32px);
-  padding:clamp(14px,2.6vh,32px) 0 clamp(18px,3vh,36px);background:var(--vr-bg)}
+  padding:clamp(14px,2.6vh,32px) 0 clamp(18px,3vh,36px);background:#070a09;transition:background-color .6s ease}
 .vr-vidstage::before,.vr-vidstage::after{content:'';position:absolute;left:0;right:0;z-index:3;pointer-events:none}
 .vr-vidstage::before{top:0;height:clamp(14px,2.6vh,32px);background:linear-gradient(180deg,var(--vr-bg),transparent)}
 .vr-vidstage::after{bottom:0;height:clamp(18px,3vh,36px);background:linear-gradient(0deg,var(--vr-bg),transparent)}
@@ -1044,7 +1044,7 @@ button.vr-plan-spot.vr-plan-pulse .vr-plan-dot{background:#10150f}
    dlaždice. --vr-vidw sdílí i lišta pod ním, aby popisek a odkaz lícovaly s
    levým okrajem obrazu. */
 .vr-vidbox{--vr-vidw:min(100%,calc(96vh * 16 / 9));
-  position:relative;width:var(--vr-vidw);margin:0 auto;aspect-ratio:16/9;background:var(--vr-bg);overflow:hidden}
+  position:relative;width:var(--vr-vidw);margin:0 auto;aspect-ratio:16/9;background:#05070a;overflow:hidden;transition:background-color .6s ease}
 .vr-vid-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .vr-vid-slot{position:absolute;inset:0;z-index:1}
 .vr-vid-slot iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
@@ -1085,7 +1085,7 @@ button.vr-plan-spot.vr-plan-pulse .vr-plan-dot{background:#10150f}
   width:var(--vr-vidw);margin:14px auto 0;box-sizing:border-box;padding:0 clamp(14px,1.6vw,20px);
   display:flex;align-items:baseline;gap:8px 20px;flex-wrap:wrap}
 .vr-vid-season{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--vr-ember-2)}
-.vr-vid-label{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.15;color:#F7F1E8;margin-right:auto}
+.vr-vid-label{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.15rem,2vw,1.7rem);line-height:1.15;color:#F7F1E8;margin-right:auto;transition:color .6s ease}
 .vr-vid-yt{display:inline-flex;align-items:center;gap:9px;text-decoration:none;
   font-family:'Archivo',sans-serif;font-size:clamp(11px,.95vw,12px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;
   color:rgba(237,232,222,.72);border-bottom:1px solid transparent;padding-bottom:2px;transition:color .25s ease,border-color .25s ease}
@@ -1100,13 +1100,22 @@ button.vr-plan-spot.vr-plan-pulse .vr-plan-dot{background:#10150f}
   .vr-vid-label{margin-right:0;flex-basis:100%}
 }
 @media(prefers-reduced-motion:reduce){.vr-vid-sound,.vr-vid-start,.vr-vid-yt{transition:none}}
-/* Zimní světlé téma: podklad videa je světlý (var(--vr-bg)), texty lišty
-   musí ztmavnout — jinak bílá na bílé. Léto zůstává beze změny. */
+/* ZIMA: video na SVĚTLÉM (bílém) podkladu — majitel: „to zimní video dej na
+   bílý podklad, ta černá je moc kontrastní." LÉTO zůstává tmavé (výchozí
+   pravidla výše se nemění). Plocha → bílá; rám (letterbox/stav při načítání) →
+   jemně šedý v barvě pozadí, poster ho stejně překryje. Okrajové fady
+   (::before/::after) už blendují z var(--vr-bg) do bílé, takže sedí bez úprav.
+   Ovládací lišta pod obrazem (název, čudlík zvuku, „Přehrát na YouTube") se
+   překlápí na tmavý text/rám kvůli čitelnosti na světlém (kontrast AA). */
+.vr-root[data-season="zima"] .vr-vidstage{background:#ffffff}
+.vr-root[data-season="zima"] .vr-vidbox{background:var(--vr-bg)}
 .vr-root[data-season="zima"] .vr-vid-label{color:var(--vr-text)}
-.vr-root[data-season="zima"] .vr-vid-yt{color:rgba(23,36,46,.66)}
-.vr-root[data-season="zima"] .vr-vid-yt:hover{color:var(--vr-text)}
-.vr-root[data-season="zima"] .vr-vid-sound{color:var(--vr-text);border-color:rgba(23,36,46,.35)}
-.vr-root[data-season="zima"] .vr-vid-sound:hover{border-color:var(--vr-ember)}
+.vr-root[data-season="zima"] .vr-vid-season{color:var(--vr-accent)}
+.vr-root[data-season="zima"] .vr-vid-sound{border-color:var(--vr-line-2);background:rgba(23,36,46,.04);color:var(--vr-text-soft)}
+.vr-root[data-season="zima"] .vr-vid-sound:hover{background:rgba(23,36,46,.08);border-color:var(--vr-accent);color:var(--vr-text)}
+.vr-root[data-season="zima"] .vr-vid-sound[data-sound="on"]{border-color:var(--vr-line);background:transparent;color:var(--vr-text-muted)}
+.vr-root[data-season="zima"] .vr-vid-yt{color:var(--vr-text-muted)}
+.vr-root[data-season="zima"] .vr-vid-yt:hover{color:var(--vr-text);border-color:var(--vr-accent)}
 
 /* ---------- Guest photo sharing ---------- */
 .sec-sdilet{padding:clamp(56px,9vh,110px) 0;background:var(--vr-bg-deep);border-top:1px solid var(--vr-line);transition:background .6s ease}
