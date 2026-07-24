@@ -108,6 +108,33 @@ function waPhone(phone){ if(!phone) return ''; let d=String(phone).replace(/[^\d
 function waLink(phone,text){ return 'https://wa.me/'+waPhone(phone)+'?text='+encodeURIComponent(text); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
+/* ---------- hlídač konfliktů (shrnutí; okamžitý e-mail posílá VrConflictWatch) ---------- */
+const KNOWN_UIDH = ['44f67225fb4ecfb9','0dcf556ecb298ab7']; // známý červencový konflikt (majitel řeší)
+function addMonthsISO(iso,m){ const d=parseISO(iso); d.setMonth(d.getMonth()+m);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function overlapsRange(a,b){ return a.start<b.end && b.start<a.end; } // [start,end)
+// Stejná eskalační logika jako VrConflictWatch: různá platforma NEBO oba se hostem
+// = reálný konflikt; stejná platforma bez hostů = artefakt (přeskočit).
+function detectConflicts(stays, calendar, bookings, today){
+  const overlaps=[], vanished=[];
+  for(let i=0;i<stays.length;i++){ for(let j=i+1;j<stays.length;j++){
+    const A=stays[i], B=stays[j];
+    if(A.uidh && B.uidh && A.uidh===B.uidh) continue;
+    if(!overlapsRange(A,B)) continue;
+    const samePlatform=(A.platform||'')===(B.platform||'');
+    const bothPaired=!!A.booking && !!B.booking;
+    if(samePlatform && !bothPaired) continue;
+    overlaps.push({ a:A, b:B,
+      os:(A.start>B.start?A.start:B.start), oe:(A.end<B.end?A.end:B.end),
+      known:!!(A.uidh&&B.uidh&&KNOWN_UIDH.indexOf(A.uidh)>=0&&KNOWN_UIDH.indexOf(B.uidh)>=0) });
+  }}
+  const cal={}; calendar.forEach(c=>{ if(c.uidh) cal[c.uidh]=1; });
+  const horizon=addMonthsISO(today,12);
+  bookings.forEach(b=>{ if(!b.uidh||cal[b.uidh]) return; if(b.departure<today) return; if(b.arrival>horizon) return;
+    vanished.push({ booking:b }); });
+  return { overlaps, vanished };
+}
+
 /* ---------- hlavní běh ---------- */
 const items = $input.all();
 let bookings = [];
@@ -129,6 +156,10 @@ bookings.forEach(b => { if (usedIds[b.id]) return; if (b.departure < cutoff) ret
   stays.push({ source:'manual', uidh:b.uidh||null, start:b.arrival, end:b.departure, platform:b.platform||'Přímá', booking:b }); });
 stays.sort((x,y)=> x.start<y.start?-1:x.start>y.start?1:0);
 
+// hlídač konfliktů (nevyřešené — jen shrnutí; detailní e-mail už poslal VrConflictWatch)
+const conflicts = detectConflicts(stays, calendar, bookings, today);
+const hasConflicts = conflicts.overlaps.length > 0 || conflicts.vanished.length > 0;
+
 // collectTasks() — dnešní/po termínu zprávy + nespárované do 21 dní
 const tasks = [];
 stays.forEach(s => {
@@ -144,7 +175,7 @@ stays.forEach(s => {
 });
 tasks.sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
 
-if (!tasks.length) return []; // nic → žádný e-mail
+if (!tasks.length && !hasConflicts) return []; // nic → žádný e-mail
 
 /* ---------- HTML e-mail ---------- */
 function card(inner){ return '<div style="background:#fff;border:1px solid #e6e8e7;border-radius:12px;padding:14px 16px;margin:10px 0">'+inner+'</div>'; }
@@ -178,14 +209,40 @@ const rows = tasks.map(t => {
 const n = tasks.length;
 const word = n===1?'úkol':(n>=2&&n<=4?'úkoly':'úkolů');
 const dnes = (function(){ const d=parseISO(today); return d.getDate()+'. '+MONTH_GEN[d.getMonth()]+' '+d.getFullYear(); })();
-const subject = 'Villa Rudolf — dnes: '+n+' '+word;
+
+// sekce konfliktů (nahoře, jen shrnutí + odkaz — detailní e-mail poslal VrConflictWatch)
+const cn = conflicts.overlaps.length + conflicts.vanished.length;
+function conflCard(inner){ return '<div style="background:#fff;border:1px solid #efd0d0;border-left:4px solid #c0392b;border-radius:12px;padding:12px 15px;margin:8px 0">'+inner+'</div>'; }
+let conflHtml = '';
+if (hasConflicts) {
+  const parts = [];
+  conflicts.overlaps.forEach(o => {
+    const an = o.a.booking?guestName(o.a.booking):'—', bn = o.b.booking?guestName(o.b.booking):'—';
+    parts.push(conflCard('<div style="font-weight:700;color:#8a1111;font-size:15px">🔴 Dvojitá rezervace — '+esc(fmtTermin(o.os,o.oe))+'</div>'+
+      '<div style="color:#333;font-size:14px;margin:6px 0 2px">'+esc(o.a.platform||'—')+' · '+esc(an)+' &nbsp;×&nbsp; '+esc(o.b.platform||'—')+' · '+esc(bn)+'</div>'+
+      (o.known?'<div style="color:#0E7A46;font-size:13px;margin-top:6px">✔ Známý — už se řeší.</div>':'')));
+  });
+  conflicts.vanished.forEach(v => { const b=v.booking;
+    parts.push(conflCard('<div style="font-weight:700;color:#8a5a11;font-size:15px">🟡 Pobyt zmizel z kalendáře — '+esc(fmtTermin(b.arrival,b.departure))+'</div>'+
+      '<div style="color:#333;font-size:14px;margin:6px 0 2px">'+esc(b.platform||'—')+' · '+esc(guestName(b))+' — storno? Ověř a případně smaž ve správě.</div>'));
+  });
+  conflHtml = '<div style="margin:2px 0 6px"><span style="display:inline-block;background:#c0392b;color:#fff;font-weight:700;font-size:12px;letter-spacing:.05em;padding:4px 10px;border-radius:6px">🔴 HLÍDAČ KALENDÁŘE</span></div>'+
+    parts.join('')+
+    '<p style="color:#6b736f;font-size:13px;margin:2px 0 18px">Řeš to hned — čím dřív, tím levnější. Detaily a řešení v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a>.</p>';
+}
+
+const subject = hasConflicts
+  ? ('🔴 Villa Rudolf — konflikt v kalendáři' + (n>0 ? (' + '+n+' '+word) : ''))
+  : ('Villa Rudolf — dnes: '+n+' '+word);
+const heading = (n>0) ? ('Dnes na řadě: '+n+' '+word) : 'Konflikt v kalendáři';
 const html = '<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'+
   '<body style="margin:0;background:#f4f5f4"><div style="max-width:640px;margin:0 auto;padding:22px 14px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1f2422">'+
   '<p style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#D68A4C;font-weight:700;margin:0 0 2px">Villa Rudolf · správa pobytů</p>'+
-  '<h1 style="font-size:21px;margin:0 0 2px">Dnes na řadě: '+n+' '+word+'</h1>'+
+  '<h1 style="font-size:21px;margin:0 0 2px">'+esc(heading)+'</h1>'+
   '<p style="color:#6b736f;font-size:14px;margin:0 0 14px">'+esc(dnes)+' · přehled a odeslání také v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a></p>'+
+  conflHtml +
   rows +
   '<p style="color:#8a918d;font-size:12px;margin-top:22px;border-top:1px solid #e6e8e7;padding-top:12px">Automatická denní připomínka (n8n · VrDailyTasks). Šablony a wa.me odkazy zrcadlí sekci DNES v /sprava/. Odkazy odesílají zprávu ručně z tvého WhatsAppu — nic se neposílá samo.</p>'+
   '</div></body></html>';
 
-return [{ json: { subject, html, to: 'pavel.kubiznak@gmail.com', count: n } }];
+return [{ json: { subject, html, to: 'pavel.kubiznak@gmail.com', count: n, conflicts: cn } }];

@@ -28,6 +28,10 @@
   var stays = [];       // sloučený pohled
   var expandedStays = false;
   var adminConfig = {}; // ubyport_* konfigurace ubytovatele (Nastavení)
+  var serverConflicts = []; // stav hlídače z vr_admin_conflicts (resolved/known)
+  var lastDetect = null;    // poslední klientská detekce (pro obsluhu tlačítek banneru)
+  // Známý červencový konflikt (majitel ho už řeší) — jen pro popisek „řeší se".
+  var KNOWN_UIDH = ['44f67225fb4ecfb9', '0dcf556ecb298ab7'];
 
   var DEPOSIT_CZK = 5000;             // vratná kauce (Kč)
   var REVOLUT_URL = 'https://revolut.me/pavelhuqh';
@@ -56,6 +60,10 @@
   function parseISO(s) { return new Date(s + 'T00:00:00'); }
   function addDaysISO(iso, n) {
     var d = parseISO(iso); d.setDate(d.getDate() + n);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function addMonthsISO(iso, m) {
+    var d = parseISO(iso); d.setMonth(d.getMonth() + m);
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
   function nights(a, b) { return Math.max(0, Math.round((parseISO(b) - parseISO(a)) / 86400000)); }
@@ -380,6 +388,13 @@
       return (res.data && res.data.ok && res.data.config) ? res.data.config : {};
     }).catch(function () { return {}; });
   }
+  function loadConflicts() {
+    // stav hlídače (vr_conflicts) — pro „✅ vyřešeno" a evidenci. Aktivní překryvy
+    // banner detekuje i sám z history.json, takže výpadek RPC banner nezhasne.
+    return rpc('vr_admin_conflicts', {}).then(function (res) {
+      return (res.data && res.data.ok && res.data.conflicts) ? res.data.conflicts : [];
+    }).catch(function () { return []; });
+  }
 
   function buildStays() {
     var today = isoToday();
@@ -413,6 +428,120 @@
     });
 
     stays.sort(function (x, y) { return x.start < y.start ? -1 : x.start > y.start ? 1 : 0; });
+  }
+
+  /* ============ Hlídač konfliktů (banner) ============ */
+  // Stejná logika jako n8n VrConflictWatch: intervaly [start,end); identické uidh
+  // se ignorují. Eskaluje (červeně) různá platforma NEBO oba pobyty se spárovaným
+  // hostem. Stejná platforma bez hostů = artefakt kalendáře → tlumeně (žlutě).
+  function overlapsRange(a, b) { return a.start < b.end && b.start < a.end; }
+  function detectConflictsClient() {
+    var today = isoToday();
+    var res = { overlaps: [], artifacts: [], vanished: [] };
+    for (var i = 0; i < stays.length; i++) {
+      for (var j = i + 1; j < stays.length; j++) {
+        var A = stays[i], B = stays[j];
+        if (A.uidh && B.uidh && A.uidh === B.uidh) continue;
+        if (!overlapsRange(A, B)) continue;
+        var samePlatform = (A.platform || '') === (B.platform || '');
+        var bothPaired = !!A.booking && !!B.booking;
+        var item = {
+          a: A, b: B,
+          overlapStart: (A.start > B.start ? A.start : B.start),
+          overlapEnd: (A.end < B.end ? A.end : B.end),
+          samePlatform: samePlatform,
+          known: !!(A.uidh && B.uidh && KNOWN_UIDH.indexOf(A.uidh) >= 0 && KNOWN_UIDH.indexOf(B.uidh) >= 0)
+        };
+        if (samePlatform && !bothPaired) res.artifacts.push(item);
+        else res.overlaps.push(item);
+      }
+    }
+    var calUidh = {}; calendar.forEach(function (c) { if (c.uidh) calUidh[c.uidh] = 1; });
+    var horizon = addMonthsISO(today, 12); // feed má 13měsíční cutoff dopředu → jen do 12 měsíců
+    bookings.forEach(function (b) {
+      if (!b.uidh || calUidh[b.uidh]) return;
+      if (b.departure < today) return;
+      if (b.arrival > horizon) return;
+      res.vanished.push({ booking: b });
+    });
+    return res;
+  }
+
+  function cbSide(s) {
+    var nm = s.booking ? guestName(s.booking) : 'neznámý host (jen v kalendáři)';
+    return '<div class="cb-side"><b>' + esc(s.platform || '—') + '</b> · ' + esc(fmtShort(s.start, s.end)) + ' · ' + esc(nm) + '</div>';
+  }
+  function renderConflicts() {
+    var host = $('conflict-banner');
+    if (!host) return;
+    var det = detectConflictsClient();
+    lastDetect = det;
+    var resolved = (serverConflicts || []).filter(function (c) { return c && c.resolved_at; });
+
+    if (!det.overlaps.length && !det.vanished.length && !det.artifacts.length && !resolved.length) {
+      host.hidden = true; host.innerHTML = ''; return;
+    }
+    var html = '';
+
+    det.overlaps.forEach(function (o, i) {
+      var known = o.known ? '<div class="cb-note">✔ Známý konflikt — majitel ho už řeší.</div>' : '';
+      var art = o.samePlatform ? '<div class="cb-note dim">Stejná platforma — prověřte, zda nejde o blok/úpravu.</div>' : '';
+      html +=
+        '<div class="cb cb-red">' +
+        '<div class="cb-h">🔴 Dvojitá rezervace — ' + esc(fmtTermin(o.overlapStart, o.overlapEnd)) + '</div>' +
+        cbSide(o.a) + cbSide(o.b) + known + art +
+        '<div class="cb-actions">' +
+        '<button type="button" class="btn btn-sm btn-outline" data-open data-grp="overlap" data-i="' + i + '" data-side="a">Detail pobytu A</button>' +
+        '<button type="button" class="btn btn-sm btn-outline" data-open data-grp="overlap" data-i="' + i + '" data-side="b">Detail pobytu B</button>' +
+        '</div></div>';
+    });
+
+    det.vanished.forEach(function (v, i) {
+      var b = v.booking;
+      html +=
+        '<div class="cb cb-yellow">' +
+        '<div class="cb-h">🟡 Pobyt zmizel z kalendáře — ' + esc(fmtTermin(b.arrival, b.departure)) + '</div>' +
+        '<div class="cb-side"><b>' + esc(b.platform || '—') + '</b> · ' + esc(guestName(b)) + '</div>' +
+        '<div class="cb-note dim">Není už ve feedu kalendáře — pravděpodobně storno na platformě. Ověřte a případně smažte ve správě.</div>' +
+        '<div class="cb-actions"><button type="button" class="btn btn-sm btn-outline" data-open data-grp="vanished" data-i="' + i + '">Detail pobytu</button></div>' +
+        '</div>';
+    });
+
+    resolved.forEach(function (c) {
+      var d = c.detail || {};
+      var termin = d.type === 'overlap'
+        ? fmtTermin(d.overlap_start, d.overlap_end)
+        : fmtTermin(d.start || '', d.end || '');
+      html +=
+        '<div class="cb cb-green">' +
+        '<div class="cb-h">✅ Vyřešeno — ' + (d.type === 'overlap' ? 'dvojitá rezervace ' : 'zmizelý pobyt ') + esc(termin) + '</div>' +
+        '<div class="cb-note dim">Konflikt už v kalendáři není. Hlídač ho uzavřel.</div>' +
+        '</div>';
+    });
+
+    det.artifacts.forEach(function (o) {
+      html +=
+        '<div class="cb cb-muted">' +
+        '<div class="cb-h dim">⚙︎ Možný artefakt kalendáře — ' + esc(fmtTermin(o.overlapStart, o.overlapEnd)) + ' (' + esc(o.a.platform || '—') + ')</div>' +
+        '<div class="cb-note dim">Překryv na stejné platformě bez hosta — nejspíš blok/duplicita, ne dvojitá rezervace. Neupozorňujeme e-mailem.</div>' +
+        '</div>';
+    });
+
+    host.innerHTML = html;
+    host.hidden = false;
+    Array.prototype.forEach.call(host.querySelectorAll('[data-open]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var grp = btn.getAttribute('data-grp'), i = +btn.getAttribute('data-i'), side = btn.getAttribute('data-side');
+        var stay;
+        if (grp === 'overlap') { var o = lastDetect.overlaps[i]; stay = side === 'b' ? o.b : o.a; }
+        else if (grp === 'vanished') {
+          var b = lastDetect.vanished[i].booking;
+          stay = { booking: b, uidh: b.uidh || null, start: b.arrival, end: b.departure, platform: b.platform || 'Přímá', source: 'manual' };
+        }
+        if (!stay) return;
+        if (stay.booking) openDetail(stay); else openEditor({ stay: stay });
+      });
+    });
   }
 
   /* ============ Render: DNES ============ */
@@ -1244,11 +1373,11 @@
   /* ============ Reload ============ */
   function reload() {
     $('loadline').hidden = false; $('loadline').textContent = 'Načítám pobyty a kalendář…';
-    return Promise.all([loadCalendar(), loadBookings(), loadConfig()]).then(function (r) {
-      calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {};
+    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts()]).then(function (r) {
+      calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {}; serverConflicts = r[3] || [];
       buildStays();
       $('loadline').hidden = true;
-      renderToday(); renderStays();
+      renderConflicts(); renderToday(); renderStays();
     }).catch(function (e) {
       if (String(e && e.message) === 'unauthorized') { lockOut('Přístup vypršel. Přihlaste se znovu.'); return; }
       $('loadline').hidden = false; $('loadline').textContent = 'Načtení se nepodařilo. Zkuste Obnovit.';

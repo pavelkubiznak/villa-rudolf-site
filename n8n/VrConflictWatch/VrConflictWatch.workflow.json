@@ -1,0 +1,239 @@
+{
+  "id": "VrConflictWatch001",
+  "name": "VrConflictWatch",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "12 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "b1000000-0000-4000-8000-000000000001",
+      "name": "Každou hodinu (min 12)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://fpknbrzbqpalguajskut.supabase.co/rest/v1/vr_bookings",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,uidh,first_name,last_name,platform,arrival,departure,anonymized_at"
+            },
+            {
+              "name": "uidh",
+              "value": "not.is.null"
+            },
+            {
+              "name": "order",
+              "value": "arrival"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "b1000000-0000-4000-8000-000000000002",
+      "name": "Načíst pobyty (service-role)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        300
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "VrSupaService01",
+          "name": "Supabase service-role (VR)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/* VrConflictWatch — Code node „Detekce konfliktů\" (n8n VrConflictWatch001).\n * REFERENČNÍ kopie kódu vloženého do Code node. Vstup = vr_bookings (service-role\n * z předchozího HTTP nodu). Sám si stáhne kalendář (history.json) a spočítá\n * AKTUÁLNĚ eskalovatelné konflikty (desired). Výstup jde do RPC vr_apply_conflicts.\n *\n * DETEKCE PŘEKRYVŮ: dvojice pobytů s a.start < b.end AND b.start < a.end\n *   (intervaly [start,end) → den odjezdu = den příjezdu NENÍ konflikt); identické\n *   uidh se ignorují. ESKALUJE (zápis + e-mail) jen když jde o reálné riziko:\n *   RŮZNÉ platformy (kanály se nesynchronizují — každý prodá stejný termín, přesně\n *   případ z 7/2027) NEBO oba pobyty mají hosta ve vr_bookings. Překryv na STEJNÉ\n *   platformě bez hostů = artefakt kalendáře (blok / úprava / duplicitní iCal) a\n *   nezapisuje se (jedna platforma svůj inventář dvakrát neprodá).\n * DETEKCE ZMIZELÝCH: booking s uidh a departure>=dnes, jehož uidh NENÍ ve feedu =\n *   pravděpodobné storno. Jen pro arrival do 12 měsíců (feed má 13měsíční cutoff\n *   dopředu → vzdálenější pobyty můžou chybět legitimně, žádný false poplach).\n * BEZPEČNOSTNÍ POJISTKA: když feed nejde stáhnout / je prázdný, běh se ZASTAVÍ\n *   (throw) — jinak by se desired=[] vyložilo jako „vše zmizelo/vyřešeno\" a poslalo\n *   by to lavinu false e-mailů. Feed se zkusí znovu za hodinu.\n */\nconst KNOWN = ['44f67225fb4ecfb9', '0dcf556ecb298ab7']; // známý červencový konflikt (acknowledged-ready)\nconst CAL_URL = 'https://pavelkubiznak.github.io/villa-booking-calendar/data/history.json';\n\nfunction parseISO(s) { return new Date(s + 'T00:00:00Z'); }\nfunction addMonthsISO(iso, m) { const d = parseISO(iso); d.setUTCMonth(d.getUTCMonth() + m); return d.toISOString().slice(0, 10); }\nfunction isoToday() { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Prague', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); }\nfunction nameOf(b) { if (!b || b.anonymized_at) return null; const p = [b.first_name, b.last_name].filter(x => x && String(x).trim()); return p.length ? p.join(' ') : null; }\nfunction overlaps(a, b) { return a.start < b.end && b.start < a.end; }\n\nconst items = $input.all();\nlet bookings = [];\nif (items.length === 1 && Array.isArray(items[0].json)) bookings = items[0].json;\nelse bookings = items.map(i => i.json).filter(x => x && x.id);\n\nlet feed = [];\ntry {\n  const c = await this.helpers.httpRequest({ url: CAL_URL + '?_=' + Date.now(), json: true });\n  if (Array.isArray(c)) feed = c;\n} catch (e) { /* níže se to vyhodnotí jako feed_unavailable */ }\n\n// POJISTKA: prázdný / nedostupný feed = neprovádět nic (jinak lavina false poplachů).\nif (!Array.isArray(feed) || feed.length === 0) {\n  throw new Error('feed_unavailable — history.json prázdný/nedostupný; přeskakuji běh (žádný zápis, žádný e-mail).');\n}\n\nconst today = isoToday();\nconst byUidh = {};\nbookings.forEach(b => { if (b.uidh) byUidh[b.uidh] = b; });\n\nconst desired = [];\nconst seen = {};\n\n// ---- PŘEKRYVY ----\nfor (let i = 0; i < feed.length; i++) {\n  for (let j = i + 1; j < feed.length; j++) {\n    const a = feed[i], b = feed[j];\n    if (!a.uidh || !b.uidh || a.uidh === b.uidh) continue;\n    if (!overlaps(a, b)) continue;\n    const ba = byUidh[a.uidh] || null, bb = byUidh[b.uidh] || null;\n    const samePlatform = (a.platform || '') === (b.platform || '');\n    const bothPaired = !!ba && !!bb;\n    if (samePlatform && !bothPaired) continue; // artefakt kalendáře → neeskalovat\n    let lo, hi, blo, bhi;\n    if (a.uidh < b.uidh) { lo = a; hi = b; blo = ba; bhi = bb; }\n    else { lo = b; hi = a; blo = bb; bhi = ba; }\n    const key = 'overlap:' + lo.uidh + '|' + hi.uidh + '|' + lo.start + '_' + lo.end + '|' + hi.start + '_' + hi.end;\n    if (seen[key]) continue; seen[key] = 1;\n    const known = KNOWN.indexOf(lo.uidh) >= 0 && KNOWN.indexOf(hi.uidh) >= 0;\n    desired.push({ kind: 'overlap', key, detail: {\n      type: 'overlap',\n      a: { uidh: lo.uidh, start: lo.start, end: lo.end, platform: lo.platform, name: nameOf(blo), booking_id: blo ? blo.id : null },\n      b: { uidh: hi.uidh, start: hi.start, end: hi.end, platform: hi.platform, name: nameOf(bhi), booking_id: bhi ? bhi.id : null },\n      overlap_start: (lo.start > hi.start ? lo.start : hi.start),\n      overlap_end: (lo.end < hi.end ? lo.end : hi.end),\n      same_platform: samePlatform, known: known\n    } });\n  }\n}\n\n// ---- ZMIZELÉ (storno) ----\nconst feedUidh = {}; feed.forEach(f => { if (f.uidh) feedUidh[f.uidh] = 1; });\nconst horizon = addMonthsISO(today, 12);\nbookings.forEach(b => {\n  if (!b.uidh || feedUidh[b.uidh]) return;\n  if (b.departure < today) return;   // minulé neřešíme\n  if (b.arrival > horizon) return;   // za >12 měsíců legitimně chybí ve feedu\n  desired.push({ kind: 'vanished', key: 'vanished:' + b.uidh, detail: {\n    type: 'vanished', uidh: b.uidh, start: b.arrival, end: b.departure,\n    platform: b.platform || null, name: nameOf(b), booking_id: b.id\n  } });\n});\n\nreturn [{ json: { applyBody: { p_conflicts: desired }, desiredCount: desired.length, feedCount: feed.length, today } }];\n"
+      },
+      "id": "b1000000-0000-4000-8000-000000000003",
+      "name": "Detekce konfliktů",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://fpknbrzbqpalguajskut.supabase.co/rest/v1/rpc/vr_apply_conflicts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.applyBody) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "b1000000-0000-4000-8000-000000000004",
+      "name": "Zapsat stav (vr_apply_conflicts)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        940,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "VrSupaService01",
+          "name": "Supabase service-role (VR)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/* VrConflictWatch — Code node „Sestavit e-maily\" (n8n VrConflictWatch001).\n * REFERENČNÍ kopie. Vstup = odpověď RPC vr_apply_conflicts:\n *   { ok, to_notify_new:[{kind,key,detail}], to_notify_resolved:[…] }\n * Výstup = 0–2 položky, každá {subject, html} pro jediný emailSend node\n *   (0 položek → node se neprovede → žádný e-mail; přesně to chceme, když nic není).\n * NEODESÍLÁ nic samo — jen připraví předmět + HTML. Znovu už neupozorňuje\n * (notified_at / resolved_notified řeší RPC).\n */\nconst SPRAVA_URL = 'https://villarudolf.com/sprava/';\nconst MONTH_GEN = ['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];\nfunction parseISO(s) { return new Date(s + 'T00:00:00Z'); }\nfunction fmtTermin(a, b) {\n  const da = parseISO(a), db = parseISO(b);\n  const d1 = da.getUTCDate(), m1 = da.getUTCMonth(), y1 = da.getUTCFullYear();\n  const d2 = db.getUTCDate(), m2 = db.getUTCMonth(), y2 = db.getUTCFullYear();\n  if (y1 === y2 && m1 === m2) return d1 + '.–' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;\n  if (y1 === y2) return d1 + '. ' + MONTH_GEN[m1] + ' – ' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;\n  return d1 + '. ' + MONTH_GEN[m1] + ' ' + y1 + ' – ' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;\n}\nfunction esc(s) { return String(s == null ? '' : s).replace(/[&<>\"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c])); }\nfunction card(inner, color) { return '<div style=\"background:#fff;border:1px solid #e6e8e7;border-left:4px solid ' + color + ';border-radius:10px;padding:14px 16px;margin:10px 0\">' + inner + '</div>'; }\nfunction sideRow(x) {\n  const nm = x.name ? esc(x.name) : '<span style=\"color:#9aa0a0\">neznámý host (jen v kalendáři)</span>';\n  return '<div style=\"margin:2px 0;font-size:14px\"><b>' + esc(x.platform || '—') + '</b> · ' + esc(fmtTermin(x.start, x.end)) + ' · ' + nm + '</div>';\n}\nfunction overlapCard(d) {\n  const known = d.known ? '<div style=\"color:#0E7A46;font-size:13px;margin-top:8px\">✔ Známý konflikt — už ho řešíš. Tato zpráva je jen evidence.</div>' : '';\n  const art = d.same_platform ? '<div style=\"color:#8a918d;font-size:12px;margin-top:6px\">(stejná platforma — prověř, zda nejde o blok/úpravu)</div>' : '';\n  return card('<div style=\"font-weight:700;color:#8a1111;font-size:15px\">🔴 Dvojitá rezervace — ' + esc(fmtTermin(d.overlap_start, d.overlap_end)) + '</div>' +\n    '<div style=\"color:#333;font-size:14px;margin:8px 0 2px\">Překrývají se dva pobyty:</div>' + sideRow(d.a) + sideRow(d.b) + known + art, '#c0392b');\n}\nfunction vanishedCard(d) {\n  return card('<div style=\"font-weight:700;color:#8a5a11;font-size:15px\">🟡 Pobyt zmizel z kalendáře — ' + esc(fmtTermin(d.start, d.end)) + '</div>' +\n    '<div style=\"color:#333;font-size:14px;margin:8px 0 2px\">' + esc(d.platform || '—') + (d.name ? ' · ' + esc(d.name) : '') + '</div>' +\n    '<div style=\"color:#6b736f;font-size:13px;margin-top:6px\">Pobyt s hostem ve správě už není ve feedu kalendáře — pravděpodobně <b>storno na platformě</b>. Ověř a případně smaž ve správě.</div>', '#c48a1a');\n}\nfunction resolvedCard(d) {\n  const t = d.type === 'overlap' ? ('Dvojitá rezervace ' + esc(fmtTermin(d.overlap_start, d.overlap_end)))\n                                 : ('Zmizelý pobyt ' + esc(fmtTermin(d.start, d.end)));\n  return card('<div style=\"font-weight:700;color:#0E7A46;font-size:15px\">✅ Vyřešeno — ' + t + '</div>' +\n    '<div style=\"color:#6b736f;font-size:13px;margin-top:6px\">Konflikt už v kalendáři není. Hlídač ho uzavřel.</div>', '#0E7A46');\n}\nfunction wrap(title, sub, rows) {\n  return '<!doctype html><html lang=\"cs\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>' +\n    '<body style=\"margin:0;background:#f4f5f4\"><div style=\"max-width:640px;margin:0 auto;padding:22px 14px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1f2422\">' +\n    '<p style=\"font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#D68A4C;font-weight:700;margin:0 0 2px\">Villa Rudolf · hlídač kalendáře</p>' +\n    '<h1 style=\"font-size:21px;margin:0 0 2px\">' + title + '</h1>' +\n    '<p style=\"color:#6b736f;font-size:14px;margin:0 0 14px\">' + sub + '</p>' + rows +\n    '<p style=\"margin:18px 0 6px\"><a href=\"' + esc(SPRAVA_URL) + '\" style=\"display:inline-block;background:#D68A4C;color:#20140A;font-weight:700;text-decoration:none;padding:10px 18px;border-radius:8px;font-size:14px\">Otevřít správu pobytů ↗</a></p>' +\n    '<p style=\"color:#8a918d;font-size:12px;margin-top:20px;border-top:1px solid #e6e8e7;padding-top:12px\">Automatická kontrola každou hodinu (n8n · VrConflictWatch). Řeš to hned — čím dřív, tím levnější.</p>' +\n    '</div></body></html>';\n}\n\nconst applyResp = ($input.first() && $input.first().json) || {};\nconst nw = applyResp.to_notify_new || [];\nconst rs = applyResp.to_notify_resolved || [];\nconst out = [];\n\nif (nw.length) {\n  const rows = nw.map(c => c.kind === 'overlap' ? overlapCard(c.detail) : vanishedCard(c.detail)).join('');\n  const n = nw.length, word = n === 1 ? 'konflikt' : (n <= 4 ? 'konflikty' : 'konfliktů');\n  out.push({ json: { kind: 'new', count: n, subject: '🔴 Villa Rudolf — KONFLIKT v kalendáři',\n    html: wrap('Nalezen ' + (n === 1 ? '' : n + ' ') + word + ' v kalendáři', 'Zkontroluj a vyřeš co nejdřív.', rows) } });\n}\nif (rs.length) {\n  const rows = rs.map(c => resolvedCard(c.detail)).join('');\n  out.push({ json: { kind: 'resolved', count: rs.length, subject: '✅ Villa Rudolf — konflikt vyřešen',\n    html: wrap('Konflikt vyřešen', 'Situace v kalendáři se srovnala.', rows) } });\n}\nreturn out;\n"
+      },
+      "id": "b1000000-0000-4000-8000-000000000005",
+      "name": "Sestavit e-maily",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "pavel.kubiznak@gmail.com",
+        "toEmail": "pavel.kubiznak@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b1000000-0000-4000-8000-000000000006",
+      "name": "E-mail majiteli",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1460,
+        300
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "VrSmtpGmail0001",
+          "name": "Gmail SMTP (Villa Rudolf)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Každou hodinu (min 12)": {
+      "main": [
+        [
+          {
+            "node": "Načíst pobyty (service-role)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Načíst pobyty (service-role)": {
+      "main": [
+        [
+          {
+            "node": "Detekce konfliktů",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detekce konfliktů": {
+      "main": [
+        [
+          {
+            "node": "Zapsat stav (vr_apply_conflicts)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zapsat stav (vr_apply_conflicts)": {
+      "main": [
+        [
+          {
+            "node": "Sestavit e-maily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sestavit e-maily": {
+      "main": [
+        [
+          {
+            "node": "E-mail majiteli",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

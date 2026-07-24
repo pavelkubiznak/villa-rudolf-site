@@ -54,6 +54,23 @@ a{color:var(--ember-2)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 .btn-danger{background:transparent;border-color:color-mix(in oklab,var(--err),transparent 55%);color:var(--err)}
 
+/* ===== HLÍDAČ KONFLIKTŮ (banner) ===== */
+.cbanner{padding:14px 16px 0;display:flex;flex-direction:column;gap:10px}
+.cb{border:1px solid var(--line-2);border-left-width:4px;border-radius:var(--radius-sm);padding:12px 14px;background:var(--card)}
+.cb-red{border-left-color:var(--err);background:color-mix(in oklab,var(--err),transparent 90%);animation:cbpulse 2.4s ease-in-out 3}
+.cb-yellow{border-left-color:var(--warn);background:color-mix(in oklab,var(--warn),transparent 91%)}
+.cb-green{border-left-color:var(--ok);background:color-mix(in oklab,var(--ok),transparent 92%)}
+.cb-muted{border-left-color:var(--dim);background:transparent;opacity:.85}
+.cb-h{font-family:'Newsreader',Georgia,serif;font-size:17px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.cb-h.dim{font-size:15px;color:var(--muted)}
+.cb-side{font-size:14px;color:var(--muted);margin:2px 0}
+.cb-side b{color:var(--text)}
+.cb-note{font-size:13px;margin-top:7px;color:var(--ok)}
+.cb-note.dim{color:var(--dim)}
+.cb-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+@keyframes cbpulse{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 3px color-mix(in oklab,var(--err),transparent 78%)}}
+@media (prefers-reduced-motion:reduce){.cb-red{animation:none}}
+
 /* ===== BRÁNA ===== */
 .lock{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
 .lock-box{width:100%;max-width:380px;text-align:center}
