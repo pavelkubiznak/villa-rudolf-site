@@ -515,6 +515,17 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-car-card:hover .vr-car-badge,.vr-car-card:focus-visible .vr-car-badge{opacity:1;transform:none}
 .vr-car-badge.is360{background:rgba(214,138,76,.92);border-color:transparent;color:#10150f}
 .vr-car-badge svg{width:20px;height:20px}
+/* Špendlík „ukázat na plánu" — sesterský prvek k 360/lupě badge, o kousek vlevo.
+   Zjeví se s badge při hoveru/fokusu karty; menší a tmavší, ať nedominuje. Na
+   dotykových zařízeních skrytý (reverzní cesta tam vede přes lightbox). */
+.vr-car-pin{position:absolute;top:13px;right:56px;z-index:4;display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:999px;background:rgba(10,14,12,.5);border:1px solid rgba(240,235,225,.28);color:#F0EBE1;
+  cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:auto;
+  opacity:0;transform:scale(.82);transition:opacity .25s ease,transform .25s ease,background .2s ease,border-color .2s ease,color .2s ease}
+.vr-car-pin svg{width:17px;height:17px;pointer-events:none}
+.vr-car-card:hover .vr-car-pin,.vr-car-card:focus-visible .vr-car-pin,.vr-car-pin:hover{opacity:1;transform:none}
+.vr-car-pin:hover{background:rgba(214,138,76,.9);border-color:transparent;color:#10150f}
+@media(hover:none){.vr-car-pin{display:none}}
 .vr-car-arrow{position:absolute;top:calc(50% - 8px);transform:translateY(-50%);z-index:4;display:flex;align-items:center;justify-content:center;
   width:46px;height:46px;border-radius:999px;border:1px solid var(--vr-line-2);background:var(--vr-panel-strong);color:var(--vr-text-soft);
   font-size:24px;line-height:1;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);transition:background .25s,color .25s,border-color .25s}
@@ -584,6 +595,16 @@ button.vr-plan-spot:hover .vr-plan-dot,button.vr-plan-spot:focus-visible .vr-pla
   padding:4px 10px;border-radius:6px;background:rgba(14,19,17,.66);color:#EDE7DC;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
 .vr-plan-hint{font-family:'Archivo',sans-serif;font-size:12.5px;color:var(--vr-text-faint);margin:clamp(12px,1.6vw,18px) 0 0;transition:color .6s ease}
 @media(prefers-reduced-motion:reduce){button.vr-plan-spot{transition:none}}
+/* Pulz hotspotu po skoku „fotka → plán": ember obrys ~2 s (2 iterace) + ember
+   výplň, ať je cílová místnost jednoznačně vidět. */
+button.vr-plan-spot.vr-plan-pulse{background:var(--vr-ember);color:#10150f;border-color:var(--vr-ember);z-index:4;animation:vrSpotPulse 1.05s ease-out 2}
+button.vr-plan-spot.vr-plan-pulse .vr-plan-dot{background:#10150f}
+@keyframes vrSpotPulse{
+  0%{box-shadow:0 0 0 0 rgba(214,138,76,.7),0 7px 22px rgba(0,0,0,.4)}
+  70%{box-shadow:0 0 0 13px rgba(214,138,76,0),0 7px 22px rgba(0,0,0,.4)}
+  100%{box-shadow:0 0 0 0 rgba(214,138,76,0),0 7px 22px rgba(0,0,0,.4)}
+}
+@media(prefers-reduced-motion:reduce){button.vr-plan-spot.vr-plan-pulse{animation:none}}
 @media(max-width:520px){.vr-plan-spot{padding:4px 7px;gap:4px}}
 
 /* ===== Varianta B: čtyři patra vedle sebe jako plovoucí modely =====
@@ -890,7 +911,11 @@ button.vr-plan-spot:hover .vr-plan-dot,button.vr-plan-spot:focus-visible .vr-pla
 /* „Otevřít ve 360° prohlídce domu" — jen u fotek, které mají zimní 360° scénu.
    Text jmenuje CÍL a šipka dolů říká, že skok vede po stránce níž, do sekce
    „Projděte si dům i pozemek" (majitelovo přání). */
-.vr-lb-360{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);z-index:3;align-items:center;gap:9px;
+/* Řada akcí pod fotkou: ember CTA do 360° + decentní odkaz zpět do plánu.
+   Vystředěná nad počítadlem; na úzkém displeji se obě pilulky zalomí. */
+.vr-lb-actions{position:absolute;left:50%;bottom:50px;transform:translateX(-50%);z-index:3;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;max-width:calc(100vw - 24px)}
+.vr-lb-360{align-items:center;gap:9px;
   font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;letter-spacing:.01em;color:#10150f;background:var(--vr-ember);
   border:0;border-radius:999px;padding:12px 22px;cursor:pointer;box-shadow:0 12px 32px rgba(214,138,76,.42);
   max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -901,7 +926,18 @@ button.vr-plan-spot:hover .vr-plan-dot,button.vr-plan-spot:focus-visible .vr-pla
 .vr-lb-360-ic svg{width:19px;height:19px;display:block}
 .vr-lb-360-ar{flex:none;font-size:14px;line-height:1;transition:transform .2s ease}
 .vr-lb-360:hover .vr-lb-360-ar{transform:translateY(2px)}
-@media(max-width:520px){.vr-lb-360{font-size:12px;padding:11px 16px;gap:7px;bottom:48px}}
+/* Decentní protějšek: obrysová pilulka „Zobrazit na plánu". */
+.vr-lb-plan{align-items:center;gap:8px;
+  font-family:'Archivo',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.01em;color:#F2ECE1;
+  background:rgba(10,14,12,.55);border:1px solid rgba(240,235,225,.3);border-radius:999px;padding:11px 18px;cursor:pointer;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:background .2s ease,border-color .2s ease}
+.vr-lb-plan:hover{background:rgba(214,138,76,.22);border-color:var(--vr-ember)}
+.vr-lb-plan:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.vr-lb-plan-ic{display:inline-flex;flex:none}
+.vr-lb-plan-ic svg{width:17px;height:17px;display:block}
+@media(max-width:520px){.vr-lb-actions{bottom:46px}.vr-lb-360{font-size:12px;padding:11px 16px;gap:7px}.vr-lb-plan{font-size:11.5px;padding:10px 14px;gap:6px}}
 @media(prefers-reduced-motion:reduce){.vr-lb-360,.vr-lb-360-ar{transition:none}}
 
 /* ---------- Keyframes ---------- */

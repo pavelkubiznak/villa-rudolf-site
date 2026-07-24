@@ -263,6 +263,7 @@ const T = {
     interior: {
       hint: 'Táhněte myší nebo prstem · klepnutím zvětšíte',
       open360: 'Otevřít ve 360° prohlídce domu',
+      showOnPlan: 'Zobrazit na plánu',
       rosterTitle: 'Kde se u nás vyspíte',
       rosterNote: '{luzka} lůžek — {luzkaDetail} přistýlky. Rozpis, podle kterého rozdělíte partu do pokojů.',
       items: { kitchen: 'Kuchyně a jídelna', suite: 'Apartmá Suite', room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4', sauna: 'Finská sauna', wellness: 'Wellness a sprcha', bath: 'Sprcha u sauny', bath2: 'Koupelna – Pokoj 2', bath3: 'Koupelna – Pokoj 3', bath4: 'Koupelna – Pokoj 4' },
@@ -636,6 +637,7 @@ const T = {
     interior: {
       hint: 'Drag with mouse or finger · tap to enlarge',
       open360: 'Open in the 360° house tour',
+      showOnPlan: 'Show on the floor plan',
       rosterTitle: 'Where you’ll sleep',
       rosterNote: '{luzka} beds — {luzkaDetail} extra beds. The layout you’ll split the group by.',
       items: { kitchen: 'Kitchen & dining', suite: 'Apartment Suite', room1: 'Bedroom 1', room2: 'Bedroom 2', room3: 'Bedroom 3', room4: 'Bedroom 4', sauna: 'Finnish sauna', wellness: 'Wellness & shower', bath: 'Shower by the sauna', bath2: 'Bathroom – Room 2', bath3: 'Bathroom – Room 3', bath4: 'Bathroom – Room 4' },
@@ -981,6 +983,7 @@ const T = {
     interior: {
       hint: 'Mit Maus oder Finger ziehen · zum Vergrößern tippen',
       open360: 'In der 360°-Haustour öffnen',
+      showOnPlan: 'Im Grundriss zeigen',
       rosterTitle: 'Wo ihr schlaft',
       rosterNote: '{luzka} Betten — {luzkaDetail} Zustellbetten. Die Aufteilung, nach der ihr die Gruppe verteilt.',
       items: { kitchen: 'Küche & Essbereich', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Dusche an der Sauna', bath2: 'Bad – Zimmer 2', bath3: 'Bad – Zimmer 3', bath4: 'Bad – Zimmer 4' },
@@ -1326,6 +1329,7 @@ const T = {
     interior: {
       hint: 'Przeciągnij myszą lub palcem · dotknij, aby powiększyć',
       open360: 'Otwórz w spacerze 360° po domu',
+      showOnPlan: 'Pokaż na planie',
       rosterTitle: 'Gdzie będziecie spać',
       rosterNote: '{luzka} miejsc do spania — {luzkaDetail} dostawki. Rozkład, według którego podzielicie grupę.',
       items: { kitchen: 'Kuchnia i jadalnia', suite: 'Apartament Suite', room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4', sauna: 'Sauna fińska', wellness: 'Wellness i prysznic', bath: 'Prysznic przy saunie', bath2: 'Łazienka – Pokój 2', bath3: 'Łazienka – Pokój 3', bath4: 'Łazienka – Pokój 4' },
@@ -2318,8 +2322,19 @@ const has360 = (it) => it && it.pano != null && panoIdx(it.pano) >= 0;
 
 const zoomIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M20.5 20.5 16 16M11 8v6M8 11h6"></path></svg>';
 const spinIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="10" ry="4.6"></ellipse><path d="M6.5 13.5A6 6 0 0 0 17.5 13.5"></path><path d="M16 10.4 17.7 13l-2.9.5"></path></svg>';
+/* Špendlík — obousměrné provázání „fotka → plán domu". */
+const pinIcon = () => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s6.5-5.4 6.5-10.2A6.5 6.5 0 0 0 5.5 10.8C5.5 15.6 12 21 12 21Z"></path><circle cx="12" cy="10.6" r="2.3"></circle></svg>';
+/* Mapa interiérové karty (klíč místnosti) → cíl v Plánu domu (act hotspotu).
+   Apartmá vede na svůj obývací pokoj (apt-living, 1. patro); ostatní na svůj
+   vlastní hotspot. Slouží k reverznímu skoku „fotka → plán". */
+const PLAN_ACT_BY_ROOM = {
+  kitchen: 'int:kitchen', suite: 'apt:apt-living',
+  room1: 'int:room1', room2: 'int:room2', room3: 'int:room3', room4: 'int:room4',
+  bath2: 'int:bath2', bath3: 'int:bath3', bath4: 'int:bath4',
+};
+const planActForRoom = (k) => PLAN_ACT_BY_ROOM[k] || null;
 
-function interiorLbList() { return INTERIOR.map((it) => ({ src: it.img, pano: it.pano, tag: roomTag(it.img, it.k) })); }
+function interiorLbList() { return INTERIOR.map((it) => ({ src: it.img, pano: it.pano, tag: roomTag(it.img, it.k), plan: planActForRoom(it.k) })); }
 /* Klik na kartu: má-li prostor víc fotek, otevře se jeho MALÁ GALERIE (šipky
    i Esc jedou jen po ní). Tlačítko „Prohlédnout ve 360°" visí u všech fotek
    pokoje, ať nezmizí při prolistování. Karta s jednou fotkou se chová jako dřív
@@ -2328,7 +2343,8 @@ function interiorLbFor(idx) {
   const it = INTERIOR[idx];
   if (it && it.gal && it.gal.length > 1) {
     const name = (tt().interior && tt().interior.items && tt().interior.items[it.k]) || '';
-    return { list: it.gal.map((src) => ({ src: src, pano: it.pano, name: name, tag: roomTag(src, it.k) })), start: 0 };
+    const plan = planActForRoom(it.k);
+    return { list: it.gal.map((src) => ({ src: src, pano: it.pano, name: name, tag: roomTag(src, it.k), plan: plan })), start: 0 };
   }
   return { list: interiorLbList(), start: idx };
 }
@@ -2336,10 +2352,14 @@ function interiorLbFor(idx) {
 function buildInteriorCard(it, idx) {
   const t = tt();
   const name = (t.interior && t.interior.items && t.interior.items[it.k]) || '';
+  const planKey = planActForRoom(it.k);
   return el('button', { type: 'button', class: 'vr-car-card', 'data-idx': String(idx), 'aria-label': name }, [
     el('img', { src: it.img, alt: name + ' — Villa Rudolf', loading: 'lazy', decoding: 'async', width: '900', height: '1200' }),
     // anglický štítek místnosti přímo na fotce (aria-hidden: čtečka už má aria-label karty)
     el('span', { class: 'vr-car-tag', 'aria-hidden': 'true', text: roomTag(it.img, it.k) }),
+    // špendlík „ukázat na plánu" — pointer-only zkratka; klávesnice/čtečka jde
+    // přes lightbox, kde je stejný odkaz jako plnohodnotné tlačítko
+    planKey ? el('span', { class: 'vr-car-pin', 'data-plan': planKey, 'aria-hidden': 'true', html: pinIcon() }) : null,
     el('span', { class: 'vr-car-badge' + (has360(it) ? ' is360' : ''), 'aria-hidden': 'true', html: has360(it) ? spinIcon() : zoomIcon() }),
     el('span', { class: 'vr-car-cap' }, [el('span', { 'data-t': 'interior.items.' + it.k, text: name })]),
   ]);
@@ -2476,6 +2496,14 @@ function setupCarousel(track) {
      prvek) → aktivní prvek (Enter/Space na <button>, kde clientX/Y jsou 0).
      Drag potlačíme až od 10 px — myš při běžném kliknutí mikroskopicky ujede. */
   track.addEventListener('click', (e) => {
+    // Špendlík na kartě → reverzní skok do plánu (přednost před lightboxem).
+    const pin = (e.target && e.target.closest) ? e.target.closest('.vr-car-pin') : null;
+    if (pin && track.contains(pin)) {
+      e.preventDefault();
+      if (moved > 10) return;                 // byl to drag, ne klik
+      planShowFrom(pin.getAttribute('data-plan'));
+      return;
+    }
     let card = (e.target && e.target.closest) ? e.target.closest('.vr-car-card') : null;
     if (!card && (e.clientX || e.clientY)) {
       const hit = document.elementFromPoint(e.clientX, e.clientY);
@@ -2517,6 +2545,9 @@ function setupCarousel(track) {
 
 const PLAN_KEYS = ['ground', 'floor1', 'attic', 'basement'];
 let planFloor = 'ground';
+/* Cache-buster pro renderované půdorysy — mění se při retuši (odstranění „JH"
+   obrazovek), aby vrácení hosté dostali novou verzi i při stejném názvu souboru. */
+const PLAN_V = '?v=53';
 
 /* Hotspot: lab = klíč do plan.r, x/y v ‰ šířky renderu, act = akce po kliknutí
    (null = jen popisek — hala, WC, technické zázemí). */
@@ -2566,7 +2597,7 @@ function planOpenInterior(key) {
   const it = INTERIOR[idx];
   if (it.gal && it.gal.length > 1) { const g = interiorLbFor(idx); lbOpen(g.list, g.start); return; }
   const name = (tt().interior && tt().interior.items && tt().interior.items[key]) || '';
-  lbOpen([{ src: it.img, pano: it.pano, name: name, tag: roomTag(it.img, key) }], 0);
+  lbOpen([{ src: it.img, pano: it.pano, name: name, tag: roomTag(it.img, key), plan: planActForRoom(key) }], 0);
 }
 /* Apartmá: všechny místnosti apartmá ukazují fotky apartmá (karta „suite"),
    ale tlačítko do 360° míří na KONKRÉTNÍ scénu té místnosti (pano override). */
@@ -2575,12 +2606,12 @@ function planOpenApt(pano) {
   const it = INTERIOR[idx];
   const name = (tt().interior && tt().interior.items && tt().interior.items.suite) || '';
   const src = (it.gal && it.gal.length) ? it.gal : [it.img];
-  lbOpen(src.map((s) => ({ src: s, pano: pano, name: name, tag: ROOM_EN.suite })), 0);
+  lbOpen(src.map((s) => ({ src: s, pano: pano, name: name, tag: ROOM_EN.suite, plan: 'apt:' + pano })), 0);
 }
 function planOpenGal(key) {
   const g = PLAN_GAL[key]; if (!g) return;
   const name = (tt().plan && tt().plan.r && tt().plan.r[g.nameKey]) || '';
-  lbOpen(g.imgs.map((s) => ({ src: s, pano: g.pano, name: name, tag: g.tag })), 0);
+  lbOpen(g.imgs.map((s) => ({ src: s, pano: g.pano, name: name, tag: g.tag, plan: 'gal:' + key })), 0);
 }
 function planDoAct(act) {
   if (!act) return;
@@ -2589,6 +2620,36 @@ function planDoAct(act) {
   if (kind === 'int') planOpenInterior(val);
   else if (kind === 'apt') planOpenApt(val);
   else if (kind === 'gal') planOpenGal(val);
+}
+
+/* ===================== Reverzní skok: fotka → plán domu =====================
+   Majitel chtěl „trošku víc spojit samostatnou místnost s fotkami a 360, aby se
+   to provázalo logicky." Z lightboxu (i z karty karuselu) vede odkaz zpět DO
+   plánu: zavře lightbox, přepne správné patro, doscrolluje k plánu a hotspot
+   místnosti krátce zapulzuje ember obrysem (~2 s). */
+function planLocate(act) {
+  if (!act) return null;
+  for (let f = 0; f < PLAN_KEYS.length; f++) {
+    const key = PLAN_KEYS[f], spots = (PLAN_DATA[key] && PLAN_DATA[key].spots) || [];
+    for (let s = 0; s < spots.length; s++) { if (spots[s].act === act) return { floor: key }; }
+  }
+  return null;
+}
+function planPulse(floor, act) {
+  const panel = document.getElementById('vr-plan-panel-' + floor); if (!panel) return;
+  const spot = panel.querySelector('.vr-plan-spot[data-act="' + act + '"]'); if (!spot) return;
+  spot.classList.remove('vr-plan-pulse');
+  void spot.offsetWidth;                 // restart animace
+  spot.classList.add('vr-plan-pulse');
+  setTimeout(() => spot.classList.remove('vr-plan-pulse'), 2300);
+}
+function planShowFrom(act) {
+  const loc = planLocate(act); if (!loc) return;
+  if (state.lb >= 0) lbSet(-1);          // zavři lightbox, pokud je otevřený
+  planSelect(loc.floor);                 // přepni na správné patro
+  const host = $('#vr-plan');
+  if (host) host.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'center' });
+  setTimeout(() => planPulse(loc.floor, act), prefersReduced() ? 60 : 520);
 }
 
 function planSpotHTML(sp, floor, t) {
@@ -2612,7 +2673,7 @@ function planFigureHTML(key, floor, t) {
   const orient = (floor.orient && t.plan && t.plan.orient)
     ? '<span class="vr-plan-orient">' + planEsc(t.plan.orient) + '</span>' : '';
   return '<figure class="vr-plan-fig" style="aspect-ratio:' + floor.w + '/' + floor.h + '">'
-    + '<img class="vr-plan-img" src="' + floor.img + '" alt="' + planEsc(alt) + '" loading="lazy" decoding="async" width="' + floor.w + '" height="' + floor.h + '">'
+    + '<img class="vr-plan-img" src="' + floor.img + PLAN_V + '" alt="' + planEsc(alt) + '" loading="lazy" decoding="async" width="' + floor.w + '" height="' + floor.h + '">'
     + spots + orient + '</figure>';
 }
 
@@ -2659,7 +2720,7 @@ function planThumbsHTML(p) {
     const on = k === planFloor;
     h += '<button class="vr-plan-thumb" type="button" role="tab" id="vr-plan-tab-' + k + '" data-floor="' + k + '"'
       + ' aria-selected="' + (on ? 'true' : 'false') + '" aria-controls="vr-plan-panel-' + k + '" tabindex="' + (on ? '0' : '-1') + '">'
-      + '<span class="vr-plan-thumb-fig"><img class="vr-plan-thumb-img" src="' + PLAN_DATA[k].img + '" alt="" loading="lazy" decoding="async" width="' + PLAN_DATA[k].w + '" height="' + PLAN_DATA[k].h + '"></span>'
+      + '<span class="vr-plan-thumb-fig"><img class="vr-plan-thumb-img" src="' + PLAN_DATA[k].img + PLAN_V + '" alt="" loading="lazy" decoding="async" width="' + PLAN_DATA[k].w + '" height="' + PLAN_DATA[k].h + '"></span>'
       + '<span class="vr-plan-thumb-lab">' + planEsc((p.floors && p.floors[k]) || k) + '</span></button>';
   });
   return h + '</div>';
@@ -3806,10 +3867,12 @@ function lbSet(i) {
   const lb = $('#vr-lb');
   const list = state.lbList || [];
   const b360 = $('#vr-lb-360');
+  const bplan = $('#vr-lb-plan');
   const tag = $('#vr-lb-tag');
   if (i < 0 || !list.length) {
     state.lb = -1; lb.style.display = 'none'; lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = '';
     if (b360) { b360.style.display = 'none'; b360.onclick = null; }
+    if (bplan) { bplan.style.display = 'none'; bplan.onclick = null; }
     if (tag) { tag.textContent = ''; tag.style.display = 'none'; }
     return;
   }
@@ -3835,6 +3898,19 @@ function lbSet(i) {
       b360.appendChild(el('span', { class: 'vr-lb-360-ar', 'aria-hidden': 'true', text: '↓' }));
       b360.onclick = (e) => { e.stopPropagation(); lbSet(-1); openTourScene(p); };
     } else { b360.style.display = 'none'; b360.onclick = null; }
+  }
+  if (bplan) {
+    /* Reverzní odkaz „Zobrazit na plánu" — jen u fotek, které mají místo
+       v Plánu domu (interiér / apartmá / suterén). Zavře lightbox, skočí na
+       patro a hotspot místnosti zapulzuje. */
+    if (it.plan && planLocate(it.plan)) {
+      const target = it.plan;
+      bplan.style.display = 'inline-flex';
+      bplan.innerHTML = '';
+      bplan.appendChild(el('span', { class: 'vr-lb-plan-ic', 'aria-hidden': 'true', html: pinIcon() }));
+      bplan.appendChild(el('span', { text: (tt().interior && tt().interior.showOnPlan) || 'Show on the floor plan' }));
+      bplan.onclick = (e) => { e.stopPropagation(); planShowFrom(target); };
+    } else { bplan.style.display = 'none'; bplan.onclick = null; }
   }
   lb.style.display = 'flex'; lb.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
 }
