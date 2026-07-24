@@ -94,7 +94,9 @@
         "subject": "={{ $json.subject }}",
         "emailFormat": "html",
         "html": "={{ $json.html }}",
-        "options": {}
+        "options": {
+          "appendAttribution": false
+        }
       },
       "id": "a1000000-0000-4000-8000-000000000004",
       "name": "E-mail Pavlovi",
