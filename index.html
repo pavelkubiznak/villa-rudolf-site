@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="media/photos/hero-summer.jpg">
-<link rel="stylesheet" href="assets/site.css?v=53">
+<link rel="stylesheet" href="assets/site.css?v=54">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
@@ -345,6 +345,19 @@
         <span data-t="tour.drag">Chyť a otáčej</span>
       </div>
       <div class="vrp-cap"><h3 id="vrp-capname">Společenská místnost</h3></div>
+      <!-- Návratový chip 360° prohlídky: „Zpět na fotky (pokoj)" / „Zpět na plán
+           domu". Skrytý; JS (renderTourReturn) ho ukáže, když host skočí do scény
+           z lightboxu pokoje nebo z hotspotu na plánu, a vrátí ho přesně tam.
+           Křížek = zavřít bez návratu. -->
+      <div class="vrp-return" id="vrpReturn" hidden>
+        <button type="button" class="vrp-return-back" id="vrpReturnBack">
+          <span class="vrp-return-ar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></span>
+          <span class="vrp-return-lb" id="vrpReturnLabel">Zpět na fotky</span>
+        </button>
+        <button type="button" class="vrp-return-x" id="vrpReturnClose" aria-label="Zavřít">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+      </div>
     </div>
 
     <div class="vr-wrap">
@@ -1046,7 +1059,7 @@
   </div>
 
 </div>
-<script src="assets/site.js?v=53" defer></script>
+<script src="assets/site.js?v=54" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

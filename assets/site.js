@@ -459,6 +459,9 @@ const T = {
         { name: 'Apartmá — obývací část', desc: 'Vlastní obývák apartmá Suite: dlouhá sedací souprava pod trámy, velký stůl, televize a schody do podkrovních ložnic.' },
         { name: 'Apartmá — kuchyňský kout', desc: 'Kuchyňská linka apartmá s troubou a varnou deskou — apartmá má vlastní zázemí a nemusí se dělit o hlavní kuchyni.' },
         { name: 'Apartmá — ložnice A', desc: 'První ze tří ložnic apartmá, v 1. patře: manželská postel a geometrická tapeta za podsvíceným čelem.' },
+        { name: 'Apartmá — koupelna', desc: 'Vlastní koupelna apartmá v 1. patře — prosklený sprchový kout, umyvadlo se zrcadlovou skříňkou a okno do zasněžené zahrady. Dřevěný obklad ladí se zbytkem apartmá.' },
+        { name: 'Apartmá — WC', desc: 'Samostatné WC apartmá — závěsná toaleta s dřevěným obkladem za mísou, malé okno a vyhřívaný radiátor. Oddělené od koupelny, takže apartmá nemusí nic sdílet.' },
+        { name: 'Podkroví — podesta apartmá', desc: 'Podesta na vrcholu schodiště apartmá pod šikmými stropy — dřevěné zábradlí, střešní okno se zasněženými horami a dveře do dvou podkrovních ložnic.' },
         { name: 'Apartmá — ložnice B', desc: 'Podkrovní ložnice apartmá — manželská postel a samostatné lůžko s výsuvným druhým lůžkem pod šikmým stropem, komoda a noční stolek. Apartmá má díky ní 10 lůžek.' },
         { name: 'Apartmá — ložnice C', desc: 'Největší podkrovní ložnice apartmá: manželská postel a dvě samostatná lůžka pod šikmým stropem, vikýřové okno.' },
         { name: 'Wellness u sauny', desc: 'Předsálí sauny — lavice na vychladnutí, sprcha a vstup do finské sauny. Celé jen pro vaši skupinu.' },
@@ -479,6 +482,7 @@ const T = {
       groupsLabel: 'Skupiny scén', groupAll: 'Vše',
       stripLabel: 'Scény 360° prohlídky', stripPrev: 'Předchozí náhledy', stripNext: 'Další náhledy',
       groups: { ground: 'Přízemí', floor1: '1. patro', floor2: 'Podkroví', basement: 'Suterén', extSummer: 'Exteriér léto', extWinter: 'Exteriér zima' },
+      backPhotos: 'Zpět na fotky ({room})', backPlan: 'Zpět na plán domu', backClose: 'Zavřít návrat',
     },
     gallery: { eyebrow: 'Galerie', title: 'Dům, pozemek, okolí', note: 'Všechny fotky ({n}) · klepnutím zvětšíte' },
     vylety: {
@@ -812,6 +816,9 @@ const T = {
         { name: 'Suite — living area', desc: 'The Suite apartment’s own lounge: a long sofa under the beams, a big table, a TV and the stairs up to the attic bedrooms.' },
         { name: 'Suite — kitchenette', desc: 'The Suite’s own kitchen units with an oven and hob — the apartment is self-contained and doesn’t share the main kitchen.' },
         { name: 'Suite — bedroom A', desc: 'The first of the Suite’s three bedrooms, on the first floor: a double bed and geometric wallpaper behind the backlit headboard.' },
+        { name: 'Suite — bathroom', desc: 'The Suite’s own first-floor bathroom — a glass shower enclosure, a vanity with a mirror cabinet and a window onto the snowy garden. The wood-look tiling matches the rest of the apartment.' },
+        { name: 'Suite — WC', desc: 'The Suite’s separate toilet — a wall-hung WC with a wood-panel accent, a small window and a heated radiator. Kept apart from the bathroom, so the apartment never has to share.' },
+        { name: 'Attic — Suite landing', desc: 'The landing at the top of the Suite’s attic stairs under the sloping ceilings — a wooden banister, a skylight framing the snowy mountains and doors into the two attic bedrooms.' },
         { name: 'Suite — bedroom B', desc: 'An attic bedroom of the Suite — a double bed and a single with a pull-out second bed under the sloping ceiling, a chest of drawers and a bedside table. It is what takes the Suite to 10 beds.' },
         { name: 'Suite — bedroom C', desc: 'The Suite’s largest attic bedroom: a double bed and two singles under the sloping ceiling, and a dormer window.' },
         { name: 'Wellness by the sauna', desc: 'The room in front of the sauna — a bench to cool down on, a shower and the door into the Finnish sauna. All yours alone.' },
@@ -832,6 +839,7 @@ const T = {
       groupsLabel: 'Scene groups', groupAll: 'All',
       stripLabel: '360° tour scenes', stripPrev: 'Previous thumbnails', stripNext: 'Next thumbnails',
       groups: { ground: 'Ground floor', floor1: 'First floor', floor2: 'Attic', basement: 'Basement', extSummer: 'Outside — summer', extWinter: 'Outside — winter' },
+      backPhotos: 'Back to {room} photos', backPlan: 'Back to the floor plan', backClose: 'Dismiss',
     },
     gallery: { eyebrow: 'Gallery', title: 'The house, grounds, surroundings', note: 'All photos ({n}) · click to enlarge' },
     vylety: {
@@ -1158,6 +1166,9 @@ const T = {
         { name: 'Apartment — Wohnbereich', desc: 'Der eigene Wohnbereich der Suite: eine lange Sitzgruppe unter den Balken, ein großer Tisch, TV und die Treppe zu den Dachzimmern.' },
         { name: 'Apartment — Küchenzeile', desc: 'Die eigene Küchenzeile der Suite mit Backofen und Kochfeld — das Apartment versorgt sich selbst und teilt die Hauptküche nicht.' },
         { name: 'Apartment — Schlafzimmer A', desc: 'Das erste der drei Schlafzimmer der Suite, im 1. Obergeschoss: Doppelbett und geometrische Tapete hinter dem beleuchteten Kopfteil.' },
+        { name: 'Apartment — Bad', desc: 'Das eigene Bad der Suite im 1. Obergeschoss — verglaste Dusche, Waschtisch mit Spiegelschrank und ein Fenster zum verschneiten Garten. Die Holzoptik passt zum übrigen Apartment.' },
+        { name: 'Apartment — WC', desc: 'Das separate WC der Suite — Wand-WC mit Holzakzent, kleines Fenster und Heizkörper. Vom Bad getrennt, damit das Apartment nichts teilen muss.' },
+        { name: 'Dachgeschoss — Treppenabsatz der Suite', desc: 'Der Treppenabsatz oben an der Suite-Treppe unter den Schrägen — Holzgeländer, Dachfenster mit Blick auf die verschneiten Berge und Türen zu den beiden Dachschlafzimmern.' },
         { name: 'Apartment — Schlafzimmer B', desc: 'Ein Dachschlafzimmer der Suite — Doppelbett und Einzelbett mit ausziehbarem Zweitbett unter der Schräge, Kommode und Nachttisch. Damit kommt die Suite auf 10 Betten.' },
         { name: 'Apartment — Schlafzimmer C', desc: 'Das größte Dachschlafzimmer der Suite: Doppelbett und zwei Einzelbetten unter der Schräge und ein Gaubenfenster.' },
         { name: 'Wellness an der Sauna', desc: 'Der Raum vor der Sauna — Bank zum Abkühlen, Dusche und die Tür in die finnische Sauna. Ganz allein für eure Gruppe.' },
@@ -1178,6 +1189,7 @@ const T = {
       groupsLabel: 'Szenengruppen', groupAll: 'Alle',
       stripLabel: 'Szenen der 360°-Tour', stripPrev: 'Vorherige Vorschaubilder', stripNext: 'Nächste Vorschaubilder',
       groups: { ground: 'Erdgeschoss', floor1: '1. Obergeschoss', floor2: 'Dachgeschoss', basement: 'Untergeschoss', extSummer: 'Außen — Sommer', extWinter: 'Außen — Winter' },
+      backPhotos: 'Zurück zu den Fotos ({room})', backPlan: 'Zurück zum Grundriss', backClose: 'Schließen',
     },
     gallery: { eyebrow: 'Galerie', title: 'Haus, Grundstück, Umgebung', note: 'Alle Fotos ({n}) · zum Vergrößern klicken' },
     vylety: {
@@ -1504,6 +1516,9 @@ const T = {
         { name: 'Apartament — część dzienna', desc: 'Własny salon apartamentu Suite: długa sofa pod belkami, duży stół, telewizor i schody do sypialni na poddaszu.' },
         { name: 'Apartament — aneks kuchenny', desc: 'Własna zabudowa kuchenna apartamentu z piekarnikiem i płytą — apartament jest samodzielny i nie dzieli głównej kuchni.' },
         { name: 'Apartament — sypialnia A', desc: 'Pierwsza z trzech sypialni apartamentu, na 1. piętrze: łóżko podwójne i geometryczna tapeta za podświetlanym zagłówkiem.' },
+        { name: 'Apartament — łazienka', desc: 'Własna łazienka apartamentu na 1. piętrze — przeszklona kabina prysznicowa, umywalka z szafką z lustrem i okno na ośnieżony ogród. Okładzina w drewnie spójna z resztą apartamentu.' },
+        { name: 'Apartament — WC', desc: 'Osobne WC apartamentu — wisząca toaleta z drewnianym akcentem, małe okno i grzejnik. Oddzielone od łazienki, więc apartament niczego nie musi dzielić.' },
+        { name: 'Poddasze — podest apartamentu', desc: 'Podest na szczycie schodów apartamentu pod skosami — drewniana balustrada, okno dachowe z widokiem na ośnieżone góry i drzwi do dwóch sypialni na poddaszu.' },
         { name: 'Apartament — sypialnia B', desc: 'Poddaszowa sypialnia apartamentu — łóżko podwójne i pojedyncze z wysuwanym drugim łóżkiem pod skosem, komoda i stolik nocny. Dzięki niemu apartament ma 10 miejsc do spania.' },
         { name: 'Apartament — sypialnia C', desc: 'Największa poddaszowa sypialnia apartamentu: łóżko podwójne i dwa pojedyncze pod skosem oraz okno w lukarnie.' },
         { name: 'Wellness przy saunie', desc: 'Przedsionek sauny — ława do ochłonięcia, prysznic i wejście do sauny fińskiej. Tylko dla waszej grupy.' },
@@ -1524,6 +1539,7 @@ const T = {
       groupsLabel: 'Grupy scen', groupAll: 'Wszystko',
       stripLabel: 'Sceny spaceru 360°', stripPrev: 'Poprzednie miniatury', stripNext: 'Następne miniatury',
       groups: { ground: 'Parter', floor1: '1. piętro', floor2: 'Poddasze', basement: 'Piwnica', extSummer: 'Na zewnątrz — lato', extWinter: 'Na zewnątrz — zima' },
+      backPhotos: 'Powrót do zdjęć ({room})', backPlan: 'Powrót do planu domu', backClose: 'Zamknij',
     },
     gallery: { eyebrow: 'Galeria', title: 'Dom, posesja, okolica', note: 'Wszystkie zdjęcia ({n}) · kliknij, by powiększyć' },
     vylety: {
@@ -1629,17 +1645,21 @@ const PANO_SETS = {
   zima: ['courtyard', 'hall', 'shoerack', 'dining', 'room1', 'bath1', 'room2', 'bath2',
          'room3', 'room3b', 'bath3',
          'corridor', 'room4', 'room4b', 'bath4', 'apt-living', 'apt-kitchen', 'apt-bed-a',
-         'apt-bed-b', 'apt-bed-c',
+         'apt-bath', 'apt-wc',
+         'attic-corridor', 'apt-bed-b', 'apt-bed-c',
          'wellness', 'sauna', 'skiroom', 'garden', 'gazebo'],
   leto: ['s_arrival', 's_garden', 's_pool', 's_terrace', 's_pergola', 's_playground', 's_firepit'],
 };
 /* Skupina (patro) každé scény — stejné pořadí jako PANO_SETS. Klíče → popisky
-   v T[lang].tour.groups. Menu skupin se skryje, když má sezóna jen jednu. */
+   v T[lang].tour.groups. Menu skupin se skryje, když má sezóna jen jednu.
+   apt-bath + apt-wc (koupelna a WC apartmá) patří k apartmá v 1. patře;
+   attic-corridor (podesta) je vstup do podkrovních ložnic apartmá (floor2). */
 const PANO_GROUPS = {
   zima: ['extWinter', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
          'ground', 'ground', 'ground',
          'floor1', 'floor1', 'floor1', 'floor1', 'floor1', 'floor1', 'floor1',
-         'floor2', 'floor2',
+         'floor1', 'floor1',
+         'floor2', 'floor2', 'floor2',
          'basement', 'basement', 'basement', 'extWinter', 'extWinter'],
   leto: ['extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer', 'extSummer'],
 };
@@ -1669,7 +1689,8 @@ const PANO_YAWF = {
   courtyard: 0.72, hall: 0.75, shoerack: 0.50, dining: 0.12, room1: 0.25, bath1: 0.88,
   room2: 0.50, bath2: 0.68, room3: 0.50, room3b: 0.56, bath3: 0.62,
   corridor: 0.00, room4: 0.50, room4b: 0.54, bath4: 0.22, 'apt-living': 0.50, 'apt-kitchen': 0.75,
-  'apt-bed-a': 0.50, 'apt-bed-b': 0.50, 'apt-bed-c': 0.62,
+  'apt-bed-a': 0.50, 'apt-bath': 0.46, 'apt-wc': 0.48, 'attic-corridor': 0.80,
+  'apt-bed-b': 0.50, 'apt-bed-c': 0.62,
   wellness: 0.50, sauna: 0.25, skiroom: 0.86, garden: 0.25, gazebo: 0.29,
   s_arrival: 0.5, s_garden: 0.75, s_pool: 0.32, s_terrace: 0.12, s_pergola: 0.5, s_playground: 0.72, s_firepit: 0.25,
 };
@@ -2279,7 +2300,14 @@ const INTERIOR = [
   { k: 'suite',    img: 'media/sections/room-suite.jpg' + IV,  pano: 'apt-living',
     gal: ['media/sections/room-suite.jpg' + IV, 'media/sections/room-suite-b.jpg' + IV, 'media/sections/room-suite-c.jpg' + IV, 'media/sections/room-suite-d.jpg' + IV] },
   { k: 'room1',    img: 'media/sections/room-1.jpg' + IV,      pano: 'room1',
-    gal: ['media/sections/room-1.jpg' + IV, 'media/sections/room-1b.jpg' + IV, 'media/sections/room-1c.jpg' + IV] },
+    gal: ['media/sections/room-1.jpg' + IV, 'media/sections/room-1b.jpg' + IV, 'media/sections/room-1c.jpg' + IV, 'media/sections/bath-room1.jpg'],
+    /* Koupelna Pokoje 1 nemá vlastní kartu (v lednové sadě není samostatná fotka).
+       Tenhle záběr je z profi sady a vizuálně SEDÍ s 360 scénou bath1 (týž
+       čtvrtkruhový sprchový kout, terrazzo obklad, dřevěné umyvadlo se zrcadlovou
+       skříňkou) — proto má vlastní štítek a jeho 360 tlačítko míří na bath1, ne
+       na room1. Per-fotku override drží galPano/galTag. */
+    galPano: { 'media/sections/bath-room1.jpg': 'bath1' },
+    galTag:  { 'media/sections/bath-room1.jpg': 'Bathroom — Room 1' } },
   { k: 'room2',    img: 'media/sections/room-2.jpg' + IV,      pano: 'room2',
     gal: ['media/sections/room-2.jpg' + IV, 'media/sections/room-2b.jpg' + IV, 'media/sections/room-2c.jpg' + IV, 'media/sections/room-2d.jpg' + IV, 'media/sections/bath-room2.jpg'] },
   { k: 'bath2',    img: 'media/sections/bath-room2.jpg',   pano: 'bath2' },   // koupelna Pokoje 2
@@ -2344,7 +2372,13 @@ function interiorLbFor(idx) {
   if (it && it.gal && it.gal.length > 1) {
     const name = (tt().interior && tt().interior.items && tt().interior.items[it.k]) || '';
     const plan = planActForRoom(it.k);
-    return { list: it.gal.map((src) => ({ src: src, pano: it.pano, name: name, tag: roomTag(src, it.k), plan: plan })), start: 0 };
+    return { list: it.gal.map((src) => ({
+      src: src,
+      pano: (it.galPano && it.galPano[src]) || it.pano,   // per-fotku override 360 cíle (koupelna P1 → bath1)
+      name: name,
+      tag: (it.galTag && it.galTag[src]) || roomTag(src, it.k),
+      plan: plan,
+    })), start: 0 };
   }
   return { list: interiorLbList(), start: idx };
 }
@@ -2560,7 +2594,7 @@ const PLAN_DATA = {
     { lab: 'bath',    x: 790, y: 451, act: 'int:bath3' },
     { lab: 'room1',   x: 398, y: 733, act: 'int:room1' },
     { lab: 'bath',    x: 296, y: 536 },
-    { lab: 'hall',    x: 498, y: 485 },
+    { lab: 'hall',    x: 498, y: 485, act: 'pano:hall' },
   ] },
   floor1: { img: 'media/plan/floor1.webp', w: 1600, h: 1343, spots: [
     { lab: 'aptLiving', x: 590, y: 239, act: 'apt:apt-living' },
@@ -2568,15 +2602,15 @@ const PLAN_DATA = {
     { lab: 'aptKitchen',x: 854, y: 331, act: 'apt:apt-kitchen' },
     { lab: 'room4',     x: 254, y: 453, act: 'int:room4' },
     { lab: 'bath',      x: 408, y: 685, act: 'int:bath4' },
-    { lab: 'corridor',  x: 597, y: 424 },
-    { lab: 'bath',      x: 766, y: 439 },
-    { lab: 'wc',        x: 709, y: 511 },
+    { lab: 'corridor',  x: 597, y: 424, act: 'pano:corridor' },
+    { lab: 'aptBath',   x: 766, y: 439, act: 'pano:apt-bath' },
+    { lab: 'aptWc',     x: 709, y: 511, act: 'pano:apt-wc' },
     { lab: 'hall',      x: 509, y: 513 },
   ] },
   attic: { img: 'media/plan/attic.webp', w: 1600, h: 1355, spots: [
     { lab: 'aptBedB',  x: 708, y: 248, act: 'apt:apt-bed-b' },
     { lab: 'aptBedC',  x: 309, y: 519, act: 'apt:apt-bed-c' },
-    { lab: 'corridor', x: 541, y: 400 },
+    { lab: 'corridor', x: 541, y: 400, act: 'pano:attic-corridor' },
   ] },
   basement: { img: 'media/plan/basement.webp', w: 1600, h: 2031, orient: true, spots: [
     { lab: 'ski',   x: 636, y: 371, act: 'gal:ski' },
@@ -2613,6 +2647,14 @@ function planOpenGal(key) {
   const name = (tt().plan && tt().plan.r && tt().plan.r[g.nameKey]) || '';
   lbOpen(g.imgs.map((s) => ({ src: s, pano: g.pano, name: name, tag: g.tag, plan: 'gal:' + key })), 0);
 }
+/* Prostory bez fotogalerie (vstupní hala, chodby, koupelna/WC apartmá) skáčou
+   z hotspotu PŘÍMO do své 360° scény — stejný mechanismus jako „Otevřít ve 360°".
+   Origin si openTourScene zapamatuje, takže se z ní host vrátí chipem
+   „Zpět na plán domu" (act = klíč hotspotu → planShowFrom umí patro i zvýraznění). */
+function planOpenPano(sceneId, act) {
+  const idx = panoIdx(sceneId); if (idx < 0) return;
+  openTourScene(idx, { kind: 'plan', act: act });
+}
 function planDoAct(act) {
   if (!act) return;
   const i = act.indexOf(':'); if (i < 0) return;
@@ -2620,6 +2662,7 @@ function planDoAct(act) {
   if (kind === 'int') planOpenInterior(val);
   else if (kind === 'apt') planOpenApt(val);
   else if (kind === 'gal') planOpenGal(val);
+  else if (kind === 'pano') planOpenPano(val, act);
 }
 
 /* ===================== Reverzní skok: fotka → plán domu =====================
@@ -2660,7 +2703,10 @@ function planSpotHTML(sp, floor, t) {
   const top = (sp.y / Hpm * 100).toFixed(2);
   const style = 'left:' + left + '%;top:' + top + '%';
   if (sp.act) {
-    const openTxt = (t.plan && t.plan.open) || 'Open';
+    // Prostory bez galerie (act 'pano:…') otevřou rovnou 360° scénu — čtečce to
+    // řekni přesně, ne „Otevřít fotky".
+    const isPano = sp.act.indexOf('pano:') === 0;
+    const openTxt = (isPano && t.interior && t.interior.open360) || (t.plan && t.plan.open) || 'Open';
     return '<button type="button" class="vr-plan-spot is-click" style="' + style + '" data-act="' + sp.act + '" aria-label="' + planEsc(name + ' — ' + openTxt) + '">'
       + '<span class="vr-plan-dot" aria-hidden="true"></span><span class="vr-plan-name">' + planEsc(name) + '</span></button>';
   }
@@ -2778,11 +2824,61 @@ function renderPlan() {
    ten totiž doroluje AKTIVNÍ náhled do pruhu, a musí k tomu už existovat.
    Dřív bylo pořadí opačné, takže se scéna sice načetla správně, ale její
    náhled mohl zůstat schovaný za okrajem pruhu. */
-function openTourScene(idx) {
+/* ===================== Návratový chip z 360° prohlídky =====================
+   Majitel: „z fotek pokoje se do 360 dostanu — parádní — ale zpátky snadná cesta
+   není." Když host skočí do prohlídky z lightboxu pokoje NEBO z hotspotu na plánu
+   domu, zapamatujeme PŮVOD (tourReturn) a nad scénou ukážeme plovoucí chip, který
+   ho vrátí přesně tam (lightbox té fotky / plán se zvýrazněným patrem). Chip zmizí,
+   jakmile se host pustí do běžného prohlížení — přepne skupinu (setPanoGroup),
+   sezónu (setSeason) nebo se posune o 2+ scény dál ručně (goScene). Křížkem se dá
+   zavřít bez návratu.
+     origin = { kind:'photos', lbList, lbIdx, label }   // zpět do lightboxu pokoje
+            | { kind:'plan',   act }                     // zpět na plán domu (hotspot) */
+let tourReturn = null, tourReturnSteps = 0;
+function tourReturnLabelText() {
+  const t = (tt().tour) || {};
+  if (!tourReturn) return '';
+  if (tourReturn.kind === 'plan') return t.backPlan || 'Zpět na plán domu';
+  return (t.backPhotos || 'Zpět na fotky ({room})').replace('{room}', tourReturn.label || '');
+}
+function renderTourReturn() {
+  const host = document.getElementById('vrpReturn'); if (!host) return;
+  if (!tourReturn) { host.hidden = true; return; }
+  const lab = document.getElementById('vrpReturnLabel');
+  if (lab) lab.textContent = tourReturnLabelText();
+  const x = document.getElementById('vrpReturnClose');
+  if (x) x.setAttribute('aria-label', (tt().tour && tt().tour.backClose) || 'Zavřít');
+  host.hidden = false;
+  // Nápověda „chyť a otáčej" sedí u horního okraje stejně jako chip — schovej ji,
+  // ať se nepřekrývají.
+  const d = document.getElementById('vrpDrag'); if (d) d.style.opacity = '0';
+}
+function clearTourReturn() { tourReturn = null; renderTourReturn(); }
+/* Ruční posun o scénu: první krok chip nechá (zvědavost), od druhého už je to
+   běžné prohlížení → chip pryč. */
+function tourReturnStep() {
+  if (!tourReturn) return;
+  tourReturnSteps++;
+  if (tourReturnSteps >= 2) clearTourReturn();
+}
+function doTourReturn() {
+  const r = tourReturn; if (!r) return;
+  clearTourReturn();
+  if (r.kind === 'plan') { planShowFrom(r.act); return; }
+  // photos: doscrolluj ke karuselu (ať je po zavření lightboxu kontext) a otevři
+  // lightbox pokoje na téže fotce.
+  const sec = document.getElementById('loznice');
+  if (sec) sec.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'start' });
+  lbOpen(r.lbList || [], r.lbIdx || 0);
+}
+
+function openTourScene(idx, origin) {
   panoSkipIntro = true;      // cílený skok na scénu → žádný nájezd
-  if (state.season !== 'zima') setSeason('zima');
+  if (state.season !== 'zima') setSeason('zima');   // setSeason() přitom smaže starý tourReturn
   state.panoGroup = 'all';
   state.scene = idx;
+  // Zapamatuj si PŮVOD skoku — AŽ po setSeason (to by ho jinak smazalo).
+  tourReturn = origin || null; tourReturnSteps = 0; renderTourReturn();
   renderPanoGroups(); renderThumbs(); renderScene();
   ensureThree(initPano);
   const jump = () => { if (loadPano) loadPano(idx); };
@@ -2800,6 +2896,7 @@ function goScene(i) {
   if (state.scene === i) return;
   state.scene = i; renderScene();
   if (loadPano) loadPano(i);
+  tourReturnStep();     // ruční posun scény → po 2. kroku návratový chip zmizí
 }
 
 /* ===================== Menu skupin (pater) =====================
@@ -2830,6 +2927,7 @@ function renderPanoGroups() {
 
 function setPanoGroup(key) {
   panoLastInteract = Date.now();
+  clearTourReturn();    // přepnutí skupiny = běžné prohlížení → návratový chip pryč
   state.panoGroup = key;
   $all('#vr-pano-groups .vrp-group').forEach((b) => {
     const on = b.getAttribute('data-group') === key;
@@ -3811,6 +3909,7 @@ function setLang(lang) {
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); applySeasonButtons(); setTexts();
   renderRatings(); renderBedrooms(); renderPlan(); renderPanoGroups(); renderThumbs(); renderScene();
+  renderTourReturn();  // překlad návratového chipu, pokud zrovna svítí
   applyStripAria();
   renderTrips(); renderGallery();
   renderPriceBlock(); renderCalendar(); renderBookingPanel();
@@ -3829,6 +3928,7 @@ function eagerLoadSeason(season) {
 }
 function setSeason(season) {
   if ((season !== 'leto' && season !== 'zima') || state.season === season) return;
+  clearTourReturn();    // změna sezóny = jiná sada scén → návratový chip pozbývá smysl
   state.season = season;
   persistSeason();
   eagerLoadSeason(season);
@@ -3896,7 +3996,13 @@ function lbSet(i) {
       b360.appendChild(el('span', { class: 'vr-lb-360-ic', 'aria-hidden': 'true', html: spinIcon() }));
       b360.appendChild(el('span', { text: (tt().interior && tt().interior.open360) || 'View in 360°' }));
       b360.appendChild(el('span', { class: 'vr-lb-360-ar', 'aria-hidden': 'true', text: '↓' }));
-      b360.onclick = (e) => { e.stopPropagation(); lbSet(-1); openTourScene(p); };
+      b360.onclick = (e) => {
+        e.stopPropagation();
+        // Zapamatuj si, ze které fotky pokoje host odešel — chip ho vrátí přesně sem.
+        const origin = { kind: 'photos', lbList: (list || []).slice(), lbIdx: i, label: (it.name || it.tag || '') };
+        lbSet(-1);
+        openTourScene(p, origin);
+      };
     } else { b360.style.display = 'none'; b360.onclick = null; }
   }
   if (bplan) {
@@ -4239,6 +4345,11 @@ function init() {
     else if (e.key === 'ArrowLeft') lbNav(-1);
     else if (e.key === 'ArrowRight') lbNav(1);
   });
+  // Návratový chip 360° prohlídky — „Zpět na fotky (pokoj)" / „Zpět na plán domu"
+  // + křížek (zavřít bez návratu). stopPropagation, ať klik nespadne do scény.
+  const rBack = $('#vrpReturnBack'), rClose = $('#vrpReturnClose');
+  if (rBack) rBack.addEventListener('click', (e) => { e.stopPropagation(); doTourReturn(); });
+  if (rClose) rClose.addEventListener('click', (e) => { e.stopPropagation(); clearTourReturn(); });
 
   // booking — real <form>: submit (klik na tlačítko i Enter v poli) → JS preventDefault
   const bookForm = $('#vr-book-formEl');

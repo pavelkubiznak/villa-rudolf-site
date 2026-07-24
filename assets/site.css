@@ -349,6 +349,35 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vrp-cap{position:absolute;z-index:3;left:clamp(20px,3vw,32px);bottom:clamp(112px,13vh,168px);pointer-events:none}
 .vrp-cap h3{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.5rem,2.6vw,2.3rem);color:#F7F1E8;margin:0;line-height:1.05;text-shadow:0 1px 2px rgba(0,0,0,.9),0 2px 26px rgba(0,0,0,.6)}
 .vrp-spin{position:absolute;z-index:4;left:50%;top:50%;width:32px;height:32px;margin:-16px 0 0 -16px;border:2px solid rgba(240,235,225,.22);border-top-color:var(--vr-accent);border-radius:50%;opacity:0;pointer-events:none;transition:opacity .25s;animation:vrpRot .9s linear infinite}
+/* Návratový chip z 360° prohlídky — sklo jako ostatní overlaye. Sedí vlevo
+   nahoře: nápověda „chyť a otáčej" je uprostřed, titulek vlevo dole, menu skupin
+   nad scénou — takže nekoliduje. z-index nad fady i ovládáním, pointer-events
+   zpět zapnuté (rám scény je má vypnuté). */
+.vrp-return{position:absolute;z-index:5;top:clamp(14px,2.2vh,22px);left:clamp(14px,3vw,30px);
+  display:flex;align-items:stretch;max-width:calc(100% - 28px);
+  border:1px solid rgba(240,235,225,.20);border-radius:999px;background:rgba(8,11,14,.56);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 6px 22px rgba(0,0,0,.32);overflow:hidden}
+.vrp-return[hidden]{display:none}
+.vrp-return-back{display:flex;align-items:center;gap:8px;min-width:0;
+  padding:9px 6px 9px 14px;background:transparent;border:0;cursor:pointer;
+  font-family:'Archivo',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.02em;
+  color:#EDE9E0;transition:background-color .2s}
+.vrp-return-back:hover{background:rgba(255,255,255,.08)}
+.vrp-return-ar{flex:0 0 auto;display:flex}
+.vrp-return-ar svg{width:16px;height:16px;opacity:.9}
+.vrp-return-lb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vrp-return-x{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:34px;padding:0;
+  background:transparent;border:0;border-left:1px solid rgba(240,235,225,.16);
+  color:#CDD2C8;cursor:pointer;transition:background-color .2s,color .2s}
+.vrp-return-x:hover{background:rgba(255,255,255,.08);color:#fff}
+.vrp-return-x svg{width:15px;height:15px}
+.vrp-return-back:focus-visible,.vrp-return-x:focus-visible{outline:2px solid var(--vr-accent);outline-offset:2px}
+@media(max-width:600px){
+  .vrp-return{top:12px;left:12px;max-width:calc(100% - 24px)}
+  .vrp-return-back{font-size:12px;padding:8px 5px 8px 12px}
+  .vrp-return-lb{max-width:56vw}
+}
 /* Menu skupin (patra / exteriéry) nad scénou — decentní chipy, na mobilu
    vodorovný scroll. Stejný jazyk jako filtry galerie, jen menší, aby to
    nevypadalo jako druhá úroveň záložek. */
