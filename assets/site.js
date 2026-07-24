@@ -2883,8 +2883,17 @@ function openTourScene(idx, origin) {
   ensureThree(initPano);
   const jump = () => { if (loadPano) loadPano(idx); };
   jump(); setTimeout(jump, 380);
-  const sec = document.getElementById('interier');
-  if (sec) sec.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'start' });
+  // Majitel: přistát ROVNOU na scéně co nejvíc na fullscreen, ne na nadpisu
+  // sekce. Stage je vysoký min(96vh,…), takže jeho horní hranu srovnáme těsně
+  // pod sticky lištu — scéna pak vyplní prakticky celý viewport.
+  const stage = document.getElementById('vrpStage');
+  const target = stage || document.getElementById('interier');
+  if (target) {
+    const nav = document.querySelector('.vr-nav');
+    const navH = nav ? nav.getBoundingClientRect().height : 72;
+    const y = window.scrollY + target.getBoundingClientRect().top - navH - 4;
+    window.scrollTo({ top: Math.max(0, y), behavior: prefersReduced() ? 'auto' : 'smooth' });
+  }
   // Pruh se rozloží až po přepnutí sezóny/skupiny — dorolování zopakuj, až
   // bude mít strip finální šířku (jinak by scrollLeft počítal ze starého stavu).
   setTimeout(() => { syncStripArrows(); scrollThumbIntoView(false); }, 420);
