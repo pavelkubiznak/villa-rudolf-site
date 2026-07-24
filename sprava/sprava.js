@@ -441,6 +441,9 @@
     for (var i = 0; i < stays.length; i++) {
       for (var j = i + 1; j < stays.length; j++) {
         var A = stays[i], B = stays[j];
+        // jen kalendářní pobyty (stejně jako VrConflictWatch) — ruční „Přímá"
+        // záznamy bývají nespárovaná kopie feedu, ne dvojitá rezervace.
+        if (A.source !== 'calendar' || B.source !== 'calendar') continue;
         if (A.uidh && B.uidh && A.uidh === B.uidh) continue;
         if (!overlapsRange(A, B)) continue;
         var samePlatform = (A.platform || '') === (B.platform || '');

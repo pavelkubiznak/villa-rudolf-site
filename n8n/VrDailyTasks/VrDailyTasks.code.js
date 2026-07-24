@@ -119,6 +119,7 @@ function detectConflicts(stays, calendar, bookings, today){
   const overlaps=[], vanished=[];
   for(let i=0;i<stays.length;i++){ for(let j=i+1;j<stays.length;j++){
     const A=stays[i], B=stays[j];
+    if(A.source!=='calendar' || B.source!=='calendar') continue; // jen feed (jako VrConflictWatch)
     if(A.uidh && B.uidh && A.uidh===B.uidh) continue;
     if(!overlapsRange(A,B)) continue;
     const samePlatform=(A.platform||'')===(B.platform||'');
