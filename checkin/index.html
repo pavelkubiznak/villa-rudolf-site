@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="checkin.css?v=15">
+<link rel="stylesheet" href="checkin.css?v=16">
 </head>
 <body>
 <div class="vc-root">
@@ -47,6 +47,18 @@
           <p data-i18n="noticeConfirmed">Tento formulář je pro hosty s potvrzenou rezervací.</p>
           <a href="https://villarudolf.com/#rezervace" data-i18n="noticeNoDate">Ještě nemáte termín? Rezervovat termín →</a>
         </div>
+
+        <!-- Odkaz na NOVOU předregistraci po osobách (Systém A). Starý skupinový
+             formulář níže běží souběžně, dokud majitel nepřepne význam QR. -->
+        <a class="vc-newreg" id="newRegLink" href="../registrace/">
+          <span class="vc-newreg-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+          </span>
+          <span class="vc-newreg-tx">
+            <span class="vc-newreg-t" data-i18n="newRegTitle">Registrace hostů po osobách</span>
+            <span class="vc-newreg-s" data-i18n="newRegSub">Zaregistrujte každou osobu zvlášť — kvůli evidenci a poplatku →</span>
+          </span>
+        </a>
       </section>
 
       <form class="vc-form" id="form" novalidate autocomplete="on">
@@ -148,6 +160,6 @@
 
   </div>
 </div>
-<script src="checkin.js?v=15" defer></script>
+<script src="checkin.js?v=16" defer></script>
 </body>
 </html>

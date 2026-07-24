@@ -22,6 +22,8 @@
       intro: 'Vyplňte prosím pár údajů. Připravíme vám podle nich personalizovaného průvodce výlety, pošleme informace před příjezdem i kód k zámku.',
       noticeConfirmed: 'Tento formulář je pro hosty s potvrzenou rezervací.',
       noticeNoDate: 'Ještě nemáte termín? Rezervovat termín →',
+      newRegTitle: 'Registrace hostů po osobách',
+      newRegSub: 'Zaregistrujte každou osobu zvlášť — kvůli evidenci a poplatku →',
       fName: 'Jméno a příjmení', fPhone: 'Telefon', fEmail: 'E-mail',
       fStay: 'Termín pobytu', fFrom: 'Od', fTo: 'Do',
       fAdults: 'Počet dospělých', fChildren: 'Věky dětí',
@@ -50,6 +52,8 @@
       intro: 'Please share a few details. We’ll use them to prepare your personalised trip guide and to send arrival info and the lock code before you come.',
       noticeConfirmed: 'This form is for guests with a confirmed booking.',
       noticeNoDate: 'No dates yet? Book your stay →',
+      newRegTitle: 'Per-person guest registration',
+      newRegSub: 'Register each person separately — for the guest register and fee →',
       fName: 'Full name', fPhone: 'Phone', fEmail: 'E-mail',
       fStay: 'Dates of stay', fFrom: 'From', fTo: 'To',
       fAdults: 'Number of adults', fChildren: 'Children’s ages',
@@ -78,6 +82,8 @@
       intro: 'Bitte geben Sie ein paar Angaben ein. Damit erstellen wir Ihren persönlichen Ausflugsguide und senden Ihnen vor der Anreise Infos und den Türcode.',
       noticeConfirmed: 'Dieses Formular ist für Gäste mit bestätigter Buchung.',
       noticeNoDate: 'Noch kein Termin? Jetzt buchen →',
+      newRegTitle: 'Gästeregistrierung pro Person',
+      newRegSub: 'Jede Person einzeln registrieren — für Gästeregister und Kurtaxe →',
       fName: 'Vor- und Nachname', fPhone: 'Telefon', fEmail: 'E-Mail',
       fStay: 'Aufenthaltszeitraum', fFrom: 'Von', fTo: 'Bis',
       fAdults: 'Anzahl Erwachsene', fChildren: 'Alter der Kinder',
@@ -106,6 +112,8 @@
       intro: 'Prosimy o kilka danych. Na ich podstawie przygotujemy spersonalizowany przewodnik po wycieczkach oraz wyślemy informacje przed przyjazdem i kod do zamka.',
       noticeConfirmed: 'Ten formularz jest dla gości z potwierdzoną rezerwacją.',
       noticeNoDate: 'Nie masz jeszcze terminu? Zarezerwuj →',
+      newRegTitle: 'Rejestracja gości wg osób',
+      newRegSub: 'Zarejestruj każdą osobę osobno — do ewidencji i opłaty →',
       fName: 'Imię i nazwisko', fPhone: 'Telefon', fEmail: 'E-mail',
       fStay: 'Termin pobytu', fFrom: 'Od', fTo: 'Do',
       fAdults: 'Liczba dorosłych', fChildren: 'Wiek dzieci',
@@ -161,6 +169,9 @@
     // submit label (may have been swapped to "sending")
     var sl = document.querySelector('.vc-submit-label');
     if (sl && $('submit').getAttribute('data-busy') !== 'true') sl.textContent = L.submit;
+    // odkaz na novou registraci po osobách nese aktuální jazyk
+    var nr = $('newRegLink');
+    if (nr) nr.setAttribute('href', '../registrace/?lang=' + encodeURIComponent(lang));
   }
 
   function showError(msg) {

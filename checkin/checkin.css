@@ -56,6 +56,19 @@ body{margin:0;background:#0E1311}
 .vc-notice a{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--vc-ember-2);text-decoration:none}
 .vc-notice a:hover{text-decoration:underline}
 
+/* ---------- Nová registrace po osobách (odkaz na /registrace/) ---------- */
+.vc-newreg{display:flex;align-items:center;gap:13px;margin:14px 0 0;padding:15px 16px;
+  border:1px solid var(--vc-ember);border-radius:7px;
+  background:color-mix(in oklab,var(--vc-ember),transparent 88%);
+  max-width:44ch;text-decoration:none;transition:background-color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.vc-newreg:hover{background:color-mix(in oklab,var(--vc-ember),transparent 82%)}
+.vc-newreg-ic{flex:none;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--vc-ember);background:color-mix(in oklab,var(--vc-ember),#0E1311 76%);border:1px solid rgba(214,138,76,.4)}
+.vc-newreg-ic svg{width:20px;height:20px}
+.vc-newreg-tx{display:flex;flex-direction:column;gap:3px;min-width:0}
+.vc-newreg-t{font-size:14px;font-weight:700;color:var(--vc-text);line-height:1.25}
+.vc-newreg-s{font-size:12.5px;line-height:1.45;color:var(--vc-ember-2);font-weight:600}
+
 /* ---------- Form ---------- */
 .vc-form{margin-top:30px;display:flex;flex-direction:column;gap:18px}
 .vc-field{display:flex;flex-direction:column;gap:8px}
