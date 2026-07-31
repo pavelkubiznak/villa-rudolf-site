@@ -4258,9 +4258,13 @@ function startScrollSpy() {
     if (id && document.getElementById(id) && ids.indexOf(id) === -1) ids.push(id);
   });
   if (!ids.length) return;
-  // sections in document order, so the topmost visible one wins on overlap
+  // Sekce v pořadí dokumentu, aby při překryvu vyhrála ta nejvýše.
+  // Řadíme přes compareDocumentPosition, ne přes getBoundingClientRect().top:
+  // rect se čte jednou při startu, takže skryté sekce (mimo sezónu) hlásí top 0
+  // a propadnou na začátek, a jakýkoli dopočítaný layout (obrázky, fonty) po
+  // startu pořadí rozhodí. Pořadí v dokumentu je stabilní.
   const sections = ids.map((id) => document.getElementById(id))
-    .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
 
   let current = null;
   function setActive(id) {
