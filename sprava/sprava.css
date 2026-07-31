@@ -193,6 +193,10 @@ a{color:var(--ember-2)}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--ember)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hint{color:var(--dim);font-size:12px;line-height:1.45}
+/* stav zadaného telefonu (co se uloží / co je špatně) */
+.phone-ok{color:var(--ok)}
+.phone-guess{color:var(--warn)}
+.phone-bad{color:var(--err)}
 .form-err{color:var(--err);font-size:14px;margin:4px 0 12px}
 
 /* ===== Detail blocks ===== */

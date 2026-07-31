@@ -314,22 +314,115 @@
 
   /* ============ Telefon → kód dveří (Yale) ============ */
   // Kód ke dveřím = posledních 5 číslic telefonu (návrh; nikdy nepřepíše uložený kód).
+  // Předvolba je prefix, takže posledních 5 číslic vyjde stejně z národního
+  // i mezinárodního tvaru — normalizace to nerozbije.
   function phoneDigits(phone) { return String(phone == null ? '' : phone).replace(/\D/g, ''); }
   function suggestDoorCode(phone) { var d = phoneDigits(phone); return d.length >= 5 ? d.slice(-5) : null; }
   function doorCodeFor(b) { return b.door_code || suggestDoorCode(b.phone); }
 
+  /* ============ Telefon — normalizace na mezinárodní tvar ============ */
+  // Ukládáme +49171… a z toho pak vychází wa.me. Dřív se předvolba hádala
+  // (9 číslic = Česko) a německé číslo psané národně (0171…) vyrobilo mrtvý
+  // odkaz wa.me/01711234567. Teď se předvolba buď přečte z čísla, nebo odvodí
+  // z jazyka hosta — a majitel ve formuláři hned vidí, co se uloží.
+
+  // min/max = počet číslic národní části za předvolbou. Delší předvolby první
+  // (hledá se nejdelší shoda), jinak by '420' spadlo pod '42'.
+  var DIAL = [
+    { cc: '351', name: 'Portugalsko', min: 9, max: 9 },
+    { cc: '380', name: 'Ukrajina', min: 9, max: 9 },
+    { cc: '385', name: 'Chorvatsko', min: 8, max: 9 },
+    { cc: '386', name: 'Slovinsko', min: 8, max: 8 },
+    { cc: '420', name: 'Česko', min: 9, max: 9 },
+    { cc: '421', name: 'Slovensko', min: 9, max: 9 },
+    { cc: '31', name: 'Nizozemsko', min: 9, max: 9 },
+    { cc: '32', name: 'Belgie', min: 8, max: 9 },
+    { cc: '33', name: 'Francie', min: 9, max: 9 },
+    { cc: '34', name: 'Španělsko', min: 9, max: 9 },
+    { cc: '36', name: 'Maďarsko', min: 8, max: 9 },
+    { cc: '39', name: 'Itálie', min: 6, max: 11 },
+    { cc: '41', name: 'Švýcarsko', min: 9, max: 9 },
+    { cc: '43', name: 'Rakousko', min: 8, max: 13 },
+    { cc: '44', name: 'Británie', min: 9, max: 10 },
+    { cc: '45', name: 'Dánsko', min: 8, max: 8 },
+    { cc: '46', name: 'Švédsko', min: 7, max: 13 },
+    { cc: '47', name: 'Norsko', min: 8, max: 8 },
+    { cc: '48', name: 'Polsko', min: 9, max: 9 },
+    { cc: '49', name: 'Německo', min: 6, max: 11 },
+    { cc: '1', name: 'USA/Kanada', min: 10, max: 10 }
+  ];
+  // Domovská předvolba podle jazyka hosta. 'en' schválně chybí — anglicky
+  // píšou hosté odkudkoliv, tam se hádat nedá a radši si řekneme o předvolbu.
+  var LANG_CC = { cs: '420', de: '49', pl: '48' };
+
+  function dialInfo(digits) {
+    for (var i = 0; i < DIAL.length; i++) if (digits.indexOf(DIAL[i].cc) === 0) return DIAL[i];
+    return null;
+  }
+  function dialFits(info, digits) {
+    var n = digits.length - info.cc.length;
+    return n >= info.min && n <= info.max;
+  }
+  function prettyPhone(digits, info) {
+    if (!info) return '+' + digits;
+    var nat = digits.slice(info.cc.length);
+    if (nat.length === 9) nat = nat.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+    else if (nat.length === 10) nat = nat.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+    return '+' + info.cc + ' ' + nat;
+  }
+
+  // Vrací { empty } | { error } | { ok, e164, pretty, country, guessed }.
+  // guessed = předvolbu jsme doplnili podle jazyka, ne z toho, co bylo napsané.
+  function normPhone(raw, lang) {
+    var s = String(raw == null ? '' : raw).trim();
+    if (!s) return { empty: true };
+    var intl = /^\+/.test(s);
+    var d = s.replace(/\D/g, '');
+    if (!d) return { error: 'V políčku není žádná číslice.' };
+    if (!intl && d.indexOf('00') === 0) { d = d.slice(2); intl = true; } // 00420… = mezinárodní
+
+    var guessed = false;
+    if (!intl) {
+      var home = LANG_CC[lang] || null;
+      var info = dialInfo(d);
+      if (d.charAt(0) === '0') {
+        // národní tvar s nulou (0171…) — nula se do mezinárodního tvaru nedává
+        if (!home) return { error: 'Číslo začíná nulou, ale nevím ze které země. Napiš ho s předvolbou, např. +49 171 1234567.' };
+        d = home + d.replace(/^0+/, '');
+        guessed = true;
+      } else if (info && dialFits(info, d)) {
+        // předvolba tam je, jen bez plusu — bereme jak je
+      } else if (home) {
+        d = home + d;
+        guessed = true;
+      } else {
+        return { error: 'Nepoznám předvolbu. Napiš číslo mezinárodně, např. +49 171 1234567.' };
+      }
+    }
+
+    if (d.length < 8) return { error: 'Číslo má jen ' + d.length + ' číslic — na telefonní číslo je to málo.' };
+    if (d.length > 15) return { error: 'Číslo má ' + d.length + ' číslic — víc než 15 telefonní číslo mít nemůže.' };
+    var fin = dialInfo(d);
+    if (fin && !dialFits(fin, d)) {
+      var have = d.length - fin.cc.length;
+      var want = fin.min === fin.max ? fin.min : (fin.min + '–' + fin.max);
+      return { error: fin.name + ' (+' + fin.cc + ') má za předvolbou ' + want + ' číslic, tohle jich má ' + have + '.' };
+    }
+    return { ok: true, e164: '+' + d, pretty: prettyPhone(d, fin), country: fin ? fin.name : null, guessed: guessed };
+  }
+
   /* ============ wa.me ============ */
-  function waPhone(phone) {
-    if (!phone) return '';
-    var d = String(phone).replace(/[^\d]/g, '');
-    if (d.indexOf('00') === 0) d = d.slice(2);
-    else if (d.length === 9) d = '420' + d; // CZ bez předvolby
-    return d;
+  // wa.me chce holé číslice v mezinárodním tvaru. Bere se booking (ne string),
+  // protože jazyk hosta je záložní zdroj předvolby u starších záznamů.
+  function waPhone(b) {
+    var n = normPhone(b && b.phone, b && b.lang);
+    return n.ok ? n.e164.slice(1) : '';
   }
-  function waLink(phone, text) {
-    var p = waPhone(phone);
-    return 'https://wa.me/' + p + '?text=' + encodeURIComponent(text);
+  function waLink(b, text) {
+    return 'https://wa.me/' + waPhone(b) + '?text=' + encodeURIComponent(text);
   }
+  // Použitelný telefon = takový, ze kterého vznikne funkční wa.me odkaz.
+  function phoneUsable(b) { return !!waPhone(b); }
 
   /* ============ Data load ============ */
   function loadCalendar() {
@@ -534,7 +627,9 @@
           probs.push({ kind: 'unpaired', stay: s, date: s.start });
         return;
       }
-      var hasPhone = !!phoneDigits(b.phone);
+      // Použitelný = vznikne z něj wa.me odkaz. Číslo, které tam je, ale nejde
+      // převést (starý záznam „0171…“), hlásíme stejně jako chybějící.
+      var hasPhone = phoneUsable(b);
       // (a) bez telefonu — v 30denním pipeline (od T−30 začínají zprávy) nebo běžící
       if (!hasPhone && s.end >= today && s.start <= addDaysISO(today, 30)) probs.push({ kind: 'nophone', stay: s, date: s.start });
       // (b) příjezd do 7 dnů bez uloženého kódu dveří
@@ -560,8 +655,11 @@
         html += probCard('warn', '⚠️ ' + esc(fmtShort(s.start, s.end)),
           'Pobyt z kalendáře bez kontaktu — doplnit hosta (' + esc(s.platform) + ').', i, 'Doplnit hosta');
       } else if (p.kind === 'nophone') {
-        html += probCard('warn', '📞 ' + esc(guestName(b)) + ' — chybí telefon',
-          esc(fmtShort(s.start, s.end)) + ' · bez telefonu nejde poslat zprávy ani připravit kód dveří.', i, 'Doplnit');
+        var junk = !!phoneDigits(b.phone); // číslo tam je, jen se nedá použít
+        html += probCard('warn', '📞 ' + esc(guestName(b)) + (junk ? ' — telefon nejde použít' : ' — chybí telefon'),
+          esc(fmtShort(s.start, s.end)) + ' · ' + (junk
+            ? 'z čísla „' + esc(b.phone) + '“ nejde složit mezinárodní tvar — WhatsApp odkaz z něj nevznikne.'
+            : 'bez telefonu nejde poslat zprávy ani připravit kód dveří.'), i, 'Doplnit');
       } else if (p.kind === 'nocode') {
         html += probCard('soon', '🔑 ' + esc(guestName(b)) + ' — chybí kód dveří',
           'Příjezd za ' + daysBetween(today, s.start) + ' dní (' + esc(fmtShort(s.start, s.end)) + ') — není uložený kód dveří.', i, 'Doplnit kód');
@@ -680,11 +778,11 @@
         };
         act.appendChild(done);
       } else {
-        var canWa = b.phone && parts[0].text && !parts[0].needsToken && !parts[0].needsCode;
+        var canWa = phoneUsable(b) && parts[0].text && !parts[0].needsToken && !parts[0].needsCode;
         var wa = document.createElement('a');
         wa.className = 'btn btn-sm btn-wa';
         wa.textContent = 'WhatsApp';
-        if (canWa) { wa.href = waLink(b.phone, parts[0].text); wa.target = '_blank'; wa.rel = 'noopener'; }
+        if (canWa) { wa.href = waLink(b, parts[0].text); wa.target = '_blank'; wa.rel = 'noopener'; }
         else { wa.setAttribute('aria-disabled', 'true'); wa.classList.add('btn'); wa.style.opacity = '.45'; wa.style.pointerEvents = 'none'; }
         act.appendChild(wa);
       }
@@ -737,7 +835,12 @@
           return '<span class="pdot ' + (isSent ? 'done' : (due ? 'due' : '')) + (msg.deposit ? ' dep' : '') + '" title="' + esc(msg.title) + '"></span>';
         }).join('');
         var meta = [];
-        if (b.phone) meta.push('📞 ' + esc(b.phone));
+        if (b.phone) {
+          var np = normPhone(b.phone, b.lang);
+          meta.push('📞 ' + (np.ok
+            ? esc(np.pretty)
+            : esc(b.phone) + ' <span class="phone-bad">⚠︎ nejde použít</span>'));
+        }
         meta.push('👤 ' + (p.registered || 0) + ' registr. / ' + (b.adults == null ? '?' : b.adults) + '+' + ((b.children || []).length) + ' dle rez.');
         if ((p.foreigners || 0) > 0) meta.push('🌍 ' + p.foreigners + ' cizinci');
         if ((p.missing_doc || 0) > 0) meta.push('⚠️ ' + p.missing_doc + ' bez dokladu');
@@ -803,7 +906,8 @@
       '<div class="field"><label>Jméno</label><input id="ed-first" maxlength="100" value="' + esc(b ? (b.first_name || '') : '') + '"></div>' +
       '<div class="field"><label>Příjmení</label><input id="ed-last" maxlength="100" value="' + esc(b ? (b.last_name || '') : '') + '"></div>' +
       '</div>' +
-      '<div class="field"><label>Telefon (mezinárodně, např. +420 775…)</label><input id="ed-phone" inputmode="tel" maxlength="40" value="' + esc(b ? (b.phone || '') : '') + '"></div>' +
+      '<div class="field"><label>Telefon</label><input id="ed-phone" inputmode="tel" maxlength="40" placeholder="+49 171 1234567" value="' + esc(b ? (b.phone || '') : '') + '">' +
+      '<p class="hint" id="ed-phone-info"></p></div>' +
       '<div class="field"><label>E-mail</label><input id="ed-email" inputmode="email" maxlength="160" value="' + esc(b ? (b.email || '') : '') + '"></div>' +
       '<div class="row2">' +
       '<div class="field"><label>Jazyk</label><select id="ed-lang">' +
@@ -830,6 +934,28 @@
 
     openOverlay();
 
+    // Telefon: ukázat rovnou při psaní, co se uloží a v jakém tvaru.
+    // Reaguje i na změnu jazyka — z něj se bere předvolba, když ji host nenapsal.
+    var phoneEl = $('ed-phone'), langEl = $('ed-lang'), infoEl = $('ed-phone-info');
+    function phoneFeedback() {
+      var n = normPhone(phoneEl.value, langEl.value);
+      if (n.empty) {
+        infoEl.className = 'hint';
+        infoEl.textContent = 'Bez telefonu nejde poslat zprávy ani navrhnout kód dveří.';
+      } else if (n.error) {
+        infoEl.className = 'hint phone-bad';
+        infoEl.textContent = '✕ ' + n.error;
+      } else {
+        infoEl.className = 'hint ' + (n.guessed ? 'phone-guess' : 'phone-ok');
+        infoEl.textContent = (n.guessed ? '⚠︎ Uložím jako ' : '✓ Uložím jako ') + n.pretty +
+          (n.country ? ' · ' + n.country : '') +
+          (n.guessed ? ' — předvolbu jsem doplnil podle jazyka hosta. Když nesedí, napiš ji do čísla.' : '');
+      }
+    }
+    phoneEl.addEventListener('input', phoneFeedback);
+    langEl.addEventListener('change', phoneFeedback);
+    phoneFeedback();
+
     $('ed-form').addEventListener('submit', function (ev) {
       ev.preventDefault();
       saveEditor(b, uidh);
@@ -843,6 +969,10 @@
     var arrival = $('ed-arrival').value, departure = $('ed-departure').value;
     if (!arrival || !departure) { err.textContent = 'Vyplňte příjezd i odjezd.'; err.hidden = false; return; }
     if (departure < arrival) { err.textContent = 'Odjezd musí být po příjezdu.'; err.hidden = false; return; }
+    // Telefon se ukládá v mezinárodním tvaru; rozbité číslo neprojde,
+    // ať se rozbitý wa.me odkaz nezjistí až ve chvíli, kdy má odejít zpráva.
+    var ph = normPhone($('ed-phone').value, $('ed-lang').value);
+    if (ph.error) { err.textContent = 'Telefon: ' + ph.error; err.hidden = false; $('ed-phone').focus(); return; }
     var kids = parseInt($('ed-children').value, 10) || 0;
     var childrenArr = [];
     for (var i = 0; i < kids; i++) childrenArr.push(10);
@@ -851,7 +981,7 @@
       p_uidh: uidh || null,
       p_first: $('ed-first').value.trim(),
       p_last: $('ed-last').value.trim(),
-      p_phone: $('ed-phone').value.trim(),
+      p_phone: ph.ok ? ph.e164 : '',
       p_email: $('ed-email').value.trim(),
       p_lang: $('ed-lang').value,
       p_arrival: arrival,
@@ -1054,10 +1184,11 @@
           var warn = '';
           if (p.needsToken) warn = '<div class="notice">Odkaz na registraci není k dispozici (token hosta chybí na tomto zařízení). Vygenerujte nový odkaz výše.</div>';
           if (p.needsCode) warn = '<div class="notice">Zatím není vyplněný kód ke dveřím — doplňte ho výše, ať se dosadí do zprávy.</div>';
-          var canWa = b.phone && p.text && !p.needsToken && !p.needsCode;
+          var canWa = phoneUsable(b) && p.text && !p.needsToken && !p.needsCode;
+          var waTitle = phoneUsable(b) ? 'chybí údaj' : (b.phone ? 'telefon nejde použít — oprav ho v „Upravit pobyt“' : 'chybí telefon');
           var waHtml = canWa
-            ? '<a class="btn btn-sm btn-wa" href="' + esc(waLink(b.phone, p.text)) + '" target="_blank" rel="noopener">Otevřít ve WhatsApp</a>'
-            : '<button class="btn btn-sm btn-wa" disabled title="' + (b.phone ? 'chybí údaj' : 'chybí telefon') + '">Otevřít ve WhatsApp</button>';
+            ? '<a class="btn btn-sm btn-wa" href="' + esc(waLink(b, p.text)) + '" target="_blank" rel="noopener">Otevřít ve WhatsApp</a>'
+            : '<button class="btn btn-sm btn-wa" disabled title="' + esc(waTitle) + '">Otevřít ve WhatsApp</button>';
           return (p.label ? '<div class="msg-when" style="margin:6px 0 4px">' + esc(p.label) + variant + '</div>' : (variant ? '<div class="msg-when" style="margin:6px 0 4px">' + variant.replace(/^ · /, '') + '</div>' : '')) +
             warn +
             '<div class="msg-preview">' + esc(p.text) + '</div>' +

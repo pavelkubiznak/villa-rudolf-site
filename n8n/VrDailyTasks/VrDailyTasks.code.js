@@ -167,8 +167,35 @@ function buildParts(msg,ctx,b){
   if(msg.key==='review'){ const rv=reviewVariant(b.platform,L); return [{text:fill(rv.text,ctx),variantLabel:rv.label}]; }
   return [{text:''}];
 }
-function waPhone(phone){ if(!phone) return ''; let d=String(phone).replace(/[^\d]/g,''); if(d.indexOf('00')===0)d=d.slice(2); else if(d.length===9)d='420'+d; return d; }
-function waLink(phone,text){ return 'https://wa.me/'+waPhone(phone)+'?text='+encodeURIComponent(text); }
+/* Telefon → mezinárodní tvar. Shodná logika s /sprava/ (normPhone v sprava.js) —
+   když se mění tady, musí se změnit i tam. Dřív se hádalo „9 číslic = Česko“ a
+   německé číslo psané národně (0171…) dalo mrtvý odkaz wa.me/01711234567.
+   Položka = [předvolba, min, max] číslic národní části; delší předvolby první. */
+const DIAL=[['351',9,9],['380',9,9],['385',8,9],['386',8,8],['420',9,9],['421',9,9],
+  ['31',9,9],['32',8,9],['33',9,9],['34',9,9],['36',8,9],['39',6,11],['41',9,9],['43',8,13],
+  ['44',9,10],['45',8,8],['46',7,13],['47',8,8],['48',9,9],['49',6,11],['1',10,10]];
+const LANG_CC={cs:'420',de:'49',pl:'48'}; // 'en' schválně chybí — nedá se uhodnout
+function dialInfo(d){ for(const x of DIAL) if(d.indexOf(x[0])===0) return x; return null; }
+function dialFits(x,d){ const n=d.length-x[0].length; return n>=x[1]&&n<=x[2]; }
+// Vrací holé číslice v mezinárodním tvaru, nebo '' když číslo nejde použít.
+function intlPhone(phone,lang){
+  const s=String(phone==null?'':phone).trim(); if(!s) return '';
+  let intl=/^\+/.test(s), d=s.replace(/\D/g,''); if(!d) return '';
+  if(!intl && d.indexOf('00')===0){ d=d.slice(2); intl=true; }
+  if(!intl){
+    const home=LANG_CC[lang]||null, x=dialInfo(d);
+    if(d.charAt(0)==='0'){ if(!home) return ''; d=home+d.replace(/^0+/,''); } // národní nula se zahazuje
+    else if(x && dialFits(x,d)){ /* předvolba tam je, jen bez plusu */ }
+    else if(home){ d=home+d; }
+    else return '';
+  }
+  if(d.length<8||d.length>15) return '';
+  const fin=dialInfo(d);
+  return (fin && !dialFits(fin,d)) ? '' : d;
+}
+function waPhone(b){ return intlPhone(b&&b.phone, b&&b.lang); }
+function waLink(b,text){ return 'https://wa.me/'+waPhone(b)+'?text='+encodeURIComponent(text); }
+function phoneUsable(b){ return !!waPhone(b); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 /* ---------- hlídač konfliktů (shrnutí; okamžitý e-mail posílá VrConflictWatch) ---------- */
@@ -236,7 +263,7 @@ stays.forEach(s => {
   if (!sent.yale_set && doorCodeFor(b) && today >= addDaysISO(b.arrival,-1) && today <= b.arrival)
     tasks.push({ stay:s, booking:b, yale:true, date: addDaysISO(b.arrival,-1) });
   sequenceFor(b).forEach(msg => { if (sent[msg.key]) return; const d = schedDate(msg,b); if (d>today) return;
-    if (!msg.ownerTask && !b.phone) return; // guest zpráva bez telefonu → řeší Problémy
+    if (!msg.ownerTask && !phoneUsable(b)) return; // bez použitelného telefonu → řeší Problémy
     tasks.push({ stay:s, booking:b, msg:msg, date:d, overdue:d<today }); });
 });
 tasks.sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
@@ -249,7 +276,7 @@ stays.forEach(s => {
     if (s.end >= today && s.start <= addDaysISO(today,21) && s.start >= addDaysISO(today,-14))
       problems.push({ kind:'unpaired', stay:s, date:s.start });
     return; }
-  const hasPhone = !!phoneDigits(b.phone);
+  const hasPhone = phoneUsable(b); // použitelný = vznikne z něj wa.me odkaz
   if (!hasPhone && s.end >= today && s.start <= addDaysISO(today,30)) problems.push({ kind:'nophone', stay:s, date:s.start }); // 30denní pipeline / běžící
   if (hasPhone && !b.door_code && s.start >= today && daysBetween(today, s.start) <= 7)
     problems.push({ kind:'nocode', stay:s, date:s.start });
@@ -282,7 +309,7 @@ const rows = tasks.map(t => {
     action = '<div style="color:#c47b1a;font-size:13px">Chybí kód ke dveřím — doplň ho v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a> a odešli odtud.</div>';
   } else {
     // welcome má 2 části → 2 tlačítka
-    action = parts.filter(p=>p.text).map((p,i)=> (p.label?'<div style="font-size:12px;color:#8a918d;margin:8px 0 4px">'+esc(p.label)+'</div>':'') + waBtn(waLink(b.phone, p.text))).join(' ');
+    action = parts.filter(p=>p.text).map((p,i)=> (p.label?'<div style="font-size:12px;color:#8a918d;margin:8px 0 4px">'+esc(p.label)+'</div>':'') + waBtn(waLink(b, p.text))).join(' ');
   }
   return card('<div style="font-weight:700;color:#182019;font-size:15px">'+esc(guestName(b))+'</div>'+
     '<div style="color:#6b736f;font-size:13px;margin:2px 0 10px">'+esc(t.msg.title)+langTag+variant+' · '+when+'</div>'+ action);
@@ -322,9 +349,13 @@ if (problems.length) {
     if (p.kind === 'unpaired')
       return probCard('<div style="font-weight:700;color:#8a5a11;font-size:15px">⚠️ '+esc(fmtShort(s.start,s.end))+'</div>'+
         '<div style="color:#555;font-size:13px;margin-top:3px">Pobyt z kalendáře bez kontaktu — doplnit hosta ('+esc(s.platform)+') v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a>.</div>');
-    if (p.kind === 'nophone')
-      return probCard('<div style="font-weight:700;color:#8a5a11;font-size:15px">📞 '+esc(guestName(b))+' — chybí telefon</div>'+
-        '<div style="color:#555;font-size:13px;margin-top:3px">'+esc(fmtShort(s.start,s.end))+' · bez telefonu nejde poslat zprávy ani připravit kód dveří.</div>');
+    if (p.kind === 'nophone') {
+      const junk = !!phoneDigits(b.phone); // číslo tam je, jen se nedá použít
+      return probCard('<div style="font-weight:700;color:#8a5a11;font-size:15px">📞 '+esc(guestName(b))+(junk?' — telefon nejde použít':' — chybí telefon')+'</div>'+
+        '<div style="color:#555;font-size:13px;margin-top:3px">'+esc(fmtShort(s.start,s.end))+' · '+(junk
+          ? 'z čísla „'+esc(b.phone)+'“ nejde složit mezinárodní tvar — WhatsApp odkaz z něj nevznikne.'
+          : 'bez telefonu nejde poslat zprávy ani připravit kód dveří.')+'</div>');
+    }
     return probCard('<div style="font-weight:700;color:#8a5a11;font-size:15px">🔑 '+esc(guestName(b))+' — chybí kód dveří</div>'+
       '<div style="color:#555;font-size:13px;margin-top:3px">Příjezd za '+daysBetween(today,s.start)+' dní ('+esc(fmtShort(s.start,s.end))+') — není uložený kód dveří.</div>');
   });
