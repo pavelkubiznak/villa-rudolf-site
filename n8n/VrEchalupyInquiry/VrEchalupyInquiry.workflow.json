@@ -1,0 +1,63 @@
+{
+  "id": "VrEchalupyInq001",
+  "name": "VrEchalupyInquiry",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour",
+              "minute": 7
+            }
+          ]
+        },
+        "authentication": "oAuth2",
+        "event": "messageReceived",
+        "simple": false,
+        "filters": {
+          "q": "from:info@e-chalupy.cz subject:\"Poptávka z e-chalupy.cz\""
+        },
+        "options": {}
+      },
+      "id": "b1000000-0000-4000-8000-000000000001",
+      "name": "Poptávka z e-chalupy (Gmail)",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ---------- Telefon → mezinárodní tvar ----------\n// Shodná logika s /sprava/ (normPhone v sprava.js) a VrDailyTasks (intlPhone).\n// Když měníš jednu kopii, spusť tools/test-telefon.mjs — hlídá, že se nerozejdou.\nconst DIAL=[['351',9,9],['380',9,9],['385',8,9],['386',8,8],['420',9,9],['421',9,9],\n  ['31',9,9],['32',8,9],['33',9,9],['34',9,9],['36',8,9],['39',6,11],['41',9,9],['43',8,13],\n  ['44',9,10],['45',8,8],['46',7,13],['47',8,8],['48',9,9],['49',6,11],['1',10,10]];\nconst LANG_CC={cs:'420',de:'49',pl:'48'};\nfunction dialInfo(d){ for(const x of DIAL) if(d.indexOf(x[0])===0) return x; return null; }\nfunction dialFits(x,d){ const n=d.length-x[0].length; return n>=x[1]&&n<=x[2]; }\nfunction intlPhone(phone,lang){\n  const s=String(phone==null?'':phone).trim(); if(!s) return '';\n  let intl=/^\\+/.test(s), d=s.replace(/\\D/g,''); if(!d) return '';\n  if(!intl && d.indexOf('00')===0){ d=d.slice(2); intl=true; }\n  if(!intl){\n    const home=LANG_CC[lang]||null, x=dialInfo(d);\n    if(d.charAt(0)==='0'){ if(!home) return ''; d=home+d.replace(/^0+/,''); }\n    else if(x && dialFits(x,d)){ /* předvolba tam je, jen bez plusu */ }\n    else if(home){ d=home+d; }\n    else return '';\n  }\n  if(d.length<8||d.length>15) return '';\n  const fin=dialInfo(d);\n  return (fin && !dialFits(fin,d)) ? '' : d;\n}\n\n// ---------- Pomocné ----------\n// HTML → text. <br> a </p> na zlom řádku, zbytek pryč, entity zpět.\nfunction htmlToText(html){\n  return String(html==null?'':html)\n    .replace(/<\\s*br\\s*\\/?>/gi, '\\n')\n    .replace(/<\\/\\s*(p|div|tr|li)\\s*>/gi, '\\n')\n    .replace(/<[^>]*>/g, '')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')\n    .replace(/&quot;/gi, '\"').replace(/&#39;/gi, \"'\");\n}\n// Hodnoty v e-mailu jsou rozlámané zalomením uvnitř <strong> („14\\ndospělých“),\n// takže se před hledáním všechny bílé znaky srazí na jednu mezeru.\nfunction squash(s){ return String(s==null?'':s).replace(/\\s+/g, ' ').trim(); }\n\nfunction pad2(n){ return (n<10?'0':'')+n; }\n// „24.7.2027“ i „24. 7. 2027“ → „2027-07-24“. Nesmysl vrátí null.\nfunction czDateToISO(s){\n  const m = squash(s).match(/^(\\d{1,2})\\.\\s*(\\d{1,2})\\.\\s*(\\d{4})$/);\n  if(!m) return null;\n  const d=+m[1], mo=+m[2], y=+m[3];\n  if(mo<1||mo>12||d<1||d>31) return null;\n  const dt=new Date(Date.UTC(y,mo-1,d));\n  if(dt.getUTCDate()!==d||dt.getUTCMonth()!==mo-1) return null; // 31.2. apod.\n  return y+'-'+pad2(mo)+'-'+pad2(d);\n}\n// „Jana Nováková“ → {first:'Jana', last:'Nováková'}. Poslední slovo = příjmení.\nfunction splitName(full){\n  const parts = squash(full).split(' ').filter(Boolean);\n  if(!parts.length) return { first:'', last:'' };\n  if(parts.length===1) return { first:'', last:parts[0] };\n  return { first: parts.slice(0,-1).join(' '), last: parts[parts.length-1] };\n}\n\n/* ---------- Vlastní parser ----------\n * Tvar těla (ukázka s vymyšlenými údaji — reálná poptávka do repa nepatří):\n *   Bez vzkazu - viz upřesnění termínu a počtu osob.\n *   odeslal: Jana Nováková, telefon: 728111222\n *   požadovaný termín: 24.7.2027 - 31.7.2027\n *   počet osob: 14 dospělých + 6 dětí\n *   email: jana.novakova@example.cz\n *   ... ID zprávy: 3999001 / ID objektu: 18852\n * Popisky se hledají bez ohledu na velikost písmen a na to, kde končí řádek.\n */\nfunction parseEchalupy(rawHtmlOrText){\n  const looksHtml = /<[a-z][\\s\\S]*>/i.test(String(rawHtmlOrText||''));\n  const text = squash(looksHtml ? htmlToText(rawHtmlOrText) : rawHtmlOrText);\n  const chybi = [];\n\n  const pick = (re, label) => {\n    const m = text.match(re);\n    if(!m) { chybi.push(label); return null; }\n    return squash(m[1]) || (chybi.push(label), null);\n  };\n\n  // Hodnota končí tam, kde začíná další popisek — proto ty lookaheady.\n  const NEXT = '(?=,?\\\\s*(?:telefon|požadovaný termín|počet osob|email|e-mail|Email byl zaslán|ID zprávy)\\\\b|$)';\n  const jmeno  = pick(new RegExp('odeslal:\\\\s*(.+?)' + NEXT, 'i'), 'jméno');\n  const tel    = pick(new RegExp('telefon:\\\\s*([+0-9 ()/.-]{6,})' + NEXT, 'i'), 'telefon');\n  const termin = pick(new RegExp('požadovaný termín:\\\\s*(.+?)' + NEXT, 'i'), 'termín');\n  const osoby  = pick(new RegExp('počet osob:\\\\s*(.+?)' + NEXT, 'i'), 'počet osob');\n  const email  = pick(new RegExp('e-?mail:\\\\s*([^\\\\s,;]+@[^\\\\s,;]+)' + NEXT, 'i'), 'e-mail');\n\n  // termín „24.7.2027 - 31.7.2027“ (pomlčka i en-dash)\n  let arrival=null, departure=null;\n  if(termin){\n    const m = termin.match(/^(.+?)\\s*[-–—]\\s*(.+)$/);\n    if(m){ arrival = czDateToISO(m[1]); departure = czDateToISO(m[2]); }\n    if(!arrival || !departure) chybi.push('termín');\n  }\n\n  // „14 dospělých + 6 dětí“; „4 dospělí“ bez dětí; české tvary dosp*/dít*/dět*\n  let adults=null, children=0;\n  if(osoby){\n    const a = osoby.match(/(\\d+)\\s*dosp\\w*/i);\n    const d = osoby.match(/(\\d+)\\s*(?:d[ěe]t\\w*|dít\\w*)/i);\n    if(a) adults = +a[1]; else chybi.push('počet dospělých');\n    if(d) children = +d[1];\n  }\n\n  const nm = splitName(jmeno || '');\n  const telIntl = intlPhone(tel, 'cs');\n  if(tel && !telIntl) chybi.push('telefon (nejde převést na mezinárodní tvar)');\n\n  const idZpravy = (text.match(/ID zprávy:\\s*(\\d+)/i) || [])[1] || null;\n  const idObjektu = (text.match(/ID objektu:\\s*(\\d+)/i) || [])[1] || null;\n\n  // Vzkaz hosta = text před „odeslal:“. „Bez vzkazu…“ je zástupka e-chalup.\n  let vzkaz = squash((text.split(/odeslal:/i)[0] || ''));\n  if(/^Bez vzkazu/i.test(vzkaz)) vzkaz = '';\n\n  const uplne = chybi.length === 0;\n  return {\n    zdroj: 'e-chalupy',\n    idZpravy, idObjektu,\n    jmeno: jmeno || null, first: nm.first || null, last: nm.last || null,\n    telefon: telIntl ? '+'+telIntl : null, telefonPuvodni: tel || null,\n    email: email || null,\n    arrival, departure,\n    adults, children,\n    vzkaz: vzkaz || null,\n    uplne, chybi,\n    // Payload pro RPC vr_admin_upsert_booking — beze změny tvaru z /sprava/.\n    // p_children je pole věků; z poptávky známe jen počet, takže 10 jako odhad\n    // (stejně to dělá formulář v /sprava/ — přesné věky přijdou z registrace).\n    payload: {\n      p_id: null,\n      p_uidh: null,\n      p_first: nm.first || '',\n      p_last: nm.last || '',\n      p_phone: telIntl ? '+'+telIntl : '',\n      p_email: email || '',\n      p_lang: 'cs',\n      p_arrival: arrival,\n      p_departure: departure,\n      p_adults: adults == null ? 0 : adults,\n      p_children: Array.from({ length: children || 0 }, () => 10),\n      p_platform: 'e-chalupy',\n      p_notes: vzkaz || '',\n      p_door_code: null\n    }\n  };\n}\n\n/* ---------- n8n obal ----------\n * Gmail node vrací tělo pod různými klíči podle nastavení, proto se zkouší\n * několik variant a přednost má HTML (viz komentář v hlavičce).\n */\nconst out = [];\nfor (const item of $input.all()) {\n  const j = item.json || {};\n  const raw = j.html || j.textHtml || j.bodyHtml || j.textAsHtml\n           || j.text || j.textPlain || j.body || j.snippet || '';\n  const parsed = parseEchalupy(raw);\n  parsed.subject = j.subject || (j.headers && j.headers.subject) || null;\n  parsed.gmailId = j.id || null;\n  out.push({ json: parsed });\n}\nreturn out;\n\n/* ---------- Co dál (až se to bude zapojovat) ----------\n * 1) IF uzel na `uplne` — když false, poslat si e-mail „poptávka došla, ale\n *    nepovedlo se přečíst: {{chybi}}“ a dál needitovat.\n * 2) Dedup na `idZpravy` (e-chalupy ho posílají v každé zprávě), ať opakované\n *    doručení nezaloží druhý záznam.\n * 3) Teprve po potvrzení pobytu volat vr_admin_upsert_booking s `payload`\n *    (HTTP Request na Supabase RPC, hlavička s admin klíčem — stejně jako\n *    to dělá /sprava/). Automatické zakládání z poptávky nedoporučuju.\n */\n"
+      },
+      "id": "b1000000-0000-4000-8000-000000000002",
+      "name": "Naparsovat poptávku",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Poptávka z e-chalupy (Gmail)": {
+      "main": [
+        [
+          {
+            "node": "Naparsovat poptávku",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

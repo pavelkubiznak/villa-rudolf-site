@@ -2,6 +2,15 @@
  * STAV: PŘIPRAVENO, zatím NENASAZENO. Referenční kopie kódu do Code node
  * (bez tohoto úvodního komentáře, jinak 1:1) — stejná konvence jako VrDailyTasks.
  *
+ * DRUHÁ KOPIE: VrEchalupyInquiry.workflow.json má tenhle kód vložený (taky bez
+ * úvodního komentáře) — ten soubor je na rozdíl od VrDailyTasks.workflow.json
+ * importovatelný. Když měníš kód tady, přegeneruj i jeho, ať se nerozejdou.
+ *
+ * K NASAZENÍ CHYBÍ: (1) credential gmailOAuth2 — na instanci žádný pro čtení
+ * pošty není (Gmail SMTP umí jen odesílat, Google Drive SA je Sintery), musí ho
+ * v editoru vytvořit majitel účtu; (2) rozhodnutí, co s naparsovanou poptávkou
+ * dál — viz „Co dál" na konci souboru. Proto je workflow v JSONu active:false.
+ *
  * Trigger: Gmail, filtr `from:info@e-chalupy.cz subject:"Poptávka z e-chalupy.cz"`.
  * Vstup: položka z Gmail node. Bere se HTML tělo — Gmail API v plaintextu převádí
  * tučné části na VELKÁ PÍSMENA, takže z textu vyjde „LUCIE PAPCUNOVÁ" a
