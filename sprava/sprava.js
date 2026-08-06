@@ -697,6 +697,7 @@
         if (sent[msg.key]) return;
         var d = schedDate(msg, b);
         if (d > today) return; // budoucí
+        if (!msg.ownerTask && !phoneUsable(b)) return; // bez použitelného telefonu → řeší Problémy
         tasks.push({ stay: s, booking: b, msg: msg, date: d, overdue: d < today });
       });
     });
