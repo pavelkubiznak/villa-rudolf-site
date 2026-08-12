@@ -1,17 +1,3 @@
-/* VrDailyTasks — Code node „Spočítat úkoly" (n8n na Hetzneru sintera-radar).
- * NASAZENO: n8n workflow id VrDailyTasks001, cron 30 7 * * * (Europe/Prague).
- * Tento soubor je REFERENČNÍ kopie kódu vloženého do Code node (bez tohoto úvodního
- * komentáře, jinak 1:1). Při změně šablon/sekvence v /sprava/sprava.js DRŽ V SYNCU
- * a vlož zpět do Code node (n8n import:workflow / editor).
- * Systém D: šablony ve 4 jazycích (cs/en/de/pl), 🔑 Yale připomínka den před příjezdem,
- * sekce „Problémy" (chybí telefon / chybí kód do 7 dnů / nespárováno). Jazyk = jazyk
- * pobytu, jinak anglicky.
- * Data: vr_bookings přes Supabase service-role (credential VrSupaService01,
- * apikey=anon inline + Authorization=Bearer service-role z credentialu).
- * POZN.: PostgREST vrací vnořený log jako vr_msglog → níže se normalizuje na b.msglog
- * (zrcadlí tvar z RPC vr_admin_list_bookings, který používá /sprava/).
- * E-mail: SMTP credential VrSmtpGmail0001 (Gmail app-password).
- */
 // VrDailyTasks — spočítá dnešní úkoly STEJNOU logikou jako sekce DNES v /sprava/
 // (časová osa T0/T−7/T−5/příjezd/den2/odjezd−24h/ráno-odjezdu vs. vr_msglog;
 // + 🔑 Yale připomínka; + nespárované/chybějící kontakty do sekce „Problémy").
@@ -283,7 +269,22 @@ stays.forEach(s => {
 });
 problems.sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
 
-if (!tasks.length && !problems.length && !hasConflicts) return []; // nic → žádný e-mail
+/* ---------- žádosti z webu (vr_requests) ---------- */
+// Čte se JMÉNEM uzlu, ne z $input — uzel „Spočítat úkoly" tak dál dostává na
+// vstupu pobyty a zbytek téhle 1400řádkové funkce se nemusel sahat.
+// Selhání dotazu = prázdný seznam: kvůli žádostem se denní e-mail nikdy nezastaví.
+let rqOpen = [];
+try {
+  const rqItems = $('Načíst žádosti (service-role)').all();
+  const raw = (rqItems.length === 1 && Array.isArray(rqItems[0].json))
+    ? rqItems[0].json
+    : rqItems.map(i => i.json).filter(x => x && x.id);
+  rqOpen = raw.filter(r => r && r.id && r.status !== 'done');
+} catch (e) { rqOpen = []; }
+
+// Nevyřízená žádost je sama o sobě důvod e-mail poslat — bez rqOpen v téhle
+// podmínce by v klidný den (0 úkolů, 0 problémů) zůstala zase neviditelná.
+if (!tasks.length && !problems.length && !hasConflicts && !rqOpen.length) return []; // nic → žádný e-mail
 
 /* ---------- HTML e-mail ---------- */
 function card(inner){ return '<div style="background:#fff;border:1px solid #e6e8e7;border-radius:12px;padding:14px 16px;margin:10px 0">'+inner+'</div>'; }
@@ -365,20 +366,52 @@ if (problems.length) {
 }
 
 const pn = problems.length;
-const subject = hasConflicts
+// sekce ŽÁDOSTI Z WEBU — ember rámeček (příležitost, ne chyba)
+function reqCard(inner){ return '<div style="background:#fff;border:1px solid #f0dfc9;border-left:4px solid #D68A4C;border-radius:12px;padding:12px 15px;margin:8px 0">'+inner+'</div>'; }
+let reqHtml = '';
+if (rqOpen.length) {
+  const RQ_FLAG = { cs:'🇨🇿', de:'🇩🇪', en:'🇬🇧', pl:'🇵🇱' };
+  const rParts = rqOpen.map(r => {
+    const hoste = [ r.adults+' dosp.', r.children ? (r.children+' dět.') : null, r.pets ? (r.pets+'× pes') : null ]
+      .filter(Boolean).join(' · ');
+    const wait = r.notified_at ? '' : ' <span style="color:#c47b1a;font-weight:700">· e-mail zatím neodešel</span>';
+    const dig = String(r.phone == null ? '' : r.phone).replace(/\D/g, '');
+    const tel = dig ? (' · <a href="tel:+'+dig+'">+'+esc(dig)+'</a>') : '';
+    return reqCard('<div style="font-weight:700;color:#182019;font-size:15px">'+(RQ_FLAG[r.lang]||'🏳️')+' '+esc(r.name)+'</div>'+
+      '<div style="color:#6b736f;font-size:13px;margin:3px 0 8px">'+esc(fmtTermin(r.arrival, r.departure))+' · '+esc(hoste)+
+      ' · <b style="color:#1f2422">'+esc(Number(r.total||0).toLocaleString('cs-CZ'))+' Kč</b>'+wait+'</div>'+
+      '<div style="font-size:13.5px"><a href="mailto:'+esc(r.email)+'">'+esc(r.email)+'</a>'+tel+'</div>');
+  });
+  reqHtml = '<div style="margin:2px 0 6px"><span style="display:inline-block;background:#D68A4C;color:#20140A;font-weight:700;font-size:12px;letter-spacing:.05em;padding:4px 10px;border-radius:6px">🏔️ ŽÁDOSTI Z WEBU</span></div>'+
+    rParts.join('')+
+    '<p style="color:#6b736f;font-size:13px;margin:2px 0 18px">Neodpovězené žádosti z formuláře na webu. Odbav a označ „Vyřízeno" v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a>.</p>';
+}
+
+const subjectBase = hasConflicts
   ? ('🔴 Villa Rudolf — konflikt v kalendáři' + (n>0 ? (' + '+n+' '+word) : ''))
   : (n>0)
     ? ('Villa Rudolf — dnes: '+n+' '+word)
-    : ('Villa Rudolf — '+pn+' '+(pn===1?'problém':(pn>=2&&pn<=4?'problémy':'problémů'))+' ke kontrole');
+    : (pn>0)
+      ? ('Villa Rudolf — '+pn+' '+(pn===1?'problém':(pn>=2&&pn<=4?'problémy':'problémů'))+' ke kontrole')
+      : ('Villa Rudolf — '+rqOpen.length+'× žádost z webu');
+// Žádost patří do předmětu, ne až do těla — jinak se e-mail v mobilu tváří
+// jako běžná denní připomínka a otevře se až večer.
+// Prefix jen tehdy, když v předmětu už něco jiného je — jinak by v klidný den
+// vyšlo „1× žádost z webu · Villa Rudolf — 1× žádost z webu".
+const subject = (rqOpen.length && (n>0 || hasConflicts || pn>0))
+  ? ('🏔️ ' + rqOpen.length + '× žádost z webu · ' + subjectBase)
+  : subjectBase;
 const heading = (n>0) ? ('Dnes na řadě: '+n+' '+word)
   : hasConflicts ? 'Konflikt v kalendáři'
-  : 'Problémy ke kontrole';
+  : (pn>0) ? 'Problémy ke kontrole'
+  : (rqOpen.length===1 ? 'Nová žádost z webu' : rqOpen.length+' žádosti z webu');
 const html = '<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'+
   '<body style="margin:0;background:#f4f5f4"><div style="max-width:640px;margin:0 auto;padding:22px 14px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1f2422">'+
   '<p style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#D68A4C;font-weight:700;margin:0 0 2px">Villa Rudolf · správa pobytů</p>'+
   '<h1 style="font-size:21px;margin:0 0 2px">'+esc(heading)+'</h1>'+
   '<p style="color:#6b736f;font-size:14px;margin:0 0 14px">'+esc(dnes)+' · přehled a odeslání také v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a></p>'+
   conflHtml +
+  reqHtml +
   problemsHtml +
   rows +
   '<p style="color:#8a918d;font-size:12px;margin-top:22px;border-top:1px solid #e6e8e7;padding-top:12px">Automatická denní připomínka (n8n · VrDailyTasks). Šablony a wa.me odkazy jsou v jazyce pobytu a zrcadlí sekci DNES v /sprava/. Odkazy odesílají zprávu ručně z tvého WhatsAppu — nic se neposílá samo.</p>'+

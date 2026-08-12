@@ -29,6 +29,9 @@
   var expandedStays = false;
   var adminConfig = {}; // ubyport_* konfigurace ubytovatele (Nastavení)
   var serverConflicts = []; // stav hlídače z vr_admin_conflicts (resolved/known)
+  var requests = [];        // žádosti z webového formuláře (vr_admin_list_requests)
+  var requestsShowDone = false; // vyřízené žádosti jsou schované, dokud si je nevyžádáš
+  var lastRequests = [];    // právě vykreslené pořadí (pro obsluhu tlačítek)
   var lastDetect = null;    // poslední klientská detekce (pro obsluhu tlačítek banneru)
   var lastProblems = [];    // poslední seznam konfiguračních děr (sekce „Problémy")
   // Známý červencový konflikt (majitel ho už řeší) — jen pro popisek „řeší se".
@@ -451,6 +454,14 @@
     }).catch(function () { return []; });
   }
 
+  function loadRequests() {
+    // Selhání nesmí shodit celý panel — pobyty jsou důležitější než žádosti,
+    // proto tady (stejně jako u konfliktů) chyba končí prázdným polem.
+    return rpc('vr_admin_list_requests', {}).then(function (res) {
+      return (res.data && res.data.ok && res.data.requests) ? res.data.requests : [];
+    }).catch(function () { return []; });
+  }
+
   function buildStays() {
     var today = isoToday();
     var cutoff = addDaysISO(today, -14);
@@ -606,7 +617,100 @@
   // Pod konfliktním bannerem, nad DNES. Řazeno podle blízkosti příjezdu.
   //  (a) pobyt bez telefonu  (b) příjezd do 7 dnů bez kódu dveří
   //  (c) nespárovaný pobyt z kalendáře  (d) odkaz na aktivní konflikt (jen link na banner)
-  function refreshBoards() { renderProblems(); renderToday(); renderStays(); }
+  function refreshBoards() { renderRequests(); renderProblems(); renderToday(); renderStays(); }
+
+  /* ============ Render: ŽÁDOSTI Z WEBU ============ */
+  // Formulář na homepage zapisuje do vr_requests přes RPC vr_request. Do 12. 8. 2026
+  // tabulku nečetl NIKDO — žádost od hosta v ní ležela devět dní, než se ozval
+  // podruhé přes platformu. Tahle sekce je jedna ze dvou cest ven; druhá je
+  // e-mail z n8n (VrWebRequest, kontrola po 5 minutách).
+  var REQ_FLAG = { cs: '🇨🇿', de: '🇩🇪', en: '🇬🇧', pl: '🇵🇱' };
+
+  function fmtWhen(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.getDate() + '. ' + MONTH_GEN[d.getMonth()] + ' ' + d.getFullYear()
+      + ' v ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+  function nightWord(n) { return n === 1 ? 'noc' : (n <= 4 ? 'noci' : 'nocí'); }
+
+  function requestCard(r, idx) {
+    var n = daysBetween(r.arrival, r.departure);
+    var done = r.status === 'done';
+    // waPhone bere celý objekt kvůli jazyku hosta — řádek žádosti má .phone i .lang,
+    // takže se sem normalizace telefonu z pobytů dá použít beze změny.
+    var wa = waPhone(r);
+
+    var hoste = r.adults + ' dosp.';
+    if (r.children) hoste += ' · ' + r.children + ' dět.';
+    if (r.pets) hoste += ' · ' + r.pets + '× pes';
+
+    var links = '<a class="req-lnk" href="mailto:' + esc(r.email) + '">' + esc(r.email) + '</a>';
+    if (wa) {
+      links += '<a class="req-lnk" href="tel:+' + esc(wa) + '">+' + esc(wa) + '</a>'
+        + '<a class="req-lnk" href="https://wa.me/' + esc(wa) + '" target="_blank" rel="noopener">WhatsApp ↗</a>';
+    } else if (r.phone) {
+      links += '<span class="req-bad">telefon „' + esc(r.phone) + '“ nejde použít</span>';
+    }
+
+    // Prázdné notified_at = e-mail ještě neodešel. Buď je žádost čerstvá (n8n běží
+    // po 5 minutách), nebo vázne pošta — obojí je lepší vidět než neřešit.
+    var tag = r.notified_at ? '' : '<span class="req-tag">e-mail zatím neodešel</span>';
+    var msg = r.message ? '<div class="req-msg">' + esc(r.message) + '</div>' : '';
+
+    return '<div class="req' + (done ? ' req-done' : '') + '">'
+      + '<div class="req-main">'
+      + '<div class="req-t">' + (REQ_FLAG[r.lang] || '🏳️') + ' ' + esc(r.name) + tag + '</div>'
+      + '<div class="req-d">' + esc(fmtShort(r.arrival, r.departure)) + ' · ' + n + ' ' + nightWord(n)
+      + ' · ' + esc(hoste) + ' · <b>' + esc(Number(r.total || 0).toLocaleString('cs-CZ')) + ' Kč</b></div>'
+      + '<div class="req-c">' + links + '</div>' + msg
+      + '<div class="req-when">Přišla ' + esc(fmtWhen(r.created_at)) + '</div>'
+      + '</div>'
+      + '<button type="button" class="btn btn-sm ' + (done ? 'btn-ghost' : 'btn-outline')
+      + '" data-req="' + idx + '">' + (done ? 'Vrátit' : 'Vyřízeno') + '</button>'
+      + '</div>';
+  }
+
+  function renderRequests() {
+    var panel = $('requests-panel'), host = $('requests'), toggle = $('btn-req-done');
+    if (!panel || !host) return;
+    if (!requests.length) { panel.hidden = true; return; }  // žádná žádost = žádná sekce
+    panel.hidden = false;
+
+    var open = [], done = [];
+    requests.forEach(function (r) { (r.status === 'done' ? done : open).push(r); });
+    if (toggle) {
+      toggle.hidden = !done.length;
+      toggle.textContent = requestsShowDone ? 'Skrýt vyřízené' : 'Vyřízené (' + done.length + ')';
+    }
+
+    lastRequests = requestsShowDone ? open.concat(done) : open;
+    if (!lastRequests.length) {
+      host.innerHTML = '<div class="prob prob-ok"><span class="prob-ok-i">✓</span> '
+        + 'Všechny žádosti z webu jsou vyřízené.</div>';
+      return;
+    }
+    host.innerHTML = lastRequests.map(requestCard).join('');
+
+    Array.prototype.forEach.call(host.querySelectorAll('[data-req]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var r = lastRequests[+btn.getAttribute('data-req')];
+        if (!r) return;
+        var next = r.status === 'done' ? 'open' : 'done';
+        btn.disabled = true;
+        rpc('vr_admin_set_request_status', { p_id: r.id, p_status: next }).then(function (res) {
+          if (res.data && res.data.ok) {
+            r.status = next;
+            toast(next === 'done' ? 'Žádost vyřízena.' : 'Žádost vrácena mezi otevřené.');
+            renderRequests();
+          } else {
+            btn.disabled = false;
+            toast('Uložení se nepodařilo.');
+          }
+        }).catch(function () { btn.disabled = false; toast('Uložení se nepodařilo.'); });
+      });
+    });
+  }
 
   function probCard(tone, title, desc, idx, btnLabel) {
     return '<div class="prob prob-' + tone + '"><div class="prob-main">' +
@@ -1558,8 +1662,9 @@
   /* ============ Reload ============ */
   function reload() {
     $('loadline').hidden = false; $('loadline').textContent = 'Načítám pobyty a kalendář…';
-    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts()]).then(function (r) {
+    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests()]).then(function (r) {
       calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {}; serverConflicts = r[3] || [];
+      requests = r[4] || [];
       buildStays();
       $('loadline').hidden = true;
       renderConflicts(); refreshBoards();
@@ -1612,6 +1717,9 @@
     $('sheet-close').addEventListener('click', closeOverlay);
     $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeOverlay(); });
     $('btn-manual').addEventListener('click', function () { openEditor({}); });
+    $('btn-req-done').addEventListener('click', function () {
+      requestsShowDone = !requestsShowDone; renderRequests();
+    });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('overlay').hidden) closeOverlay(); });
 
     if (keyParam) {

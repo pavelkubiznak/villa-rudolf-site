@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="sprava.css?v=7">
+<link rel="stylesheet" href="sprava.css?v=8">
 </head>
 <body>
 
@@ -54,6 +54,17 @@
 
   <p class="loadline" id="loadline">Načítám pobyty a kalendář…</p>
 
+  <!-- ŽÁDOSTI Z WEBU (formulář na homepage → vr_requests) -->
+  <!-- Schová se úplně, když žádná žádost není — prázdný panel by jen ukrajoval
+       místo nad „Dnes na řadě", které se čte každý den. -->
+  <section class="panel panel-requests" id="requests-panel" hidden>
+    <div class="panel-head">
+      <h2 class="panel-title">Žádosti z webu</h2>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-req-done" hidden>Vyřízené</button>
+    </div>
+    <div class="requests" id="requests"></div>
+  </section>
+
   <!-- PROBLÉMY (konfigurační díry: chybí telefon / kód / nespárováno) -->
   <section class="panel panel-problems" id="problems-panel" hidden>
     <div class="panel-head"><h2 class="panel-title">Problémy</h2></div>
@@ -94,6 +105,6 @@
   </div>
 </div>
 
-<script src="sprava.js?v=7" defer></script>
+<script src="sprava.js?v=8" defer></script>
 </body>
 </html>

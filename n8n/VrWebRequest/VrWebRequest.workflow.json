@@ -1,0 +1,215 @@
+[
+  {
+    "id": "VrWebRequest001",
+    "name": "VrWebRequest",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "*/5 * * * *"
+              }
+            ]
+          }
+        },
+        "id": "wr-trigger-0001",
+        "name": "Každých 5 minut",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -220,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://fpknbrzbqpalguajskut.supabase.co/rest/v1/vr_requests",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,created_at,name,email,phone,lang,arrival,departure,adults,children,pets,total,message,status"
+              },
+              {
+                "name": "notified_at",
+                "value": "is.null"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "id": "wr-fetch-00001",
+        "name": "Načíst nové žádosti (service-role)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          0,
+          300
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "VrSupaService01",
+            "name": "Supabase service-role (VR)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "/* VrWebRequest — Code node „Sestavit e-mail\" (n8n VrWebRequest001).\n * REFERENČNÍ kopie. Ostrá verze běží v n8n na Hetzneru; změna tady se nikam\n * sama nepropíše (stejně jako u VrDailyTasks a VrConflictWatch).\n *\n * Vstup  = odpověď PostgREST GET /rest/v1/vr_requests?notified_at=is.null\n *          (pole řádků; při prázdné tabulce jedna položka s prázdným polem)\n * Výstup = jedna položka NA KAŽDOU žádost: { id, subject, html }\n *          → emailSend pošle jeden e-mail za žádost (lépe se na ně odpovídá\n *            než na jeden souhrn) → PATCH označí řádek jako odeslaný.\n *          Nula žádostí → nula položek → emailSend se vůbec neprovede.\n *\n * POZOR: notified_at se zapisuje AŽ ZA odesláním e-mailu. Když SMTP spadne,\n * řádek zůstane s notified_at = NULL a příští běh (za 5 minut) to zkusí znovu.\n * Opačné pořadí by při výpadku pošty žádost tiše ztratilo — přesně to, co\n * tenhle workflow má odstranit.\n */\nconst SPRAVA_URL = 'https://villarudolf.com/sprava/';\nconst MONTH_GEN = ['ledna', 'února', 'března', 'dubna', 'května', 'června',\n  'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];\n\n/* Jazyk hosta rozhoduje, v jakém jazyce mu máš odepsat — proto je to v e-mailu\n   vidět jako první, ne schované mezi údaji. */\nconst LANG = {\n  cs: { flag: '🇨🇿', name: 'česky' },\n  de: { flag: '🇩🇪', name: 'německy' },\n  en: { flag: '🇬🇧', name: 'anglicky' },\n  pl: { flag: '🇵🇱', name: 'polsky' },\n};\n\nfunction esc(s) {\n  return String(s == null ? '' : s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));\n}\nfunction parseISO(s) { return new Date(s + 'T00:00:00Z'); }\nfunction fmtTermin(a, b) {\n  const da = parseISO(a), db = parseISO(b);\n  const d1 = da.getUTCDate(), m1 = da.getUTCMonth(), y1 = da.getUTCFullYear();\n  const d2 = db.getUTCDate(), m2 = db.getUTCMonth(), y2 = db.getUTCFullYear();\n  if (y1 === y2 && m1 === m2) return d1 + '.–' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;\n  if (y1 === y2) return d1 + '. ' + MONTH_GEN[m1] + ' – ' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;\n  return d1 + '. ' + MONTH_GEN[m1] + ' ' + y1 + ' – ' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;\n}\nfunction nights(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }\nfunction nightWord(n) { return n === 1 ? 'noc' : (n <= 4 ? 'noci' : 'nocí'); }\nfunction fmtM(v) { return new Intl.NumberFormat('cs-CZ').format(Math.round(v || 0)) + ' Kč'; }\n\n/* Telefon v DB je uložený tak, jak ho host napsal — někdy s +, někdy bez.\n   Pro tel: chceme mezinárodní tvar s +, pro wa.me holé číslice. */\nfunction phoneDigits(p) { return String(p || '').replace(/\\D+/g, ''); }\n\nfunction row(k, v) {\n  return '<tr>'\n    + '<td style=\"padding:5px 12px 5px 0;color:#6b736f;font-size:13px;vertical-align:top;white-space:nowrap\">' + k + '</td>'\n    + '<td style=\"padding:5px 0;color:#1f2422;font-size:14px;font-weight:600\">' + v + '</td>'\n    + '</tr>';\n}\n\nfunction buildHtml(r) {\n  const n = nights(r.arrival, r.departure);\n  const lang = LANG[r.lang] || { flag: '🏳️', name: r.lang || 'neznámý jazyk' };\n  const digits = phoneDigits(r.phone);\n\n  let hosti = r.adults + ' dosp.';\n  if (r.children) hosti += ' · ' + r.children + ' dět.';\n  if (r.pets) hosti += ' · ' + r.pets + '× pes';\n\n  const kontakt = []\n    .concat('<a href=\"mailto:' + esc(r.email) + '\" style=\"color:#B35C1E;text-decoration:none\">' + esc(r.email) + '</a>')\n    .concat(digits ? '<a href=\"tel:+' + digits + '\" style=\"color:#B35C1E;text-decoration:none\">+' + esc(digits) + '</a>' : [])\n    .join(' · ');\n\n  const zprava = r.message\n    ? '<div style=\"background:#fbf7f3;border:1px solid #ecdcc9;border-radius:8px;padding:12px 14px;margin:12px 0;'\n      + 'color:#33291f;font-size:14px;line-height:1.5;white-space:pre-wrap\">' + esc(r.message) + '</div>'\n    : '<div style=\"color:#8a918d;font-size:13px;margin:12px 0\">Host nenapsal žádnou zprávu.</div>';\n\n  const waBtn = digits\n    ? '<a href=\"https://wa.me/' + digits + '\" style=\"display:inline-block;background:#f4f5f4;color:#1f2422;'\n      + 'font-weight:600;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;'\n      + 'border:1px solid #e6e8e7;margin-left:6px\">WhatsApp ↗</a>'\n    : '';\n\n  return '<!doctype html><html lang=\"cs\"><head><meta charset=\"utf-8\">'\n    + '<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>'\n    + '<body style=\"margin:0;background:#f4f5f4\"><div style=\"max-width:640px;margin:0 auto;padding:22px 14px;'\n    + 'font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1f2422\">'\n    + '<p style=\"font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#D68A4C;font-weight:700;margin:0 0 2px\">'\n    + 'Villa Rudolf · žádost z webu</p>'\n    + '<h1 style=\"font-size:21px;margin:0 0 2px\">' + esc(r.name) + '</h1>'\n    + '<p style=\"color:#6b736f;font-size:14px;margin:0 0 14px\">'\n    + lang.flag + ' Formulář vyplnil ' + lang.name + ' — odpověz ve stejném jazyce.</p>'\n    + '<div style=\"background:#fff;border:1px solid #e6e8e7;border-left:4px solid #D68A4C;border-radius:10px;padding:14px 16px;margin:10px 0\">'\n    + '<table style=\"border-collapse:collapse;width:100%\">'\n    + row('Termín', esc(fmtTermin(r.arrival, r.departure)) + ' <span style=\"color:#8a918d;font-weight:400\">· ' + n + ' ' + nightWord(n) + '</span>')\n    + row('Hosté', esc(hosti))\n    + row('Cena', fmtM(r.total))\n    + row('Kontakt', kontakt)\n    + '</table>' + zprava + '</div>'\n    + '<p style=\"margin:18px 0 6px\">'\n    + '<a href=\"mailto:' + esc(r.email) + '?subject=' + encodeURIComponent('Villa Rudolf — ' + fmtTermin(r.arrival, r.departure))\n    + '\" style=\"display:inline-block;background:#D68A4C;color:#20140A;font-weight:700;text-decoration:none;'\n    + 'padding:10px 18px;border-radius:8px;font-size:14px\">Odpovědět hostovi ↗</a>' + waBtn + '</p>'\n    + '<p style=\"margin:14px 0 6px\"><a href=\"' + esc(SPRAVA_URL) + '\" style=\"color:#6b736f;font-size:13px\">'\n    + 'Všechny žádosti ve správě ↗</a></p>'\n    + '<p style=\"color:#8a918d;font-size:12px;margin-top:20px;border-top:1px solid #e6e8e7;padding-top:12px\">'\n    + 'Kontrola každých 5 minut (n8n · VrWebRequest). Žádost čeká ve stavu „Nová\", '\n    + 'dokud ji ve správě neoznačíš za vyřízenou.</p>'\n    + '</div></body></html>';\n}\n\n/* PostgREST vrací pole; n8n ho podle nastavení podá buď jako jednu položku\n   s polem, nebo jako N položek. Zvládneme obojí. */\nconst items = $input.all();\nconst reqs = [];\nfor (const it of items) {\n  const j = it.json;\n  if (Array.isArray(j)) reqs.push(...j);\n  else if (Array.isArray(j.data)) reqs.push(...j.data);\n  else if (j && j.id) reqs.push(j);\n}\n\nreturn reqs.map((r) => ({\n  json: {\n    id: r.id,\n    subject: '🏔️ Villa Rudolf — nová žádost: ' + r.name + ' (' + fmtTermin(r.arrival, r.departure) + ')',\n    html: buildHtml(r),\n  },\n}));\n"
+        },
+        "id": "wr-build-00001",
+        "name": "Sestavit e-mail",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          220,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "fromEmail": "pavel.kubiznak@gmail.com",
+          "toEmail": "pavel.kubiznak@gmail.com",
+          "subject": "={{ $json.subject }}",
+          "emailFormat": "html",
+          "html": "={{ $json.html }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "wr-mail-000001",
+        "name": "E-mail majiteli",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          440,
+          300
+        ],
+        "credentials": {
+          "smtp": {
+            "id": "VrSmtpGmail0001",
+            "name": "Gmail SMTP (Villa Rudolf)"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://fpknbrzbqpalguajskut.supabase.co/rest/v1/vr_requests?id=eq.{{ $('Sestavit e-mail').item.json.id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Prefer",
+                "value": "return=minimal"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ notified_at: new Date().toISOString() }) }}",
+          "options": {}
+        },
+        "id": "wr-mark-000001",
+        "name": "Označit jako odeslané",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          660,
+          300
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "VrSupaService01",
+            "name": "Supabase service-role (VR)"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Každých 5 minut": {
+        "main": [
+          [
+            {
+              "node": "Načíst nové žádosti (service-role)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Načíst nové žádosti (service-role)": {
+        "main": [
+          [
+            {
+              "node": "Sestavit e-mail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sestavit e-mail": {
+        "main": [
+          [
+            {
+              "node": "E-mail majiteli",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "E-mail majiteli": {
+        "main": [
+          [
+            {
+              "node": "Označit jako odeslané",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "pinData": {}
+  }
+]
