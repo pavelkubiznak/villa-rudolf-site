@@ -73,5 +73,9 @@ Aktualizováno: 13. 8. 2026
   potvrdit roli „jen datový zdroj".
 - Archivovat `villa-rudolf-vylety`, `villa-rudolf-web`, `villa-rudolf-cedule-22`
   (archivace na GitHubu je jen zámek — URL fungují dál).
-- Kalendář: **číst 4 feedy zvlášť** místo e-chalupy hubu — hub odmítá import rezervace přes
-  existující překryv, takže platné rezervace z feedu mizí a `/sprava/` je pak nevidí.
+- Kalendář: **čtení 4 feedů zvlášť je nasazené** (13. 8.), ale běží zatím v hub módu — chybí
+  secrety `ICAL_URL_AIRBNB` / `_BOOKING` / `_FEWO`. Dokud nejsou, platí původní problém: hub
+  odmítá import rezervace přes existující překryv, takže platné rezervace z feedu mizí
+  a `/sprava/` je pak nevidí. Podrobnosti v `STAV.md`.
+- **Bezpečnost:** `vr_purge_expired` má heslo natvrdo ve veřejném repu a `grant to anon` —
+  spustit tu mazací funkci může kdokoli. Viz `STAV.md`.
