@@ -6,6 +6,8 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 > 🗺️ **Než začneš cokoli dělat, přečti si [`MAPA-SYSTEMU.md`](MAPA-SYSTEMU.md).**
 > Systém je rozdělený do víc repozitářů a bez mapy nepoznáš, které je živé. Už se stalo,
 > že se navrhoval modul, který tady dávno běží.
+>
+> 📋 **Co je rozdělané a co zbývá: [`STAV.md`](STAV.md).**
 
 ## Struktura
 
