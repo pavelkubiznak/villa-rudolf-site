@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 13. 8. 2026
+Aktualizováno: 26. 8. 2026
 
 ---
 
@@ -87,6 +87,33 @@ V `sprava.js` je kompletní aparát (66× `msg`, `msgLang`, `msglog`) a žádné
 Majitel 13. 8. říká, že „zprávu potřebuje dotáhnout" — **není jasné co**. Kandidáti:
 odesílání přes WhatsApp (dnes se odkaz vkládá ručně, Booking blokuje boty), nebo jiná zpráva
 (denní souhrn / report). **Doplnit, až se upřesní.**
+
+---
+
+## 📈 Návštěvnost webu → Umami na Hetzneru
+
+| | Stav |
+|---|---|
+| Umami (self-hosted, cookieless), dashboard `https://178-104-207-97.sslip.io` | ✅ běží nejpozději od 23. 7. |
+| Skript na `/`, `/vylety/`, `/pruvodce/`, `/podminky/` | ✅ nasazeno od začátku |
+| Skript na `/info/`, `/album/`, `/checkin/`, `/registrace/` | ✅ **doplněno 26. 8.** |
+| Vlastní eventy plánovače (`planner_open`, `planner_filter`, `Detail-výlet`, …) | ✅ v `planner.js` |
+| Hostovské tokeny `?t=…` netečou do analytiky (`data-exclude-search`) | ✅ **utěsněno 26. 8.** |
+| Odkaz „📈 Návštěvnost" v liště `/sprava/` | ✅ **přidáno 26. 8.** |
+| Ověřit v dashboardu, že data od července opravdu tečou | ❓ **NA MAJITELI** — jedno otevření |
+
+Měří se: návštěvy, zobrazení stránek, doba návštěvy, zdroje (referrer), země, jazyk,
+prohlížeč a zařízení. Bez cookies a bez PII — `/podminky/` to deklarují ve 4 jazycích.
+`/sprava/` se **záměrně neměří**: majitelovy vlastní návštěvy by kazily čísla
+a v URL bývá `?key=…`.
+
+*Zpětně:* do 26. 8. zapisovalo `/pruvodce/` adresy včetně `?t=<token hosta>` — staré
+záznamy v datech Umami tedy tokeny obsahují (vidí je jen přihlášený do dashboardu).
+Kdo chce úklid, smaže v Umami stará data webu; jinak s tím netřeba nic dělat.
+
+*Další krok, až bude chuť:* UTM parametry do odkazů, které sami rozdáváme (profily na
+Booking/Airbnb/e-chalupy, příspěvky, zprávy hostům) — pak jde rozlišit, který kanál
+lidi přivádí, i když prohlížeč referrer nepošle.
 
 ---
 
