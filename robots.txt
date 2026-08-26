@@ -3,9 +3,11 @@ Allow: /
 
 # /pruvodce/, /checkin/, /registrace/ are guest-only tools (also noindex via meta) — keep them out of search.
 # /sprava/ is the private owner control page (noindex; token-gated).
+# /metrika/ is the owner's shortcut to the traffic dashboard (noindex; redirect only).
 Disallow: /pruvodce/
 Disallow: /checkin/
 Disallow: /registrace/
 Disallow: /sprava/
+Disallow: /metrika/
 
 Sitemap: https://villarudolf.com/sitemap.xml

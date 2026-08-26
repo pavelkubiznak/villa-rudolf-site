@@ -4,7 +4,7 @@
 navrhovat — ať jsi člověk nebo AI session — přečti si tuhle tabulku. Systém je rozdělený do
 několika repozitářů a bez mapy se v nich nedá poznat, které je živé.
 
-Aktualizováno: 13. 8. 2026
+Aktualizováno: 26. 8. 2026
 
 ## Součásti
 
@@ -46,13 +46,16 @@ Aktualizováno: 13. 8. 2026
 | **KOLIK** — ceny a tržby | `villa-booking-calendar/owner.html` | šifrované, klíč má jen majitel |
 | **CO** — výlety, počasí | `villa-rudolf-portal/data/` | `site` je odtud čte |
 | **SPOJKA** mezi kalendářem a rezervací | `uidh` (= `sha256(iCal UID)[:16]`) | používá `sprava.js` i `vr_admin_upsert_booking(p_uidh)` |
+| **NÁVŠTĚVNOST** webu — kolik lidí, odkud, kam, jak dlouho | Umami na Hetzneru | cookieless, bez PII; skript na všech stránkách kromě `/sprava/`, tokeny `?t=` se nezapisují |
 
 ## Infrastruktura
 
 - **Supabase** `fpknbrzbqpalguajskut` — sdílený projekt se SINTERA, proto prefix `vr_`.
   Schéma pravdy = `villa-rudolf-site/supabase/migrations/` (ne kopie v jiných repech).
 - **Hetzner** (`178.104.207.97`, tailnet `sintera-radar`) — cron na počasí, n8n (`127.0.0.1:5678`,
-  **zvenku nedostupné**), Umami, doklady.
+  **zvenku nedostupné**), Umami — **analytika návštěvnosti webu** (dashboard
+  `https://178-104-207-97.sslip.io`; vchody: `villarudolf.com/metrika` a odkaz
+  „📈 Návštěvnost" v liště `/sprava/`), doklady.
 - **GitHub Pages** — všechna veřejná repa. Vlastní doména jen `site` (CNAME villarudolf.com).
 
 ## E-mail — kudy tečou zprávy hostům
