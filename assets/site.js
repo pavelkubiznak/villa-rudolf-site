@@ -1614,7 +1614,10 @@ const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, panoGroup
 /* Kalendář: okno 2 měsíců lze posouvat 0 .. CAL_MAX_OFFSET (dnešek .. +18 měsíců). */
 const CAL_MAX_OFFSET = 17;
 /* Ceny řídí VR_PRICING (nahoře v souboru). */
-const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
+/* Kontaktní e-mail NEPATŘÍ sem — jediný zdroj pravdy je VR_CONTACT.email
+   (rezervace@villarudolf.com). Dřív tu vedle něj žila druhá konstanta
+   s majitelovou soukromou Gmail adresou; nic ji nepoužívalo a odporovala
+   tomu, co web ukazuje v patičce. Novou adresu nezakládat. */
 /* ===================== 360° scény =====================
    Scény jsou SEZÓNNÍ: zima = celý dům + zasněžený pozemek, léto = pozemek za
    letního podvečera. Pořadí musí přesně odpovídat T[lang].tour.scenes /
