@@ -15,6 +15,7 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 |---|---|---|
 | `/` (`index.html`, 80 kB) | homepage, vícejazyčná | hosté, veřejnost |
 | `/sprava/` | **admin majitele** — rezervace, kontakty hostů, zprávy, konflikty. `sprava.js` (1 600+ ř.) | jen majitel |
+| `/metrika/` | přesměrování na dashboard návštěvnosti (Umami na Hetzneru), bez odkazů z webu | jen majitel |
 | `/registrace/` | registrace hostů (evidence + poplatek z pobytu) | hosté |
 | `/checkin/` | check-in formulář | hosté |
 | `/album/` | fotoalbum pobytu | hosté |

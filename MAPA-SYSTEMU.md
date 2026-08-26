@@ -54,7 +54,8 @@ Aktualizováno: 26. 8. 2026
   Schéma pravdy = `villa-rudolf-site/supabase/migrations/` (ne kopie v jiných repech).
 - **Hetzner** (`178.104.207.97`, tailnet `sintera-radar`) — cron na počasí, n8n (`127.0.0.1:5678`,
   **zvenku nedostupné**), Umami — **analytika návštěvnosti webu** (dashboard
-  `https://178-104-207-97.sslip.io`, odkaz „📈 Návštěvnost" je v liště `/sprava/`), doklady.
+  `https://178-104-207-97.sslip.io`; vchody: `villarudolf.com/metrika` a odkaz
+  „📈 Návštěvnost" v liště `/sprava/`), doklady.
 - **GitHub Pages** — všechna veřejná repa. Vlastní doména jen `site` (CNAME villarudolf.com).
 
 ## Pravidla, ať se zmatek nevrátí

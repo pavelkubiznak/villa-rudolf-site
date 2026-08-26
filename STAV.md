@@ -100,6 +100,8 @@ odesílání přes WhatsApp (dnes se odkaz vkládá ručně, Booking blokuje bot
 | Vlastní eventy plánovače (`planner_open`, `planner_filter`, `Detail-výlet`, …) | ✅ v `planner.js` |
 | Hostovské tokeny `?t=…` netečou do analytiky (`data-exclude-search`) | ✅ **utěsněno 26. 8.** |
 | Odkaz „📈 Návštěvnost" v liště `/sprava/` | ✅ **přidáno 26. 8.** |
+| Zapamatovatelný vchod `villarudolf.com/metrika` (přesměrování, noindex, bez odkazů) | ✅ **přidáno 26. 8.** |
+| Subdoména `metrika.villarudolf.com` | 💤 volitelné — kroky níže |
 | Ověřit v dashboardu, že data od července opravdu tečou | ❓ **NA MAJITELI** — jedno otevření |
 
 Měří se: návštěvy, zobrazení stránek, doba návštěvy, zdroje (referrer), země, jazyk,
@@ -110,6 +112,14 @@ a v URL bývá `?key=…`.
 *Zpětně:* do 26. 8. zapisovalo `/pruvodce/` adresy včetně `?t=<token hosta>` — staré
 záznamy v datech Umami tedy tokeny obsahují (vidí je jen přihlášený do dashboardu).
 Kdo chce úklid, smaže v Umami stará data webu; jinak s tím netřeba nic dělat.
+
+*Subdoména `metrika.villarudolf.com`, kdyby byla chuť (z repa to udělat nejde — je to
+DNS + server):* (1) v DNS domény přidat A záznam `metrika` → `178.104.207.97`;
+(2) na Hetzneru přidat tenhle hostname k aplikaci Umami v reverse proxy, která dnes
+obsluhuje `178-104-207-97.sslip.io`, a nechat vystavit certifikát; (3) přepsat cíl
+přesměrování v `/metrika/index.html` — jediné místo, `/sprava/` odkazuje přes něj;
+(4) volitelně přepnout na nový hostname i `src` měřicího skriptu na stránkách,
+ať měření nestojí na IP adrese v názvu.
 
 *Další krok, až bude chuť:* UTM parametry do odkazů, které sami rozdáváme (profily na
 Booking/Airbnb/e-chalupy, příspěvky, zprávy hostům) — pak jde rozlišit, který kanál
