@@ -58,6 +58,25 @@ Aktualizováno: 26. 8. 2026
   „📈 Návštěvnost" v liště `/sprava/`), doklady.
 - **GitHub Pages** — všechna veřejná repa. Vlastní doména jen `site` (CNAME villarudolf.com).
 
+## E-mail — kudy tečou zprávy hostům
+
+**Jediná veřejná adresa Villy Rudolf je `rezervace@villarudolf.com`.** Je vysázená na webu
+(`index.html`, `podminky/`, `vylety/`, `pruvodce/`, `registrace/` a chybové hlášky ve všech
+4 jazycích v `assets/site.js`) a jediný zdroj pravdy pro ni je `VR_CONTACT.email`.
+**Další adresy na doméně nezakládat** — rozhodnuto 26. 8. 2026. Kdo potřebuje jiného
+příjemce, řeší to štítkem v Gmailu, ne novou adresou.
+
+| Směr | Kudy to jde dnes | Pozn. |
+|---|---|---|
+| Host → vila | `rezervace@villarudolf.com` | přeposílá se do majitelovy Gmail schránky, **ověřeno 26. 8. 2026** |
+| Vila → host (ručně) | odchází z majitelova Gmailu | ⚠️ **nesedí s adresou na webu** — host vidí v odpovědi jiného odesílatele |
+| Vila → host (zálohová faktura) | z fakturační schránky Sintery | ⚠️ host pak odpovídá do účetní schránky cizí firmy |
+| Systém → majitel | n8n přes Gmail SMTP (`VrSmtpGmail0001`) | v pořádku, majitel sám sobě — hosta to nevidí |
+
+Dvě „⚠️" nejsou chyba v kódu, řeší se v nastavení pošty (Gmail „Odeslat poštu jako" nad
+vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatří nic —
+**žádné adresy, hesla ani SMTP údaje.**
+
 ## Pravidla, ať se zmatek nevrátí
 
 1. **Jedno repo = jedna práce.** Napsaná na prvním řádku jeho `CLAUDE.md`.

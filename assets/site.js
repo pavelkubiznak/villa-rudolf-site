@@ -153,11 +153,17 @@ function factValue(key) {
   const sep = VR_NUM_SEP[state.lang] || VR_NUM_SEP.cs;
   return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
 }
-/* Dosadí {klic} z VR_FACTS do libovolného řetězce. Neznámé zástupné znaky
-   (např. {n} u počtů výletů) nechává být — o ty se stará applyTripCounts(). */
+/* Dosadí {klic} z VR_FACTS do libovolného řetězce. Navíc umí {petFee} —
+   poplatek za mazlíčka bere z VR_PRICING, aby se částka nemusela psát do
+   překladů ve čtyřech jazycích ručně a nerozešla se s kalkulačkou.
+   Neznámé zástupné znaky (např. {n} u počtů výletů) nechává být — o ty se
+   stará applyTripCounts(). */
 function fillFacts(str) {
   if (typeof str !== 'string' || str.indexOf('{') < 0) return str;
-  return str.replace(/\{([a-zA-Z]+)\}/g, (m, k) => (Object.prototype.hasOwnProperty.call(VR_FACTS, k) ? factValue(k) : m));
+  return str.replace(/\{([a-zA-Z]+)\}/g, (m, k) => {
+    if (k === 'petFee') return fmtM(VR_PRICING.petPerStay);
+    return Object.prototype.hasOwnProperty.call(VR_FACTS, k) ? factValue(k) : m;
+  });
 }
 
 /* ============================ Translations (verbatim from prototype) ============================ */
@@ -551,7 +557,7 @@ const T = {
         { k: 'Kapacita', v: '{minHostu}–{maxHostu} hostů v {loznice} ložnicích' },
         { k: 'Soukromí', v: 'Celý dům i pozemek jen pro vaši skupinu' },
         { k: 'Příjezd / odjezd', v: 'Check-in od 15:00 · check-out do 10:00' },
-        { k: 'Mazlíčci', v: 'Pes vítán za poplatek' },
+        { k: 'Mazlíčci', v: 'Pes vítán — {petFee} za pobyt a zvíře' },
         { k: 'Parkování', v: 'Vlastní parkoviště na pozemku u vchodu, zdarma' },
         { k: 'Lyžování', v: 'Sjezdovky Černá hora 4 km · zastávka skibusu 200 m' },
       ],
@@ -901,7 +907,7 @@ const T = {
         { k: 'Capacity', v: '{minHostu}–{maxHostu} guests across {loznice} bedrooms' },
         { k: 'Privacy', v: 'The whole house and grounds, just your group' },
         { k: 'Check-in / out', v: 'Check-in from 15:00 · check-out by 10:00' },
-        { k: 'Pets', v: 'Dogs welcome for a fee' },
+        { k: 'Pets', v: 'Dogs welcome — {petFee} per stay, per animal' },
         { k: 'Parking', v: 'Free, right on the property behind the gate' },
         { k: 'Skiing', v: 'Černá hora slopes 4 km · ski-bus stop 200 m' },
       ],
@@ -1251,7 +1257,7 @@ const T = {
         { k: 'Kapazität', v: '{minHostu}–{maxHostu} Gäste in {loznice} Schlafzimmern' },
         { k: 'Privatsphäre', v: 'Ganzes Haus und Grundstück, nur Ihre Gruppe' },
         { k: 'Check-in / -out', v: 'Check-in ab 15:00 · Check-out bis 10:00' },
-        { k: 'Haustiere', v: 'Hunde gegen Gebühr willkommen' },
+        { k: 'Haustiere', v: 'Hunde willkommen — {petFee} pro Aufenthalt und Tier' },
         { k: 'Parken', v: 'Kostenlos direkt auf dem Grundstück hinter dem Tor' },
         { k: 'Skifahren', v: 'Pisten Černá hora 4 km · Skibus-Haltestelle 200 m' },
       ],
@@ -1601,7 +1607,7 @@ const T = {
         { k: 'Pojemność', v: '{minHostu}–{maxHostu} gości w {loznice} sypialniach' },
         { k: 'Prywatność', v: 'Cały dom i teren tylko dla Waszej grupy' },
         { k: 'Zameldowanie / wym.', v: 'Zameldowanie od 15:00 · wymeldowanie do 10:00' },
-        { k: 'Zwierzęta', v: 'Psy mile widziane za opłatą' },
+        { k: 'Zwierzęta', v: 'Psy mile widziane — {petFee} za pobyt i zwierzę' },
         { k: 'Parking', v: 'Za darmo na terenie, za bramą' },
         { k: 'Narty', v: 'Stoki Czarna Góra 4 km · przystanek skibusu 200 m' },
       ],
@@ -1614,7 +1620,10 @@ const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, panoGroup
 /* Kalendář: okno 2 měsíců lze posouvat 0 .. CAL_MAX_OFFSET (dnešek .. +18 měsíců). */
 const CAL_MAX_OFFSET = 17;
 /* Ceny řídí VR_PRICING (nahoře v souboru). */
-const CONTACT_EMAIL = 'pavel.kubiznak@gmail.com';
+/* Kontaktní e-mail NEPATŘÍ sem — jediný zdroj pravdy je VR_CONTACT.email
+   (rezervace@villarudolf.com). Dřív tu vedle něj žila druhá konstanta
+   s majitelovou soukromou Gmail adresou; nic ji nepoužívalo a odporovala
+   tomu, co web ukazuje v patičce. Novou adresu nezakládat. */
 /* ===================== 360° scény =====================
    Scény jsou SEZÓNNÍ: zima = celý dům + zasněžený pozemek, léto = pozemek za
    letního podvečera. Pořadí musí přesně odpovídat T[lang].tour.scenes /
