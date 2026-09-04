@@ -1620,8 +1620,9 @@ const state = { lang: 'cs', season: 'leto', scrolled: false, scene: 0, panoGroup
 /* Kalendář: okno 2 měsíců lze posouvat 0 .. CAL_MAX_OFFSET (dnešek .. +18 měsíců). */
 const CAL_MAX_OFFSET = 17;
 /* Ceny řídí VR_PRICING (nahoře v souboru). */
-/* Kontaktní e-mail NEPATŘÍ sem — jediný zdroj pravdy je VR_CONTACT.email
-   (rezervace@villarudolf.com). Dřív tu vedle něj žila druhá konstanta
+/* Kontaktní e-mail NEPATŘÍ sem. Veřejná adresa je rezervace@villarudolf.com;
+   VR_CONTACT.email z ní řídí jen patičku homepage, jinde na webu je vysázená
+   natvrdo (seznam míst viz MAPA-SYSTEMU.md). Dřív tu žila druhá konstanta
    s majitelovou soukromou Gmail adresou; nic ji nepoužívalo a odporovala
    tomu, co web ukazuje v patičce. Novou adresu nezakládat. */
 /* ===================== 360° scény =====================

@@ -60,9 +60,12 @@ Aktualizováno: 26. 8. 2026
 
 ## E-mail — kudy tečou zprávy hostům
 
-**Jediná veřejná adresa Villy Rudolf je `rezervace@villarudolf.com`.** Je vysázená na webu
-(`index.html`, `podminky/`, `vylety/`, `pruvodce/`, `registrace/` a chybové hlášky ve všech
-4 jazycích v `assets/site.js`) a jediný zdroj pravdy pro ni je `VR_CONTACT.email`.
+**Jediná veřejná adresa Villy Rudolf je `rezervace@villarudolf.com`.** Pozor — **není nikde
+jeden zdroj pravdy**, adresa je vysázená natvrdo na sedmi místech a při změně je nutné projít
+všechna: `index.html`, `podminky/podminky.js` (8×, ve 4 jazycích), `podminky/index.html`
+(noscript), `vylety/index.html` (2×), `pruvodce/index.html`, `registrace/index.html`
+a `assets/site.js` (4 chybové hlášky + záloha v `renderFooterContact`). Konstanta
+`VR_CONTACT.email` řídí **jen patičku homepage**, nic dalšího z ní nečerpá.
 **Další adresy na doméně nezakládat** — rozhodnuto 26. 8. 2026. Kdo potřebuje jiného
 příjemce, řeší to štítkem v Gmailu, ne novou adresou.
 
