@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 26. 8. 2026
+Aktualizováno: 8. 9. 2026
 
 ---
 
@@ -17,7 +17,7 @@ Aktualizováno: 26. 8. 2026
 | Anonymizace veřejných dat | ✅ nasazeno |
 | Šrafování matoucí pro úklid | ✅ **vyřešeno 13. 8.** |
 | Číst 4 feedy zvlášť místo e-chalupy hubu | 🟡 **kód hotov, čeká na 3 secrety** |
-| **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | 🔴 **OPRAVIT** |
+| **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | 🟡 **migrace napsaná 8. 9., čeká na nasazení** |
 
 **✅ Šrafování — hotovo a nasazeno 13. 8.** Šrafuje se **jen skutečná dvojitá rezervace**
 (oba pobyty živé ve feedu). Data dala majiteli za pravdu dvakrát: z 15 šrafovaných buněk
@@ -46,9 +46,14 @@ archivní klíč. **Kvůli přepnutí se v `/sprava/` nemusí měnit nic.**
 v `supabase/migrations/20260724_vr_retention.sql:43` (repo je veřejné) a funkce má
 `grant execute … to anon` (řádek 81). Adresa Supabase je taky veřejná — je v `MAPA-SYSTEMU.md`.
 Spustit ji tedy může kdokoli. Nesmaže nic, co by nezmizelo samo časem, ale destruktivní
-funkci na produkční DB nemá držet v ruce cizí člověk. Oprava: heslo do vaultu / config,
-`revoke execute … from anon`. Ostatní admin funkce tuhle díru nemají (jdou přes
-`_vr_admin_auth`).
+funkci na produkční DB nemá držet v ruce cizí člověk. Ostatní admin funkce tuhle díru nemají
+(jdou přes `_vr_admin_auth`).
+
+**🟡 Oprava napsaná 8. 9.:** `supabase/migrations/20260908_vr_purge_lockdown.sql` — hash secretu
+se čte z `vr_admin_config` (klíč `purge_secret_sha256`), `revoke execute … from public, anon,
+authenticated`, zůstává jen `service_role`. Postup nasazení je v hlavičce migrace: nový secret →
+jeho sha256 do configu → aplikovat migraci → přepnout volajícího (pg_cron / n8n) na service klíč.
+Staré heslo je v git historii, takže **rotace je povinná**, ne volitelná.
 
 *Souvislost s evidencí pobytů:* stejná funkce maže bookingy 30+ dní po odjezdu, které
 **nemají zapsané osoby** (řádek 57). Pro majitelovo interní účetnictví („kdo tam byl, jak
@@ -129,7 +134,8 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 
 ## Doporučené pořadí
 
-1. **`vr_purge_expired`** — heslo ve veřejném repu + `grant to anon`, spustit to může kdokoli
+1. **`vr_purge_expired`** — migrace `20260908_vr_purge_lockdown.sql` je napsaná, zbývá nasadit
+   podle postupu v její hlavičce (nový secret, hash do configu, service klíč u volajícího)
 2. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
 3. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
@@ -137,6 +143,46 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 5. **Zprávy** — až bude jasné zadání
 
 ~~Šrafování v kalendáři~~ — hotovo 13. 8.
+
+---
+
+## 🔍 Audit repa 8. 9. 2026 → `villa-rudolf-site`
+
+Průchod homepage (`index.html`, `assets/site.js`, `assets/season.js`) a migrací. Ostatní
+oblasti (`/sprava/`, `/registrace/`, `/checkin/`, `/album/`, `/vylety/`, n8n) audit
+nedoběhl — zbývá projít.
+
+**Opraveno (v tomto commitu):**
+- `?lang=constructor` (a další zděděné vlastnosti) prošel kontrolou jazyka, uložil se do
+  `localStorage` a shodil vykreslení při každé další návštěvě → whitelist přes `hasOwnProperty`.
+- Vadné `?season=%E0` vyhodilo `URIError` v synchronním skriptu v `<head>` a zastavilo JS
+  celého webu → `try/catch` v `season.js`.
+- Když se nestáhl `vendor/three.min.js`, sekce 360° zůstala jako prázdný rám a `initPano`
+  čekal na `THREE` donekonečna → `onerror` skryje prohlídku a zastaví polling.
+- Termín naklikaný v kalendáři dřív, než dorazila obsazenost, se po jejím načtení
+  nepřeměřil → `revalidateSelection()`.
+- `<title>` v DE a PL neuváděl počet ložnic (CS a EN ano).
+- V zimě se přednostně předstahovalo neviditelné letní hero → preload podle sezóny.
+- Homepage neměla `hreflang` ani JSON-LD (`/vylety/` má obojí) → doplněno
+  (`LodgingBusiness`, adresa/telefon/e-mail stejné jako v patičce a `/info/`).
+- Aria-labely lightboxu, karuselu, kalendáře a menu byly natvrdo česky ve všech jazycích
+  → `data-t-aria` + klíče `aria.*` ve 4 jazycích.
+- Celé jméno hosta v komentáři migrace `20260812_vr_requests_admin.sql` ve veřejném repu
+  → odstraněno (v git historii zůstává).
+- Zastaralý komentář v `index.html` odkazoval na neexistující `VR_SEASON_SLOTS`.
+
+**Zjištěno, neopraveno — na rozhodnutí majitele:**
+- **`vr_request` a tabulka `vr_requests` nejsou v migracích.** Formulář homepage na nich stojí
+  (jediné backendové volání) a přijímá PII, ale „zdroj pravdy" je neobsahuje — nejde je z repa
+  auditovat. Vytáhnout definici z živé DB do migrace.
+- **Hash admin klíče je veřejný** (`sprava/sprava.js` `TOKEN_HASH` a
+  `20260724_vr_admin.sql:37`). Umožňuje offline brute-force; při dlouhém náhodném klíči
+  neprůchodné, při „lidském" heslu ne. Doporučení: klíč rotovat a hash z migrace vyndat
+  (do configu ručně, jako u `purge_secret_sha256`).
+- Vzdálenost do Pece pod Sněžkou se na homepage liší: mapa 10 km, tabulka lyžování ≈ 13 km
+  (`site.js` kolem ř. 433). Které číslo platí, ví jen majitel.
+- Mrtvá větev „Přímá rezervace = nejlepší cena" (`site.js` kolem ř. 3672) a nepoužité
+  překladové bloky (`mail`, `skupina`, ikona `guestsIcon`) — úklid, ne chyba.
 
 ## Kde pracovat
 

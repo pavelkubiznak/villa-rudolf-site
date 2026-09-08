@@ -3,7 +3,7 @@
 -- Formulář na homepage zapisuje do public.vr_requests přes SECURITY DEFINER
 -- funkci public.vr_request. Zápis fungoval od začátku, ALE tabulku nikdy nikdo
 -- nečetl — žádné admin RPC, žádná sekce v /sprava/, žádné n8n workflow.
--- Žádost od Leny Rohrberg (9. 8. 2026) tak ležela devět dní bez povšimnutí,
+-- Jedna žádost (9. 8. 2026) tak ležela devět dní bez povšimnutí,
 -- než se hosté ozvali podruhé přes platformu. Tahle migrace dodává cestu ven.
 --
 -- `status` a `notified_at` jsou SCHVÁLNĚ na sobě nezávislé:
