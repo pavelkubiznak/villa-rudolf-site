@@ -281,6 +281,8 @@
   function isNice(c) { return ['clear', 'fair', 'partly'].indexOf(c) >= 0; }
   function wxClass(c) { if (!c) return 'mild'; if (['rain', 'heavyrain', 'thunder', 'showers', 'snow'].indexOf(c) >= 0) return 'wet'; if (isNice(c)) return 'nice'; return 'mild'; }
   function wxColor(c) { var k = wxClass(c); return k === 'wet' ? '#7E93B8' : (['clear', 'fair'].indexOf(c) >= 0 ? '#D6B25C' : '#B4BAAD'); }
+  /* Whitelist jazyka přes hasOwnProperty — `T['constructor']` by jinak prošel. */
+  function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
   function wxIcon(c) { return (CAT[c] && CAT[c].ic) || 'i-cloud'; }
   function wxText(c, lang) { var m = CAT[c] || CAT.cloudy; return m[lang] || m.cs; }
 
@@ -968,8 +970,8 @@
         // Reálný host má jazyk z rezervace. U ukázky (?t=demo) rozhoduje ?lang=,
         // jinak by Čech kliknuvší na „Ukázat na příkladu →" dostal němčinu.
         var qLang = (qs.get('lang') || '').toLowerCase();
-        S.lang = (token === 'demo' && T[qLang]) ? qLang
-          : ((guest.lang && T[guest.lang]) ? guest.lang : (T[S.lang] ? S.lang : 'cs'));
+        S.lang = (token === 'demo' && isLang(qLang)) ? qLang
+          : (isLang(guest.lang) ? guest.lang : (isLang(S.lang) ? S.lang : 'cs'));
       } else {
         S.mode = 'public';
       }
@@ -986,7 +988,7 @@
     var qLang = (qs.get('lang') || '').toLowerCase();
     var lsLang = null; try { lsLang = localStorage.getItem('vrLang'); } catch (e) { }
     var navLang = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    return T[qLang] ? qLang : ((lsLang && T[lsLang]) ? lsLang : (T[navLang] ? navLang : 'cs'));
+    return isLang(qLang) ? qLang : (isLang(lsLang) ? lsLang : (isLang(navLang) ? navLang : 'cs'));
   }
 
   /* ===================== Veřejné API ===================== */
@@ -998,7 +1000,7 @@
       var el = typeof opts.el === 'string' ? document.querySelector(opts.el) : opts.el;
       if (!el) return Promise.resolve(false);
       MOUNT = el;
-      if (opts.lang && T[opts.lang]) S.lang = opts.lang;
+      if (isLang(opts.lang)) S.lang = opts.lang;
       if (opts.season === 'leto' || opts.season === 'zima') S.season = opts.season;
       if (opts.filter && FILTER_IDS.indexOf(opts.filter) >= 0) S.filter = opts.filter;
       el.setAttribute('data-season', S.season);
@@ -1021,7 +1023,7 @@
     },
     openDetail: function (id) { if (booted) openDetail(id); else boot().then(function () { openDetail(id); }); },
     setFilter: function (f) { if (FILTER_IDS.indexOf(f) < 0) return; S.filter = f; if (booted) renderApp(true); },
-    setLang: function (l) { if (!T[l] || S.lang === l) return; S.lang = l; if (booted) renderApp(true); },
+    setLang: function (l) { if (!isLang(l) || S.lang === l) return; S.lang = l; if (booted) renderApp(true); },
     setSeason: function (s) {
       if ((s !== 'leto' && s !== 'zima') || S.season === s) return;
       S.season = s; if (MOUNT) MOUNT.setAttribute('data-season', s);

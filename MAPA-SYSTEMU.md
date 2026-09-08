@@ -51,6 +51,8 @@ Aktualizováno: 8. 9. 2026
 ## Infrastruktura
 
 - **Supabase** `fpknbrzbqpalguajskut` — sdílený projekt se SINTERA, proto prefix `vr_`.
+  Edge Function `album` (`supabase/functions/album/`) je jediná brána ke Storage bucketu
+  `vr-album`; nasazuje se `supabase functions deploy album`.
   Schéma pravdy = `villa-rudolf-site/supabase/migrations/` (ne kopie v jiných repech).
 - **Hetzner** (`178.104.207.97`, tailnet `sintera-radar`) — cron na počasí, n8n (`127.0.0.1:5678`,
   **zvenku nedostupné**), Umami — **analytika návštěvnosti webu** (dashboard

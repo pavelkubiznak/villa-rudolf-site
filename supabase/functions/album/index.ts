@@ -136,6 +136,13 @@ Deno.serve(async (req: Request) => {
 
       /* ---------- upload: vydá SIGNED UPLOAD URL scopnutou na cestu tohoto alba ---------- */
       case "upload": {
+        // Token musí patřit skutečnému pobytu. Bez toho by kdokoli s libovolným
+        // řetězcem dostal podepsanou upload URL a mohl plnit bucket (album_id je
+        // jen hash tokenu — cizí album to neohrozí, ale úložiště ano).
+        const { data: open, error: openErr } = await admin.rpc("vr_album_open", { p_token: token });
+        if (openErr) return json({ ok: false, error: "rpc_failed" }, 500);
+        if (!open || open.ok !== true) return json(open ?? { ok: false, error: "unauthorized" }, 401);
+
         const ct = String(body.content_type || "").toLowerCase();
         const ext = EXT_BY_TYPE[ct];
         if (!ext) return json({ ok: false, error: "type_not_allowed" }, 415);

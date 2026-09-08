@@ -218,17 +218,19 @@
   var qs = new URLSearchParams(location.search);
   var lang = 'cs';
 
+  /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel a otrávil localStorage. */
+  function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
   function pickInitialLang() {
     var q = (qs.get('lang') || '').toLowerCase();
-    if (T[q]) return q;
-    try { var s = (localStorage.getItem(LS_KEY) || '').toLowerCase(); if (T[s]) return s; } catch (e) {}
+    if (isLang(q)) return q;
+    try { var s = (localStorage.getItem(LS_KEY) || '').toLowerCase(); if (isLang(s)) return s; } catch (e) {}
     var nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    if (T[nav]) return nav;
+    if (isLang(nav)) return nav;
     return 'cs';
   }
 
   function applyLang(l) {
-    lang = T[l] ? l : 'cs';
+    lang = isLang(l) ? l : 'cs';
     var L = T[lang];
     document.documentElement.lang = L.htmlLang;
     document.querySelectorAll('[data-i18n]').forEach(function (el) {

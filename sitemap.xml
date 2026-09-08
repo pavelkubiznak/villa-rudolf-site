@@ -6,13 +6,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://villarudolf.com/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://villarudolf.com/vylety/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="cs" href="https://villarudolf.com/vylety/?lang=cs"/>
@@ -23,13 +23,13 @@
   </url>
   <url>
     <loc>https://villarudolf.com/info/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://villarudolf.com/podminky/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

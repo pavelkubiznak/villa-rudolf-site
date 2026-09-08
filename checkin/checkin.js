@@ -140,16 +140,21 @@
   var qs = new URLSearchParams(location.search);
   var lang = 'cs';
 
+  /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel. */
+  function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
+  /* ?lang → jazyk zvolený jinde na webu (localStorage vrLang) → prohlížeč → cs.
+     Host, který si na homepage přepnul němčinu, dostane formulář německy. */
   function pickInitialLang() {
     var q = (qs.get('lang') || '').toLowerCase();
-    if (T[q]) return q;
+    if (isLang(q)) return q;
+    try { var s = (localStorage.getItem('vrLang') || '').toLowerCase(); if (isLang(s)) return s; } catch (e) {}
     var nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    if (T[nav]) return nav;
+    if (isLang(nav)) return nav;
     return 'cs';
   }
 
   function applyLang(l) {
-    lang = T[l] ? l : 'cs';
+    lang = isLang(l) ? l : 'cs';
     var L = T[lang];
     document.documentElement.lang = L.htmlLang;
     // textContent
