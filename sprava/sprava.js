@@ -77,13 +77,22 @@
   }
   function nights(a, b) { return Math.max(0, Math.round((parseISO(b) - parseISO(a)) / 86400000)); }
   function daysBetween(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
-  function fmtTermin(a, b) {
+  /* Měsíce pro {TERMIN} ve zprávách hostům — v jazyce pobytu, ne česky.
+     Admin UI (konflikty, seznam pobytů) zůstává česky (lang vynechán). */
+  var MONTH_BY_LANG = {
+    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    de: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+    pl: ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia']
+  };
+  function fmtTermin(a, b, lang) {
     var da = parseISO(a), db = parseISO(b);
     var d1 = da.getDate(), m1 = da.getMonth(), y1 = da.getFullYear();
     var d2 = db.getDate(), m2 = db.getMonth(), y2 = db.getFullYear();
-    if (y1 === y2 && m1 === m2) return d1 + '.–' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;
-    if (y1 === y2) return d1 + '. ' + MONTH_GEN[m1] + ' – ' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;
-    return d1 + '. ' + MONTH_GEN[m1] + ' ' + y1 + ' – ' + d2 + '. ' + MONTH_GEN[m2] + ' ' + y2;
+    var M = MONTH_BY_LANG[lang] || MONTH_GEN;
+    var dot = (lang === 'en' || lang === 'pl') ? '' : '.';   // en/pl bez tečky za dnem
+    if (y1 === y2 && m1 === m2) return d1 + dot + '–' + d2 + dot + ' ' + M[m2] + ' ' + y2;
+    if (y1 === y2) return d1 + dot + ' ' + M[m1] + ' – ' + d2 + dot + ' ' + M[m2] + ' ' + y2;
+    return d1 + dot + ' ' + M[m1] + ' ' + y1 + ' – ' + d2 + dot + ' ' + M[m2] + ' ' + y2;
   }
   function fmtDayShort(iso) {
     var d = parseISO(iso);
@@ -313,7 +322,7 @@
     var token = tokenFor(booking.id);
     return {
       jmeno: guestName(booking),
-      termin: fmtTermin(booking.arrival, booking.departure),
+      termin: fmtTermin(booking.arrival, booking.departure, msgLang(booking)),
       dospeli: dospeli, deti: deti, noci: noci,
       castka: dospeli * noci * 25,
       kod: booking.door_code || '{KOD_DVERI}',

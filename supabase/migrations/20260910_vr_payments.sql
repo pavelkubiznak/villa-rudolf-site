@@ -31,8 +31,10 @@
 --
 -- BEZPEČNOST
 --   * vr_payments: RLS ON, žádná policy → anon/authenticated nevidí nic.
---   * vr_ingest_payments: grant JEN service_role (n8n). ŽÁDNÉ heslo v kódu —
---     vr_purge_expired ukázalo, kam to vede (heslo ve veřejném repu + grant anon).
+--   * vr_ingest_payments: grant JEN service_role (n8n). ŽÁDNÉ heslo v parametru —
+--     vr_purge_expired ukázalo, kam to vede (heslo natvrdo ve veřejném repu +
+--     grant anon; zavírá to až 20260908_vr_purge_lockdown.sql). Tady se ta chyba
+--     nedělá znovu: autorizace je čistě přes grant, žádné sdílené heslo neexistuje.
 --   * admin RPC: _vr_admin_auth jako všude jinde.
 --   * Bankovní pohyby obsahují jméno a číslo účtu plátce → PII. Ven se
 --     nepublikuje nic; vr_public_holds() se téhle tabulky vůbec netýká.

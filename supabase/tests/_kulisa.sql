@@ -1,8 +1,16 @@
 -- Předpoklady, které v ostré Supabase existují, ale v repu nejsou (základní tabulky
 -- a role zakládá Supabase sama). Tohle je JEN kulisa pro test migrace.
-create role anon;
-create role authenticated;
-create role service_role;
+-- Role jsou v Postgresu společné pro celý cluster, ne pro databázi. Když se kulisa
+-- pouští podruhé (jiná testovací DB na témž serveru), `create role` by spadl.
+do $$
+declare r text;
+begin
+  foreach r in array array['anon','authenticated','service_role'] loop
+    if not exists (select 1 from pg_roles where rolname = r) then
+      execute format('create role %I', r);
+    end if;
+  end loop;
+end $$;
 create schema extensions;
 create extension pgcrypto with schema extensions;
 

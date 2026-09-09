@@ -22,7 +22,8 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 | `/vylety/`, `/pruvodce/` | tipy na výlety (data z repa `villa-rudolf-portal`) | hosté |
 | `/info/`, `/podminky/` | informace, podmínky | hosté |
 | `/n8n/` | exporty n8n workflow (importovatelné) | provoz |
-| `supabase/migrations/` | **schéma databáze — zdroj pravdy** | vývoj |
+| `supabase/migrations/` | **schéma databáze — zdroj pravdy** (neúplný, viz `STAV.md`) | vývoj |
+| `supabase/functions/album/` | Edge Function `album` — jediná brána ke Storage bucketu `vr-album`, autorizace tokenem pobytu | vývoj |
 
 ## Data a databáze
 
@@ -121,8 +122,8 @@ Dvě věci, na kterých to stojí:
 
 Tokeny Fia patří do prostředí n8n instance (`FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA`),
 **nikdy do repa** — a vždy **jen ke čtení**, k jednomu účtu. `vr_ingest_payments` má grant
-jen pro `service_role` a **žádné heslo v parametru** (viz `vr_purge_expired` ve `STAV.md`,
-kam vede opak).
+jen pro `service_role` a **žádné sdílené heslo** — přesně ta chyba, kterou u `vr_purge_expired`
+zavírá `20260908_vr_purge_lockdown.sql`.
 
 **iDoklad zatím napojený není.** Kontrola, na jaký účet faktura zní, se dnes dělá z toho, co
 majitel zapíše v editoru předrezervace — pravidlo `měna ⇒ účet` varuje živě při psaní. Číst

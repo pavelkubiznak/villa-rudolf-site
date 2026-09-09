@@ -179,6 +179,7 @@ const T = {
       locale: 'cs_CZ',
     },
     nav: { dum: 'Dům', loznice: 'Interiér', lyzovani: 'Lyžování', vybaveni: 'Vybavení', galerie: 'Galerie', ohniste: 'Ohniště', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', cta: 'Rezervovat termín' },
+    aria: { sections: 'Sekce', season: 'Sezóna', menu: 'Menu', close: 'Zavřít', interior: 'Interiér — projeďte fotky, klepnutím zvětšíte', prev: 'Předchozí', next: 'Další', prevMonths: 'Předchozí měsíce', nextMonths: 'Další měsíce', gallery: 'Galerie' },
     hero: {
       eyebrow: 'Celý dům jen pro vaši skupinu · Krkonoše',
       eyebrowWinter: 'Lyžování za rohem · Krkonoše',
@@ -572,6 +573,7 @@ const T = {
       locale: 'en_GB',
     },
     nav: { dum: 'The House', loznice: 'Interior', lyzovani: 'Skiing', vybaveni: 'Amenities', galerie: 'Gallery', ohniste: 'Fire Pit', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', cta: 'Book dates' },
+    aria: { sections: 'Sections', season: 'Season', menu: 'Menu', close: 'Close', interior: 'Interior — swipe through the photos, tap to enlarge', prev: 'Previous', next: 'Next', prevMonths: 'Previous months', nextMonths: 'Next months', gallery: 'Gallery' },
     hero: {
       eyebrow: 'The whole house, just for your group · Krkonoše',
       eyebrowWinter: 'Skiing just around the corner · Krkonoše',
@@ -917,11 +919,12 @@ const T = {
   de: {
     photoSoon: 'Foto folgt',
     meta: {
-      title: 'Villa Rudolf – ganzes Haus für {minHostu}–{maxHostu} Gäste | Riesengebirge',
+      title: 'Villa Rudolf – ganzes Haus für {minHostu}–{maxHostu} Gäste, {loznice} Schlafzimmer | Riesengebirge',
       desc: 'Ganzes Haus und Grundstück nur für eure Gruppe von {minHostu}–{maxHostu} in Svoboda nad Úpou. {loznice} Schlafzimmer, {koupelny} Bäder, {pozemek} m², Sauna, Skiraum. Ski und Pool saisonal.',
       locale: 'de_DE',
     },
     nav: { dum: 'Das Haus', loznice: 'Innenräume', lyzovani: 'Skifahren', vybaveni: 'Ausstattung', galerie: 'Galerie', ohniste: 'Feuerstelle', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', cta: 'Termin buchen' },
+    aria: { sections: 'Abschnitte', season: 'Saison', menu: 'Menü', close: 'Schließen', interior: 'Innenräume — Fotos durchblättern, zum Vergrößern tippen', prev: 'Zurück', next: 'Weiter', prevMonths: 'Vorherige Monate', nextMonths: 'Nächste Monate', gallery: 'Galerie' },
     hero: {
       eyebrow: 'Das ganze Haus, nur für eure Gruppe · Riesengebirge',
       eyebrowWinter: 'Skifahren gleich um die Ecke · Riesengebirge',
@@ -1267,11 +1270,12 @@ const T = {
   pl: {
     photoSoon: 'Zdjęcie wkrótce',
     meta: {
-      title: 'Villa Rudolf – cały dom dla {minHostu}–{maxHostu} osób | Karkonosze',
+      title: 'Villa Rudolf – cały dom dla {minHostu}–{maxHostu} osób, {loznice} sypialni | Karkonosze',
       desc: 'Cały dom i posesja tylko dla grupy {minHostu}–{maxHostu} osób w Svobodzie nad Úpą. {loznice} sypialni, {koupelny} łazienek, {pozemek} m², sauna, narciarnia. Narty i basen sezonowo.',
       locale: 'pl_PL',
     },
     nav: { dum: 'Dom', loznice: 'Wnętrza', lyzovani: 'Narty', vybaveni: 'Udogodnienia', galerie: 'Galeria', ohniste: 'Palenisko', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', cta: 'Zarezerwuj termin' },
+    aria: { sections: 'Sekcje', season: 'Sezon', menu: 'Menu', close: 'Zamknij', interior: 'Wnętrza — przewiń zdjęcia, dotknij, aby powiększyć', prev: 'Poprzednie', next: 'Następne', prevMonths: 'Poprzednie miesiące', nextMonths: 'Następne miesiące', gallery: 'Galeria' },
     hero: {
       eyebrow: 'Cały dom tylko dla waszej grupy · Karkonosze',
       eyebrowWinter: 'Narty tuż za rogiem · Karkonosze',
@@ -1851,6 +1855,12 @@ function setTexts() {
   $all('[data-t-ph]').forEach((n) => {
     const v = resolve(t, n.getAttribute('data-t-ph'));
     if (typeof v === 'string') n.setAttribute('placeholder', fillFacts(v));
+  });
+  // aria-label ovládacích prvků (lightbox, karusel, kalendář, menu) — čtečky
+  // obrazovky v EN/DE/PL nemají slyšet česky
+  $all('[data-t-aria]').forEach((n) => {
+    const v = resolve(t, n.getAttribute('data-t-aria'));
+    if (typeof v === 'string') n.setAttribute('aria-label', fillFacts(v));
   });
   // trusted, first-party HTML strings (e.g. hero sub with <em> accent)
   $all('[data-t-html]').forEach((n) => {
@@ -3148,6 +3158,17 @@ function slimFuture(records) {
   });
   return out;
 }
+/* Obsazenost přichází asynchronně; host mohl termín naklikat dřív, než
+   dorazila. Kolizi s obsazenými nocemi je pak potřeba zrušit, jinak by se
+   odeslala žádost na termín, který kalendář vzápětí vykreslí jako obsazený. */
+function revalidateSelection() {
+  const s0 = state.selStart, s1 = state.selEnd;
+  if (!s0) return;
+  if (BOOKED.has(s0) || (s1 && rangeBlocked(s0, s1))) {
+    state.selStart = 0; state.selEnd = 0;
+    renderBookingPanel();
+  }
+}
 function loadAvailability() {
   try {
     const raw = sessionStorage.getItem(AVAIL_CACHE_KEY);
@@ -3155,7 +3176,7 @@ function loadAvailability() {
       const c = JSON.parse(raw);
       if (c && c.t && (Date.now() - c.t) < AVAIL_TTL && Array.isArray(c.pairs)) {
         buildBooked(c.pairs); availStatus = 'ok';
-        renderCalendar(); updateAvailNote(); return;
+        revalidateSelection(); renderCalendar(); updateAvailNote(); return;
       }
     }
   } catch (e) {}
@@ -3165,7 +3186,7 @@ function loadAvailability() {
       const pairs = slimFuture(Array.isArray(records) ? records : []);
       buildBooked(pairs); availStatus = 'ok';
       try { sessionStorage.setItem(AVAIL_CACHE_KEY, JSON.stringify({ t: Date.now(), pairs: pairs })); } catch (e) {}
-      renderCalendar(); updateAvailNote();
+      revalidateSelection(); renderCalendar(); updateAvailNote();
     })
     .catch(() => { availStatus = 'fail'; BOOKED = new Set(); renderCalendar(); updateAvailNote(); });
 }
@@ -3863,13 +3884,17 @@ function applyThemeColor() {
   if (m) m.setAttribute('content', state.season === 'zima' ? '#eef2f6' : '#0E1311');
 }
 
-/* Jazyk: ?lang= → localStorage vrLang → navigator.language (cs/en/de/pl) → cs. */
+/* Jazyk: ?lang= → localStorage vrLang → navigator.language (cs/en/de/pl) → cs.
+   Kontrola přes hasOwnProperty, ne přes `T[x]`: „?lang=constructor" by jinak
+   prošel (zděděná vlastnost Object), uložil se do localStorage a shodil
+   vykreslení stránky při každé další návštěvě. */
+function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
 function resolveLang(qs) {
   const q = (qs.get('lang') || '').toLowerCase();
-  if (T[q]) return q;
-  try { const s = localStorage.getItem('vrLang'); if (s && T[s]) return s; } catch (e) {}
+  if (isLang(q)) return q;
+  try { const s = localStorage.getItem('vrLang'); if (isLang(s)) return s; } catch (e) {}
   const nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-  if (T[nav]) return nav;
+  if (isLang(nav)) return nav;
   return 'cs';
 }
 /* Sezóna: ?season= → DATUM → uložená volba (jen v rámci návštěvy).
@@ -3922,7 +3947,7 @@ function syncUrl() {
 }
 
 function setLang(lang) {
-  if (!T[lang] || state.lang === lang) return;
+  if (!isLang(lang) || state.lang === lang) return;
   state.lang = lang;
   try { localStorage.setItem('vrLang', lang); } catch (e) {}
   applyLangButtons(); applySeasonButtons(); setTexts();
@@ -4041,7 +4066,7 @@ function lbSet(i) {
 function lbNav(dir) { const n = (state.lbList || []).length; if (!n) return; lbSet((state.lb + dir + n) % n); }
 
 /* ============================ 360 panorama (three.js, lazy) ============================ */
-let panoInited = false, loadPano = null, panoLastInteract = 0, threeInjected = false;
+let panoInited = false, loadPano = null, panoLastInteract = 0, threeInjected = false, threeFailed = false;
 /* Když host skočí do prohlídky přes „Prohlédnout ve 360°" z lightboxu, chce
    vidět konkrétní pokoj — nájezd „malé planety" se v tom případě přeskočí. */
 let panoSkipIntro = false;
@@ -4051,9 +4076,13 @@ function ensureThree(cb) {
     threeInjected = true;
     const s = document.createElement('script');
     s.src = 'vendor/three.min.js'; s.async = true;
-    s.onload = cb; s.onerror = () => {};
+    s.onload = cb;
+    /* Když se knihovna nestáhne (offline, blokovaný skript), prohlídku
+       schováme rovnou — jinak by zůstal prázdný rám a initPano by čekal
+       na THREE donekonečna. */
+    s.onerror = () => { threeFailed = true; hide360(); };
     document.head.appendChild(s);
-  } else { setTimeout(() => ensureThree(cb), 80); }
+  } else if (!threeFailed) { setTimeout(() => ensureThree(cb), 80); }
 }
 /* Když se 360° prohlídku nepodaří inicializovat (WebGL nedostupný / chyba
    kontextu), skryjeme jen prvky prohlídky, aby nezůstal prázdný rám s nadpisem.
@@ -4064,7 +4093,7 @@ function hide360() {
   });
 }
 function initPano() {
-  if (panoInited) return;
+  if (panoInited || threeFailed) return;
   if (typeof THREE === 'undefined') { setTimeout(initPano, 80); return; }
   const mount = $('#vrpCanvas'), stage = $('#vrpStage');
   if (!mount || !stage) return;
