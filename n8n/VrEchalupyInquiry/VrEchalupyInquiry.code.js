@@ -13,8 +13,8 @@
  *
  * Trigger: Gmail, filtr `from:info@e-chalupy.cz subject:"Poptávka z e-chalupy.cz"`.
  * Vstup: položka z Gmail node. Bere se HTML tělo — Gmail API v plaintextu převádí
- * tučné části na VELKÁ PÍSMENA, takže z textu vyjde „LUCIE PAPCUNOVÁ" a
- * „LUCKABARBIE@ATLAS.CZ". Z HTML se čte původní zápis.
+ * tučné části na VELKÁ PÍSMENA, takže z textu vyjde „JANA NOVÁKOVÁ" a
+ * „JANA.NOVAKOVA@EXAMPLE.CZ" (smyšlený příklad). Z HTML se čte původní zápis.
  *
  * Výstup: 1 položka s naparsovanými poli + hotovým payloadem pro RPC
  * vr_admin_upsert_booking. ZÁMĚRNĚ NIC NEZAKLÁDÁ — poptávka není rezervace

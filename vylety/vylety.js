@@ -113,7 +113,7 @@
         stezka: { name: 'Baumwipfelpfad', meta: 'Zu Fuß von der Villa (~4 km durch den Wald)', pitch: 'Ein Klassiker, den Sie zu Fuß durch den Wald erreichen: die Kolonnade in Janské Lázně, dann der Baumwipfelpfad mit 43-Meter-Turm, Rutsche hinab und Bärenpfad. Am Fuß Emils Waldwelt mit Klettergerüsten und Mini-Bauernhof.' },
         safari: { name: 'Safari-Park Dvůr Králové', meta: '30 Min. Fahrt · Ausflug für einen ganzen Tag', pitch: 'Ein afrikanisch geprägter Zoo, den Sie im Safaribus mitten durch frei lebende Tiere durchfahren. Das Areal ist weitläufig — kommen Sie zur Öffnung. Im Sommer lockt zudem die Abendsafari in der Dämmerung (Reservierung nötig).' },
         cernahora: { name: 'Černá hora — Park Kabinka', meta: '15 Min. Fahrt · Gondel aus Janské Lázně', pitch: 'Eine Acht-Personen-Kabinenbahn bringt die ganze Familie (auch mit Kinderwagen) auf den Gipfel der Černá hora. Oben der Freizeitpark Park Kabinka mit sieben Attraktionen und der Aussichtsturm Panorama — der Parkeintritt ist im Ticket enthalten.' },
-        bobovka: { name: 'Sommerrodelbahn Relaxpark Pec', meta: '15 Min. Fahrt · fährt auch im Regen · solo ab 8', pitch: '900 Meter Edelstahl-Bobbahn und Doppelsitzer bis 40 km/h — Nervenkitzel bei jedem Wetter. Ab acht Jahren dürfen Kinder allein fahren.' },
+        bobovka: { name: 'Sommerrodelbahn Relaxpark Pec', meta: '20 Min. Fahrt · fährt auch im Regen · solo ab 8', pitch: '900 Meter Edelstahl-Bobbahn und Doppelsitzer bis 40 km/h — Nervenkitzel bei jedem Wetter. Ab acht Jahren dürfen Kinder allein fahren.' },
         aquacentrum: { name: 'Aquacentrum Janské Lázně', meta: 'Zu Fuß von der Villa · Hallenbad', pitch: 'Ein Hallenbad aus Mineralquellen, auf 27 °C geheizt, mit Whirlpools, Gegenstromanlage und Saunawelt — gleich hinter der Kolonnade in Janské Lázně, zu Fuß erreichbar. Ideal für einen Tag mit schlechtem Wetter.' },
         stachelberg: { name: 'Festung Stachelberg', meta: '15 Min. Fahrt · Gänge mit konstanten 8 °C', pitch: 'Die größte Artilleriefestung Tschechiens. Steigen Sie 52 Meter unter die Erde in 3,5 km Gänge mit ganzjährig kühlen 8 °C. Auf dem Gelände auch der Aussichtsturm Eliška und ein Spielplatz.' },
         karpacz: { name: 'Aquapark Tropikana — Karpacz (PL)', meta: '45 Min. Fahrt · hinter der polnischen Grenze', pitch: 'Ein großer Hotel-Aquapark gleich hinter der polnischen Grenze: Wellen, Rutschen, acht Whirlpools sowie Salz- und Eishöhle. Für die Fahrt nach Polen auch für Kinder Ausweise mitnehmen.' },
@@ -193,12 +193,14 @@
   function resolve(obj, path) { return path.split('.').reduce(function (o, k) { return o == null ? undefined : o[k]; }, obj); }
 
   /* Jazyk: ?lang= → localStorage vrLang → navigator.language → cs. */
+  /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel a otrávil localStorage. */
+  function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
   function resolveLang(qs) {
     var q = (qs.get('lang') || '').toLowerCase();
-    if (T[q]) return q;
-    try { var s = localStorage.getItem('vrLang'); if (s && T[s]) return s; } catch (e) {}
+    if (isLang(q)) return q;
+    try { var s = localStorage.getItem('vrLang'); if (isLang(s)) return s; } catch (e) {}
     var nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    if (T[nav]) return nav;
+    if (isLang(nav)) return nav;
     return 'cs';
   }
   /* Sezóna: ?season= → DATUM → uložená volba (jen v rámci návštěvy).
@@ -274,7 +276,7 @@
   }
 
   function setLang(lang) {
-    if (!T[lang] || state.lang === lang) return;
+    if (!isLang(lang) || state.lang === lang) return;
     state.lang = lang;
     try { localStorage.setItem('vrLang', lang); } catch (e) {}
     applyLangButtons(); applySeasonButtons(); setTexts(); applyMeta(); applyLangLinks(); syncUrl();
@@ -319,6 +321,12 @@
         if (c && c.total) { COUNTS = c; setTexts(); }
       } catch (e) { }
       return ok;
+    }).catch(function () {
+      /* trips.json nedorazil: bez tohoto by sekce zůstala navždy v shimmeru
+         a tlačítko by se už nedalo znovu zmáčknout. */
+      plannerReq = null;
+      if (idle) idle.removeAttribute('data-loading');
+      return false;
     });
     return plannerReq;
   }

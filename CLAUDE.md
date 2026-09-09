@@ -22,7 +22,8 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 | `/vylety/`, `/pruvodce/` | tipy na výlety (data z repa `villa-rudolf-portal`) | hosté |
 | `/info/`, `/podminky/` | informace, podmínky | hosté |
 | `/n8n/` | exporty n8n workflow (importovatelné) | provoz |
-| `supabase/migrations/` | **schéma databáze — zdroj pravdy** | vývoj |
+| `supabase/migrations/` | **schéma databáze — zdroj pravdy** (neúplný, viz `STAV.md`) | vývoj |
+| `supabase/functions/album/` | Edge Function `album` — jediná brána ke Storage bucketu `vr-album`, autorizace tokenem pobytu | vývoj |
 
 ## Data a databáze
 
