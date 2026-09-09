@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 8. 9. 2026
+Aktualizováno: 9. 9. 2026
 
 ---
 
@@ -60,6 +60,43 @@ Staré heslo je v git historii, takže **rotace je povinná**, ne volitelná.
 dlouho, kolik hostů") to znamená, že proběhlé pobyty bez evidence osob se tiše ztrácejí.
 Než se z `vr_bookings` začne dělat dlouhodobá evidence, je potřeba tohle vyřešit — a v repu
 kalendáře taky 18měsíční prune `history.json`.
+
+---
+
+## 💳 Předrezervace a přímý prodej → `vr_holds` + `/sprava/` + kalendář
+
+| | Stav |
+|---|---|
+| Tabulka `vr_holds` + admin/veřejné RPC (`20260909_vr_holds.sql`) | 🟡 **kód hotov, čeká na spuštění migrace** |
+| Sekce „Předrezervace" v `/sprava/`, editor faktury, dialog „Uhrazeno" | ✅ hotovo, ověřeno v prohlížeči |
+| Pojistka měna ⇒ účet (klient i databáze) | ✅ hotovo |
+| Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
+| Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
+| `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód upraven, čeká na re-import** |
+| Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **kód hotov + otestován, čeká na 3 tokeny a migraci** |
+| Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
+| Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
+| Napojení na iDoklad (kontrola účtu na faktuře přímo ze zdroje) | ⏭️ **nezačato** — API se nepsalo naslepo |
+
+**Proč to vzniklo.** Pobyt prodaný napřímo nebyl v žádném feedu, takže pro systém neexistoval —
+`/sprava/` o něm nevěděla a homepage ten termín dál nabízela jako volný. Tak zmizel termín
+**14.–21. 8. 2027**: zálohová faktura vystavená i uhrazená, peníze v bance, a v systému nic.
+Spouštěčem proto **není platba, ale vystavení zálohové faktury**.
+
+*Zbývá:*
+1. **Spustit migraci** `supabase/migrations/20260909_vr_holds.sql` proti živé DB. Do té doby
+   vrací RPC 404, `/sprava/` to spolkne (sekce se neukáže) a Action kalendáře to zaloguje
+   jako `::warning::` a jede beze změny. Nasadit se to tedy dá v libovolném pořadí.
+2. **Znovu importovat `n8n/VrConflictWatch`** (Code node „Detekce konfliktů").
+3. **Zapsat termín 14.–21. 8. 2027** jako uhrazenou přímou rezervaci a **zablokovat ho na
+   platformách** — dneska je v očích všech kanálů volný.
+4. **Spustit migraci** `supabase/migrations/20260910_vr_payments.sql`.
+5. **Založit tři read-only tokeny Fia** (VR korunový, VR eurový, hlavní účet Sintery),
+   vložit je do prostředí n8n jako `FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA` a poskládat
+   workflow podle `n8n/VrPaymentWatch/README.md`. **První běhy nech read-only**
+   (`AUTOCONFIRM = false`) a přečti, co párování navrhlo — teprve pak povol zápis.
+6. Až bude párování usazené: napojit **iDoklad** a číst z něj, na jaký účet je faktura
+   opravdu vystavená (dnes se to bere z toho, co se zapíše ručně v `/sprava/`).
 
 ---
 
@@ -134,13 +171,18 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 
 ## Doporučené pořadí
 
-1. **`vr_purge_expired`** — migrace `20260908_vr_purge_lockdown.sql` je napsaná, zbývá nasadit
+1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
+   v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
+2. **`vr_purge_expired`** — migrace `20260908_vr_purge_lockdown.sql` je napsaná, zbývá nasadit
    podle postupu v její hlavičce (nový secret, hash do configu, service klíč u volajícího)
-2. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
-3. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
+3. **Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`** — bez nich nemají
+   sekce Předrezervace a Platby kam ukládat
+4. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
+5. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
-4. **Polština u výletů** — podle toho, jestli chodí polští hosté
-5. **Zprávy** — až bude jasné zadání
+6. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
+7. **Polština u výletů** — podle toho, jestli chodí polští hosté
+8. **Zprávy** — až bude jasné zadání
 
 ~~Šrafování v kalendáři~~ — hotovo 13. 8.
 
@@ -230,7 +272,7 @@ jen u části (limit účtu), zbytek ověřen ručně. Opravené je níž, neopr
 
 | Práce | Repo | Klon |
 |---|---|---|
-| kalendář (šrafování, 4 feedy) | `villa-booking-calendar` | `~/villa-booking-calendar` |
+| kalendář (šrafování, 4 feedy, předrezervace) | `villa-booking-calendar` | `~/villa-booking-calendar` |
 | výlety — data a překlady | `villa-rudolf-portal` | `~/villa-rudolf-portal` |
 | výlety — zobrazení, zprávy, `/sprava/` | `villa-rudolf-site` | *(klon zatím není)* |
 

@@ -29,6 +29,11 @@
   var expandedStays = false;
   var adminConfig = {}; // ubyport_* konfigurace ubytovatele (Nastavení)
   var serverConflicts = []; // stav hlídače z vr_admin_conflicts (resolved/known)
+  var holds = [];           // předrezervace + přímé rezervace (vr_admin_list_holds)
+  var holdsShowClosed = false;  // propadlé a zrušené jsou schované, dokud si je nevyžádáš
+  var lastHolds = [];       // právě vykreslené pořadí (pro obsluhu tlačítek)
+  var payments = [];        // bankovní pohyby z Fia (vr_admin_list_payments)
+  var lastPays = [];        // právě vykreslené pořadí (pro obsluhu tlačítek)
   var requests = [];        // žádosti z webového formuláře (vr_admin_list_requests)
   var requestsShowDone = false; // vyřízené žádosti jsou schované, dokud si je nevyžádáš
   var lastRequests = [];    // právě vykreslené pořadí (pro obsluhu tlačítek)
@@ -88,6 +93,10 @@
     if (y1 === y2 && m1 === m2) return d1 + dot + '–' + d2 + dot + ' ' + M[m2] + ' ' + y2;
     if (y1 === y2) return d1 + dot + ' ' + M[m1] + ' – ' + d2 + dot + ' ' + M[m2] + ' ' + y2;
     return d1 + dot + ' ' + M[m1] + ' ' + y1 + ' – ' + d2 + dot + ' ' + M[m2] + ' ' + y2;
+  }
+  function fmtDayShort(iso) {
+    var d = parseISO(iso);
+    return isNaN(d) ? String(iso || '') : (d.getDate() + '. ' + (d.getMonth() + 1) + '. ' + d.getFullYear());
   }
   function fmtShort(a, b) {
     var da = parseISO(a), db = parseISO(b);
@@ -477,6 +486,20 @@
     var byUidh = {};
     bookings.forEach(function (b) { if (b.uidh) byUidh[b.uidh] = b; });
 
+    // Předrezervace, které právě drží termín. Do kalendáře je Action dostane až při
+    // dalším běhu (každé 3 h), takže se tady berou rovnou z databáze — čerstvě
+    // založená předrezervace musí být vidět hned, ne až za tři hodiny.
+    var holdByUidh = {}, holdBySpan = {}, usedHoldIds = {};
+    holds.forEach(function (h) {
+      if (!holdOpen(h) || holdExpired(h)) return;
+      if (h.uidh) holdByUidh[h.uidh] = h;
+      // Klíč přes termín zrcadlí pravidlo ze skriptu kalendáře: hold se shodným
+      // termínem jako záznam z feedu je TÝŽ pobyt zablokovaný na platformě, ne
+      // druhá rezervace. Bez toho by z každé zablokované přímé rezervace vyskočil
+      // červený konflikt sám se sebou.
+      holdBySpan[h.arrival + '|' + h.departure] = h;
+    });
+
     stays = [];
     var usedBookingIds = {};
 
@@ -485,9 +508,11 @@
       if (c.end < cutoff) return;
       var b = byUidh[c.uidh] || null;
       if (b) usedBookingIds[b.id] = true;
+      var h = holdByUidh[c.uidh] || holdBySpan[c.start + '|' + c.end] || null;
+      if (h) usedHoldIds[h.id] = true;
       stays.push({
         source: 'calendar', uidh: c.uidh,
-        start: c.start, end: c.end, platform: c.platform, booking: b
+        start: c.start, end: c.end, platform: c.platform, booking: b, hold: h
       });
     });
 
@@ -498,7 +523,20 @@
       if (b.departure < cutoff) return;
       stays.push({
         source: 'manual', uidh: b.uidh || null,
-        start: b.arrival, end: b.departure, platform: b.platform || 'Přímá', booking: b
+        start: b.arrival, end: b.departure, platform: b.platform || 'Přímá', booking: b, hold: null
+      });
+    });
+
+    // 3) předrezervace, které v kalendáři ještě nejsou (Action běží po 3 h)
+    holds.forEach(function (h) {
+      if (usedHoldIds[h.id]) return;
+      if (!holdOpen(h) || holdExpired(h)) return;
+      if (h.departure < cutoff) return;
+      stays.push({
+        source: 'hold', uidh: h.uidh || null,
+        start: h.arrival, end: h.departure, platform: 'Přímá',
+        booking: h.booking_id ? (bookings.filter(function (b) { return b.id === h.booking_id; })[0] || null) : null,
+        hold: h
       });
     });
 
@@ -516,13 +554,17 @@
     for (var i = 0; i < stays.length; i++) {
       for (var j = i + 1; j < stays.length; j++) {
         var A = stays[i], B = stays[j];
-        // jen kalendářní pobyty (stejně jako VrConflictWatch) — ruční „Přímá"
-        // záznamy bývají nespárovaná kopie feedu, ne dvojitá rezervace.
-        if (A.source !== 'calendar' || B.source !== 'calendar') continue;
+        // Kalendářní pobyty (stejně jako VrConflictWatch) plus předrezervace, které
+        // v kalendáři ještě nejsou. Ruční „Přímá" záznamy zůstávají venku — bývají
+        // to nespárované kopie feedu, ne dvojitá rezervace.
+        if (A.source === 'manual' || B.source === 'manual') continue;
         if (A.uidh && B.uidh && A.uidh === B.uidh) continue;
         if (!overlapsRange(A, B)) continue;
         var samePlatform = (A.platform || '') === (B.platform || '');
         var bothPaired = !!A.booking && !!B.booking;
+        // U předrezervace je vystavená faktura — dva nároky na stejný termín se
+        // nesmí schovat mezi „artefakty kalendáře", i když jsou obě „Přímá".
+        var withHold = !!A.hold || !!B.hold;
         var item = {
           a: A, b: B,
           overlapStart: (A.start > B.start ? A.start : B.start),
@@ -530,7 +572,7 @@
           samePlatform: samePlatform,
           known: !!(A.uidh && B.uidh && KNOWN_UIDH.indexOf(A.uidh) >= 0 && KNOWN_UIDH.indexOf(B.uidh) >= 0)
         };
-        if (samePlatform && !bothPaired) res.artifacts.push(item);
+        if (samePlatform && !bothPaired && !withHold) res.artifacts.push(item);
         else res.overlaps.push(item);
       }
     }
@@ -626,7 +668,7 @@
   // Pod konfliktním bannerem, nad DNES. Řazeno podle blízkosti příjezdu.
   //  (a) pobyt bez telefonu  (b) příjezd do 7 dnů bez kódu dveří
   //  (c) nespárovaný pobyt z kalendáře  (d) odkaz na aktivní konflikt (jen link na banner)
-  function refreshBoards() { renderRequests(); renderProblems(); renderToday(); renderStays(); }
+  function refreshBoards() { renderRequests(); renderHolds(); renderPayments(); renderProblems(); renderToday(); renderStays(); }
 
   /* ============ Render: ŽÁDOSTI Z WEBU ============ */
   // Formulář na homepage zapisuje do vr_requests přes RPC vr_request. Do 12. 8. 2026
@@ -732,9 +774,31 @@
     if (!panel || !host) return;
     var today = isoToday();
     var probs = [];
+    // (e) předrezervace: špatný účet na faktuře, propadlá splatnost, nezablokovaný
+    //     termín. Všechny tři jsou časově citlivé — fakturu jde levně opravit jen
+    //     dokud ji host nezaplatil, a nezablokovaný termín může kdykoli prodat
+    //     kterákoli platforma.
+    holds.forEach(function (h) {
+      if (h.departure < today) return;
+      if (h.account_mismatch && holdOpen(h)) probs.push({ kind: 'holdacc', hold: h, date: h.arrival });
+      if (h.paid_mismatch) probs.push({ kind: 'holdpaid', hold: h, date: h.arrival });
+      if (holdExpired(h)) probs.push({ kind: 'holdexp', hold: h, date: h.arrival });
+      else if (holdOpen(h) && !blockedOnPlatform(h)) probs.push({ kind: 'holdblock', hold: h, date: h.arrival });
+    });
+
+    // (f) platba, ke které se nenašla faktura. Přesně tím tenhle modul začal:
+    //     peníze v bance viděné, ale rezervace z nich nevznikla.
+    payments.forEach(function (p) {
+      if (p.ignored_at || p.matched_hold) return;
+      probs.push({ kind: 'payopen', pay: p, date: p.booked_on });
+    });
+
     stays.forEach(function (s) {
       var b = s.booking;
       if (!b) {
+        // Předrezervace má vlastní sekci i vlastní tlačítka — mezi „chybí kontakt"
+        // nepatří, host se doplňuje až po zaplacení.
+        if (s.hold) return;
         // (c) nespárovaný pobyt z kalendáře — jen near-term (zrcadlí původní ⚠️ logiku): start v [dnes−14, dnes+14]
         if (s.end >= today && s.start <= addDaysISO(today, 14) && s.start >= addDaysISO(today, -14))
           probs.push({ kind: 'unpaired', stay: s, date: s.start });
@@ -763,7 +827,9 @@
     }
     var html = '';
     probs.forEach(function (p, i) {
-      var s = p.stay, b = s.booking;
+      // Problémy předrezervací nesou `hold`, ne `stay` — sáhnout na s.booking by
+      // u nich shodilo celé vykreslení (a s ním i sekce pod ním).
+      var s = p.stay || null, b = s ? s.booking : null;
       if (p.kind === 'unpaired') {
         html += probCard('warn', '⚠️ ' + esc(fmtShort(s.start, s.end)),
           'Pobyt z kalendáře bez kontaktu — doplnit hosta (' + esc(s.platform) + ').', i, 'Doplnit hosta');
@@ -773,6 +839,28 @@
           esc(fmtShort(s.start, s.end)) + ' · ' + (junk
             ? 'z čísla „' + esc(b.phone) + '“ nejde složit mezinárodní tvar — WhatsApp odkaz z něj nevznikne.'
             : 'bez telefonu nejde poslat zprávy ani připravit kód dveří.'), i, 'Doplnit');
+      } else if (p.kind === 'holdacc') {
+        html += probCard('red', '🏦 Předrezervace ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — faktura zní na špatný účet',
+          esc(p.hold.account_mismatch) + '. Oprav ji v iDokladu, dokud ji host nezaplatil'
+          + (p.hold.invoice_no ? ' (faktura ' + esc(p.hold.invoice_no) + ')' : '') + '.', i, 'Otevřít');
+      } else if (p.kind === 'payopen') {
+        html += probCard('warn', '❓ Nepřiřazená platba ' + esc(fmtMoney(p.pay.amount, p.pay.currency)),
+          esc(fmtDayShort(p.pay.booked_on)) + ' · ' + esc(accountLabel(p.pay.account))
+          + (p.pay.vs ? ' · VS ' + esc(p.pay.vs) : ' · bez variabilního symbolu')
+          + (p.pay.counterparty ? ' · ' + esc(p.pay.counterparty) : '')
+          + '. Nenašla se k ní faktura — přiřaď ji, nebo ji odlož.', i, 'Přiřadit');
+      } else if (p.kind === 'holdpaid') {
+        html += probCard('warn', '💸 ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — platba přišla na cizí účet',
+          'Peníze dorazily na ' + esc(accountLabel(p.hold.paid_account)) + '. Rezervace platí (host svoje udělal), '
+          + 'ale je potřeba přeúčtovat na účet Villa Rudolf.', i, 'Otevřít');
+      } else if (p.kind === 'holdexp') {
+        html += probCard('warn', '⌛ Předrezervace ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — propadla splatnost',
+          'Termín se už uvolnil. Zaplatit o pár dní později je běžné — buď prodluž, nebo potvrď jako uhrazenou, '
+          + 'nebo ji odepiš. <b>Než ji odepíšeš, ověř, jestli platba nedorazila na jiný účet.</b>', i, 'Rozhodnout');
+      } else if (p.kind === 'holdblock') {
+        html += probCard('soon', '📅 Předrezervace ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — termín není zablokovaný',
+          'Na platformách je ten termín pořád volný, takže ho může kterýkoli kanál prodat znovu. '
+          + 'Zablokuj ho v e-chalupách (cross-iCal ho rozešle dál).', i, 'Otevřít');
       } else if (p.kind === 'nocode') {
         html += probCard('soon', '🔑 ' + esc(guestName(b)) + ' — chybí kód dveří',
           'Příjezd za ' + daysBetween(today, s.start) + ' dní (' + esc(fmtShort(s.start, s.end)) + ') — není uložený kód dveří.', i, 'Doplnit kód');
@@ -788,7 +876,473 @@
         var p = lastProblems[+btn.getAttribute('data-prob')];
         if (!p) return;
         if (p.kind === 'unpaired') openEditor({ stay: p.stay });
+        else if (p.pay) openPayPicker(p.pay);
+        else if (p.hold) openHoldEditor(p.hold);
         else openDetail(p.stay);
+      });
+    });
+  }
+
+  /* ============ PŘEDREZERVACE (vr_holds) ============ */
+  // Vystavená zálohová faktura = předrezervace, která drží termín. Platba pak jen
+  // rozhoduje, jestli přežije. Spouštěčem NENÍ platba: přesně tak zmizel termín
+  // 14.–21. 8. 2027 — faktura vystavená i uhrazená, a v systému po ní nic.
+  //
+  // Propadnutí je LÍNÉ, bez cronu: vr_public_holds() propadlý hold prostě nevrátí,
+  // takže se termín uvolní sám. Řádek zůstane a čeká, až majitel rozhodne —
+  // zaplatit o dva dny později je běžné a tiché smazání blokace je ta chyba,
+  // kterou tenhle modul řeší, jen obráceně.
+  var ACCOUNTS = {
+    VR_CZK:  'Villa Rudolf — korunový',
+    VR_EUR:  'Villa Rudolf — eurový',
+    SINTERA: 'Sintera — hlavní účet',
+    JINY:    'jiný účet'
+  };
+  var HOLD_STATUS = {
+    hold:      { label: '⏳ drží termín', tone: 'soon' },
+    confirmed: { label: '✅ uhrazeno — rezervace', tone: 'ok' },
+    expired:   { label: '⌛ propadlá', tone: 'muted' },
+    cancelled: { label: '✕ zrušená', tone: 'muted' }
+  };
+  function accountLabel(a) { return ACCOUNTS[a] || (a ? String(a) : '—'); }
+  function fmtMoney(amount, cur) {
+    if (amount == null || amount === '') return '—';
+    var n = Number(amount);
+    if (isNaN(n)) return '—';
+    return n.toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + ' ' + (cur === 'EUR' ? '€' : 'Kč');
+  }
+  // Hold, kterému uplynulo hold_until, už termín nedrží (server ho přestal publikovat).
+  function holdExpired(h) { return h.status === 'hold' && h.hold_until && h.hold_until < isoToday(); }
+  function holdOpen(h) { return h.status === 'hold' || h.status === 'confirmed'; }
+
+  function loadHolds() {
+    // Selhání nesmí shodit celý panel (stejně jako u konfliktů a žádostí). Dokud
+    // v Supabase neproběhne migrace 20260909_vr_holds.sql, vrátí RPC 404 → [].
+    return rpc('vr_admin_list_holds', {}).then(function (res) {
+      return (res.data && res.data.ok && res.data.holds) ? res.data.holds : [];
+    }).catch(function () { return []; });
+  }
+
+  // Je termín zablokovaný i na platformách? Dokud není, může ho kterýkoli kanál
+  // prodat znovu — hub nás neochrání. Blokace se pozná tak, že termín v kalendáři
+  // pokrývá záznam z NĚJAKÉ platformy (tedy ne náš vlastní 'Přímá' zápis).
+  function blockedOnPlatform(h) {
+    return calendar.some(function (c) {
+      return c.platform !== 'Přímá' && c.start < h.departure && h.arrival < c.end;
+    });
+  }
+
+  function holdCard(h, idx) {
+    var st = HOLD_STATUS[h.status] || HOLD_STATUS.hold;
+    var expired = holdExpired(h);
+    var n = nights(h.arrival, h.departure);
+
+    var tags = '<span class="hold-st hold-st-' + (expired ? 'muted' : st.tone) + '">'
+      + (expired ? '⌛ propadla splatností' : st.label) + '</span>';
+    if (h.channel) tags += '<span class="pill pill-plat">' + esc(h.channel) + '</span>';
+
+    var lines = [];
+    if (h.invoice_no || h.invoice_amount != null) {
+      lines.push('🧾 ' + (h.invoice_no ? esc(h.invoice_no) + ' · ' : '')
+        + fmtMoney(h.invoice_amount, h.invoice_currency)
+        + (h.invoice_due ? ' · splatnost ' + esc(fmtDayShort(h.invoice_due)) : ''));
+    }
+    if (h.status === 'hold' && h.hold_until) {
+      lines.push('⏳ drží do ' + esc(fmtDayShort(h.hold_until))
+        + (expired ? ' — termín se už uvolnil' : ' (' + daysBetween(isoToday(), h.hold_until) + ' dní)'));
+    }
+    if (h.paid_at) {
+      lines.push('💰 uhrazeno ' + esc(fmtWhen(h.paid_at))
+        + (h.paid_amount != null ? ' · ' + fmtMoney(h.paid_amount, h.invoice_currency) : '')
+        + (h.paid_account ? ' · ' + esc(accountLabel(h.paid_account)) : ''));
+    }
+    if (h.invoice_account) lines.push('🏦 faktura zní na: ' + esc(accountLabel(h.invoice_account)));
+    if (h.guest_note) lines.push('👤 ' + esc(h.guest_note));
+
+    // Pojistka na účet — hlásí se u karty i v sekci Problémy, ať se to nepřehlédne
+    // v žádném z obou pohledů.
+    var warn = '';
+    if (h.account_mismatch) {
+      warn += '<div class="hold-warn">🏦 ' + esc(h.account_mismatch)
+        + ' — oprav fakturu, dokud ji host nezaplatil.</div>';
+    }
+    // Peníze dorazily jinam, než měly. Rezervaci to nezpochybňuje (host svoje
+    // udělal), ale zůstává úkol přeúčtovat — a ten se jinde nikde neobjeví.
+    if (h.paid_mismatch) {
+      warn += '<div class="hold-warn">💸 Platba dorazila na cizí účet ('
+        + esc(accountLabel(h.paid_account)) + ') — je potřeba přeúčtovat.</div>';
+    }
+    if (holdOpen(h) && !expired && !blockedOnPlatform(h)) {
+      warn += '<div class="hold-warn hold-warn-soft">📅 Termín zatím není zablokovaný na platformách '
+        + '— dokud nebude, může ho kterýkoli kanál prodat znovu.</div>';
+    }
+
+    var btns = '<button type="button" class="btn btn-sm btn-outline" data-hold-edit="' + idx + '">Upravit</button>';
+    if (h.status === 'hold') {
+      btns = '<button type="button" class="btn btn-sm btn-primary" data-hold-paid="' + idx + '">Uhrazeno</button>'
+        + (expired
+            ? '<button type="button" class="btn btn-sm btn-outline" data-hold-extend="' + idx + '">Prodloužit</button>'
+            : '')
+        + '<button type="button" class="btn btn-sm btn-ghost" data-hold-drop="' + idx + '">Propadla</button>'
+        + btns;
+    }
+
+    return '<div class="hold' + (expired ? ' hold-expired' : '')
+      + (h.status === 'expired' || h.status === 'cancelled' ? ' hold-closed' : '') + '">'
+      + '<div class="hold-main">'
+      + '<div class="hold-t">' + esc(fmtShort(h.arrival, h.departure)) + ' <span class="hold-n">' + n + ' ' + nightWord(n) + '</span></div>'
+      + '<div class="hold-tags">' + tags + '</div>'
+      + (lines.length ? '<div class="hold-d">' + lines.join('<br>') + '</div>' : '')
+      + warn
+      + '</div><div class="hold-actions">' + btns + '</div></div>';
+  }
+
+  function renderHolds() {
+    var panel = $('holds-panel'), host = $('holds'), toggle = $('btn-hold-closed');
+    if (!panel || !host) return;
+    if (!holds.length) { panel.hidden = true; return; }
+
+    var open = [], closed = [];
+    holds.forEach(function (h) { (holdOpen(h) ? open : closed).push(h); });
+    if (toggle) {
+      toggle.hidden = !closed.length;
+      toggle.textContent = holdsShowClosed ? 'Skrýt uzavřené' : 'Uzavřené (' + closed.length + ')';
+    }
+    lastHolds = holdsShowClosed ? open.concat(closed) : open;
+    if (!lastHolds.length) { panel.hidden = true; return; }
+    panel.hidden = false;
+    host.innerHTML = lastHolds.map(holdCard).join('');
+
+    var on = function (attr, fn) {
+      Array.prototype.forEach.call(host.querySelectorAll('[' + attr + ']'), function (btn) {
+        btn.addEventListener('click', function () {
+          var h = lastHolds[+btn.getAttribute(attr)];
+          if (h) fn(h, btn);
+        });
+      });
+    };
+    on('data-hold-edit', function (h) { openHoldEditor(h); });
+    on('data-hold-paid', function (h) { openPaidDialog(h); });
+    on('data-hold-drop', function (h, btn) {
+      if (!window.confirm('Označit předrezervaci ' + fmtShort(h.arrival, h.departure)
+          + ' jako propadlou? Termín se uvolní, ale záznam o vystavené faktuře zůstane.')) return;
+      btn.disabled = true;
+      setHoldStatus(h, 'expired', null, null, null, 'Předrezervace propadla, termín je volný.');
+    });
+    on('data-hold-extend', function (h, btn) {
+      btn.disabled = true;
+      setHoldStatus(h, 'hold', addDaysISO(isoToday(), 14), null, null, 'Prodlouženo o 14 dní.');
+    });
+  }
+
+  function setHoldStatus(h, status, until, paidAmount, paidAccount, okMsg) {
+    return rpc('vr_admin_set_hold_status', {
+      p_id: h.id, p_status: status, p_hold_until: until || null,
+      p_paid_amount: paidAmount == null ? null : paidAmount,
+      p_paid_account: paidAccount || null
+    }).then(function (res) {
+      if (res.data && res.data.ok) { toast(okMsg || 'Uloženo.'); return reload(); }
+      toast('Uložení se nepodařilo.');
+    }).catch(function () { toast('Uložení se nepodařilo.'); });
+  }
+
+  // „Uhrazeno" se ptá i na to, KAM peníze dorazily. Kvůli tomu, že se faktura dá
+  // vystavit na hlavní účet Sintery: platba je pak z pohledu hosta v pořádku,
+  // ale musí se přeúčtovat — a to je vidět jen tehdy, když se to někam zapíše.
+  function openPaidDialog(h) {
+    $('sheet-title').textContent = 'Uhrazeno — potvrdit rezervaci';
+    var expect = h.invoice_account || (h.invoice_currency === 'EUR' ? 'VR_EUR' : 'VR_CZK');
+    $('sheet-body').innerHTML =
+      '<form id="hp-form" autocomplete="off">' +
+      '<div class="notice">' + esc(fmtShort(h.arrival, h.departure)) + ' · '
+        + esc(fmtMoney(h.invoice_amount, h.invoice_currency))
+        + (h.invoice_no ? ' · faktura ' + esc(h.invoice_no) : '') + '</div>' +
+      '<div class="row2">' +
+      '<div class="field"><label>Přišlo (částka)</label><input id="hp-amount" type="number" step="0.01" min="0" value="'
+        + esc(h.invoice_amount == null ? '' : h.invoice_amount) + '"></div>' +
+      '<div class="field"><label>Na účet</label><select id="hp-account">' +
+      Object.keys(ACCOUNTS).map(function (k) {
+        return '<option value="' + k + '"' + (k === expect ? ' selected' : '') + '>' + esc(ACCOUNTS[k]) + '</option>';
+      }).join('') + '</select></div>' +
+      '</div>' +
+      '<p class="hint" id="hp-hint"></p>' +
+      '<button type="submit" class="btn btn-primary" id="hp-save" style="width:100%">Potvrdit rezervaci</button>' +
+      '</form>';
+    openOverlay();
+
+    var accEl = $('hp-account'), hintEl = $('hp-hint');
+    function accFeedback() {
+      var mism = accountMismatch(h.invoice_currency, accEl.value);
+      if (mism) {
+        hintEl.className = 'hint phone-bad';
+        hintEl.textContent = '⚠︎ Peníze přišly jinam, než měly: ' + mism
+          + '. Rezervaci to potvrdí (host svoje udělal), ale bude potřeba přeúčtovat.';
+      } else {
+        hintEl.className = 'hint phone-ok';
+        hintEl.textContent = '✓ Účet sedí s měnou faktury.';
+      }
+    }
+    accEl.addEventListener('change', accFeedback);
+    accFeedback();
+
+    $('hp-form').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var btn = $('hp-save'); btn.disabled = true; btn.textContent = 'Ukládám…';
+      var amt = $('hp-amount').value === '' ? null : Number($('hp-amount').value);
+      setHoldStatus(h, 'confirmed', null, amt, accEl.value, 'Potvrzeno — z předrezervace je rezervace.')
+        .then(closeOverlay);
+    });
+  }
+
+  // Stejné pravidlo jako vr_hold_account_mismatch() v databázi. Klient ho počítá
+  // sám, aby uměl varovat DŘÍV, než se cokoli uloží — server je pak druhá vrstva.
+  function accountMismatch(currency, account) {
+    if (!currency || !account) return null;
+    if (account === 'SINTERA') return 'faktura zní na hlavní účet Sintery, ne na účet Villa Rudolf';
+    if (account === 'JINY') return 'faktura zní na jiný než villový účet';
+    if (currency === 'CZK' && account !== 'VR_CZK') return 'faktura je v CZK, ale nezní na korunový účet Villa Rudolf';
+    if (currency === 'EUR' && account !== 'VR_EUR') return 'faktura je v EUR, ale nezní na eurový účet Villa Rudolf';
+    return null;
+  }
+
+  function openHoldEditor(h) {
+    h = h || null;
+    var isEdit = !!h;
+    $('sheet-title').textContent = isEdit ? 'Upravit předrezervaci' : 'Nová předrezervace';
+    var v = function (k, d) { return h && h[k] != null ? h[k] : (d == null ? '' : d); };
+    var sel = function (val, cur) { return val === cur ? ' selected' : ''; };
+
+    $('sheet-body').innerHTML =
+      '<form id="hd-form" autocomplete="off">' +
+      '<div class="notice">Předrezervaci zakládej ve chvíli, kdy <b>vystavíš zálohovou fakturu</b>. ' +
+      'Od té chvíle termín drží — v kalendáři, v majitelském přehledu i ve veřejné dostupnosti na webu.</div>' +
+      '<div class="row2">' +
+      '<div class="field"><label>Příjezd</label><input id="hd-arrival" type="date" value="' + esc(v('arrival')) + '"></div>' +
+      '<div class="field"><label>Odjezd</label><input id="hd-departure" type="date" value="' + esc(v('departure')) + '"></div>' +
+      '</div>' +
+      '<div class="row2">' +
+      '<div class="field"><label>Odkud poptávka</label><select id="hd-channel">' +
+      ['Přímá', 'E-chalupy', 'Telefon', 'E-mail', 'Airbnb', 'Booking.com', 'Fewo-direkt'].map(function (c) {
+        return '<option value="' + esc(c) + '"' + sel(c, v('channel', 'Přímá')) + '>' + esc(c) + '</option>';
+      }).join('') + '</select></div>' +
+      '<div class="field"><label>Host (interní poznámka)</label><input id="hd-guest" maxlength="120" value="' + esc(v('guest_note')) + '"></div>' +
+      '</div>' +
+      '<div class="field"><label>Číslo zálohové faktury</label><input id="hd-invno" maxlength="60" placeholder="např. 2026-0142" value="' + esc(v('invoice_no')) + '"></div>' +
+      '<div class="row2">' +
+      '<div class="field"><label>Částka</label><input id="hd-amount" type="number" step="0.01" min="0" value="' + esc(v('invoice_amount')) + '"></div>' +
+      '<div class="field"><label>Měna</label><select id="hd-currency">' +
+      ['CZK', 'EUR'].map(function (c) { return '<option value="' + c + '"' + sel(c, v('invoice_currency', 'CZK')) + '>' + c + '</option>'; }).join('') +
+      '</select></div>' +
+      '</div>' +
+      '<div class="row2">' +
+      '<div class="field"><label>Vystavena</label><input id="hd-issued" type="date" value="' + esc(v('invoice_issued', isoToday())) + '"></div>' +
+      '<div class="field"><label>Splatnost</label><input id="hd-due" type="date" value="' + esc(v('invoice_due')) + '"></div>' +
+      '</div>' +
+      '<div class="field"><label>Faktura zní na účet</label><select id="hd-account">' +
+      Object.keys(ACCOUNTS).map(function (k) {
+        return '<option value="' + k + '"' + sel(k, v('invoice_account', 'VR_CZK')) + '>' + esc(ACCOUNTS[k]) + '</option>';
+      }).join('') + '</select>' +
+      '<p class="hint" id="hd-acc-info"></p></div>' +
+      '<div class="field"><label>Drží termín do</label><input id="hd-until" type="date" value="' + esc(v('hold_until')) + '">' +
+      '<p class="hint">Nevyplněné = splatnost + 3 dny (převod přes víkend dorazí až v pondělí). Bez splatnosti 14 dní.</p></div>' +
+      '<div class="field"><label>Poznámka</label><textarea id="hd-note" maxlength="500">' + esc(v('note')) + '</textarea></div>' +
+      '<p class="form-err" id="hd-err" hidden></p>' +
+      '<button type="submit" class="btn btn-primary" id="hd-save" style="width:100%">' +
+      (isEdit ? 'Uložit změny' : 'Založit předrezervaci') + '</button>' +
+      (isEdit ? '<button type="button" class="btn btn-danger" id="hd-del" style="width:100%;margin-top:10px">Smazat záznam</button>' : '') +
+      '</form>';
+    openOverlay();
+
+    // Pojistka na účet živě při psaní — ne až po uložení. Faktura se opravuje
+    // levně jen do chvíle, než ji host dostane.
+    var curEl = $('hd-currency'), accEl = $('hd-account'), accInfo = $('hd-acc-info');
+    function accFeedback() {
+      var mism = accountMismatch(curEl.value, accEl.value);
+      if (mism) {
+        accInfo.className = 'hint phone-bad';
+        accInfo.textContent = '⚠︎ ' + mism + '. Zkontroluj v iDokladu, na jaký účet je faktura vystavená.';
+      } else {
+        accInfo.className = 'hint phone-ok';
+        accInfo.textContent = '✓ Účet sedí s měnou faktury.';
+      }
+    }
+    curEl.addEventListener('change', accFeedback);
+    accEl.addEventListener('change', accFeedback);
+    accFeedback();
+
+    $('hd-form').addEventListener('submit', function (ev) { ev.preventDefault(); saveHold(h); });
+    if (isEdit) {
+      $('hd-del').addEventListener('click', function () {
+        if (!window.confirm('Smazat záznam úplně? Pro propadlou předrezervaci použij radši „Propadla“ — '
+          + 'termín se uvolní a doklad o vystavené faktuře zůstane.')) return;
+        rpc('vr_admin_delete_hold', { p_id: h.id }).then(function (res) {
+          if (res.data && res.data.ok) { toast('Smazáno.'); reload().then(closeOverlay); }
+          else toast('Smazání se nepodařilo.');
+        });
+      });
+    }
+  }
+
+  function saveHold(existing) {
+    var err = $('hd-err'); err.hidden = true;
+    var arrival = $('hd-arrival').value, departure = $('hd-departure').value;
+    if (!arrival || !departure) { err.textContent = 'Vyplňte příjezd i odjezd.'; err.hidden = false; return; }
+    if (departure <= arrival) { err.textContent = 'Odjezd musí být po příjezdu.'; err.hidden = false; return; }
+
+    var num = function (id) { var x = $(id).value; return x === '' ? null : Number(x); };
+    var payload = {
+      p_id: existing ? existing.id : null,
+      p_arrival: arrival,
+      p_departure: departure,
+      p_status: existing ? existing.status : 'hold',
+      p_hold_until: $('hd-until').value || null,
+      p_channel: $('hd-channel').value,
+      p_guest_note: $('hd-guest').value.trim(),
+      p_invoice_no: $('hd-invno').value.trim(),
+      p_invoice_amount: num('hd-amount'),
+      p_invoice_currency: $('hd-currency').value,
+      p_invoice_issued: $('hd-issued').value || null,
+      p_invoice_due: $('hd-due').value || null,
+      p_invoice_account: $('hd-account').value,
+      p_note: $('hd-note').value.trim()
+    };
+    var btn = $('hd-save'); btn.disabled = true; btn.textContent = 'Ukládám…';
+    rpc('vr_admin_upsert_hold', payload).then(function (res) {
+      var d = res.data || {};
+      if (!d.ok) {
+        err.textContent = mapErr(d.error || d.message); err.hidden = false;
+        btn.disabled = false; btn.textContent = existing ? 'Uložit změny' : 'Založit předrezervaci';
+        return;
+      }
+      toast(existing ? 'Uloženo.' : 'Předrezervace založena — termín drží.');
+      reload().then(closeOverlay);
+    }).catch(function () {
+      err.textContent = 'Uložení se nepodařilo. Zkuste to znovu.'; err.hidden = false;
+      btn.disabled = false; btn.textContent = existing ? 'Uložit změny' : 'Založit předrezervaci';
+    });
+  }
+
+  /* ============ PLATBY (vr_payments) ============ */
+  // Pohyby ze tří účtů u Fia (n8n, VrPaymentWatch) spárované na předrezervace.
+  // Sem patří jen to, co čeká na člověka:
+  //   * NÁVRH — spárováno, ale nepotvrzeno (dokud se párování neusadí, běží
+  //     ingest s p_autoconfirm=false a všechno je návrh),
+  //   * NEPŘIŘAZENO — platba, ke které se nenašla faktura. Přesně ten původní
+  //     případ: peníze v bance viděné, ale rezervace z nich nevznikla.
+  var PAY_HOW = {
+    vs_exact:          'variabilní symbol i částka sedí',
+    ref_exact:         'číslo faktury v textu platby, částka sedí',
+    vs_amount_differs: 'variabilní symbol sedí, částka ne',
+    amount_window:     'sedí částka i termín, variabilní symbol chybí',
+    ruka:              'přiřazeno ručně'
+  };
+
+  function loadPayments() {
+    // Bez migrace 20260910_vr_payments.sql vrátí RPC 404 → prázdno, sekce se neukáže.
+    return rpc('vr_admin_list_payments', {}).then(function (res) {
+      return (res.data && res.data.ok && res.data.payments) ? res.data.payments : [];
+    }).catch(function () { return []; });
+  }
+
+  function payNeedsMe(p) {
+    if (p.ignored_at) return false;
+    return !p.matched_hold || !p.confirmed;
+  }
+
+  function payCard(p, idx) {
+    var unmatched = !p.matched_hold;
+    var lines = [];
+    lines.push('🏦 ' + esc(accountLabel(p.account)) + ' · ' + esc(fmtDayShort(p.booked_on))
+      + (p.vs ? ' · VS ' + esc(p.vs) : ' · bez variabilního symbolu'));
+    if (p.counterparty) lines.push('👤 ' + esc(p.counterparty));
+    if (p.message) lines.push('✉️ ' + esc(p.message));
+    if (!unmatched) {
+      lines.push('🧾 navrženo k faktuře ' + esc(p.hold_invoice_no || '—')
+        + ' · ' + esc(fmtShort(p.hold_arrival, p.hold_departure))
+        + ' · ' + esc(PAY_HOW[p.matched_how] || p.matched_how || ''));
+    }
+
+    var btns = '';
+    if (!unmatched) btns += '<button type="button" class="btn btn-sm btn-primary" data-pay-ok="' + idx + '">Potvrdit</button>';
+    btns += '<button type="button" class="btn btn-sm btn-outline" data-pay-pick="' + idx + '">'
+      + (unmatched ? 'Přiřadit' : 'Jinam') + '</button>';
+    btns += '<button type="button" class="btn btn-sm btn-ghost" data-pay-skip="' + idx + '">Nepatří sem</button>';
+
+    return '<div class="pay' + (unmatched ? ' pay-open' : '') + '">'
+      + '<div class="pay-main">'
+      + '<div class="pay-t">' + esc(fmtMoney(p.amount, p.currency))
+      + '<span class="pay-st">' + (unmatched ? '❓ nepřiřazeno' : '📎 návrh k odklepnutí') + '</span></div>'
+      + '<div class="pay-d">' + lines.join('<br>') + '</div>'
+      + '</div><div class="pay-actions">' + btns + '</div></div>';
+  }
+
+  function renderPayments() {
+    var panel = $('pays-panel'), host = $('pays');
+    if (!panel || !host) return;
+    lastPays = payments.filter(payNeedsMe);
+    if (!lastPays.length) { panel.hidden = true; return; }
+    panel.hidden = false;
+    host.innerHTML = lastPays.map(payCard).join('');
+
+    var on = function (attr, fn) {
+      Array.prototype.forEach.call(host.querySelectorAll('[' + attr + ']'), function (btn) {
+        btn.addEventListener('click', function () {
+          var p = lastPays[+btn.getAttribute(attr)];
+          if (p) fn(p, btn);
+        });
+      });
+    };
+    on('data-pay-ok', function (p, btn) { btn.disabled = true; assignPayment(p, p.matched_hold, true); });
+    on('data-pay-pick', function (p) { openPayPicker(p); });
+    on('data-pay-skip', function (p, btn) {
+      if (!window.confirm('Označit platbu ' + fmtMoney(p.amount, p.currency)
+          + ' jako nesouvisející s vilou? Zůstane uložená, jen zmizí ze seznamu.')) return;
+      btn.disabled = true;
+      rpc('vr_admin_ignore_payment', { p_id: p.id }).then(function (res) {
+        if (res.data && res.data.ok) { toast('Odloženo.'); reload(); }
+        else { btn.disabled = false; toast('Uložení se nepodařilo.'); }
+      }).catch(function () { btn.disabled = false; toast('Uložení se nepodařilo.'); });
+    });
+  }
+
+  function assignPayment(p, holdId, confirm) {
+    return rpc('vr_admin_assign_payment', { p_id: p.id, p_hold_id: holdId, p_confirm: !!confirm })
+      .then(function (res) {
+        if (res.data && res.data.ok) {
+          toast(confirm ? 'Potvrzeno — z předrezervace je rezervace.' : 'Platba přiřazena.');
+          return reload();
+        }
+        toast('Uložení se nepodařilo.');
+      }).catch(function () { toast('Uložení se nepodařilo.'); });
+  }
+
+  // Ruční přiřazení: nabídne se jen to, co dává smysl — otevřené předrezervace
+  // a přímé rezervace. Řadí se podle příjezdu, ne podle částky: hledá se termín.
+  function openPayPicker(p) {
+    var open = holds.filter(holdOpen);
+    $('sheet-title').textContent = 'Přiřadit platbu';
+    $('sheet-body').innerHTML =
+      '<div class="notice">' + esc(fmtMoney(p.amount, p.currency)) + ' · '
+      + esc(accountLabel(p.account)) + ' · ' + esc(fmtDayShort(p.booked_on))
+      + (p.vs ? ' · VS ' + esc(p.vs) : '') + (p.counterparty ? ' · ' + esc(p.counterparty) : '') + '</div>'
+      + (open.length
+        ? '<div class="picklist">' + open.map(function (h, i) {
+            return '<button type="button" class="pick" data-pick="' + i + '">'
+              + '<b>' + esc(fmtShort(h.arrival, h.departure)) + '</b>'
+              + '<span>' + esc(h.invoice_no || 'bez čísla faktury') + ' · '
+              + esc(fmtMoney(h.invoice_amount, h.invoice_currency))
+              + ' · ' + esc((HOLD_STATUS[h.status] || {}).label || h.status) + '</span></button>';
+          }).join('') + '</div>'
+        : '<p class="hint">Žádná otevřená předrezervace. Nejdřív ji založ tlačítkem „+ Předrezervace".</p>')
+      + '<p class="hint">Potvrzením se z předrezervace stane rezervace a zapíše se, na který účet '
+      + 'platba dorazila — když je to cizí účet, objeví se úkol přeúčtovat.</p>';
+    openOverlay();
+    Array.prototype.forEach.call($('sheet-body').querySelectorAll('[data-pick]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var h = open[+btn.getAttribute('data-pick')];
+        if (!h) return;
+        btn.disabled = true;
+        assignPayment(p, h.id, true).then(closeOverlay);
       });
     });
   }
@@ -927,6 +1481,10 @@
       var b = s.booking;
 
       var pills = '<span class="pill pill-plat">' + esc(s.platform) + '</span>';
+      if (s.hold && s.hold.status === 'hold') {
+        pills += '<span class="pill pill-hold">⏳ předrezervace'
+          + (s.hold.hold_until ? ' do ' + esc(fmtDayShort(s.hold.hold_until)) : '') + '</span>';
+      }
       if (running) pills += '<span class="pill pill-run">právě probíhá</span>';
       else if (soon) pills += '<span class="pill pill-soon">za ' + daysBetween(today, s.start) + ' dní</span>';
 
@@ -965,6 +1523,15 @@
           '<div class="progress">' + progress + '</div>' +
           '<div class="status paired">🔗 spárováno · ' + sentCount + '/' + seq.length + ' zpráv</div>' +
           '<div class="stay-actions"></div></div>';
+      } else if (s.hold) {
+        // Přímý prodej bez hosta: u nezaplacené předrezervace se host doplňovat
+        // nemusí, u uhrazené ano — je to pobyt jako každý jiný.
+        body =
+          '<div class="stay-guest">' +
+          '<div class="status unpaired">' + (s.hold.status === 'hold'
+            ? '⏳ zálohová faktura vystavená, zaplacená zatím není'
+            : '✅ uhrazená přímá rezervace — doplnit hosta') + '</div>' +
+          '<div class="stay-actions"></div></div>';
       } else {
         body =
           '<div class="stay-guest">' +
@@ -978,6 +1545,11 @@
         det.className = 'btn btn-sm btn-primary'; det.textContent = 'Detail a zprávy';
         det.onclick = function () { openDetail(s); };
         actions.appendChild(det);
+      } else if (s.hold && s.hold.status === 'hold') {
+        var hb = document.createElement('button');
+        hb.className = 'btn btn-sm btn-primary'; hb.textContent = 'Předrezervace';
+        hb.onclick = function () { openHoldEditor(s.hold); };
+        actions.appendChild(hb);
       } else {
         var add = document.createElement('button');
         add.className = 'btn btn-sm btn-primary'; add.textContent = 'Doplnit hosta';
@@ -1139,6 +1711,9 @@
       case 'dates_invalid': return 'Zkontrolujte prosím termín pobytu.';
       case 'too_long': return 'Některé pole je příliš dlouhé.';
       case 'uidh_taken': return 'Tento pobyt z kalendáře už má přiřazeného hosta.';
+      case 'status_invalid': return 'Neznámý stav předrezervace.';
+      case 'currency_invalid': return 'Měna musí být CZK nebo EUR.';
+      case 'account_invalid': return 'Neznámý bankovní účet.';
       case 'not_found': return 'Pobyt nebyl nalezen.';
       case 'rate_limited': return 'Příliš mnoho operací. Zkuste to za chvíli.';
       case 'unauthorized': return 'Neplatný přístup.';
@@ -1671,9 +2246,9 @@
   /* ============ Reload ============ */
   function reload() {
     $('loadline').hidden = false; $('loadline').textContent = 'Načítám pobyty a kalendář…';
-    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests()]).then(function (r) {
+    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests(), loadHolds(), loadPayments()]).then(function (r) {
       calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {}; serverConflicts = r[3] || [];
-      requests = r[4] || [];
+      requests = r[4] || []; holds = r[5] || []; payments = r[6] || [];
       buildStays();
       $('loadline').hidden = true;
       renderConflicts(); refreshBoards();
@@ -1726,6 +2301,10 @@
     $('sheet-close').addEventListener('click', closeOverlay);
     $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeOverlay(); });
     $('btn-manual').addEventListener('click', function () { openEditor({}); });
+    $('btn-hold').addEventListener('click', function () { openHoldEditor(null); });
+    $('btn-hold-closed').addEventListener('click', function () {
+      holdsShowClosed = !holdsShowClosed; renderHolds();
+    });
     $('btn-req-done').addEventListener('click', function () {
       requestsShowDone = !requestsShowDone; renderRequests();
     });
