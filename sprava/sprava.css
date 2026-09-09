@@ -15,6 +15,9 @@
   --err:#E5877A;
   --ok:#8FBF8A;
   --warn:#E3B457;
+  /* předrezervace — stejný odstín jako 'Přímá' v kalendáři (villa-booking-calendar) */
+  --violet:#A569BD;
+  --violet-2:color-mix(in oklab,var(--violet),#ffffff 22%);
   --radius:14px;
   --radius-sm:10px;
 }
@@ -349,9 +352,43 @@ a{color:var(--ember-2)}
 /* vyřízené: ztlumené, ale čitelné — jsou vidět jen po rozkliknutí „Vyřízené (n)" */
 .req-done{border-left-color:var(--line-2);background:var(--card);opacity:.62}
 
+/* ===== PŘEDREZERVACE =========================================================
+   Fialová schválně nesousedí s barvami platforem ani s ember (žádosti) — v
+   kalendáři má předrezervace stejnou barvu, ať je to na obou místech totéž.
+   Sekce sedí pod „Dnes na řadě": není to úkol na dnešek, ale drží peníze. */
+.panel-holds{margin:14px 0 4px}
+.holds{display:flex;flex-direction:column;gap:8px}
+.hold{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line-2);
+  border-left:4px solid var(--violet);border-radius:var(--radius-sm);padding:12px 13px;
+  background:color-mix(in oklab,var(--violet),transparent 93%)}
+.hold-main{flex:1 1 auto;min-width:0}
+.hold-actions{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.hold-t{font-weight:600;font-size:15px;color:var(--text)}
+.hold-n{color:var(--dim);font-weight:400;font-size:13px}
+.hold-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.hold-d{color:var(--muted);font-size:13px;margin-top:7px;line-height:1.65}
+.hold-st{font-size:11px;font-weight:700;letter-spacing:.02em;padding:2px 9px;border-radius:20px;
+  border:1px solid transparent}
+.hold-st-soon{background:color-mix(in oklab,var(--violet),transparent 78%);color:var(--violet-2)}
+.hold-st-ok{background:color-mix(in oklab,var(--ok),transparent 80%);color:var(--ok)}
+.hold-st-muted{background:var(--field);color:var(--dim)}
+/* pojistka na účet + „termín není zablokovaný" — obojí je časově citlivé, proto
+   se to hlásí i tady na kartě, nejen v sekci Problémy */
+.hold-warn{margin-top:9px;padding:8px 11px;border-radius:var(--radius-sm);font-size:13px;line-height:1.5;
+  background:color-mix(in oklab,var(--err),transparent 88%);color:var(--text);
+  border:1px solid color-mix(in oklab,var(--err),transparent 62%)}
+.hold-warn-soft{background:color-mix(in oklab,var(--warn),transparent 89%);
+  border-color:color-mix(in oklab,var(--warn),transparent 62%)}
+/* propadlá splatností: termín už nedrží, ale záznam o faktuře zůstává */
+.hold-expired{border-left-color:var(--warn);background:color-mix(in oklab,var(--warn),transparent 93%)}
+.hold-closed{border-left-color:var(--line-2);background:var(--card);opacity:.62}
+.pill-hold{background:color-mix(in oklab,var(--violet),transparent 78%);color:var(--violet-2);border-color:transparent}
+
 @media(max-width:420px){
   .req{flex-direction:column;align-items:stretch}
   .req .btn{align-self:flex-start}
+  .hold{flex-direction:column;align-items:stretch}
+  .hold-actions{flex-direction:row;flex-wrap:wrap}
   .row2{grid-template-columns:1fr}
   .task{flex-direction:column;align-items:stretch}
   .task-actions{flex-direction:row}

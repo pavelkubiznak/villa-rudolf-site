@@ -7,9 +7,15 @@
  *   (intervaly [start,end) → den odjezdu = den příjezdu NENÍ konflikt); identické
  *   uidh se ignorují. ESKALUJE (zápis + e-mail) jen když jde o reálné riziko:
  *   RŮZNÉ platformy (kanály se nesynchronizují — každý prodá stejný termín, přesně
- *   případ z 7/2027) NEBO oba pobyty mají hosta ve vr_bookings. Překryv na STEJNÉ
- *   platformě bez hostů = artefakt kalendáře (blok / úprava / duplicitní iCal) a
- *   nezapisuje se (jedna platforma svůj inventář dvakrát neprodá).
+ *   případ z 7/2027) NEBO oba pobyty mají hosta ve vr_bookings NEBO je aspoň jedna
+ *   strana přímý prodej (platform 'Přímá' — předrezervace či potvrzená přímá
+ *   rezervace ze Supabase, viz vr_holds; za tou stojí vystavená faktura, takže dvě
+ *   přes sebe jsou dvojitý prodej, ne artefakt). Překryv na STEJNÉ platformě bez
+ *   hostů = artefakt kalendáře (blok / úprava / duplicitní iCal) a nezapisuje se
+ *   (jedna platforma svůj inventář dvakrát neprodá).
+ * POZN.: history.json obsahuje od 9/2026 i přímý prodej ('Přímá', pole kind).
+ *   Hold se SHODNÝM termínem jako událost z feedu se do něj vůbec nepublikuje
+ *   (je to týž pobyt zablokovaný na platformě), takže se sem falešný pár nedostane.
  * DETEKCE ZMIZELÝCH: booking s uidh a departure>=dnes, jehož uidh NENÍ ve feedu =
  *   pravděpodobné storno. Jen pro arrival do 12 měsíců (feed má 13měsíční cutoff
  *   dopředu → vzdálenější pobyty můžou chybět legitimně, žádný false poplach).
@@ -58,7 +64,10 @@ for (let i = 0; i < feed.length; i++) {
     const ba = byUidh[a.uidh] || null, bb = byUidh[b.uidh] || null;
     const samePlatform = (a.platform || '') === (b.platform || '');
     const bothPaired = !!ba && !!bb;
-    if (samePlatform && !bothPaired) continue; // artefakt kalendáře → neeskalovat
+    // Přímý prodej ('Přímá') je nárok podložený vystavenou zálohovou fakturou —
+    // dva takové přes sebe nejsou artefakt kalendáře, ale dvojitý prodej termínu.
+    const direct = a.platform === 'Přímá' || b.platform === 'Přímá';
+    if (samePlatform && !bothPaired && !direct) continue; // artefakt kalendáře → neeskalovat
     let lo, hi, blo, bhi;
     if (a.uidh < b.uidh) { lo = a; hi = b; blo = ba; bhi = bb; }
     else { lo = b; hi = a; blo = bb; bhi = ba; }

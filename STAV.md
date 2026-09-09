@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 26. 8. 2026
+Aktualizováno: 9. 9. 2026
 
 ---
 
@@ -55,6 +55,37 @@ funkci na produkční DB nemá držet v ruce cizí člověk. Oprava: heslo do va
 dlouho, kolik hostů") to znamená, že proběhlé pobyty bez evidence osob se tiše ztrácejí.
 Než se z `vr_bookings` začne dělat dlouhodobá evidence, je potřeba tohle vyřešit — a v repu
 kalendáře taky 18měsíční prune `history.json`.
+
+---
+
+## 💳 Předrezervace a přímý prodej → `vr_holds` + `/sprava/` + kalendář
+
+| | Stav |
+|---|---|
+| Tabulka `vr_holds` + admin/veřejné RPC (`20260909_vr_holds.sql`) | 🟡 **kód hotov, čeká na spuštění migrace** |
+| Sekce „Předrezervace" v `/sprava/`, editor faktury, dialog „Uhrazeno" | ✅ hotovo, ověřeno v prohlížeči |
+| Pojistka měna ⇒ účet (klient i databáze) | ✅ hotovo |
+| Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
+| Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
+| `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód upraven, čeká na re-import** |
+| Automatické párování plateb (iDoklad + Fio) | ⏭️ **etapa 2, nezačato** |
+
+**Proč to vzniklo.** Pobyt prodaný napřímo nebyl v žádném feedu, takže pro systém neexistoval —
+`/sprava/` o něm nevěděla a homepage ten termín dál nabízela jako volný. Tak zmizel termín
+**14.–21. 8. 2027**: zálohová faktura vystavená i uhrazená, peníze v bance, a v systému nic.
+Spouštěčem proto **není platba, ale vystavení zálohové faktury**.
+
+*Zbývá:*
+1. **Spustit migraci** `supabase/migrations/20260909_vr_holds.sql` proti živé DB. Do té doby
+   vrací RPC 404, `/sprava/` to spolkne (sekce se neukáže) a Action kalendáře to zaloguje
+   jako `::warning::` a jede beze změny. Nasadit se to tedy dá v libovolném pořadí.
+2. **Znovu importovat `n8n/VrConflictWatch`** (Code node „Detekce konfliktů").
+3. **Zapsat termín 14.–21. 8. 2027** jako uhrazenou přímou rezervaci a **zablokovat ho na
+   platformách** — dneska je v očích všech kanálů volný.
+4. Etapa 2: párování plateb přes **iDoklad API** (kontrola, na jaký účet faktura zní, +
+   stav „uhrazeno") a **Fio API** (3 read-only tokeny: VR korunový, VR eurový, hlavní účet
+   Sintery). U Fia nepoužívat endpoint `last` — posouvá ukazatel na serveru a při pádu
+   n8n se transakce ztratí; ptát se na klouzavé okno a odduplikovat podle ID pohybu.
 
 ---
 
@@ -129,12 +160,16 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 
 ## Doporučené pořadí
 
-1. **`vr_purge_expired`** — heslo ve veřejném repu + `grant to anon`, spustit to může kdokoli
-2. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
-3. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
+1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
+   v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
+2. **Spustit migraci `20260909_vr_holds.sql`** — bez ní sekce Předrezervace nemá kam ukládat
+3. **`vr_purge_expired`** — heslo ve veřejném repu + `grant to anon`, spustit to může kdokoli
+4. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
+5. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
-4. **Polština u výletů** — podle toho, jestli chodí polští hosté
-5. **Zprávy** — až bude jasné zadání
+6. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
+7. **Polština u výletů** — podle toho, jestli chodí polští hosté
+8. **Zprávy** — až bude jasné zadání
 
 ~~Šrafování v kalendáři~~ — hotovo 13. 8.
 
@@ -142,7 +177,7 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 
 | Práce | Repo | Klon |
 |---|---|---|
-| kalendář (šrafování, 4 feedy) | `villa-booking-calendar` | `~/villa-booking-calendar` |
+| kalendář (šrafování, 4 feedy, předrezervace) | `villa-booking-calendar` | `~/villa-booking-calendar` |
 | výlety — data a překlady | `villa-rudolf-portal` | `~/villa-rudolf-portal` |
 | výlety — zobrazení, zprávy, `/sprava/` | `villa-rudolf-site` | *(klon zatím není)* |
 

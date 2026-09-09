@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="sprava.css?v=8">
+<link rel="stylesheet" href="sprava.css?v=9">
 </head>
 <body>
 
@@ -85,10 +85,22 @@
     <p class="today-empty" id="today-empty" hidden>Pro dnešek nic nečeká — vše je odesláno. 🙂</p>
   </section>
 
+  <!-- PŘEDREZERVACE (vystavená zálohová faktura drží termín) -->
+  <!-- Schová se, když žádná není — zakládá se tlačítkem v hlavičce Pobytů, takže
+       prázdná sekce by jen ukrajovala místo nad tím, co se čte každý den. -->
+  <section class="panel panel-holds" id="holds-panel" hidden>
+    <div class="panel-head">
+      <h2 class="panel-title">Předrezervace</h2>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-hold-closed" hidden>Uzavřené</button>
+    </div>
+    <div class="holds" id="holds"></div>
+  </section>
+
   <!-- POBYTY -->
   <section class="panel">
     <div class="panel-head">
       <h2 class="panel-title">Pobyty</h2>
+      <button type="button" class="btn btn-sm btn-outline" id="btn-hold">+ Předrezervace</button>
       <button type="button" class="btn btn-sm btn-outline" id="btn-manual">+ Pobyt ručně</button>
     </div>
     <div class="stays" id="stays"></div>
@@ -109,6 +121,6 @@
   </div>
 </div>
 
-<script src="sprava.js?v=8" defer></script>
+<script src="sprava.js?v=9" defer></script>
 </body>
 </html>
