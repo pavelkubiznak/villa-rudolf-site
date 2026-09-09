@@ -42,3 +42,19 @@ vedle skutečnosti:
 12. `anon` na tabulku nedosáhne, ale veřejnou funkci zavolat smí
 
 Migrace je **idempotentní** — pustit ji podruhé projde (jen `NOTICE: … already exists`).
+
+## Co `test_vr_payments.sql` ověřuje
+
+Předpokládá už spuštěné `20260909_vr_holds.sql` i `20260910_vr_payments.sql`.
+
+- **A** první běh s `p_autoconfirm = false` nic nepotvrdí — jen navrhne
+- **B** klouzavé okno vrací tytéž pohyby znovu a **nesmí se zpracovat dvakrát**;
+  odchozí platba se přeskočí; částka, která sedí na **dvě** předrezervace, se
+  nepřiřadí (hádat je horší než nechat čekat); dílčí platba zůstane návrhem;
+  eurová SEPA platba bez VS se najde podle čísla faktury v textu
+- **C** platba na cizí účet se spáruje a potvrdí, ale hlásí `paid_mismatch`
+- **D** ruční přiřazení nepřiřazené platby potvrdí předrezervaci
+- **E** výpis toho, co čeká na člověka
+- **F** shoda variabilního symbolu (`20260142`, `2026 0142`, `0142` ano; `142` ne —
+  příliš krátké na to, aby se dalo věřit)
+- **G** `anon` na ingest nedosáhne, `service_role` ano

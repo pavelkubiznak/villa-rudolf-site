@@ -68,7 +68,10 @@ kalendáře taky 18měsíční prune `history.json`.
 | Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
 | Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
 | `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód upraven, čeká na re-import** |
-| Automatické párování plateb (iDoklad + Fio) | ⏭️ **etapa 2, nezačato** |
+| Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **kód hotov + otestován, čeká na 3 tokeny a migraci** |
+| Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
+| Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
+| Napojení na iDoklad (kontrola účtu na faktuře přímo ze zdroje) | ⏭️ **nezačato** — API se nepsalo naslepo |
 
 **Proč to vzniklo.** Pobyt prodaný napřímo nebyl v žádném feedu, takže pro systém neexistoval —
 `/sprava/` o něm nevěděla a homepage ten termín dál nabízela jako volný. Tak zmizel termín
@@ -82,10 +85,13 @@ Spouštěčem proto **není platba, ale vystavení zálohové faktury**.
 2. **Znovu importovat `n8n/VrConflictWatch`** (Code node „Detekce konfliktů").
 3. **Zapsat termín 14.–21. 8. 2027** jako uhrazenou přímou rezervaci a **zablokovat ho na
    platformách** — dneska je v očích všech kanálů volný.
-4. Etapa 2: párování plateb přes **iDoklad API** (kontrola, na jaký účet faktura zní, +
-   stav „uhrazeno") a **Fio API** (3 read-only tokeny: VR korunový, VR eurový, hlavní účet
-   Sintery). U Fia nepoužívat endpoint `last` — posouvá ukazatel na serveru a při pádu
-   n8n se transakce ztratí; ptát se na klouzavé okno a odduplikovat podle ID pohybu.
+4. **Spustit migraci** `supabase/migrations/20260910_vr_payments.sql`.
+5. **Založit tři read-only tokeny Fia** (VR korunový, VR eurový, hlavní účet Sintery),
+   vložit je do prostředí n8n jako `FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA` a poskládat
+   workflow podle `n8n/VrPaymentWatch/README.md`. **První běhy nech read-only**
+   (`AUTOCONFIRM = false`) a přečti, co párování navrhlo — teprve pak povol zápis.
+6. Až bude párování usazené: napojit **iDoklad** a číst z něj, na jaký účet je faktura
+   opravdu vystavená (dnes se to bere z toho, co se zapíše ručně v `/sprava/`).
 
 ---
 

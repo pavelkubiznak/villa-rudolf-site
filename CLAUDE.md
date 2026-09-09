@@ -83,6 +83,51 @@ zpátky feedem. Skript kalendáře proto hold se **shodným** `(start, end)` nep
 falešná dvojitá rezervace. Naopak **částečný** překryv předrezervace s cizí rezervací je
 skutečný konflikt a vyskočí červený banner.
 
+## Párování plateb (`vr_payments`) — etapa 2
+
+Předrezervaci potvrzuje majitel kliknutím na „Uhrazeno". Druhá cesta: bankovní pohyby ze
+**tří účtů u Fia** (VR korunový, VR eurový, **a hlavní účet Sintery**) natáhne n8n
+(`n8n/VrPaymentWatch`) a `vr_ingest_payments()` je zkusí spárovat s vystavenou fakturou.
+
+Sintera se čte schválně: faktura se dá omylem vystavit na ni, a kdyby se sledovaly jen
+villové účty, taková platba by se **ztratila** — předrezervace by propadla, přestože host
+zaplatil. Párování jde podle variabilního symbolu bez ohledu na účet; `paid_mismatch` pak
+řekne, že je potřeba přeúčtovat.
+
+**Žebříček jistoty — samo se potvrzuje jen nejvyšší stupeň:**
+
+| | Podmínka | Co se stane |
+|---|---|---|
+| 1 | číslo faktury sedí (z VS, nebo z textu platby u SEPA) **a** měna **a** částka | potvrdí se samo * |
+| 2 | číslo faktury sedí, částka ne (záloha / doplatek) | návrh k odklepnutí |
+| 3 | bez VS: přesná částka + měna, v okně, a **jediný** kandidát | návrh k odklepnutí |
+| 4 | cokoli jiného | **nepřiřazená platba** — vlastní sekce v `/sprava/` |
+
+\* a i ten jen když `p_autoconfirm = true`. **První ostré běhy mají zůstat read-only**
+(`AUTOCONFIRM = false` v Code node): pravidla jsou postavená proti dokumentaci Fia, ne proti
+skutečnému výpisu tohohle účtu. Stejný postup jako u čtyř feedů v kalendáři — přečíst první
+dávku, pak teprve povolit zápis. Přepnutí **nepůsobí zpětně** (pohyb se podruhé nezpracuje).
+
+Nepřiřazená platba **není chyba k zahození** — je to přesně ten případ, kterým celý modul
+začal: peníze v bance viděné, ale nikomu nedošlo, že jimi vznikla rezervace.
+
+Dvě věci, na kterých to stojí:
+- **Ambiguita se nikdy nehádá.** Když na částku bez VS sedí dvě předrezervace, platba
+  zůstane nepřiřazená. Ceny se z ceníku opakují a spárovat platbu k cizí rezervaci je horší
+  než nechat ji čekat na kliknutí.
+- **Fio se nečte endpointem `last`.** Drží ukazatel na své straně a posouvá ho při stažení —
+  pád n8n mezi stažením a zápisem by ty pohyby ztratil natrvalo. Čte se klouzavé okno 30 dní
+  a odduplikovává se podle ID pohybu (unikátní index na `(source, account, tx_id)`).
+
+Tokeny Fia patří do prostředí n8n instance (`FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA`),
+**nikdy do repa** — a vždy **jen ke čtení**, k jednomu účtu. `vr_ingest_payments` má grant
+jen pro `service_role` a **žádné heslo v parametru** (viz `vr_purge_expired` ve `STAV.md`,
+kam vede opak).
+
+**iDoklad zatím napojený není.** Kontrola, na jaký účet faktura zní, se dnes dělá z toho, co
+majitel zapíše v editoru předrezervace — pravidlo `měna ⇒ účet` varuje živě při psaní. Číst
+to přímo z iDokladu je další krok; jeho API se sem nepsalo naslepo.
+
 ⚠️ **`n8n/VrConflictWatch` je potřeba znovu importovat** — referenční kód byl upraven, aby
 překryv dvou přímých prodejů („Přímá" × „Přímá") neschoval mezi artefakty kalendáře.
 

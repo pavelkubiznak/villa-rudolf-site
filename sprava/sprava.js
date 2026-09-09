@@ -32,6 +32,8 @@
   var holds = [];           // předrezervace + přímé rezervace (vr_admin_list_holds)
   var holdsShowClosed = false;  // propadlé a zrušené jsou schované, dokud si je nevyžádáš
   var lastHolds = [];       // právě vykreslené pořadí (pro obsluhu tlačítek)
+  var payments = [];        // bankovní pohyby z Fia (vr_admin_list_payments)
+  var lastPays = [];        // právě vykreslené pořadí (pro obsluhu tlačítek)
   var requests = [];        // žádosti z webového formuláře (vr_admin_list_requests)
   var requestsShowDone = false; // vyřízené žádosti jsou schované, dokud si je nevyžádáš
   var lastRequests = [];    // právě vykreslené pořadí (pro obsluhu tlačítek)
@@ -657,7 +659,7 @@
   // Pod konfliktním bannerem, nad DNES. Řazeno podle blízkosti příjezdu.
   //  (a) pobyt bez telefonu  (b) příjezd do 7 dnů bez kódu dveří
   //  (c) nespárovaný pobyt z kalendáře  (d) odkaz na aktivní konflikt (jen link na banner)
-  function refreshBoards() { renderRequests(); renderHolds(); renderProblems(); renderToday(); renderStays(); }
+  function refreshBoards() { renderRequests(); renderHolds(); renderPayments(); renderProblems(); renderToday(); renderStays(); }
 
   /* ============ Render: ŽÁDOSTI Z WEBU ============ */
   // Formulář na homepage zapisuje do vr_requests přes RPC vr_request. Do 12. 8. 2026
@@ -775,6 +777,13 @@
       else if (holdOpen(h) && !blockedOnPlatform(h)) probs.push({ kind: 'holdblock', hold: h, date: h.arrival });
     });
 
+    // (f) platba, ke které se nenašla faktura. Přesně tím tenhle modul začal:
+    //     peníze v bance viděné, ale rezervace z nich nevznikla.
+    payments.forEach(function (p) {
+      if (p.ignored_at || p.matched_hold) return;
+      probs.push({ kind: 'payopen', pay: p, date: p.booked_on });
+    });
+
     stays.forEach(function (s) {
       var b = s.booking;
       if (!b) {
@@ -825,6 +834,12 @@
         html += probCard('red', '🏦 Předrezervace ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — faktura zní na špatný účet',
           esc(p.hold.account_mismatch) + '. Oprav ji v iDokladu, dokud ji host nezaplatil'
           + (p.hold.invoice_no ? ' (faktura ' + esc(p.hold.invoice_no) + ')' : '') + '.', i, 'Otevřít');
+      } else if (p.kind === 'payopen') {
+        html += probCard('warn', '❓ Nepřiřazená platba ' + esc(fmtMoney(p.pay.amount, p.pay.currency)),
+          esc(fmtDayShort(p.pay.booked_on)) + ' · ' + esc(accountLabel(p.pay.account))
+          + (p.pay.vs ? ' · VS ' + esc(p.pay.vs) : ' · bez variabilního symbolu')
+          + (p.pay.counterparty ? ' · ' + esc(p.pay.counterparty) : '')
+          + '. Nenašla se k ní faktura — přiřaď ji, nebo ji odlož.', i, 'Přiřadit');
       } else if (p.kind === 'holdpaid') {
         html += probCard('warn', '💸 ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — platba přišla na cizí účet',
           'Peníze dorazily na ' + esc(accountLabel(p.hold.paid_account)) + '. Rezervace platí (host svoje udělal), '
@@ -852,6 +867,7 @@
         var p = lastProblems[+btn.getAttribute('data-prob')];
         if (!p) return;
         if (p.kind === 'unpaired') openEditor({ stay: p.stay });
+        else if (p.pay) openPayPicker(p.pay);
         else if (p.hold) openHoldEditor(p.hold);
         else openDetail(p.stay);
       });
@@ -1194,6 +1210,131 @@
     }).catch(function () {
       err.textContent = 'Uložení se nepodařilo. Zkuste to znovu.'; err.hidden = false;
       btn.disabled = false; btn.textContent = existing ? 'Uložit změny' : 'Založit předrezervaci';
+    });
+  }
+
+  /* ============ PLATBY (vr_payments) ============ */
+  // Pohyby ze tří účtů u Fia (n8n, VrPaymentWatch) spárované na předrezervace.
+  // Sem patří jen to, co čeká na člověka:
+  //   * NÁVRH — spárováno, ale nepotvrzeno (dokud se párování neusadí, běží
+  //     ingest s p_autoconfirm=false a všechno je návrh),
+  //   * NEPŘIŘAZENO — platba, ke které se nenašla faktura. Přesně ten původní
+  //     případ: peníze v bance viděné, ale rezervace z nich nevznikla.
+  var PAY_HOW = {
+    vs_exact:          'variabilní symbol i částka sedí',
+    ref_exact:         'číslo faktury v textu platby, částka sedí',
+    vs_amount_differs: 'variabilní symbol sedí, částka ne',
+    amount_window:     'sedí částka i termín, variabilní symbol chybí',
+    ruka:              'přiřazeno ručně'
+  };
+
+  function loadPayments() {
+    // Bez migrace 20260910_vr_payments.sql vrátí RPC 404 → prázdno, sekce se neukáže.
+    return rpc('vr_admin_list_payments', {}).then(function (res) {
+      return (res.data && res.data.ok && res.data.payments) ? res.data.payments : [];
+    }).catch(function () { return []; });
+  }
+
+  function payNeedsMe(p) {
+    if (p.ignored_at) return false;
+    return !p.matched_hold || !p.confirmed;
+  }
+
+  function payCard(p, idx) {
+    var unmatched = !p.matched_hold;
+    var lines = [];
+    lines.push('🏦 ' + esc(accountLabel(p.account)) + ' · ' + esc(fmtDayShort(p.booked_on))
+      + (p.vs ? ' · VS ' + esc(p.vs) : ' · bez variabilního symbolu'));
+    if (p.counterparty) lines.push('👤 ' + esc(p.counterparty));
+    if (p.message) lines.push('✉️ ' + esc(p.message));
+    if (!unmatched) {
+      lines.push('🧾 navrženo k faktuře ' + esc(p.hold_invoice_no || '—')
+        + ' · ' + esc(fmtShort(p.hold_arrival, p.hold_departure))
+        + ' · ' + esc(PAY_HOW[p.matched_how] || p.matched_how || ''));
+    }
+
+    var btns = '';
+    if (!unmatched) btns += '<button type="button" class="btn btn-sm btn-primary" data-pay-ok="' + idx + '">Potvrdit</button>';
+    btns += '<button type="button" class="btn btn-sm btn-outline" data-pay-pick="' + idx + '">'
+      + (unmatched ? 'Přiřadit' : 'Jinam') + '</button>';
+    btns += '<button type="button" class="btn btn-sm btn-ghost" data-pay-skip="' + idx + '">Nepatří sem</button>';
+
+    return '<div class="pay' + (unmatched ? ' pay-open' : '') + '">'
+      + '<div class="pay-main">'
+      + '<div class="pay-t">' + esc(fmtMoney(p.amount, p.currency))
+      + '<span class="pay-st">' + (unmatched ? '❓ nepřiřazeno' : '📎 návrh k odklepnutí') + '</span></div>'
+      + '<div class="pay-d">' + lines.join('<br>') + '</div>'
+      + '</div><div class="pay-actions">' + btns + '</div></div>';
+  }
+
+  function renderPayments() {
+    var panel = $('pays-panel'), host = $('pays');
+    if (!panel || !host) return;
+    lastPays = payments.filter(payNeedsMe);
+    if (!lastPays.length) { panel.hidden = true; return; }
+    panel.hidden = false;
+    host.innerHTML = lastPays.map(payCard).join('');
+
+    var on = function (attr, fn) {
+      Array.prototype.forEach.call(host.querySelectorAll('[' + attr + ']'), function (btn) {
+        btn.addEventListener('click', function () {
+          var p = lastPays[+btn.getAttribute(attr)];
+          if (p) fn(p, btn);
+        });
+      });
+    };
+    on('data-pay-ok', function (p, btn) { btn.disabled = true; assignPayment(p, p.matched_hold, true); });
+    on('data-pay-pick', function (p) { openPayPicker(p); });
+    on('data-pay-skip', function (p, btn) {
+      if (!window.confirm('Označit platbu ' + fmtMoney(p.amount, p.currency)
+          + ' jako nesouvisející s vilou? Zůstane uložená, jen zmizí ze seznamu.')) return;
+      btn.disabled = true;
+      rpc('vr_admin_ignore_payment', { p_id: p.id }).then(function (res) {
+        if (res.data && res.data.ok) { toast('Odloženo.'); reload(); }
+        else { btn.disabled = false; toast('Uložení se nepodařilo.'); }
+      }).catch(function () { btn.disabled = false; toast('Uložení se nepodařilo.'); });
+    });
+  }
+
+  function assignPayment(p, holdId, confirm) {
+    return rpc('vr_admin_assign_payment', { p_id: p.id, p_hold_id: holdId, p_confirm: !!confirm })
+      .then(function (res) {
+        if (res.data && res.data.ok) {
+          toast(confirm ? 'Potvrzeno — z předrezervace je rezervace.' : 'Platba přiřazena.');
+          return reload();
+        }
+        toast('Uložení se nepodařilo.');
+      }).catch(function () { toast('Uložení se nepodařilo.'); });
+  }
+
+  // Ruční přiřazení: nabídne se jen to, co dává smysl — otevřené předrezervace
+  // a přímé rezervace. Řadí se podle příjezdu, ne podle částky: hledá se termín.
+  function openPayPicker(p) {
+    var open = holds.filter(holdOpen);
+    $('sheet-title').textContent = 'Přiřadit platbu';
+    $('sheet-body').innerHTML =
+      '<div class="notice">' + esc(fmtMoney(p.amount, p.currency)) + ' · '
+      + esc(accountLabel(p.account)) + ' · ' + esc(fmtDayShort(p.booked_on))
+      + (p.vs ? ' · VS ' + esc(p.vs) : '') + (p.counterparty ? ' · ' + esc(p.counterparty) : '') + '</div>'
+      + (open.length
+        ? '<div class="picklist">' + open.map(function (h, i) {
+            return '<button type="button" class="pick" data-pick="' + i + '">'
+              + '<b>' + esc(fmtShort(h.arrival, h.departure)) + '</b>'
+              + '<span>' + esc(h.invoice_no || 'bez čísla faktury') + ' · '
+              + esc(fmtMoney(h.invoice_amount, h.invoice_currency))
+              + ' · ' + esc((HOLD_STATUS[h.status] || {}).label || h.status) + '</span></button>';
+          }).join('') + '</div>'
+        : '<p class="hint">Žádná otevřená předrezervace. Nejdřív ji založ tlačítkem „+ Předrezervace".</p>')
+      + '<p class="hint">Potvrzením se z předrezervace stane rezervace a zapíše se, na který účet '
+      + 'platba dorazila — když je to cizí účet, objeví se úkol přeúčtovat.</p>';
+    openOverlay();
+    Array.prototype.forEach.call($('sheet-body').querySelectorAll('[data-pick]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var h = open[+btn.getAttribute('data-pick')];
+        if (!h) return;
+        btn.disabled = true;
+        assignPayment(p, h.id, true).then(closeOverlay);
+      });
     });
   }
 
@@ -2096,9 +2237,9 @@
   /* ============ Reload ============ */
   function reload() {
     $('loadline').hidden = false; $('loadline').textContent = 'Načítám pobyty a kalendář…';
-    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests(), loadHolds()]).then(function (r) {
+    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests(), loadHolds(), loadPayments()]).then(function (r) {
       calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {}; serverConflicts = r[3] || [];
-      requests = r[4] || []; holds = r[5] || [];
+      requests = r[4] || []; holds = r[5] || []; payments = r[6] || [];
       buildStays();
       $('loadline').hidden = true;
       renderConflicts(); refreshBoards();
