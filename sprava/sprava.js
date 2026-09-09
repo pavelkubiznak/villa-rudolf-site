@@ -770,6 +770,7 @@
     holds.forEach(function (h) {
       if (h.departure < today) return;
       if (h.account_mismatch && holdOpen(h)) probs.push({ kind: 'holdacc', hold: h, date: h.arrival });
+      if (h.paid_mismatch) probs.push({ kind: 'holdpaid', hold: h, date: h.arrival });
       if (holdExpired(h)) probs.push({ kind: 'holdexp', hold: h, date: h.arrival });
       else if (holdOpen(h) && !blockedOnPlatform(h)) probs.push({ kind: 'holdblock', hold: h, date: h.arrival });
     });
@@ -824,6 +825,10 @@
         html += probCard('red', '🏦 Předrezervace ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — faktura zní na špatný účet',
           esc(p.hold.account_mismatch) + '. Oprav ji v iDokladu, dokud ji host nezaplatil'
           + (p.hold.invoice_no ? ' (faktura ' + esc(p.hold.invoice_no) + ')' : '') + '.', i, 'Otevřít');
+      } else if (p.kind === 'holdpaid') {
+        html += probCard('warn', '💸 ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — platba přišla na cizí účet',
+          'Peníze dorazily na ' + esc(accountLabel(p.hold.paid_account)) + '. Rezervace platí (host svoje udělal), '
+          + 'ale je potřeba přeúčtovat na účet Villa Rudolf.', i, 'Otevřít');
       } else if (p.kind === 'holdexp') {
         html += probCard('warn', '⌛ Předrezervace ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — propadla splatnost',
           'Termín se už uvolnil. Zaplatit o pár dní později je běžné — buď prodluž, nebo potvrď jako uhrazenou, '
@@ -935,6 +940,12 @@
     if (h.account_mismatch) {
       warn += '<div class="hold-warn">🏦 ' + esc(h.account_mismatch)
         + ' — oprav fakturu, dokud ji host nezaplatil.</div>';
+    }
+    // Peníze dorazily jinam, než měly. Rezervaci to nezpochybňuje (host svoje
+    // udělal), ale zůstává úkol přeúčtovat — a ten se jinde nikde neobjeví.
+    if (h.paid_mismatch) {
+      warn += '<div class="hold-warn">💸 Platba dorazila na cizí účet ('
+        + esc(accountLabel(h.paid_account)) + ') — je potřeba přeúčtovat.</div>';
     }
     if (holdOpen(h) && !expired && !blockedOnPlatform(h)) {
       warn += '<div class="hold-warn hold-warn-soft">📅 Termín zatím není zablokovaný na platformách '

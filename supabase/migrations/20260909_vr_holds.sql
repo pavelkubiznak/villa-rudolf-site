@@ -201,6 +201,10 @@ begin
       'invoice_due',      h.invoice_due,
       'invoice_account',  h.invoice_account,
       'account_mismatch', public.vr_hold_account_mismatch(h.invoice_currency, h.invoice_account),
+      -- Kam peníze SKUTEČNĚ dorazily. Faktura mohla znít správně a přesto platba
+      -- skončila jinde (host poslal na starý účet, nebo se faktura mezitím opravila).
+      -- Rezervaci to nezpochybňuje — host svoje udělal —, ale je potřeba přeúčtovat.
+      'paid_mismatch',    public.vr_hold_account_mismatch(h.invoice_currency, h.paid_account),
       'paid_at',          h.paid_at,
       'paid_amount',      h.paid_amount,
       'paid_account',     h.paid_account,
