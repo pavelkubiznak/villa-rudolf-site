@@ -7,7 +7,7 @@
 
   var T = {
     cs: {
-      nav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', recenze: 'Recenze', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', book: 'Rezervovat' },
+      nav: { dum: 'Dům', vybaveni: 'Vybavení', galerie: 'Galerie', loznice: 'Interiér', lokalita: 'Lokalita', vylety: 'Výlety', info: 'Praktické info', book: 'Rezervovat' },
       badge: 'Ubytovací podmínky',
       title: 'Ubytovací podmínky a ochrana údajů',
       intro: 'Storno podmínky, zpracování osobních údajů a kontakt na provozovatele. Střízlivě a přehledně.',
@@ -16,11 +16,11 @@
       colWhen: 'Zrušení pobytu',
       colFee: 'Storno poplatek',
       stornoRows: [
-        ['Do 60 dnů před příjezdem', '10 % z celkové ceny'],
+        ['60 a více dní před příjezdem', '10 % z celkové ceny'],
         ['59–35 dní před příjezdem', '35 %'],
         ['34–21 dní před příjezdem', '50 %'],
         ['20–11 dní před příjezdem', '70 %'],
-        ['Méně než 10 dní před příjezdem', '100 %'],
+        ['10 a méně dní před příjezdem', '100 %'],
       ],
       gdprTitle: 'Ochrana osobních údajů',
       gdprRows: [
@@ -47,7 +47,7 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Krkonoše',
     },
     en: {
-      nav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', recenze: 'Reviews', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', book: 'Book' },
+      nav: { dum: 'The House', vybaveni: 'Amenities', galerie: 'Gallery', loznice: 'Interior', lokalita: 'Location', vylety: 'Trips', info: 'Guest info', book: 'Book' },
       badge: 'Booking terms',
       title: 'Booking terms & privacy',
       intro: 'Cancellation terms, how we handle personal data, and the operator’s contact. Kept short and clear.',
@@ -60,7 +60,7 @@
         ['59–35 days before arrival', '35%'],
         ['34–21 days before arrival', '50%'],
         ['20–11 days before arrival', '70%'],
-        ['Fewer than 10 days before arrival', '100%'],
+        ['10 or fewer days before arrival', '100%'],
       ],
       gdprTitle: 'Privacy (personal data)',
       gdprRows: [
@@ -87,7 +87,7 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Krkonoše',
     },
     de: {
-      nav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', recenze: 'Bewertungen', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', book: 'Buchen' },
+      nav: { dum: 'Das Haus', vybaveni: 'Ausstattung', galerie: 'Galerie', loznice: 'Innenräume', lokalita: 'Lage', vylety: 'Ausflüge', info: 'Gäste-Infos', book: 'Buchen' },
       badge: 'Buchungsbedingungen',
       title: 'Buchungsbedingungen & Datenschutz',
       intro: 'Stornobedingungen, Umgang mit personenbezogenen Daten und Kontakt zum Betreiber. Kurz und klar.',
@@ -100,7 +100,7 @@
         ['59–35 Tage vor Anreise', '35 %'],
         ['34–21 Tage vor Anreise', '50 %'],
         ['20–11 Tage vor Anreise', '70 %'],
-        ['Weniger als 10 Tage vor Anreise', '100 %'],
+        ['10 oder weniger Tage vor Anreise', '100 %'],
       ],
       gdprTitle: 'Datenschutz',
       gdprRows: [
@@ -127,7 +127,7 @@
       footBrand: 'Villa Rudolf · Svoboda nad Úpou, Riesengebirge',
     },
     pl: {
-      nav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', recenze: 'Recenzje', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', book: 'Rezerwuj' },
+      nav: { dum: 'Dom', vybaveni: 'Udogodnienia', galerie: 'Galeria', loznice: 'Wnętrza', lokalita: 'Lokalizacja', vylety: 'Wycieczki', info: 'Informacje praktyczne', book: 'Rezerwuj' },
       badge: 'Warunki pobytu',
       title: 'Warunki pobytu i prywatność',
       intro: 'Warunki anulowania, przetwarzanie danych osobowych i kontakt do operatora. Krótko i jasno.',
@@ -140,7 +140,7 @@
         ['59–35 dni przed przyjazdem', '35 %'],
         ['34–21 dni przed przyjazdem', '50 %'],
         ['20–11 dni przed przyjazdem', '70 %'],
-        ['Mniej niż 10 dni przed przyjazdem', '100 %'],
+        ['10 lub mniej dni przed przyjazdem', '100 %'],
       ],
       gdprTitle: 'Ochrona danych osobowych',
       gdprRows: [
@@ -181,12 +181,14 @@
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
+  /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel a otrávil localStorage. */
+  function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
   function resolveLang() {
     var q = (qs.get('lang') || '').toLowerCase();
-    if (T[q]) return q;
-    try { var s = localStorage.getItem('vrLang'); if (s && T[s]) return s; } catch (e) {}
+    if (isLang(q)) return q;
+    try { var s = localStorage.getItem('vrLang'); if (isLang(s)) return s; } catch (e) {}
     var nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    return T[nav] ? nav : 'cs';
+    return isLang(nav) ? nav : 'cs';
   }
   /* Sezóna dědí z webu — ?season → DATUM → volba v rámci návštěvy (assets/season.js). */
   function resolveSeason() {
@@ -203,7 +205,7 @@
   /* 6 hlavních sekcí webu — shodné s hlavičkou homepage. Výlety = samostatná stránka. */
   function siteLinks(L) {
     var n = L.nav;
-    var out = [['dum', n.dum], ['vybaveni', n.vybaveni], ['galerie', n.galerie], ['recenze', n.recenze], ['lokalita', n.lokalita]]
+    var out = [['dum', n.dum], ['vybaveni', n.vybaveni], ['galerie', n.galerie], ['loznice', n.loznice], ['lokalita', n.lokalita]]
       .map(function (x) { return '<a href="' + hp(x[0]) + '">' + esc(x[1]) + '</a>'; }).join('');
     out += '<a href="../vylety/?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season) + '">' + esc(n.vylety) + '</a>';
     return out;

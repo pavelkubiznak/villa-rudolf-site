@@ -44,7 +44,7 @@
       okAdded: 'Osoba přidána. Můžete zadat další.',
       addHint: 'Po přidání zůstane formulář otevřený — rovnou zadejte další osobu.',
       docWarn: 'Toto nevypadá jako číslo dokladu ({type}) — zkontrolujte prosím proti dokladu.',
-      docWarnFix: 'Opravit', docWarnContinue: 'Je to správně, pokračovat',
+      docWarnFix: 'Opravit', delLabel: 'Odebrat osobu', docWarnContinue: 'Je to správně, pokračovat',
       gdprTitle: 'Ochrana údajů',
       gdprBody: 'Údaje sbíráme jen kvůli zákonné evidenci ubytovaných a místnímu poplatku. Leží v zabezpečené databázi v EU. Čísla dokladů nevidí nikdo další z vaší skupiny — v přehledu se ukazuje jen, že je doklad vyplněný.',
       gdprLink: 'Podmínky a ochrana údajů',
@@ -92,7 +92,7 @@
       okAdded: 'Person added. You can add another.',
       addHint: 'The form stays open after adding — go straight on to the next person.',
       docWarn: 'This doesn’t look like a {type} number — please double-check it against the document.',
-      docWarnFix: 'Fix it', docWarnContinue: 'It’s correct, continue',
+      docWarnFix: 'Fix it', delLabel: 'Remove person', docWarnContinue: 'It’s correct, continue',
       gdprTitle: 'Data protection',
       gdprBody: 'We collect these details only for the legal guest register and the local fee. They’re stored in a secure EU database. No one else in your group sees the document numbers — the overview only shows whether a document is filled in.',
       gdprLink: 'Terms & privacy',
@@ -140,7 +140,7 @@
       okAdded: 'Person hinzugefügt. Sie können eine weitere eintragen.',
       addHint: 'Das Formular bleibt offen — tragen Sie gleich die nächste Person ein.',
       docWarn: 'Das sieht nicht wie eine {type}-Nummer aus — bitte gegen das Dokument prüfen.',
-      docWarnFix: 'Korrigieren', docWarnContinue: 'Stimmt so, weiter',
+      docWarnFix: 'Korrigieren', delLabel: 'Person entfernen', docWarnContinue: 'Stimmt so, weiter',
       gdprTitle: 'Datenschutz',
       gdprBody: 'Wir erheben diese Daten nur für das gesetzliche Gästeregister und die Kurtaxe. Sie liegen in einer sicheren Datenbank in der EU. Die Dokumentnummern sieht niemand sonst aus Ihrer Gruppe — die Übersicht zeigt nur, ob ein Dokument eingetragen ist.',
       gdprLink: 'Bedingungen & Datenschutz',
@@ -188,7 +188,7 @@
       okAdded: 'Osoba dodana. Możesz dodać kolejną.',
       addHint: 'Po dodaniu formularz zostaje otwarty — od razu wpisz kolejną osobę.',
       docWarn: 'To nie wygląda jak numer dokumentu ({type}) — sprawdź proszę z dokumentem.',
-      docWarnFix: 'Popraw', docWarnContinue: 'Jest poprawny, kontynuuj',
+      docWarnFix: 'Popraw', delLabel: 'Usuń osobę', docWarnContinue: 'Jest poprawny, kontynuuj',
       gdprTitle: 'Ochrona danych',
       gdprBody: 'Dane zbieramy wyłącznie do ustawowej ewidencji gości i opłaty miejscowej. Przechowujemy je w bezpiecznej bazie w UE. Numerów dokumentów nie widzi nikt inny z grupy — w podglądzie widać tylko, czy dokument jest wpisany.',
       gdprLink: 'Warunki i ochrona danych',
@@ -285,11 +285,16 @@
   var booking = null;         // { arrival, departure, lastName }
   var docConfirmed = false;   // uživatel odklikl „je to správně, pokračovat"
 
+  /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel. */
+  function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
+  /* ?lang → jazyk zvolený jinde na webu (localStorage vrLang) → prohlížeč → cs.
+     Host, který si na homepage přepnul němčinu, dostane formulář německy. */
   function pickInitialLang() {
     var q = (qs.get('lang') || '').toLowerCase();
-    if (T[q]) return q;
+    if (isLang(q)) return q;
+    try { var s = (localStorage.getItem('vrLang') || '').toLowerCase(); if (isLang(s)) return s; } catch (e) {}
     var nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    if (T[nav]) return nav;
+    if (isLang(nav)) return nav;
     return 'cs';
   }
 
@@ -362,7 +367,7 @@
   }
 
   function applyLang(l) {
-    lang = T[l] ? l : 'cs';
+    lang = isLang(l) ? l : 'cs';
     var L = T[lang];
     document.documentElement.lang = L.htmlLang;
 
@@ -487,7 +492,7 @@
       meta.appendChild(dates); meta.appendChild(badge);
       main.appendChild(nm); main.appendChild(meta);
       var del = document.createElement('button');
-      del.type = 'button'; del.className = 'vp-del'; del.setAttribute('aria-label', L.docWarnFix);
+      del.type = 'button'; del.className = 'vp-del'; del.setAttribute('aria-label', L.delLabel);
       del.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>';
       del.addEventListener('click', function () { deletePerson(p.id, del); });
       row.appendChild(flag); row.appendChild(main); row.appendChild(del);

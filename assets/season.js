@@ -67,7 +67,10 @@
     var raw = search != null ? search : (w.location ? w.location.search : '');
     var m = /[?&]season=([^&#]*)/.exec(String(raw));
     if (!m) return null;
-    var q = decodeURIComponent(m[1] || '').toLowerCase();
+    var q;
+    /* Vadné procentové kódování (?season=%E0) by vyhodilo URIError a tím
+       shodilo synchronní skript v <head> i init celého webu. */
+    try { q = decodeURIComponent(m[1] || '').toLowerCase(); } catch (e) { return null; }
     return valid(q) ? q : null;
   }
 

@@ -5,7 +5,9 @@
   "__jak_nasadit__": [
     "1. Záloha: docker exec n8n n8n export:workflow --id=VrDailyTasks001 --output=/tmp/bak.json",
     "2. V exportu nahraď JEN parameters.jsCode Code node „Spočítat úkoly“ obsahem",
-    "   VrDailyTasks.code.js BEZ úvodního blokového komentáře (prvních 14 řádků).",
+    "   VrDailyTasks.code.js BEZ úvodního blokového komentáře (prvních 5 řádků, tj. od řádku `const SUPA = ` dál).",
+    "   POZOR: kód čte uzel „Načíst žádosti (service-role)“ (GET /rest/v1/vr_requests) — v tomhle exportu není,",
+    "   v živé instanci musí existovat a být zapojený do „Spočítat úkoly“, jinak denní e-mail žádosti z webu tiše vynechá.",
     "3. Ověř, že se kromě jsCode nezměnilo nic jiného (nody, credentials, active).",
     "4. docker exec n8n n8n import:workflow --input=/tmp/patched.json",
     "5. Import workflow DEAKTIVUJE — aktivuj zpět: n8n publish:workflow --id=VrDailyTasks001",

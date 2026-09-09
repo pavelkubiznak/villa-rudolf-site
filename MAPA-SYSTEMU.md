@@ -4,7 +4,7 @@
 navrhovat — ať jsi člověk nebo AI session — přečti si tuhle tabulku. Systém je rozdělený do
 několika repozitářů a bez mapy se v nich nedá poznat, které je živé.
 
-Aktualizováno: 26. 8. 2026
+Aktualizováno: 8. 9. 2026
 
 ## Součásti
 
@@ -51,6 +51,8 @@ Aktualizováno: 26. 8. 2026
 ## Infrastruktura
 
 - **Supabase** `fpknbrzbqpalguajskut` — sdílený projekt se SINTERA, proto prefix `vr_`.
+  Edge Function `album` (`supabase/functions/album/`) je jediná brána ke Storage bucketu
+  `vr-album`; nasazuje se `supabase functions deploy album`.
   Schéma pravdy = `villa-rudolf-site/supabase/migrations/` (ne kopie v jiných repech).
 - **Hetzner** (`178.104.207.97`, tailnet `sintera-radar`) — cron na počasí, n8n (`127.0.0.1:5678`,
   **zvenku nedostupné**), Umami — **analytika návštěvnosti webu** (dashboard
@@ -100,4 +102,7 @@ vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatř�
   odmítá import rezervace přes existující překryv, takže platné rezervace z feedu mizí
   a `/sprava/` je pak nevidí. Podrobnosti v `STAV.md`.
 - **Bezpečnost:** `vr_purge_expired` má heslo natvrdo ve veřejném repu a `grant to anon` —
-  spustit tu mazací funkci může kdokoli. Viz `STAV.md`.
+  spustit tu mazací funkci může kdokoli. Oprava je napsaná
+  (`supabase/migrations/20260908_vr_purge_lockdown.sql`), čeká na nasazení. Viz `STAV.md`.
+- **Schéma není úplné:** `vr_request` / `vr_requests` (formulář homepage) v migracích chybí —
+  vytáhnout z živé DB. Viz `STAV.md`, audit 8. 9.
