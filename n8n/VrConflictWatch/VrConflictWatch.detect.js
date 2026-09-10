@@ -3,6 +3,12 @@
  * z předchozího HTTP nodu). Sám si stáhne kalendář (history.json) a spočítá
  * AKTUÁLNĚ eskalovatelné konflikty (desired). Výstup jde do RPC vr_apply_conflicts.
  *
+ * NEPOTVRZENÉ ZÁZNAMY: záznam s stale=true, jehož end je v budoucnu, ve feedu už
+ *   není, i když tam pořád patří — propadlá předrezervace / storno. Do překryvů se
+ *   NEPOČÍTÁ (svítilo to jako dvojitá rezervace na termín, kde žádná není; stejné
+ *   pravidlo jako isGhost() v kalendáři). Pozor na datum: feed nese jen dnešek
+ *   a budoucnost, takže KAŽDÝ proběhlý pobyt je stale — bez podmínky end > dnes
+ *   by z detekce vypadl celý archiv. Detekce ZMIZELÝCH níž se tím nemění.
  * DETEKCE PŘEKRYVŮ: dvojice pobytů s a.start < b.end AND b.start < a.end
  *   (intervaly [start,end) → den odjezdu = den příjezdu NENÍ konflikt); identické
  *   uidh se ignorují. ESKALUJE (zápis + e-mail) jen když jde o reálné riziko:
@@ -50,9 +56,14 @@ const desired = [];
 const seen = {};
 
 // ---- PŘEKRYVY ----
-for (let i = 0; i < feed.length; i++) {
-  for (let j = i + 1; j < feed.length; j++) {
-    const a = feed[i], b = feed[j];
+// Jen záznamy, které opravdu platí: stale=true s koncem v budoucnu je pobyt, který
+// z feedu vypadl, i když tam pořád patří (propadlá předrezervace / storno) — dvojitá
+// rezervace to není. Podmínka na datum je nutná: proběhlé pobyty z feedu vypadávají
+// samy, takže bez ní by z detekce vypadl celý archiv.
+const active = feed.filter(f => !(f.stale === true && f.end > today));
+for (let i = 0; i < active.length; i++) {
+  for (let j = i + 1; j < active.length; j++) {
+    const a = active[i], b = active[j];
     if (!a.uidh || !b.uidh || a.uidh === b.uidh) continue;
     if (!overlaps(a, b)) continue;
     const ba = byUidh[a.uidh] || null, bb = byUidh[b.uidh] || null;

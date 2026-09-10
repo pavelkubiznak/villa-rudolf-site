@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 8. 9. 2026
+Aktualizováno: 9. 9. 2026
 
 ---
 
@@ -16,6 +16,8 @@ Aktualizováno: 8. 9. 2026
 | Obsazenost v záhlaví měsíce (`29/31 · 94 %`) | ✅ nasazeno |
 | Anonymizace veřejných dat | ✅ nasazeno |
 | Šrafování matoucí pro úklid | ✅ **vyřešeno 13. 8.** |
+| Nepotvrzené záznamy strašily jako dvojitá rezervace | ✅ **vyřešeno 9. 9.** |
+| Stejná falešná hláška v `/sprava/` a v hlídači n8n | 🟡 **opraveno v repu, hlídač čeká na import do n8n** |
 | Číst 4 feedy zvlášť místo e-chalupy hubu | 🟡 **kód hotov, čeká na 3 secrety** |
 | **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | 🟡 **migrace napsaná 8. 9., čeká na nasazení** |
 
@@ -25,6 +27,23 @@ nebyla **ani jedna** skutečný konflikt — všech 5 překryvů mělo aspoň je
 živý feed. Oranžový čárkovaný rámeček s „?" zrušen; překryv se starým záznamem zůstal
 v tooltipu a v banneru. Živě ověřeno: 15 → 0 šrafovaných buněk, červená větev ověřená
 podvrženými daty. Detaily v `CLAUDE.md` kalendáře.
+
+**✅ Nepotvrzené záznamy — hotovo 9. 9.** Majitel: *„najedu na termín, je tam napsané dvě
+rezervace a booking není ve feedu — vždycky se leknu, že mám dvojitou rezervaci."* Záznam,
+který v živém feedu není a přitom pobyt teprve má proběhnout (propadlá předrezervace, storno),
+se nově nezobrazuje nikde: v kalendáři, tooltipu, banneru, obsazenosti, owner tabulce ani
+v tržbách. **Pozor na to, co `stale` znamená:** feed nese jen dnešek a budoucnost, takže
+každý proběhlý pobyt zestárne na `stale` sám (21 z 30) — rozhoduje proto `stale && end > dnes`,
+jinak by zmizel celý archiv. Skryté záznamy jsou vypsané v panelu historie (úklid) a v sekci
+„Nepotvrzené záznamy mimo kalendář" (majitel); `history.json` se nemění. Detaily v `CLAUDE.md`
+kalendáře.
+
+**🟡 Stejná falešná hláška byla i tady.** Ani `/sprava/` (`sprava.js`), ani hlídač
+`n8n/VrConflictWatch` `stale` nefiltrovaly, takže eskalovaly **3 překryvy — a všechny tři
+měly aspoň jednu stranu mimo živý feed** (6/2027 Fewo, 8/2027 Booking, 12/2027 Fewo).
+Po opravě jich zbývá 0. `/sprava/` se nasadí pushem, **hlídač je ale jen referenční kopie
+kódu Code node — je potřeba ho ručně nahrát do n8n**, jinak e-maily chodí dál. Až se pustí,
+označí staré konflikty ve `vr_conflicts` jako vyřešené a banner ve správě zhasne.
 
 **🟡 Čtyři feedy — kód hotový a nasazený 13. 8., zatím ale běží v hub módu.**
 `update_history.py` umí číst čtyři feedy zvlášť a filtrovat na vlastní rezervace kanálu.
@@ -140,9 +159,11 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 3. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
 4. **Polština u výletů** — podle toho, jestli chodí polští hosté
-5. **Zprávy** — až bude jasné zadání
+5. **Import `VrConflictWatch` do n8n** — dokud se nenahraje, chodí e-maily o dvojité
+   rezervaci na termíny, kde žádná není
+6. **Zprávy** — až bude jasné zadání
 
-~~Šrafování v kalendáři~~ — hotovo 13. 8.
+~~Šrafování v kalendáři~~ — hotovo 13. 8. · ~~Nepotvrzené záznamy v kalendáři~~ — hotovo 9. 9.
 
 ---
 

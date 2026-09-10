@@ -483,6 +483,13 @@
     // 1) kalendářní pobyty v okně (end >= dnes-14)
     calendar.forEach(function (c) {
       if (c.end < cutoff) return;
+      // Nepotvrzený záznam = ve feedu už není, ale pobyt teprve má proběhnout
+      // (propadlá předrezervace, storno). Do přehledu ani do hlídače překryvů
+      // nepatří — svítilo to jako dvojitá rezervace na termín, kde žádná není.
+      // POZOR na datum: feed nese jen dnešek a budoucnost, takže KAŽDÝ proběhlý
+      // pobyt je stale — bez té podmínky by zmizel celý archiv.
+      // Stejné pravidlo jako isGhost() ve villa-booking-calendar.
+      if (c.stale === true && c.end > today) return;
       var b = byUidh[c.uidh] || null;
       if (b) usedBookingIds[b.id] = true;
       stays.push({
