@@ -48,6 +48,15 @@ Všechny tři duchy navíc ověřeny přímo v extranetech (Booking do 31. 3. 20
 a vyřazeny ve `verified.json` kalendáře — ten je od 12. 9. konečně commitnutý a živý na Pages
 (do té doby byl jen lokální a `/sprava/` i kalendář ho četly jako 404).
 
+**✅ Třetí místo: denní e-mail `VrDailyTasks` — vyřešeno 12. 9.** Hlídač už mlčel, ale denní
+souhrn v 7:30 poslal ty **stejné tři „dvojité rezervace"** ještě jednou — jeho `buildStays()`
+byl třetí kopií téže smyčky a `stale` neznal. Doplněn týž filtr (`stale === true && end > dnes`),
+ověřeno proti živému `history.json`: 3 překryvy → 0. Nasazeno do ostrého n8n (`import:workflow`
++ `update:workflow --active=true` + `docker restart`), záloha původního workflow leží
+v `/root/vrdt_backup_20260912.json` na `sintera-velin`. **Poučení:** ta smyčka existuje na
+**třech** místech (`sprava.js`, `VrConflictWatch.detect.js`, `VrDailyTasks.code.js`) — když se
+mění pravidlo pro duchy, sáhni na všechny tři, jinak jedno z nich hlásí staré konflikty dál.
+
 **🟡 Čtyři feedy — kód hotový a nasazený 13. 8., zatím ale běží v hub módu.**
 `update_history.py` umí číst čtyři feedy zvlášť a filtrovat na vlastní rezervace kanálu.
 Přepíná se sám: nastavený jen e-chalupy feed → **hub mode**, chová se přesně jako dřív
