@@ -38,12 +38,15 @@ jinak by zmizel celý archiv. Skryté záznamy jsou vypsané v panelu historie (
 „Nepotvrzené záznamy mimo kalendář" (majitel); `history.json` se nemění. Detaily v `CLAUDE.md`
 kalendáře.
 
-**🟡 Stejná falešná hláška byla i tady.** Ani `/sprava/` (`sprava.js`), ani hlídač
+**✅ Stejná falešná hláška byla i tady — vyřešeno 12. 9.** Ani `/sprava/` (`sprava.js`), ani hlídač
 `n8n/VrConflictWatch` `stale` nefiltrovaly, takže eskalovaly **3 překryvy — a všechny tři
 měly aspoň jednu stranu mimo živý feed** (6/2027 Fewo, 8/2027 Booking, 12/2027 Fewo).
-Po opravě jich zbývá 0. `/sprava/` se nasadí pushem, **hlídač je ale jen referenční kopie
-kódu Code node — je potřeba ho ručně nahrát do n8n**, jinak e-maily chodí dál. Až se pustí,
-označí staré konflikty ve `vr_conflicts` jako vyřešené a banner ve správě zhasne.
+`/sprava/` nasazeno pushem 9. 9.; **hlídač nahrán do živého n8n 12. 9. 2026** (přesně kód
+z `n8n/VrConflictWatch/VrConflictWatch.detect.js`, živé == reference). První běh po nasazení:
+`desiredCount` 3 → 0, všechny čtyři řádky ve `vr_conflicts` mají `resolved_at`, banner zhasl.
+Všechny tři duchy navíc ověřeny přímo v extranetech (Booking do 31. 3. 2028, Airbnb, FeWo)
+a vyřazeny ve `verified.json` kalendáře — ten je od 12. 9. konečně commitnutý a živý na Pages
+(do té doby byl jen lokální a `/sprava/` i kalendář ho četly jako 404).
 
 **🟡 Čtyři feedy — kód hotový a nasazený 13. 8., zatím ale běží v hub módu.**
 `update_history.py` umí číst čtyři feedy zvlášť a filtrovat na vlastní rezervace kanálu.
@@ -159,11 +162,10 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 3. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
 4. **Polština u výletů** — podle toho, jestli chodí polští hosté
-5. **Import `VrConflictWatch` do n8n** — dokud se nenahraje, chodí e-maily o dvojité
-   rezervaci na termíny, kde žádná není
-6. **Zprávy** — až bude jasné zadání
+5. **Zprávy** — až bude jasné zadání
 
-~~Šrafování v kalendáři~~ — hotovo 13. 8. · ~~Nepotvrzené záznamy v kalendáři~~ — hotovo 9. 9.
+~~Šrafování v kalendáři~~ — hotovo 13. 8. · ~~Nepotvrzené záznamy v kalendáři~~ — hotovo 9. 9. ·
+~~Import `VrConflictWatch` do n8n~~ — nahráno 12. 9.
 
 ---
 
