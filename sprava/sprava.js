@@ -18,7 +18,11 @@
   // sha256 přístupového tokenu. Token samotný se sem NIKDY nepíše.
   var TOKEN_HASH = 'b887a4a499dc6306d51fd15138f4235e680ae721edec15712c7030a589367430';
 
-  var WIFI = 'Rudolf519';
+  // Heslo Wi-Fi se sem NEPÍŠE (repo je veřejné) — čte se z vr_admin_config, klíč
+  // wifi_password (vyplní se v Nastavení, migrace 20260915_vr_admin_config_wifi.sql).
+  // Když chybí, zůstane v textu zprávy viditelně {WIFI_HESLO}, ať se to pozná
+  // dřív, než zpráva odejde hostovi.
+  function wifiPassword() { return String((adminConfig || {}).wifi_password || '').trim(); }
   var STORE_KEY = 'vr_sprava_key';   // admin token (session nebo local)
   var STORE_GT = 'vr_sprava_gt';     // guest tokeny (jen sessionStorage, per-zařízení)
 
@@ -27,7 +31,7 @@
   var bookings = [];   // z vr_admin_list_bookings
   var stays = [];       // sloučený pohled
   var expandedStays = false;
-  var adminConfig = {}; // ubyport_* konfigurace ubytovatele (Nastavení)
+  var adminConfig = {}; // konfigurace z vr_admin_config: ubyport_* + wifi_password (Nastavení)
   var serverConflicts = []; // stav hlídače z vr_admin_conflicts (resolved/known)
   var holds = [];           // předrezervace + přímé rezervace (vr_admin_list_holds)
   var holdsShowClosed = false;  // propadlé a zrušené jsou schované, dokud si je nevyžádáš
@@ -249,7 +253,7 @@
       .replace(/\{NOCI\}/g, ctx.noci)
       .replace(/\{CASTKA\}/g, ctx.castka)
       .replace(/\{KOD_DVERI\}/g, ctx.kod)
-      .replace(/\{WIFI_HESLO\}/g, WIFI)
+      .replace(/\{WIFI_HESLO\}/g, wifiPassword() || '{WIFI_HESLO}')
       .replace(/\{KAUCE\}/g, DEPOSIT_CZK.toLocaleString('cs-CZ'))
       .replace(/\{REGISTRACNI_LINK\}/g, ctx.regLink || '{REGISTRACNI_LINK}')
       .replace(/\{PRUVODCE_LINK\}/g, ctx.guideLink || '{PRUVODCE_LINK}');
@@ -2216,8 +2220,9 @@
     $('uby-copy').addEventListener('click', function () { copyForeigners(b); });
   }
 
-  /* ============ NASTAVENÍ (Ubyport konfigurace ubytovatele) ============ */
+  /* ============ NASTAVENÍ (heslo Wi-Fi + Ubyport konfigurace ubytovatele) ============ */
   var SETTINGS_FIELDS = [
+    ['wifi_password', 'Heslo Wi-Fi (do uvítací zprávy, síť „Rudolf Wi-Fi“)', 'bez něj zůstane ve zprávě {WIFI_HESLO}'],
     ['ubyport_idub', 'IDUB (identifikátor ubytovatele)', 'z vašeho účtu Ubyport'],
     ['ubyport_zkratka', 'Zkratka', 'z Ubyport (nepovinné)'],
     ['ubyport_name', 'Název ubytovacího zařízení', 'Villa Rudolf'],
@@ -2232,11 +2237,11 @@
     ['ubyport_ucel_default', 'Účel pobytu (kód)', '10 = turistika']
   ];
   function openSettings() {
-    $('sheet-title').textContent = 'Nastavení — Ubyport';
+    $('sheet-title').textContent = 'Nastavení';
     var c = adminConfig || {};
     $('sheet-body').innerHTML =
       '<form id="set-form" autocomplete="off">' +
-      '<p class="hint">Údaje ubytovatele do hlavičky hlášení cizinců (Ubyport). <b>IDUB</b> získáte ve svém účtu Ubyport (Služba cizinecké policie); ostatní je předvyplněné adresou vily.</p>' +
+      '<p class="hint">Heslo Wi-Fi se vkládá do uvítací zprávy hostovi (v repu není, žije jen tady). Dál údaje ubytovatele do hlavičky hlášení cizinců (Ubyport). <b>IDUB</b> získáte ve svém účtu Ubyport (Služba cizinecké policie); ostatní je předvyplněné adresou vily.</p>' +
       SETTINGS_FIELDS.map(function (f) {
         return '<div class="field"><label>' + esc(f[1]) + '</label>' +
           '<input id="set-' + f[0] + '" maxlength="200" value="' + esc(c[f[0]] || '') + '" placeholder="' + esc(f[2]) + '"></div>';
