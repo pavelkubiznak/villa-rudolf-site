@@ -110,6 +110,20 @@ kalendáře taky 18měsíční prune `history.json`.
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
 | Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
 | Napojení na iDoklad (kontrola účtu na faktuře přímo ze zdroje) | ⏭️ **nezačato** — API se nepsalo naslepo |
+| Přenos ověřených přímých prodejů z `verified.json` (`supabase/seed/`) | 🟡 **skript hotov + otestován, čeká na spuštění** |
+
+**Dvě evidence téhož — a kde mezi nimi vede hranice.** Ruční audit v
+`villa-booking-calendar/data/verified.json` (12. 9.) vede vedle `vr_holds` část těch samých
+informací. `supabase/seed/20260915_verified_to_holds.sql` přenese ty řádky, které do `vr_holds`
+opravdu patří — **hranice je vystavená zálohová faktura**, protože na tom celý modul stojí.
+Z auditu jsou takové tři: dvě potvrzené přímé smlouvy na 8/2027 a jedna propadlá záloha
+na 13.–20. 2. 2027. Po nich se v kalendáři konečně objeví **14.–21. 8. 2027** — termín, kvůli
+kterému modul vznikl a který je dodnes na webu volný.
+
+Ve `verified.json` naopak **zůstává** vše bez faktury (přislíbené termíny, e-mailové dotazy),
+vlastní blokace („rekonstrukce schodů") a hlavně ověřování **cizích** bloků v extranetech —
+to `vr_holds` neumí a umět nemá. Skript je idempotentní; čísla faktur, částky a účty v auditu
+nejsou, takže zůstávají prázdné a doplní se v `/sprava/`.
 
 **Proč to vzniklo.** Pobyt prodaný napřímo nebyl v žádném feedu, takže pro systém neexistoval —
 `/sprava/` o něm nevěděla a homepage ten termín dál nabízela jako volný. Tak zmizel termín
