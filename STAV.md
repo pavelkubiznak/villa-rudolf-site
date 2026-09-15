@@ -19,7 +19,7 @@ Aktualizováno: 15. 9. 2026
 | Nepotvrzené záznamy strašily jako dvojitá rezervace | ✅ **vyřešeno 9. 9.** |
 | Stejná falešná hláška v `/sprava/` a v hlídači n8n | ✅ **vyřešeno 12. 9. na všech třech místech** (po #8 hlídač znovu čeká na re-import, viz Předrezervace) |
 | Číst 4 feedy zvlášť místo e-chalupy hubu | 🟡 **kód hotov, čeká na 3 secrety** |
-| **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | 🟡 **migrace napsaná 8. 9., čeká na nasazení** |
+| **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | ✅ **zamčeno 15. 9. 2026** — `execute` jen `service_role` |
 
 **✅ Šrafování — hotovo a nasazeno 13. 8.** Šrafuje se **jen skutečná dvojitá rezervace**
 (oba pobyty živé ve feedu). Data dala majiteli za pravdu dvakrát: z 15 šrafovaných buněk
@@ -75,18 +75,14 @@ kanálu jiné UID než v hubu, takže bez ošetření by každá živá rezervac
 a vazba `vr_bookings.uidh` by se utrhla. Skript při shodě `(start, end, platform)` převezme
 archivní klíč. **Kvůli přepnutí se v `/sprava/` nemusí měnit nic.**
 
-**🔴 `vr_purge_expired` jde spustit zvenku.** Heslo té mazací funkce je napsané otevřeně
-v `supabase/migrations/20260724_vr_retention.sql:43` (repo je veřejné) a funkce má
-`grant execute … to anon` (řádek 81). Adresa Supabase je taky veřejná — je v `MAPA-SYSTEMU.md`.
-Spustit ji tedy může kdokoli. Nesmaže nic, co by nezmizelo samo časem, ale destruktivní
-funkci na produkční DB nemá držet v ruce cizí člověk. Ostatní admin funkce tuhle díru nemají
-(jdou přes `_vr_admin_auth`).
-
-**🟡 Oprava napsaná 8. 9.:** `supabase/migrations/20260908_vr_purge_lockdown.sql` — hash secretu
-se čte z `vr_admin_config` (klíč `purge_secret_sha256`), `revoke execute … from public, anon,
-authenticated`, zůstává jen `service_role`. Postup nasazení je v hlavičce migrace: nový secret →
-jeho sha256 do configu → aplikovat migraci → přepnout volajícího (pg_cron / n8n) na service klíč.
-Staré heslo je v git historii, takže **rotace je povinná**, ne volitelná.
+**✅ `vr_purge_expired` — zamčeno 15. 9. 2026.** Do té doby bylo heslo té mazací funkce
+napsané otevřeně v `20260724_vr_retention.sql` (repo je veřejné) a funkce měla `grant execute … to anon`,
+takže ji mohl spustit kdokoli. Nasazeno přes konektor Supabase: `20260915_vr_purge_secret.sql`
+(hash náhodného secretu vygenerovaného přímo v DB — **secret nikdo nezná**, funkce je tím zamčená,
+dokud si majitel nenastaví vlastní, postup v hlavičce migrace) a `20260908_vr_purge_lockdown.sql`
+(heslo z těla funkce pryč, ověřuje se proti `vr_admin_config.purge_secret_sha256`, `execute` jen
+`service_role` + vlastník). Ověřeno dotazem: `anon` ani `authenticated` už právo nemají, staré heslo
+v definici není, pg_cron v projektu neexistuje — funkci dnes nic nevolá.
 
 **🟡 Další dvě migrace z auditu 8. 9. (čekají na spuštění — Actions „DB migrace" nebo SQL editor):**
 `20260908100100_vr_album_bucket.sql` — limit 15 MB a whitelist MIME typů přímo na bucketu
@@ -256,24 +252,19 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 
 ## Doporučené pořadí
 
-Všechno v repu je napsané a zmergované; **co zbývá, jsou ruční kroky mimo repo** (živá DB,
-n8n, extranety, router). **Migrace do živé DB jdou od 15. 9. pustit z GitHubu:** Actions →
-„DB migrace (Supabase)" → Run workflow, zadat soubory v pořadí; výchozí běh je dry run
-(ROLLBACK), ostrý = odškrtnout `dry_run`. Potřebuje jediný repo secret `SUPABASE_DB_URL`
-(postup v hlavičce `.github/workflows/db-migrate.yml`). Body 2–4 jsou připravené i jako
-**jeden soubor pro SQL editor Supabase** (poslaný v session 15. 9.; jde ho složit znovu:
-nový purge secret vygenerovaný v DB + migrace lockdown a wifi; holds, payments i contracts už v DB jsou).
-Purge secret má od 15. 9. vlastní migraci `20260915_vr_purge_secret.sql` (vznikne náhodně v DB, uloží se
-jen hash, nikdo ho nezná — funkce je zamčená, dokud si majitel nenastaví vlastní, postup v její hlavičce),
-takže celé nasazení jde pustit z Actions: `20260915_vr_purge_secret.sql 20260908_vr_purge_lockdown.sql
-20260915_vr_admin_config_wifi.sql`, nejdřív dry run, pak ostře.
+Všechno v repu je napsané a zmergované; **co zbývá, jsou ruční kroky mimo repo** (n8n, extranety,
+router, Nastavení). **Živá DB je od 15. 9. 2026 srovnaná s migracemi v repu** (holds, payments,
+contracts, purge lockdown, wifi config). Další migrace jdou nasadit z GitHubu: fronta
+`supabase/DEPLOY.txt` (workflow „DB nasazení z fronty" běží po merge do `main`) nebo ruční
+Actions „DB migrace (Supabase)"; obě potřebují repo secret `SUPABASE_DB_URL` (dosud chybí,
+postup v hlavičce `.github/workflows/db-migrate.yml`). Třetí cesta je konektor Supabase
+v Claude Code, kterým proběhlo nasazení 15. 9.
 
 1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
    v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
-2. **`vr_purge_expired`** — migrace `20260908_vr_purge_lockdown.sql` je napsaná, zbývá nasadit
-   podle postupu v její hlavičce (nový secret, hash do configu, service klíč u volajícího)
-3. **Heslo Wi-Fi** — migrace `20260915_vr_admin_config_wifi.sql`, vyplnit v `/sprava/` →
-   Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
+2. ~~`vr_purge_expired`~~ — **zamčeno 15. 9.** (viz sekce Kalendář)
+3. **Heslo Wi-Fi** — ~~migrace `20260915_vr_admin_config_wifi.sql`~~ nasazena 15. 9.; zbývá vyplnit
+   v `/sprava/` → Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
    uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá
    `python3 tools/n8n-patch-vrdailytasks.py <export.json> <patched.json>` (postup v jeho hlavičce)
 4. ~~Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`~~ — **hotovo 15. 9.**
@@ -310,6 +301,10 @@ odkazy, žádné otevřené issue. Uděláno v ten den:
 - **Heslo Wi-Fi ven z repa** — viz audit níž, položka „Opraveno 15. 9.".
 - Migrace `20260915_vr_interests.sql` (zájmy party, z portálu) je v `main` a **aplikovaná
   v živé DB 15. 9.** — tím je v migracích konečně i `vr_verify_token`.
+- **Živá DB srovnaná s repem** (15. 9. odpoledne, přes konektor Supabase): purge secret + purge
+  lockdown + wifi config nasazeny a ověřeny dotazem. Cestou vzniklo workflow „DB nasazení
+  z fronty" (`supabase/DEPLOY.txt`, běží jen po merge do `main`; nález Codexu: nikdy nad PR,
+  psql umí shell a log veřejného repa je veřejný) — pro příště, až bude secret `SUPABASE_DB_URL`.
 
 ---
 
@@ -365,8 +360,9 @@ jen u části (limit účtu), zbytek ověřen ručně. Opravené je níž, neopr
 `VrDailyTasks.code.js`. `/sprava/` čte `wifi_password` z `vr_admin_config` (pole v Nastavení),
 n8n ho čte novým uzlem „Načíst konfiguraci (service-role)" (definice a zapojení v exportu).
 Když hodnota chybí, zůstane ve zprávě viditelně `{WIFI_HESLO}` — nic nespadne, jen to
-připomene chybějící krok. **Zbývá ručně:** migrace `20260915_vr_admin_config_wifi.sql`,
-vyplnit Nastavení, změnit heslo na routeru (staré je v git historii), uzel do n8n.
+připomene chybějící krok. Migrace `20260915_vr_admin_config_wifi.sql` **nasazena 15. 9.** (whitelist
+`ubyport_*` + `wifi_*` ověřen v živé DB). **Zbývá ručně:** vyplnit Nastavení, změnit heslo na routeru
+(staré je v git historii), uzel do n8n.
 
 **Zjištěno, neopraveno — na rozhodnutí majitele:**
 - **`vr_request` a tabulka `vr_requests` nejsou v migracích.** Formulář homepage na nich stojí

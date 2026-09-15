@@ -1,6 +1,5 @@
 # Fronta migrací k nasazení do živé DB (workflow „DB nasazení z fronty (Supabase)").
 # Jeden soubor na řádek, v pořadí. Běží až po merge do main (jedna transakce).
 # Po úspěšném nasazení frontu vyprázdni.
-20260915_vr_purge_secret.sql
-20260908_vr_purge_lockdown.sql
-20260915_vr_admin_config_wifi.sql
+#
+# Prázdná: purge secret, purge lockdown i wifi config nasazeny 15. 9. 2026 přes konektor Supabase.
