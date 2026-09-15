@@ -110,11 +110,10 @@ vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatř�
   secrety `ICAL_URL_AIRBNB` / `_BOOKING` / `_FEWO`. Dokud nejsou, platí původní problém: hub
   odmítá import rezervace přes existující překryv, takže platné rezervace z feedu mizí
   a `/sprava/` je pak nevidí. Podrobnosti v `STAV.md`.
-- **Bezpečnost:** `vr_purge_expired` má heslo natvrdo ve veřejném repu a `grant to anon` —
-  spustit tu mazací funkci může kdokoli. Oprava je napsaná
-  (`supabase/migrations/20260908_vr_purge_lockdown.sql`), čeká na nasazení. Viz `STAV.md`.
+- ~~**Bezpečnost:** `vr_purge_expired` jde spustit zvenku~~ — **zamčeno 15. 9. 2026** (jen
+  `service_role`, secret jen jako hash v configu). Viz `STAV.md`.
 - **Heslo Wi-Fi** bylo natvrdo ve veřejném repu (a v git historii zůstává). Kód od 15. 9. čte
-  `vr_admin_config.wifi_password`; zbývá migrace `20260915_vr_admin_config_wifi.sql`, vyplnění
-  v Nastavení `/sprava/`, změna hesla na routeru a uzel v n8n `VrDailyTasks`. Viz `STAV.md`.
+  `vr_admin_config.wifi_password` (migrace nasazena 15. 9.); zbývá vyplnění v Nastavení `/sprava/`,
+  změna hesla na routeru a uzel v n8n `VrDailyTasks`. Viz `STAV.md`.
 - **Schéma není úplné:** `vr_request` / `vr_requests` (formulář homepage) v migracích chybí —
   vytáhnout z živé DB. Viz `STAV.md`, audit 8. 9.
