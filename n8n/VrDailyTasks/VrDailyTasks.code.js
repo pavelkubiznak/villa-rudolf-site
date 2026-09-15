@@ -139,9 +139,22 @@ const DEPOSIT_STEPS=[
   {key:'deposit_charge',title:'Kauce — výběr ('+DEPOSIT_CZK.toLocaleString('cs-CZ')+' Kč)',from:'arrival',off:-7,when:'T−7 / samostatně',deposit:'charge',after:'welcome'},
   {key:'deposit_return',title:'Vrátit kauci ('+DEPOSIT_CZK.toLocaleString('cs-CZ')+' Kč)',from:'departure',off:1,when:'po odjezdu',deposit:'return',ownerTask:true,after:'review'}
 ];
+// Doplatková faktura u přímých rezervací na dvě splátky. Storno ve smlouvě (§ 7)
+// přeskočí 50 % na 59. dni před příjezdem; splatnost 2. splátky je T−65, upomínka
+// tedy týden před ní (T−72). Jen pro majitele — hostovi odsud nic nechodí.
+const BALANCE_STEPS=[
+  {key:'balance_invoice',title:'Vystavit doplatkovou fakturu (2. splátka)',from:'arrival',off:-72,when:'T−72 · týden před splatností',ownerTask:true,before:'confirm'}
+];
 function depositEnabled(b){ return (b.msglog||[]).some(m=>m.msg_key==='deposit_enabled'); }
-function sequenceFor(b){ if(!depositEnabled(b)) return SEQUENCE.slice(); const out=[];
-  SEQUENCE.forEach(msg=>{ out.push(msg); DEPOSIT_STEPS.forEach(d=>{ if(d.after===msg.key) out.push(d); }); }); return out; }
+// Platformy si platbu řeší samy; dvě splátky dává jen přímá rezervace.
+function balanceEnabled(b){ return (b.platform||'')==='Přímá'; }
+function sequenceFor(b){ const dep=depositEnabled(b), bal=balanceEnabled(b);
+  if(!dep&&!bal) return SEQUENCE.slice(); const out=[];
+  SEQUENCE.forEach(msg=>{
+    if(bal) BALANCE_STEPS.forEach(x=>{ if(x.before===msg.key) out.push(x); });
+    out.push(msg);
+    if(dep) DEPOSIT_STEPS.forEach(d=>{ if(d.after===msg.key) out.push(d); });
+  }); return out; }
 function schedDate(msg,b){ return addDaysISO(msg.from==='departure'?b.departure:b.arrival, msg.off); }
 
 function guestName(b){ const parts=[b.first_name,b.last_name].filter(x=>x&&String(x).trim()); return parts.length?parts.join(' '):'milí hosté'; }
@@ -159,6 +172,7 @@ function buildParts(msg,ctx,b){
   if(msg.key==='registration') return [{text:fill(tplFor(L,'registration'),ctx),needsToken:true}]; // token není server-side
   if(msg.key==='deposit_charge') return [{text:fill(tplFor(L,'deposit'),ctx)}];
   if(msg.key==='deposit_return') return [{text:'',ownerTask:true}];
+  if(msg.key==='balance_invoice') return [{text:'',ownerTask:true}];
   if(msg.key==='doorcode') return [{text:fill(tplFor(L,'doorcode'),ctx),needsCode:!b.door_code}];
   if(msg.key==='day2') return [{text:fill(tplFor(L,'day2'),ctx)}];
   if(msg.key==='predeparture') return [{text:fill(tplFor(L,'predeparture'),ctx)}];

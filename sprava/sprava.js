@@ -281,14 +281,30 @@
   function depositEnabled(b) {
     return (b.msglog || []).some(function (m) { return m.msg_key === 'deposit_enabled'; });
   }
-  // Efektivní sekvence pro daný pobyt: základ + (volitelně) kroky kauce vložené
-  // za příslušné kotvy. Klíč 'deposit_enabled' NENÍ zpráva → do sekvence nepatří.
+  // Doplatková faktura u přímých rezervací placených na dvě splátky.
+  // Storno ve smlouvě (§ 7) přeskočí 50 % na 59. dni před příjezdem — druhá
+  // splátka musí být na účtu dřív, jinak držíme míň, než na kolik máme nárok.
+  // Splatnost dáváme na T−65, upomínka tedy týden před ní: T−72. Jen pro majitele,
+  // hostovi odsud nic nechodí (fakturu vystavuje Pavel v iDokladu).
+  var BALANCE_STEPS = [
+    { key: 'balance_invoice', title: 'Vystavit doplatkovou fakturu (2. splátka)', from: 'arrival', off: -72, when: 'T−72 · týden před splatností', ownerTask: true, before: 'confirm' }
+  ];
+  // Platformy si platbu řeší samy; dvě splátky dává jen přímá rezervace.
+  function balanceEnabled(b) {
+    return (b.platform || '') === 'Přímá';
+  }
+  // Efektivní sekvence pro daný pobyt: základ + (volitelně) kroky kauce
+  // a doplatkové faktury vložené za příslušné kotvy. Klíč 'deposit_enabled'
+  // NENÍ zpráva → do sekvence nepatří.
   function sequenceFor(b) {
-    if (!depositEnabled(b)) return SEQUENCE.slice();
+    var dep = depositEnabled(b), bal = balanceEnabled(b);
+    if (!dep && !bal) return SEQUENCE.slice();
     var out = [];
     SEQUENCE.forEach(function (msg) {
+      // balance_invoice je T−72, tedy dřív než cokoliv v SEQUENCE → vkládá se PŘED kotvu
+      if (bal) BALANCE_STEPS.forEach(function (x) { if (x.before === msg.key) out.push(x); });
       out.push(msg);
-      DEPOSIT_STEPS.forEach(function (d) { if (d.after === msg.key) out.push(d); });
+      if (dep) DEPOSIT_STEPS.forEach(function (d) { if (d.after === msg.key) out.push(d); });
     });
     return out;
   }
@@ -314,6 +330,7 @@
     if (msg.key === 'day2') return [{ text: fill(tplFor(L, 'day2'), ctx) }];
     if (msg.key === 'deposit_charge') return [{ text: fill(tplFor(L, 'deposit'), ctx) }];
     if (msg.key === 'deposit_return') return [{ text: '', ownerTask: true }];
+    if (msg.key === 'balance_invoice') return [{ text: '', ownerTask: true }];
     if (msg.key === 'predeparture') return [{ text: fill(tplFor(L, 'predeparture'), ctx) }];
     if (msg.key === 'review') {
       var rv = reviewVariant(booking.platform, L);
@@ -1012,7 +1029,8 @@
         + '— dokud nebude, může ho kterýkoli kanál prodat znovu.</div>';
     }
 
-    var btns = '<button type="button" class="btn btn-sm btn-outline" data-hold-edit="' + idx + '">Upravit</button>';
+    var btns = '<button type="button" class="btn btn-sm btn-outline" data-hold-edit="' + idx + '">Upravit</button>'
+      + '<a class="btn btn-sm btn-ghost" href="../smlouvy/?hold=' + encodeURIComponent(h.id) + '">📄 Smlouva</a>';
     if (h.status === 'hold') {
       btns = '<button type="button" class="btn btn-sm btn-primary" data-hold-paid="' + idx + '">Uhrazeno</button>'
         + (expired
@@ -1580,11 +1598,22 @@
         det.className = 'btn btn-sm btn-primary'; det.textContent = 'Detail a zprávy';
         det.onclick = function () { openDetail(s); };
         actions.appendChild(det);
+        // Přímý host dostává ubytovací smlouvu — generuje ji /smlouvy/ (platformy mají svoje podmínky).
+        if (b.platform === 'Přímá' || s.hold) {
+          var ca = document.createElement('a');
+          ca.className = 'btn btn-sm btn-outline'; ca.textContent = '📄 Smlouva';
+          ca.href = '../smlouvy/?booking=' + encodeURIComponent(b.id);
+          actions.appendChild(ca);
+        }
       } else if (s.hold && s.hold.status === 'hold') {
         var hb = document.createElement('button');
         hb.className = 'btn btn-sm btn-primary'; hb.textContent = 'Předrezervace';
         hb.onclick = function () { openHoldEditor(s.hold); };
         actions.appendChild(hb);
+        var ha = document.createElement('a');
+        ha.className = 'btn btn-sm btn-outline'; ha.textContent = '📄 Smlouva';
+        ha.href = '../smlouvy/?hold=' + encodeURIComponent(s.hold.id);
+        actions.appendChild(ha);
       } else {
         var add = document.createElement('button');
         add.className = 'btn btn-sm btn-primary'; add.textContent = 'Doplnit hosta';

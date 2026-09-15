@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Villa Rudolf — smlouvy</title>
+<meta name="theme-color" content="#0E1311">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../sprava/sprava.css?v=10">
+<link rel="stylesheet" href="smlouvy.css?v=1">
+</head>
+<body>
+
+<!-- ===== BRÁNA (stejný token jako /sprava/) ===== -->
+<section id="lock" class="lock">
+  <div class="lock-box">
+    <div class="lock-emoji" aria-hidden="true">📄</div>
+    <h1 class="lock-title">Villa Rudolf — smlouvy</h1>
+    <p class="lock-sub">Soukromá stránka majitele. Zadejte přístupový token (stejný jako pro správu) nebo otevřete odkaz s <code>?key=…</code>.</p>
+    <form id="lock-form" autocomplete="off">
+      <label for="lock-input" class="sr-only">Přístupový token</label>
+      <input type="password" id="lock-input" placeholder="Přístupový token" autocomplete="off" autofocus>
+      <label class="lock-remember">
+        <input type="checkbox" id="lock-remember">
+        <span>Zapamatovat na tomto zařízení <em>(uloží token do prohlížeče — jen na soukromém zařízení)</em></span>
+      </label>
+      <button type="submit" class="btn btn-primary" id="lock-submit">Odemknout</button>
+    </form>
+    <p class="lock-err" id="lock-err" role="alert" hidden></p>
+  </div>
+</section>
+
+<!-- ===== APLIKACE ===== -->
+<main id="app" class="app app-wide" hidden>
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-nm">Villa Rudolf</span>
+      <span class="brand-bd">smlouvy</span>
+    </div>
+    <div class="topbar-actions">
+      <a class="btn btn-ghost" href="../sprava/" title="Zpět na správu pobytů">🏠 Správa</a>
+      <button type="button" class="btn btn-ghost" id="btn-refresh" title="Načíst znovu">↻ Obnovit</button>
+      <button type="button" class="btn btn-ghost" id="btn-lock" title="Zamknout a smazat token ze zařízení">Zamknout</button>
+    </div>
+  </header>
+
+  <p class="loadline" id="loadline">Načítám pobyty a smlouvy…</p>
+
+  <!-- SEZNAM -->
+  <div id="view-list" hidden>
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Nová smlouva</h2>
+      </div>
+      <div class="newrow">
+        <div class="field" style="margin:0;flex:1 1 auto">
+          <label for="new-booking">Pobyt (přímá rezervace ze správy)</label>
+          <select id="new-booking"></select>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-new">Vytvořit smlouvu</button>
+      </div>
+      <p class="hint" style="margin-top:8px">Vyber pobyt založený ve správě — host, termín a jazyk se doplní samy. Pobyt bez vazby se dá zadat ručně, ale pak nebude spárovaný se zprávami hostovi.</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 class="panel-title">Smlouvy</h2>
+        <span class="panel-date" id="contracts-count"></span>
+      </div>
+      <div class="contracts" id="contracts"></div>
+      <p class="stays-empty" id="contracts-empty" hidden>Zatím žádná smlouva. Vyber nahoře pobyt a vytvoř první.</p>
+    </section>
+  </div>
+
+  <!-- EDITOR -->
+  <div id="view-edit" hidden>
+    <div class="edit-head">
+      <button type="button" class="btn btn-ghost btn-sm" id="btn-back">← Seznam</button>
+      <h2 class="panel-title" id="edit-title">Smlouva</h2>
+      <span class="hold-st" id="edit-status"></span>
+    </div>
+
+    <div class="edit-grid">
+      <form class="edit-form" id="form" autocomplete="off">
+
+        <div class="block">
+          <h3 class="block-h">Host</h3>
+          <div class="row2">
+            <div class="field"><label for="f-lang">Jazyk smlouvy</label>
+              <select id="f-lang"><option value="cs">čeština</option><option value="de">němčina</option><option value="en">angličtina</option></select></div>
+            <div class="field"><label for="f-cno">Číslo smlouvy</label><input id="f-cno" maxlength="40"></div>
+          </div>
+          <div class="field"><label for="f-name">Jméno a příjmení</label><input id="f-name" maxlength="120" placeholder="Petra Sabáčková"></div>
+          <div class="field"><label for="f-address">Adresa <span class="opt">(volitelné)</span></label><input id="f-address" maxlength="160" placeholder="ulice, PSČ město"></div>
+          <div class="row2">
+            <div class="field"><label for="f-country">Země</label><input id="f-country" maxlength="60"></div>
+            <div class="field"><label for="f-phone">Telefon</label><input id="f-phone" inputmode="tel" maxlength="40"></div>
+          </div>
+          <div class="field"><label for="f-email">E-mail</label><input id="f-email" type="email" maxlength="160"></div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-h">Termín</h3>
+          <div class="row2">
+            <div class="field"><label for="f-arrival">Příjezd</label><input id="f-arrival" type="date"></div>
+            <div class="field"><label for="f-departure">Odjezd</label><input id="f-departure" type="date"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="f-checkin">Příjezd od</label><input id="f-checkin" value="15:00" maxlength="5"></div>
+            <div class="field"><label for="f-checkout">Odjezd do</label><input id="f-checkout" value="10:00" maxlength="5"></div>
+          </div>
+          <p class="hint" id="h-nights"></p>
+        </div>
+
+        <div class="block">
+          <h3 class="block-h">Cena</h3>
+          <div class="row2">
+            <div class="field"><label for="f-nightly">Cena za noc (Kč)</label><input id="f-nightly" type="number" min="0" step="100"></div>
+            <div class="field"><label for="f-price">Cena celkem (Kč)</label><input id="f-price" type="number" min="0" step="1"></div>
+          </div>
+          <p class="hint" id="h-price"></p>
+          <div class="row2">
+            <div class="field"><label for="f-currency">Host platí v</label>
+              <select id="f-currency"><option value="CZK">CZK — korunový účet</option><option value="EUR">EUR — eurový účet (SEPA)</option></select></div>
+            <div class="field" id="fx-wrap" hidden><label for="f-fx">Kurz Kč / EUR</label><input id="f-fx" type="number" min="1" step="0.01"></div>
+          </div>
+          <div class="field"><label for="f-pet">Sjednaný mazlíček <span class="opt">(volitelné)</span></label><input id="f-pet" maxlength="80" placeholder="např. 1 pes (border kolie)"></div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-h">Platba</h3>
+          <div class="plan">
+            <label class="plan-opt"><input type="radio" name="plan" value="single" id="plan-single"><span><b>Celá cena najednou</b><br><small>jedna zálohová faktura na 100 %</small></span></label>
+            <label class="plan-opt"><input type="radio" name="plan" value="split" id="plan-split"><span><b>Dvě splátky 50 / 50</b><br><small>doplatek splatný <span id="h-bal-due">—</span>, tj. 65 dní před příjezdem, dřív než storno vyskočí na 70 %</small></span></label>
+          </div>
+          <p class="hint" id="h-plan"></p>
+
+          <div class="inv">
+            <div class="inv-t">Zálohová faktura z iDokladu <span id="inv1-lbl"></span></div>
+            <div class="row2">
+              <div class="field"><label for="f-inv1-no">Číslo faktury</label><input id="f-inv1-no" maxlength="30" placeholder="Z920260006"></div>
+              <div class="field"><label for="f-inv1-vs">Variabilní symbol</label><input id="f-inv1-vs" inputmode="numeric" maxlength="10" placeholder="920260006"></div>
+            </div>
+            <div class="row2">
+              <div class="field"><label for="f-inv1-due">Splatnost</label><input id="f-inv1-due" type="date"></div>
+              <div class="field"><label for="f-inv1-amount">Částka (Kč)</label><input id="f-inv1-amount" type="number" min="0" step="1"></div>
+            </div>
+            <div class="field" id="inv1-eur-wrap" hidden><label for="f-inv1-eur">Částka na faktuře (EUR)</label><input id="f-inv1-eur" type="number" min="0" step="1"></div>
+          </div>
+
+          <div class="inv" id="inv2" hidden>
+            <div class="inv-t">Doplatek — 2. splátka</div>
+            <div class="row2">
+              <div class="field"><label for="f-inv2-due">Splatnost</label><input id="f-inv2-due" type="date"></div>
+              <div class="field"><label for="f-inv2-amount">Částka (Kč)</label><input id="f-inv2-amount" type="number" min="0" step="1" readonly></div>
+            </div>
+            <p class="hint">Fakturu na doplatek vystavíš později — správa ti to připomene týden před splatností (T−72).</p>
+          </div>
+        </div>
+
+        <div class="block">
+          <h3 class="block-h">Poznámka pro tebe</h3>
+          <div class="field"><textarea id="f-note" maxlength="1000" placeholder="interní poznámka, do smlouvy se nepíše"></textarea></div>
+        </div>
+
+        <p class="form-err" id="form-err" hidden></p>
+
+        <div class="edit-actions">
+          <button type="button" class="btn btn-outline" id="btn-save">Uložit koncept</button>
+          <button type="button" class="btn btn-primary" id="btn-issue">Vystavit smlouvu</button>
+          <button type="button" class="btn btn-ghost" id="btn-open">Otevřít pro tisk / PDF</button>
+          <a class="btn btn-ghost" id="btn-download" download>Stáhnout .html</a>
+          <button type="button" class="btn btn-ghost" id="btn-email">Průvodní e-mail</button>
+          <button type="button" class="btn btn-danger" id="btn-delete">Smazat</button>
+        </div>
+        <p class="hint" id="h-issue"></p>
+      </form>
+
+      <div class="edit-preview">
+        <div class="preview-bar"><span>Náhled</span><span class="hint" id="preview-info"></span></div>
+        <iframe id="preview" title="Náhled smlouvy" sandbox="allow-same-origin"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">Villa Rudolf · interní nástroj · data v EU (Supabase)</footer>
+</main>
+
+<!-- Průvodní e-mail -->
+<div id="overlay" class="overlay" hidden>
+  <div class="sheet">
+    <div class="sheet-head">
+      <button type="button" class="sheet-close" id="sheet-close" aria-label="Zavřít">✕</button>
+      <h2 class="sheet-title">Průvodní e-mail</h2>
+    </div>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+</div>
+
+<script src="../vendor/qrcode.min.js"></script>
+<script src="smlouva-sablona.js?v=1"></script>
+<script src="smlouvy.js?v=1" defer></script>
+</body>
+</html>

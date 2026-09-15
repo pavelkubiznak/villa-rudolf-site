@@ -15,6 +15,7 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 |---|---|---|
 | `/` (`index.html`, 80 kB) | homepage, vícejazyčná | hosté, veřejnost |
 | `/sprava/` | **admin majitele** — rezervace, předrezervace, platby, kontakty hostů, zprávy, konflikty. `sprava.js` (2 300+ ř.) | jen majitel |
+| `/smlouvy/` | **generátor ubytovacích smluv** přímých hostů — šablona cs/de/en, tisk do PDF, archiv v `vr_contracts`, „Vystavit“ zakládá i předrezervaci | jen majitel |
 | `/metrika/` | přesměrování na dashboard návštěvnosti (Umami na Hetzneru), bez odkazů z webu | jen majitel |
 | `/registrace/` | registrace hostů (evidence + poplatek z pobytu) | hosté |
 | `/checkin/` | check-in formulář | hosté |
@@ -83,6 +84,30 @@ zpátky feedem. Skript kalendáře proto hold se **shodným** `(start, end)` nep
 `buildStays()` v `sprava.js` ho ke stejnému termínu přilepí — jeden pobyt, ne dva, a žádná
 falešná dvojitá rezervace. Naopak **částečný** překryv předrezervace s cizí rezervací je
 skutečný konflikt a vyskočí červený banner.
+
+## Ubytovací smlouvy (`/smlouvy/`, `vr_contracts`)
+
+Přímý host dostává **zálohovou fakturu z iDokladu + ubytovací smlouvu**; smlouva se nepodepisuje,
+vzniká úhradou faktury. Do 9/2026 se každá psala ručně jako HTML na Disku; od 15. 9. 2026 ji
+skládá `/smlouvy/` z dat (`smlouva-sablona.js` = jediné znění, cs/de/en) a ukládá do
+`vr_contracts` i s vykresleným HTML. Brána je stejný token jako `/sprava/`.
+
+| | |
+|---|---|
+| Vstup | pobyt z `vr_bookings` (host, termín, jazyk) → editor doplní cenu z `VR_PRICING` v `assets/site.js` |
+| Faktura | ručně v iDokladu; do editoru se opíše číslo, VS, splatnost (a částka v EUR u eurové) |
+| Platba | `single` (100 % jednou) nebo `split` (50 % záloha + 50 % doplatek splatný **T−65**) |
+| Vystavit | uloží smlouvu jako `issued` **a** založí/aktualizuje hold ve `vr_holds` — teprve ten drží termín |
+| Výstup | tisk do PDF z prohlížeče, „Stáhnout .html“ pro Disk, návrh průvodního e-mailu |
+| Demo | `/smlouvy/#demo` — bez klíče a bez DB, jen na prohlédnutí UI |
+
+**Proč T−65 u doplatku:** storno je 50 % v 89.–60. dni a **70 % od 59. dne**. Se zálohou 50 %
+máme z čeho strhnout jen do 59. dne; doplatek proto musí být na účtu dřív — splatnost T−65,
+připomínka majiteli T−72 (`balance_invoice` ve `/sprava/` i `VrDailyTasks`). Když je příjezd
+blíž než ~3 týdny před T−65, editor dvě splátky nenabídne.
+
+Znění CS je doslova to, co se posílalo od srpna 2026 (bez počtu osob, bez koupelen, bez
+náhradníka — viz rozhodnutí z 29. 8. 2026). Kdo mění text smlouvy, mění **jen** šablonu.
 
 ## Párování plateb (`vr_payments`) — etapa 2
 

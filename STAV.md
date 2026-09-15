@@ -106,13 +106,13 @@ kalendáře taky 18měsíční prune `history.json`.
 
 | | Stav |
 |---|---|
-| Tabulka `vr_holds` + admin/veřejné RPC (`20260909_vr_holds.sql`) | 🟡 **kód hotov, čeká na spuštění migrace** |
+| Tabulka `vr_holds` + admin/veřejné RPC (`20260909_vr_holds.sql`) | ✅ **migrace v živé DB 15. 9. 2026** |
 | Sekce „Předrezervace" v `/sprava/`, editor faktury, dialog „Uhrazeno" | ✅ hotovo, ověřeno v prohlížeči |
 | Pojistka měna ⇒ účet (klient i databáze) | ✅ hotovo |
 | Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
 | Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
 | `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód v `main` od 15. 9. (i s filtrem duchů z 12. 9.), čeká na re-import** |
-| Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **kód hotov + otestován, čeká na 3 tokeny a migraci** |
+| Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **migrace v DB 15. 9., čeká na 3 tokeny Fia** |
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
 | Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
 | Napojení na iDoklad (kontrola účtu na faktuře přímo ze zdroje) | ⏭️ **nezačato** — API se nepsalo naslepo |
@@ -123,19 +123,50 @@ kalendáře taky 18měsíční prune `history.json`.
 Spouštěčem proto **není platba, ale vystavení zálohové faktury**.
 
 *Zbývá:*
-1. **Spustit migraci** `supabase/migrations/20260909_vr_holds.sql` proti živé DB. Do té doby
-   vrací RPC 404, `/sprava/` to spolkne (sekce se neukáže) a Action kalendáře to zaloguje
-   jako `::warning::` a jede beze změny. Nasadit se to tedy dá v libovolném pořadí.
+1. ~~Spustit migraci `20260909_vr_holds.sql`~~ — **hotovo 15. 9. 2026** (i `20260910_vr_payments.sql`
+   a `20260915_vr_contracts.sql`; po každé `notify pgrst, 'reload schema'`).
 2. **Znovu importovat `n8n/VrConflictWatch`** (Code node „Detekce konfliktů").
 3. **Zapsat termín 14.–21. 8. 2027** jako uhrazenou přímou rezervaci a **zablokovat ho na
-   platformách** — dneska je v očích všech kanálů volný.
-4. **Spustit migraci** `supabase/migrations/20260910_vr_payments.sql`.
+   platformách** — dneska je v očích všech kanálů volný. Pobyt ve `vr_bookings` je (Stibalová,
+   „Přímá“), předrezervace ne — založí se přes `/smlouvy/` nebo tlačítkem „+ Předrezervace“.
+4. **Předrezervace pro Sabáčkovou (21.–28. 8. 2027) a Rohrberg (7.–14. 8. 2027)** — obě mají pobyt
+   ve `vr_bookings`, ani jedna nemá hold; Sabáčková navíc **nemá vystavenou zálohovou fakturu**
+   (15. 9. se ozvala, že jí nic nepřišlo).
 5. **Založit tři read-only tokeny Fia** (VR korunový, VR eurový, hlavní účet Sintery),
    vložit je do prostředí n8n jako `FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA` a poskládat
    workflow podle `n8n/VrPaymentWatch/README.md`. **První běhy nech read-only**
    (`AUTOCONFIRM = false`) a přečti, co párování navrhlo — teprve pak povol zápis.
 6. Až bude párování usazené: napojit **iDoklad** a číst z něj, na jaký účet je faktura
    opravdu vystavená (dnes se to bere z toho, co se zapíše ručně v `/sprava/`).
+
+---
+
+## 📄 Ubytovací smlouvy → `/smlouvy/` + `vr_contracts`
+
+| | Stav |
+|---|---|
+| Tabulka `vr_contracts` + admin RPC (`20260915_vr_contracts.sql`) | ✅ **migrace v živé DB 15. 9. 2026** |
+| Stránka `/smlouvy/` (seznam, editor, živý náhled, tisk/PDF, průvodní e-mail) | 🟡 **kód hotov, ověřeno v `#demo`; ostrý běh s klíčem čeká na majitele** |
+| Šablona cs / de / en (`smlouva-sablona.js`) | ✅ CS doslova = smlouvy od 8/2026; DE/EN podle Rohrberg + dotaženo |
+| Dvě splátky 50/50 s doplatkem T−65 (před skokem storna na 70 %) | ✅ v šabloně i v editoru; u blízkého termínu se vynutí jedna platba |
+| QR platba (SPD) v § 5 | ✅ generuje se z IBAN + VS (`vendor/qrcode.min.js`) |
+| „Vystavit“ zakládá/aktualizuje předrezervaci (`vr_holds`) | ✅ — smlouva sama termín nedrží, hold ano |
+| Odkazy ze `/sprava/` (karta pobytu, karta předrezervace, topbar) | ✅ |
+| Doplatková faktura T−72 jako úkol majitele ve `/sprava/` + `VrDailyTasks` | 🟡 **v pracovní kopii z 12. 9., necommitnuté** |
+| Zálohová faktura z iDokladu | ⏭️ ručně; číslo, VS a splatnost se opisují do editoru. API iDokladu nenapojené |
+| Vlastní doména `smlouvy.villarudolf.com` | ⏭️ zatím `villarudolf.com/smlouvy/`; subdoména = DNS CNAME + druhý Pages web, nic v kódu |
+
+**Proč to vzniklo.** Smlouvy od srpna 2026 vznikaly jako ručně psané HTML na Disku (podle té
+předchozí) a PDF z nich dělal headless Chrome — bez šablony, bez dat, bez hlídání. 15. 9. 2026
+se ukázalo, že smlouva Sabáčkové ležela 3 dny na Disku s `[DOPLNIT č. zálohové faktury]` a nikdo
+ji neposlal. Teď je smlouva záznam v DB s vykresleným HTML, svázaný s pobytem a předrezervací.
+
+*Zbývá:*
+1. **Nasadit** (push z Macu) a **projít naostro**: `/smlouvy/` → pobyt Sabáčková → doplnit číslo
+   faktury z iDokladu → Vystavit → Tisk/PDF → průvodní e-mail.
+2. Archiv na Disk: „Stáhnout .html“ + PDF z tisku uložit do `UBYTOVACÍ SMLOUVA/<rok>/<Jméno termín>/`
+   jako dosud (DB je zdroj pravdy, Disk je záloha pro účetní).
+3. Až bude párování plateb: po „Uhrazeno“ u holdu přepnout smlouvu na potvrzenou (dnes ručně).
 
 ---
 
@@ -231,7 +262,7 @@ n8n, extranety, router). **Migrace do živé DB jdou od 15. 9. pustit z GitHubu:
 (ROLLBACK), ostrý = odškrtnout `dry_run`. Potřebuje jediný repo secret `SUPABASE_DB_URL`
 (postup v hlavičce `.github/workflows/db-migrate.yml`). Body 2–4 jsou připravené i jako
 **jeden soubor pro SQL editor Supabase** (poslaný v session 15. 9.; jde ho složit znovu:
-nový purge secret vygenerovaný v DB + čtyři migrace v pořadí lockdown, wifi, holds, payments).
+nový purge secret vygenerovaný v DB + migrace lockdown a wifi; holds, payments i contracts už v DB jsou).
 
 1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
    v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
@@ -241,8 +272,9 @@ nový purge secret vygenerovaný v DB + čtyři migrace v pořadí lockdown, wif
    Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
    uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá
    `python3 tools/n8n-patch-vrdailytasks.py <export.json> <patched.json>` (postup v jeho hlavičce)
-4. **Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`** — bez nich nemají
-   sekce Předrezervace a Platby kam ukládat; pak **re-import `VrConflictWatch`**
+4. ~~Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`~~ — **hotovo 15. 9.**
+   (i `20260915_vr_contracts.sql`). Teď: **vystavit fakturu + smlouvu Sabáčkové ve `/smlouvy/`**;
+   pak **re-import `VrConflictWatch`**
 5. **Ověřit `supabase functions deploy album`** — oprava uploadu bez tokenu je v repu od 8. 9.,
    ale že nasazení proběhlo, není nikde zapsáno
 6. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
