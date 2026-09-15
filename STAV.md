@@ -88,7 +88,7 @@ authenticated`, zůstává jen `service_role`. Postup nasazení je v hlavičce m
 jeho sha256 do configu → aplikovat migraci → přepnout volajícího (pg_cron / n8n) na service klíč.
 Staré heslo je v git historii, takže **rotace je povinná**, ne volitelná.
 
-**🟡 Další dvě migrace z auditu 8. 9. (čekají na `supabase db push`):**
+**🟡 Další dvě migrace z auditu 8. 9. (čekají na spuštění — Actions „DB migrace" nebo SQL editor):**
 `20260908100100_vr_album_bucket.sql` — limit 15 MB a whitelist MIME typů přímo na bucketu
 `vr-album` (Edge Function kontrolovala jen `size`, které pošle klient);
 `20260908100200_vr_msglog_idx_cleanup.sql` — drop nadbytečného indexu `vr_msglog_booking_idx`
@@ -226,7 +226,10 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 ## Doporučené pořadí
 
 Všechno v repu je napsané a zmergované; **co zbývá, jsou ruční kroky mimo repo** (živá DB,
-n8n, extranety, router). Nic z toho nejde udělat z GitHubu. Body 2–4 jsou připravené jako
+n8n, extranety, router). **Migrace do živé DB jdou od 15. 9. pustit z GitHubu:** Actions →
+„DB migrace (Supabase)" → Run workflow, zadat soubory v pořadí; výchozí běh je dry run
+(ROLLBACK), ostrý = odškrtnout `dry_run`. Potřebuje jediný repo secret `SUPABASE_DB_URL`
+(postup v hlavičce `.github/workflows/db-migrate.yml`). Body 2–4 jsou připravené i jako
 **jeden soubor pro SQL editor Supabase** (poslaný v session 15. 9.; jde ho složit znovu:
 nový purge secret vygenerovaný v DB + čtyři migrace v pořadí lockdown, wifi, holds, payments).
 
