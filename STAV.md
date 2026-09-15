@@ -263,6 +263,10 @@ n8n, extranety, router). **Migrace do živé DB jdou od 15. 9. pustit z GitHubu:
 (postup v hlavičce `.github/workflows/db-migrate.yml`). Body 2–4 jsou připravené i jako
 **jeden soubor pro SQL editor Supabase** (poslaný v session 15. 9.; jde ho složit znovu:
 nový purge secret vygenerovaný v DB + migrace lockdown a wifi; holds, payments i contracts už v DB jsou).
+Purge secret má od 15. 9. vlastní migraci `20260915_vr_purge_secret.sql` (vznikne náhodně v DB, uloží se
+jen hash, nikdo ho nezná — funkce je zamčená, dokud si majitel nenastaví vlastní, postup v její hlavičce),
+takže celé nasazení jde pustit z Actions: `20260915_vr_purge_secret.sql 20260908_vr_purge_lockdown.sql
+20260915_vr_admin_config_wifi.sql`, nejdřív dry run, pak ostře.
 
 1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
    v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
