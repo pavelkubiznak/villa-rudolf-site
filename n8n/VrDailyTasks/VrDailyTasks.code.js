@@ -120,7 +120,7 @@ function reviewVariant(platform,lang){ const T=TPL[lang]||TPL.en; const p=(platf
 function fill(tpl,ctx){ return tpl
   .replace(/\{JMENO\}/g,ctx.jmeno).replace(/\{TERMIN\}/g,ctx.termin)
   .replace(/\{DOSPELI\}/g,ctx.dospeli).replace(/\{DETI\}/g,ctx.deti).replace(/\{NOCI\}/g,ctx.noci)
-  .replace(/\{CASTKA\}/g,ctx.castka).replace(/\{KOD_DVERI\}/g,ctx.kod).replace(/\{WIFI_HESLO\}/g,WIFI||'{WIFI_HESLO}')
+  .replace(/\{CASTKA\}/g,ctx.castka).replace(/\{KOD_DVERI\}/g,ctx.kod).replace(/\{WIFI_HESLO\}/g,()=>WIFI||'{WIFI_HESLO}')
   .replace(/\{KAUCE\}/g,DEPOSIT_CZK.toLocaleString('cs-CZ'))
   .replace(/\{REGISTRACNI_LINK\}/g,ctx.regLink||'{REGISTRACNI_LINK}')
   .replace(/\{PRUVODCE_LINK\}/g,ctx.guideLink||'{PRUVODCE_LINK}'); }
