@@ -15,12 +15,18 @@ name: DB migrace (Supabase)
 # Výchozí běh je DRY RUN: migrace se provedou a na konci se odvolají (ROLLBACK),
 # takže je vidět, že projdou, a v DB se nic nezmění. Ostrý běh = odškrtnout dry_run.
 # URL se nikdy netiskne — psql ji nevypisuje ani při chybě.
+#
+# ⚠️ BEZPEČNOST (nález Codexu na #14): vstup `files` se NIKDY nevkládá do těla skriptu
+# přes ${{ }}. Takový zápis GitHub expanduje ještě před spuštěním bashe, takže kdo smí
+# workflow pustit, mohl podstrčit `$(...)` a příkaz by běžel dřív než kontroly — s
+# SUPABASE_DB_URL v prostředí. Vstup proto chodí proměnnou prostředí a čte se jako DATA;
+# každá cesta musí projít striktním vzorem (jeden segment, jen [A-Za-z0-9._-], .sql).
 
 on:
   workflow_dispatch:
     inputs:
       files:
-        description: 'Soubory migrací v pořadí, oddělené mezerou (cesty od kořene repa)'
+        description: 'Soubory migrací v pořadí, oddělené mezerou (jen názvy v supabase/migrations/)'
         type: string
         required: true
         default: 'supabase/migrations/20260908100100_vr_album_bucket.sql supabase/migrations/20260908100200_vr_msglog_idx_cleanup.sql'
@@ -43,32 +49,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Ověřit secret a soubory
+      - name: Ověřit vstup a sestavit dávku
         env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          FILES: ${{ inputs.files }}      # DATA, ne kód — viz hlavička
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [ -z "$SUPABASE_DB_URL" ]; then
-            echo "::error::Chybí repo secret SUPABASE_DB_URL (viz hlavička workflow)."; exit 1
-          fi
-          for f in ${{ inputs.files }}; do
+          set -euo pipefail
+          set -f                          # žádné globování nad seznamem cest
+          : > /tmp/batch.sql
+          echo 'begin;' >> /tmp/batch.sql
+          n=0
+          for f in $FILES; do
+            printf '%s\n' "$f" | grep -qE '^supabase/migrations/[A-Za-z0-9._-]+\.sql$' || {
+              echo "::error::Nepovolená cesta (čekám supabase/migrations/<název>.sql): $f"; exit 1; }
             [ -f "$f" ] || { echo "::error::Soubor neexistuje: $f"; exit 1; }
-            case "$f" in supabase/migrations/*.sql) ;; *) echo "::error::Mimo supabase/migrations/: $f"; exit 1;; esac
+            printf '\\echo === %s\n\\i %s\n' "$f" "$f" >> /tmp/batch.sql
+            n=$((n + 1))
           done
-
-      - name: Sestavit dávku (jedna transakce)
-        run: |
-          {
-            echo 'begin;'
-            for f in ${{ inputs.files }}; do
-              echo "\\echo === $f"
-              echo "\\i $f"
-            done
-            if [ "${{ inputs.dry_run }}" = "true" ]; then echo 'rollback;'; echo "\\echo === DRY RUN: vse odvolano (ROLLBACK), DB nezmenena"; else echo 'commit;'; echo "\\echo === COMMIT: migrace zapsany"; fi
-          } > /tmp/batch.sql
+          [ "$n" -gt 0 ] || { echo '::error::Nezadán žádný soubor.'; exit 1; }
+          if [ "$DRY_RUN" = "true" ]; then
+            printf 'rollback;\n\\echo === DRY RUN: vse odvolano (ROLLBACK), DB nezmenena\n' >> /tmp/batch.sql
+          else
+            printf 'commit;\n\\echo === COMMIT: migrace zapsany\n' >> /tmp/batch.sql
+          fi
+          echo "Souborů: $n, dry run: $DRY_RUN"
           cat /tmp/batch.sql
 
       - name: Spustit psql
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           PGCONNECT_TIMEOUT: '15'
-        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -X -q -f /tmp/batch.sql
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            echo '::error::Chybí repo secret SUPABASE_DB_URL (viz hlavička workflow).'; exit 1
+          fi
+          psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -X -q -f /tmp/batch.sql
