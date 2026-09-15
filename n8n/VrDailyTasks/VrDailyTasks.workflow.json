@@ -3,6 +3,7 @@
   "__proc_nejde_importovat__": "Workflow je schválně zanořený pod klíčem „workflow“, takže top-level objekt nemá „nodes“ ani „connections“. „n8n import:workflow“ na tom spadne s hláškou \"File does not seem to contain valid workflows.\" a neudělá nic. Nerozbaluj to.",
   "__workflow_id__": "VrDailyTasks001",
   "__jak_nasadit__": [
+    "NEJJEDNODUŠŠÍ CESTA (15. 9. 2026): python3 tools/n8n-patch-vrdailytasks.py <export.json> <patched.json> udělá kroky 2 a NOVÉ sám (vloží kód, přidá a zapojí uzel konfigurace). Ruční postup níž zůstává jako reference.",
     "1. Záloha: docker exec n8n n8n export:workflow --id=VrDailyTasks001 --output=/tmp/bak.json",
     "2. V exportu nahraď JEN parameters.jsCode Code node „Spočítat úkoly“ obsahem",
     "   NOVÉ (15. 9. 2026): před „Načíst pobyty (service-role)“ musí být v řetězu uzel „Načíst konfiguraci (service-role)“",
