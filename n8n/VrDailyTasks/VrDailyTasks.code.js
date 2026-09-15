@@ -229,7 +229,14 @@ const byUidh = {}; bookings.forEach(b => { if (b.uidh) byUidh[b.uidh] = b; });
 
 // sloučené pobyty (kalendář + ruční), stejně jako buildStays()
 const stays = []; const usedIds = {};
-calendar.forEach(c => { if (c.end < cutoff) return; const b = byUidh[c.uidh] || null; if (b) usedIds[b.id] = true;
+calendar.forEach(c => { if (c.end < cutoff) return;
+  // Nepotvrzený záznam (duch) = ve feedu už není, ale pobyt teprve má proběhnout —
+  // propadlá předrezervace nebo storno. Do úkolů ani do hlídače překryvů nepatří.
+  // POZOR na `end > today`: feed nese jen dnešek a budoucnost, takže KAŽDÝ proběhlý
+  // pobyt je stale; bez té podmínky by zmizel celý archiv.
+  // Stejné pravidlo jako sprava.js (buildStays) a VrConflictWatch.detect.js.
+  if (c.stale === true && c.end > today) return;
+  const b = byUidh[c.uidh] || null; if (b) usedIds[b.id] = true;
   stays.push({ source:'calendar', uidh:c.uidh, start:c.start, end:c.end, platform:c.platform, booking:b }); });
 bookings.forEach(b => { if (usedIds[b.id]) return; if (b.departure < cutoff) return;
   stays.push({ source:'manual', uidh:b.uidh||null, start:b.arrival, end:b.departure, platform:b.platform||'Přímá', booking:b }); });
