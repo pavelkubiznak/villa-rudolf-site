@@ -4,7 +4,7 @@
 navrhovat — ať jsi člověk nebo AI session — přečti si tuhle tabulku. Systém je rozdělený do
 několika repozitářů a bez mapy se v nich nedá poznat, které je živé.
 
-Aktualizováno: 8. 9. 2026
+Aktualizováno: 9. 9. 2026
 
 ## Součásti
 
@@ -25,17 +25,22 @@ Aktualizováno: 8. 9. 2026
         ▼
   villa-booking-calendar ──── data/history.json ────┐   (veřejné, ANONYMIZOVANÉ:
         │  Action každé 3 h                          │    uidh, termín, platforma —
-        ▼                                            │    žádná jména hostů)
-  kalendář pro úklid + owner.html (tržby)            │
-                                                     ▼
-  villa-rudolf-portal ── trips.json ──▶  villa-rudolf-site  /sprava/
-       forecast.json                            │  admin: rezervace, kontakty, zprávy
-                                                ▼
-                                     Supabase  fpknbrzbqpalguajskut
-                                     (vr_* tabulky a funkce — PII hostů)
-                                                ▲
+        ▲          │                                 │    žádná jména hostů)
+        │          ▼                                 │
+        │  kalendář pro úklid + owner.html (tržby)   │
+        │                                            ▼
+        │  villa-rudolf-portal ─ trips.json ─▶ villa-rudolf-site  /sprava/
+        │       forecast.json                       │  admin: rezervace, kontakty, zprávy
+        │                                           ▼
+        └──── vr_public_holds() ────────  Supabase  fpknbrzbqpalguajskut
+              PŘEDREZERVACE a přímý       (vr_* tabulky a funkce — PII hostů)
+              prodej (anonymizovaně)                ▲
                                      /registrace/ · /checkin/ · /album/
 ```
+
+**Od 9. 9. 2026 tečou data i opačným směrem.** Pobyt prodaný napřímo v žádném feedu není,
+takže ho kalendář musí dostat z `/sprava/` — jinak ho web dál nabízí jako volný termín
+(přesně případ 14.–21. 8. 2027).
 
 ## Kdo vlastní kterou pravdu
 
@@ -46,6 +51,7 @@ Aktualizováno: 8. 9. 2026
 | **KOLIK** — ceny a tržby | `villa-booking-calendar/owner.html` | šifrované, klíč má jen majitel |
 | **CO** — výlety, počasí | `villa-rudolf-portal/data/` | `site` je odtud čte |
 | **SPOJKA** mezi kalendářem a rezervací | `uidh` (= `sha256(iCal UID)[:16]`) | používá `sprava.js` i `vr_admin_upsert_booking(p_uidh)` |
+| **PŘÍMÝ PRODEJ** — předrezervace ze zálohové faktury, potvrzené přímé rezervace | Supabase `vr_holds` (tady) | jediná věc, kterou `site` posílá **do** kalendáře — přes `vr_public_holds()`; `uidh` = `sha256('vr-hold:'+id)[:16]` |
 | **NÁVŠTĚVNOST** webu — kolik lidí, odkud, kam, jak dlouho | Umami na Hetzneru | cookieless, bez PII; skript na všech stránkách kromě `/sprava/`, tokeny `?t=` se nezapisují |
 
 ## Infrastruktura
