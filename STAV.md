@@ -220,7 +220,9 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 ## Doporučené pořadí
 
 Všechno v repu je napsané a zmergované; **co zbývá, jsou ruční kroky mimo repo** (živá DB,
-n8n, extranety, router). Nic z toho nejde udělat z GitHubu.
+n8n, extranety, router). Nic z toho nejde udělat z GitHubu. Body 2–4 jsou připravené jako
+**jeden soubor pro SQL editor Supabase** (poslaný v session 15. 9.; jde ho složit znovu:
+nový purge secret vygenerovaný v DB + čtyři migrace v pořadí lockdown, wifi, holds, payments).
 
 1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
    v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
@@ -228,7 +230,8 @@ n8n, extranety, router). Nic z toho nejde udělat z GitHubu.
    podle postupu v její hlavičce (nový secret, hash do configu, service klíč u volajícího)
 3. **Heslo Wi-Fi** — migrace `20260915_vr_admin_config_wifi.sql`, vyplnit v `/sprava/` →
    Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
-   uzel „Načíst konfiguraci" do n8n `VrDailyTasks` (postup v hlavičce migrace)
+   uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá
+   `python3 tools/n8n-patch-vrdailytasks.py <export.json> <patched.json>` (postup v jeho hlavičce)
 4. **Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`** — bez nich nemají
    sekce Předrezervace a Platby kam ukládat; pak **re-import `VrConflictWatch`**
 5. **Ověřit `supabase functions deploy album`** — oprava uploadu bez tokenu je v repu od 8. 9.,
