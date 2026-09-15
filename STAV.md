@@ -161,6 +161,21 @@ Majitel 13. 8. říká, že „zprávu potřebuje dotáhnout" — **není jasné
 odesílání přes WhatsApp (dnes se odkaz vkládá ručně, Booking blokuje boty), nebo jiná zpráva
 (denní souhrn / report). **Doplnit, až se upřesní.**
 
+**✅ Odkaz na průvodce se hostovi konečně posílá — 15. 9. 2026.** Potvrzení (T−30) slibovalo
+„osobní stránku s doporučeními", ale žádný krok sekvence ji neposílal; odkaz `/pruvodce/?t=`
+byl jen v detailu pobytu k ručnímu kopírování. Teď je v jádru uvítací zprávy (T−7) ve všech
+čtyřech jazycích (`{PRUVODCE_LINK}`, `sprava.js` i `VrDailyTasks`). Souvisí druhá díra: token hosta
+žil jen v `sessionStorage` jedné karty, po zavření zbývalo „Vygenerovat nový odkaz" — a to
+zneplatnilo odkaz, který už host dostal. Migrace `20260915_vr_token_enc.sql` (nasazena) ukládá token
+zašifrovaný admin klíčem (`pgp_sym_encrypt`), `vr_admin_list_bookings` ho vrací dešifrovaný →
+odkazy fungují na každém zařízení a bez regenerace. Pobyty založené před 15. 9. `token_enc` nemají:
+u nich se odkaz vygeneruje jednou tlačítkem v detailu a dál už drží. Denní e-mail (nasazen do n8n
+15. 9., záloha `/root/vrdt_backup_20260915.json`) navíc u nespárovaných pobytů čte `verified.json`
+kalendáře: servisní blok (`service`) a nepotvrzený termín (`unconfirmed`) hosta nemají, takže se nehlásí —
+jinak by od 12. 10. sedm týdnů denně strašila „rekonstrukce schodů". Okno nespárovaných rozšířeno na
+T+35, protože první zpráva sekvence je T−30 (v `sprava.js` i v e-mailu stejně).
+
+
 ---
 
 ## 📈 Návštěvnost webu → Umami na Hetzneru
