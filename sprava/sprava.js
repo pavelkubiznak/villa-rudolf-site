@@ -253,7 +253,8 @@
       .replace(/\{NOCI\}/g, ctx.noci)
       .replace(/\{CASTKA\}/g, ctx.castka)
       .replace(/\{KOD_DVERI\}/g, ctx.kod)
-      .replace(/\{WIFI_HESLO\}/g, wifiPassword() || '{WIFI_HESLO}')
+      // callback, ne řetězec: heslo obsahující $& nebo $$ by replace jinak rozepsal
+      .replace(/\{WIFI_HESLO\}/g, function () { return wifiPassword() || '{WIFI_HESLO}'; })
       .replace(/\{KAUCE\}/g, DEPOSIT_CZK.toLocaleString('cs-CZ'))
       .replace(/\{REGISTRACNI_LINK\}/g, ctx.regLink || '{REGISTRACNI_LINK}')
       .replace(/\{PRUVODCE_LINK\}/g, ctx.guideLink || '{PRUVODCE_LINK}');
