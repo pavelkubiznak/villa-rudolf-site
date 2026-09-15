@@ -1,0 +1,100 @@
+name: DB nasazení z fronty (Supabase)
+
+# Nasazení migrací bez ručního klikání — schváleno majitelem 15. 9. 2026.
+# Fronta je soubor supabase/DEPLOY.txt (názvy souborů ze supabase/migrations/, jeden na
+# řádek, v pořadí; # = komentář).
+#
+#   * pull request, který DEPLOY.txt mění  → DRY RUN (jedna transakce, na konci ROLLBACK):
+#     v logu je vidět, že migrace projdou, DB se nemění;
+#   * push do main (= merge toho PR)        → OSTRÝ BĚH (COMMIT) + kontrola po nasazení.
+#
+# Proč vedle db-migrate.yml (ruční „Run workflow"): dispatch přes API nemá integrace
+# Claude Code povolený a tlačítko v Actions je ruční krok. Tady stačí PR + merge, což
+# je stejný proces jako u každé jiné změny v repu, a dry run je součástí review.
+#
+# Stejná pravidla jako db-migrate.yml (#16): vstup se čte jako DATA (žádné ${{ }} v run:),
+# každá cesta musí být supabase/migrations/<název>.sql a existovat, SUPABASE_DB_URL je
+# v prostředí jen v krocích s psql a nikdy se netiskne. Potřebuje repo secret
+# SUPABASE_DB_URL (Supabase → Connect → Session pooler, heslo databáze).
+#
+# Po úspěšném ostrém běhu frontu vyprázdni (další PR), ať fronta říká, co ČEKÁ.
+
+on:
+  pull_request:
+    paths: ['supabase/DEPLOY.txt']
+  push:
+    branches: [main]
+    paths: ['supabase/DEPLOY.txt']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-migrate
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Přečíst frontu a sestavit dávku
+        env:
+          MODE: ${{ github.event_name }}     # pull_request = dry run, push = ostrý běh
+        run: |
+          set -euo pipefail
+          set -f
+          : > /tmp/batch.sql
+          echo 'begin;' >> /tmp/batch.sql
+          n=0
+          while IFS= read -r line || [ -n "$line" ]; do
+            f="${line%%#*}"; f="$(printf '%s' "$f" | tr -d '[:space:]')"
+            [ -n "$f" ] || continue
+            case "$f" in supabase/migrations/*) ;; *) f="supabase/migrations/$f";; esac
+            printf '%s\n' "$f" | grep -qE '^supabase/migrations/[A-Za-z0-9._-]+\.sql$' || {
+              echo "::error::Nepovolená cesta ve frontě: $f"; exit 1; }
+            [ -f "$f" ] || { echo "::error::Soubor neexistuje: $f"; exit 1; }
+            printf '\\echo === %s\n\\i %s\n' "$f" "$f" >> /tmp/batch.sql
+            n=$((n + 1))
+          done < supabase/DEPLOY.txt
+          if [ "$n" -eq 0 ]; then
+            echo "Fronta je prázdná — není co nasazovat."
+            echo "EMPTY=1" >> "$GITHUB_ENV"
+          elif [ "$MODE" = "push" ]; then
+            printf 'commit;\n\\echo === COMMIT: migrace zapsany\n' >> /tmp/batch.sql
+          else
+            printf 'rollback;\n\\echo === DRY RUN: vse odvolano (ROLLBACK), DB nezmenena\n' >> /tmp/batch.sql
+          fi
+          echo "Souborů: $n, režim: $MODE"
+          cat /tmp/batch.sql
+
+      - name: Spustit psql
+        if: env.EMPTY != '1'
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PGCONNECT_TIMEOUT: '15'
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            echo '::error::Chybí repo secret SUPABASE_DB_URL (viz hlavička workflow).'; exit 1
+          fi
+          psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -X -q -f /tmp/batch.sql
+
+      - name: Kontrola po běhu (jen názvy, žádné hodnoty)
+        if: env.EMPTY != '1'
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PGCONNECT_TIMEOUT: '15'
+        run: |
+          set -euo pipefail
+          psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 <<'SQL'
+          \echo === kdo smi volat vr_purge_expired (cil po lockdownu: postgres + service_role)
+          select grantee, privilege_type from information_schema.routine_privileges
+          where specific_schema = 'public' and routine_name = 'vr_purge_expired' order by grantee;
+          \echo === klice v vr_admin_config (bez hodnot)
+          select k from public.vr_admin_config order by k;
+          \echo === whitelist vr_admin_get_config pousti wifi_*?
+          select position('wifi' in pg_get_functiondef('public.vr_admin_get_config(text)'::regprocedure)) > 0 as wifi_ve_whitelistu;
+          SQL
