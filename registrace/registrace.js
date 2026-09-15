@@ -30,7 +30,7 @@
       listEmpty: 'Zatím nikdo. Přidejte první osobu níže.',
       countOne: '{n} osoba', countFew: '{n} osoby', countMany: '{n} osob',
       docOk: 'doklad', docNo: 'bez dokladu',
-      delConfirm: 'Odebrat tuto osobu ze seznamu?',
+      delConfirm: 'Odebrat tuto osobu ze seznamu?', delLabel: 'Odebrat osobu',
       formTitle: 'Přidat osobu',
       fFirst: 'Jméno', fLast: 'Příjmení', fBirth: 'Datum narození',
       fCitizenship: 'Občanství', fDoc: 'Číslo dokladu', fDocOptional: '(nepovinné)',
@@ -62,7 +62,8 @@
       errBookingFull: 'Dosáhli jste maxima osob na tento pobyt. Napište nám prosím.',
       errToken: 'Odkaz je neplatný nebo vypršel. Použijte prosím aktuální odkaz ze zprávy.',
       errGeneric: 'Uložení se nepodařilo. Zkuste to prosím znovu.',
-      citCommon: 'Časté', citOthers: 'Ostatní země', citOther: 'Jiná země'
+      errLoad: 'Seznam se nepodařilo načíst. Zkuste prosím obnovit stránku.',
+      citCommon: 'Časté', citOthers: 'Ostatní země'
     },
     en: {
       htmlLang: 'en',
@@ -78,7 +79,7 @@
       listEmpty: 'No one yet. Add the first person below.',
       countOne: '{n} person', countFew: '{n} people', countMany: '{n} people',
       docOk: 'document', docNo: 'no document',
-      delConfirm: 'Remove this person from the list?',
+      delConfirm: 'Remove this person from the list?', delLabel: 'Remove person',
       formTitle: 'Add a person',
       fFirst: 'First name', fLast: 'Last name', fBirth: 'Date of birth',
       fCitizenship: 'Citizenship', fDoc: 'Document number', fDocOptional: '(optional)',
@@ -110,7 +111,8 @@
       errBookingFull: 'You’ve reached the maximum number of people for this stay. Please contact us.',
       errToken: 'The link is invalid or has expired. Please use the current link from your message.',
       errGeneric: 'Saving failed. Please try again.',
-      citCommon: 'Common', citOthers: 'Other countries', citOther: 'Other country'
+      errLoad: 'The list couldn’t be loaded. Please reload the page.',
+      citCommon: 'Common', citOthers: 'Other countries'
     },
     de: {
       htmlLang: 'de',
@@ -126,7 +128,7 @@
       listEmpty: 'Noch niemand. Fügen Sie unten die erste Person hinzu.',
       countOne: '{n} Person', countFew: '{n} Personen', countMany: '{n} Personen',
       docOk: 'Dokument', docNo: 'kein Dokument',
-      delConfirm: 'Diese Person aus der Liste entfernen?',
+      delConfirm: 'Diese Person aus der Liste entfernen?', delLabel: 'Person entfernen',
       formTitle: 'Person hinzufügen',
       fFirst: 'Vorname', fLast: 'Nachname', fBirth: 'Geburtsdatum',
       fCitizenship: 'Staatsangehörigkeit', fDoc: 'Dokumentnummer', fDocOptional: '(optional)',
@@ -158,7 +160,8 @@
       errBookingFull: 'Die maximale Personenzahl für diesen Aufenthalt ist erreicht. Bitte kontaktieren Sie uns.',
       errToken: 'Der Link ist ungültig oder abgelaufen. Bitte den aktuellen Link aus Ihrer Nachricht nutzen.',
       errGeneric: 'Speichern fehlgeschlagen. Bitte erneut versuchen.',
-      citCommon: 'Häufig', citOthers: 'Weitere Länder', citOther: 'Anderes Land'
+      errLoad: 'Die Liste konnte nicht geladen werden. Bitte die Seite neu laden.',
+      citCommon: 'Häufig', citOthers: 'Weitere Länder'
     },
     pl: {
       htmlLang: 'pl',
@@ -174,7 +177,7 @@
       listEmpty: 'Jeszcze nikogo. Dodaj pierwszą osobę poniżej.',
       countOne: '{n} osoba', countFew: '{n} osoby', countMany: '{n} osób',
       docOk: 'dokument', docNo: 'bez dokumentu',
-      delConfirm: 'Usunąć tę osobę z listy?',
+      delConfirm: 'Usunąć tę osobę z listy?', delLabel: 'Usuń osobę',
       formTitle: 'Dodaj osobę',
       fFirst: 'Imię', fLast: 'Nazwisko', fBirth: 'Data urodzenia',
       fCitizenship: 'Obywatelstwo', fDoc: 'Numer dokumentu', fDocOptional: '(opcjonalnie)',
@@ -206,7 +209,8 @@
       errBookingFull: 'Osiągnięto maksymalną liczbę osób dla tego pobytu. Napisz do nas.',
       errToken: 'Link jest nieprawidłowy lub wygasł. Skorzystaj z aktualnego linku z wiadomości.',
       errGeneric: 'Zapis się nie powiódł. Spróbuj ponownie.',
-      citCommon: 'Częste', citOthers: 'Pozostałe kraje', citOther: 'Inny kraj'
+      errLoad: 'Nie udało się wczytać listy. Odśwież proszę stronę.',
+      citCommon: 'Częste', citOthers: 'Pozostałe kraje'
     }
   };
 
@@ -420,12 +424,21 @@
   function hideDocWarn() { $('docWarn').hidden = true; $('f-doc').classList.remove('warn'); }
 
   /* ===================== error/ok ===================== */
-  function showError(msg) {
+  // aria-invalid: zvýrazní dotčené pole (CSS [aria-invalid="true"]) a čtečka ho ohlásí.
+  // Maže se při dalším pokusu (clearError) i jakmile uživatel do pole sáhne (init).
+  function markInvalid(ids) {
+    ids.forEach(function (id) { var el = $(id); if (el) el.setAttribute('aria-invalid', 'true'); });
+  }
+  function clearInvalid() {
+    document.querySelectorAll('.vp-form [aria-invalid]').forEach(function (el) { el.removeAttribute('aria-invalid'); });
+  }
+  function showError(msg, ids) {
     var e = $('err'); e.textContent = msg; e.hidden = false;
     $('okToast').hidden = true;
+    if (ids) markInvalid(ids);
     e.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-  function clearError() { var e = $('err'); e.hidden = true; e.textContent = ''; }
+  function clearError() { var e = $('err'); e.hidden = true; e.textContent = ''; clearInvalid(); }
   function showOk() { var o = $('okToast'); o.textContent = T[lang].okAdded; o.hidden = false; }
 
   function setBusy(on) {
@@ -452,6 +465,12 @@
       default: return L.errGeneric;
     }
   }
+  // které pole patří k chybovému kódu ze serveru (pro aria-invalid)
+  var ERR_FIELD = {
+    first_required: ['f-first'], last_required: ['f-last'], citizenship_invalid: ['f-cit'],
+    doc_required: ['f-doc'], doc_invalid: ['f-doc'], birth_invalid: ['f-birth'],
+    dates_invalid: ['f-from', 'f-to'], out_of_window: ['f-from', 'f-to']
+  };
 
   /* ===================== list ===================== */
   var lastPersons = null;
@@ -460,8 +479,16 @@
     if (!token) return;
     rpc('vr_persons_list', { p_token: token }).then(function (res) {
       var d = res.data || {};
-      if (d.ok === true) { renderList(d.persons || []); }
-    });
+      if (d.ok === true) { renderList(d.persons || []); return; }
+      // Neplatný / prošlý odkaz: řekni to hned při načtení, ne až po odeslání
+      // formuláře. Prázdná hlavička „Zaregistrovaní" by jinak tvrdila, že je vše OK.
+      if (d.error === 'token_invalid' || d.error === 'token_required') {
+        $('listSection').hidden = true;
+        showError(T[lang].errToken);
+        return;
+      }
+      showError(T[lang].errLoad);
+    }).catch(function () { showError(T[lang].errLoad); });
   }
 
   function renderList(persons) {
@@ -492,7 +519,7 @@
       meta.appendChild(dates); meta.appendChild(badge);
       main.appendChild(nm); main.appendChild(meta);
       var del = document.createElement('button');
-      del.type = 'button'; del.className = 'vp-del'; del.setAttribute('aria-label', L.delLabel);
+      del.type = 'button'; del.className = 'vp-del'; del.setAttribute('aria-label', L.delLabel); del.title = L.delLabel;
       del.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>';
       del.addEventListener('click', function () { deletePerson(p.id, del); });
       row.appendChild(flag); row.appendChild(main); row.appendChild(del);
@@ -540,16 +567,16 @@
     var from = $('f-from').value;
     var to = $('f-to').value;
 
-    if (!first) { showError(L.errFirst); return; }
-    if (!last) { showError(L.errLast); return; }
-    if (!from || !to) { showError(L.errStay); return; }
-    if (to < from) { showError(L.errDates); return; }
+    if (!first) { showError(L.errFirst, ['f-first']); return; }
+    if (!last) { showError(L.errLast, ['f-last']); return; }
+    if (!from || !to) { showError(L.errStay, [].concat(from ? [] : ['f-from'], to ? [] : ['f-to'])); return; }
+    if (to < from) { showError(L.errDates, ['f-to']); return; }
 
     // --- validace dokladu ---
     var dc = checkDoc(doc, cit);
-    if (dc === 'hard-empty') { showError(L.errDocRequired); $('f-doc').focus(); return; }
-    if (dc === 'hard-chars') { showError(L.errDocChars); $('f-doc').focus(); return; }
-    if (dc === 'hard-short') { showError(L.errDocShort); $('f-doc').focus(); return; }
+    if (dc === 'hard-empty') { showError(L.errDocRequired, ['f-doc']); $('f-doc').focus(); return; }
+    if (dc === 'hard-chars') { showError(L.errDocChars, ['f-doc']); $('f-doc').focus(); return; }
+    if (dc === 'hard-short') { showError(L.errDocShort, ['f-doc']); $('f-doc').focus(); return; }
     if (dc === 'soft' && !docConfirmed) {
       // měkké varování — necháme uživatele potvrdit
       var msg = L.docWarn.replace('{type}', docTypeLabel(cit, lang));
@@ -586,7 +613,7 @@
         return;
       }
       if (d.error === 'no_active_stay') { showClosed(); return; }
-      showError(mapError(d.error));
+      showError(mapError(d.error), ERR_FIELD[d.error]);
     }).catch(function () { setBusy(false); showError(L.errGeneric); });
   }
 
@@ -652,6 +679,13 @@
     });
 
     $('form').addEventListener('submit', submit);
+    // pole označené aria-invalid se odznačí, jakmile do něj uživatel sáhne
+    ['input', 'change'].forEach(function (evName) {
+      $('form').addEventListener(evName, function (ev) {
+        var el = ev.target;
+        if (el && el.getAttribute && el.getAttribute('aria-invalid')) el.removeAttribute('aria-invalid');
+      });
+    });
 
     // token: ověř + načti seznam; jinak lednicová cesta
     if (token) {

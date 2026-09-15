@@ -88,6 +88,12 @@ authenticated`, zůstává jen `service_role`. Postup nasazení je v hlavičce m
 jeho sha256 do configu → aplikovat migraci → přepnout volajícího (pg_cron / n8n) na service klíč.
 Staré heslo je v git historii, takže **rotace je povinná**, ne volitelná.
 
+**🟡 Další dvě migrace z auditu 8. 9. (čekají na `supabase db push`):**
+`20260908100100_vr_album_bucket.sql` — limit 15 MB a whitelist MIME typů přímo na bucketu
+`vr-album` (Edge Function kontrolovala jen `size`, které pošle klient);
+`20260908100200_vr_msglog_idx_cleanup.sql` — drop nadbytečného indexu `vr_msglog_booking_idx`
+(unique constraint nad stejným prefixem už index má). Obě jsou idempotentní.
+
 *Souvislost s evidencí pobytů:* stejná funkce maže bookingy 30+ dní po odjezdu, které
 **nemají zapsané osoby** (řádek 57). Pro majitelovo interní účetnictví („kdo tam byl, jak
 dlouho, kolik hostů") to znamená, že proběhlé pobyty bez evidence osob se tiše ztrácejí.

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="album.css?v=3">
+<link rel="stylesheet" href="album.css?v=4">
 </head>
 <body>
 <div class="va-root">
@@ -99,13 +99,15 @@
   </div>
 </div>
 
-<!-- Lightbox -->
-<div class="va-lightbox" id="lightbox" hidden>
-  <button type="button" class="va-lb-close" id="lbClose" aria-label="Zavřít">&times;</button>
+<!-- Lightbox: dialog s jediným ovládacím prvkem (zavřít). Fokus do něj přesouvá
+     openLightbox(), zpět na náhled ho vrací closeLightbox(). aria-label překládá
+     applyLang() přes data-i18n-aria. -->
+<div class="va-lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Náhled fotky" data-i18n-aria="lbTitle" hidden>
+  <button type="button" class="va-lb-close" id="lbClose" aria-label="Zavřít" data-i18n-aria="lbClose">&times;</button>
   <img id="lbImg" alt="">
 </div>
 
-<script src="album.js?v=5" defer></script>
+<script src="album.js?v=6" defer></script>
 <!-- Umami analytics (self-hosted, cookieless). data-exclude-search: v URL je
      hostovský token ?t=…, do analytiky smí jen cesta bez parametrů. -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-exclude-search="true"></script>

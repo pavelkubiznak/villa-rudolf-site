@@ -5,6 +5,8 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:#0E1311}
+/* atribut hidden musí vždy vyhrát nad autorským display (flex/inline-flex) */
+[hidden]{display:none!important}
 
 :root{
   --vc-bg:#0E1311;

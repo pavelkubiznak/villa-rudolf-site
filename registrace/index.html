@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="registrace.css?v=1">
+<link rel="stylesheet" href="registrace.css?v=2">
 </head>
 <body>
 <div class="vp-root">
@@ -76,11 +76,11 @@
 
           <div class="vp-row2">
             <label class="vp-field">
-              <span class="vp-lbl" data-i18n="fFirst">Jméno <em>*</em></span>
+              <span class="vp-lbl"><span data-i18n="fFirst">Jméno</span> <em>*</em></span>
               <input type="text" id="f-first" autocomplete="off" required maxlength="100">
             </label>
             <label class="vp-field">
-              <span class="vp-lbl" data-i18n="fLast">Příjmení <em>*</em></span>
+              <span class="vp-lbl"><span data-i18n="fLast">Příjmení</span> <em>*</em></span>
               <input type="text" id="f-last" autocomplete="off" required maxlength="100">
             </label>
           </div>
@@ -91,17 +91,19 @@
           </label>
 
           <label class="vp-field">
-            <span class="vp-lbl" data-i18n="fCitizenship">Občanství <em>*</em></span>
+            <span class="vp-lbl"><span data-i18n="fCitizenship">Občanství</span> <em>*</em></span>
             <select id="f-cit"></select>
           </label>
 
-          <label class="vp-field">
-            <span class="vp-lbl">
+          <!-- Obal je <div>, ne <label>: uvnitř je varování s <p> a tlačítky, které
+               <label> obalovat nesmí (čtečka by je četla jako název pole). -->
+          <div class="vp-field">
+            <label class="vp-lbl" for="f-doc">
               <span data-i18n="fDoc">Číslo dokladu</span>
               <em id="docStar">*</em>
               <span class="vp-lbl-opt" id="docOpt" data-i18n="fDocOptional" hidden>(nepovinné)</span>
-            </span>
-            <input type="text" id="f-doc" autocomplete="off" maxlength="40" inputmode="latin" autocapitalize="characters" spellcheck="false">
+            </label>
+            <input type="text" id="f-doc" autocomplete="off" maxlength="40" inputmode="latin" autocapitalize="characters" spellcheck="false" aria-describedby="docHint">
             <span class="vp-hint" id="docHint" data-i18n="docHintCz">Cestovní pas nebo občanský průkaz. U českých občanů nepovinné.</span>
             <div class="vp-docwarn" id="docWarn" hidden>
               <p id="docWarnMsg"></p>
@@ -110,7 +112,7 @@
                 <button type="button" class="vp-docwarn-ok" id="docWarnOk" data-i18n="docWarnContinue">Je to správně, pokračovat</button>
               </div>
             </div>
-          </label>
+          </div>
 
           <div class="vp-row2">
             <label class="vp-field">
@@ -124,7 +126,7 @@
           </div>
 
           <div class="vp-field">
-            <span class="vp-lbl" data-i18n="fStay">Termín pobytu <em>*</em></span>
+            <span class="vp-lbl"><span data-i18n="fStay">Termín pobytu</span> <em>*</em></span>
             <div class="vp-dates">
               <label class="vp-datecol">
                 <span class="vp-sub" data-i18n="fFrom">Od</span>

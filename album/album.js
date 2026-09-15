@@ -42,12 +42,15 @@
       empty: 'Zatím tu nejsou žádné fotky. Buďte první!',
       proto: 'Prototyp alba', mine: 'vaše', del: 'Smazat',
       count1: 'fotka', count234: 'fotky', count5: 'fotek',
-      byUnknown: '', by: 'nahrál/a ',
+      by: 'nahrál/a ',
       errGuard: 'Nejdřív prosím potvrďte souhlas zákonných zástupců.',
       errType: 'Tohle není obrázek: ', errBig: 'Soubor je příliš velký (max 15 MB): ',
       errDecode: 'Tuto fotku neumíme bezpečně zpracovat v prohlížeči (např. formát HEIC z iPhonu), tak jsme ji kvůli ochraně soukromí nenahráli. Uložte ji prosím jako JPEG nebo pořiďte snímek obrazovky: ',
       errUpload: 'Nahrání selhalo. Zkuste to prosím znovu.',
+      errDelete: 'Smazání selhalo. Zkuste to prosím znovu.',
+      errLoad: 'Album se nepodařilo načíst. Zkuste prosím obnovit stránku.',
       confirmDel: 'Opravdu smazat tuto fotku?',
+      lbTitle: 'Náhled fotky', lbClose: 'Zavřít', openPhoto: 'Zobrazit fotku',
       uploading: 'Nahrávám', of: 'z'
     },
     en: {
@@ -66,12 +69,15 @@
       empty: 'No photos yet. Be the first!',
       proto: 'Album prototype', mine: 'yours', del: 'Delete',
       count1: 'photo', count234: 'photos', count5: 'photos',
-      byUnknown: '', by: 'by ',
+      by: 'by ',
       errGuard: 'Please confirm the guardians’ consent first.',
       errType: 'This is not an image: ', errBig: 'File too large (max 15 MB): ',
       errDecode: 'We can’t safely process this photo in the browser (e.g. iPhone HEIC format), so we didn’t upload it, to protect your privacy. Please save it as JPEG or take a screenshot: ',
       errUpload: 'Upload failed. Please try again.',
+      errDelete: 'Deleting failed. Please try again.',
+      errLoad: 'The album couldn’t be loaded. Please reload the page.',
       confirmDel: 'Really delete this photo?',
+      lbTitle: 'Photo preview', lbClose: 'Close', openPhoto: 'View photo',
       uploading: 'Uploading', of: 'of'
     },
     de: {
@@ -90,12 +96,15 @@
       empty: 'Noch keine Fotos. Seien Sie die/der Erste!',
       proto: 'Album-Prototyp', mine: 'Ihres', del: 'Löschen',
       count1: 'Foto', count234: 'Fotos', count5: 'Fotos',
-      byUnknown: '', by: 'von ',
+      by: 'von ',
       errGuard: 'Bitte bestätigen Sie zuerst die Zustimmung der Erziehungsberechtigten.',
       errType: 'Das ist kein Bild: ', errBig: 'Datei zu groß (max 15 MB): ',
       errDecode: 'Dieses Foto können wir im Browser nicht sicher verarbeiten (z. B. HEIC-Format vom iPhone), deshalb haben wir es zum Schutz Ihrer Privatsphäre nicht hochgeladen. Bitte speichern Sie es als JPEG oder machen Sie einen Screenshot: ',
       errUpload: 'Upload fehlgeschlagen. Bitte erneut versuchen.',
+      errDelete: 'Löschen fehlgeschlagen. Bitte erneut versuchen.',
+      errLoad: 'Das Album konnte nicht geladen werden. Bitte die Seite neu laden.',
       confirmDel: 'Dieses Foto wirklich löschen?',
+      lbTitle: 'Fotovorschau', lbClose: 'Schließen', openPhoto: 'Foto anzeigen',
       uploading: 'Lade hoch', of: 'von'
     },
     pl: {
@@ -114,12 +123,15 @@
       empty: 'Nie ma jeszcze zdjęć. Bądź pierwszy!',
       proto: 'Prototyp albumu', mine: 'Twoje', del: 'Usuń',
       count1: 'zdjęcie', count234: 'zdjęcia', count5: 'zdjęć',
-      byUnknown: '', by: 'dodał(a) ',
+      by: 'dodał(a) ',
       errGuard: 'Najpierw potwierdź zgodę opiekunów prawnych.',
       errType: 'To nie jest obraz: ', errBig: 'Plik za duży (maks 15 MB): ',
       errDecode: 'Nie możemy bezpiecznie przetworzyć tego zdjęcia w przeglądarce (np. format HEIC z iPhone’a), więc dla ochrony prywatności nie zostało wysłane. Zapisz je jako JPEG lub zrób zrzut ekranu: ',
       errUpload: 'Wysyłanie nie powiodło się. Spróbuj ponownie.',
+      errDelete: 'Usuwanie nie powiodło się. Spróbuj ponownie.',
+      errLoad: 'Nie udało się wczytać albumu. Odśwież proszę stronę.',
       confirmDel: 'Na pewno usunąć to zdjęcie?',
+      lbTitle: 'Podgląd zdjęcia', lbClose: 'Zamknij', openPhoto: 'Pokaż zdjęcie',
       uploading: 'Wysyłam', of: 'z'
     }
   };
@@ -239,15 +251,17 @@
       var card = document.createElement('div');
       card.className = 'va-card';
 
-      var thumb = document.createElement('div');
-      thumb.className = 'va-thumb';
+      // Náhled je <button>, ať jde lightbox otevřít i z klávesnice (Enter / mezerník).
+      var thumb = document.createElement('button');
+      thumb.type = 'button'; thumb.className = 'va-thumb';
+      thumb.setAttribute('aria-label', t('openPhoto'));
       var img = document.createElement('img');
       // eager: lazy-loaded thumbnaily se v některých kontextech (in-app webview,
       // krátká stránka) nespustí; nahráváme thumbnaily rovnou.
       img.decoding = 'async'; img.alt = ''; img.src = url;
       thumb.appendChild(img);
       if (mine) { var b = document.createElement('span'); b.className = 'va-mine-badge'; b.textContent = t('mine'); thumb.appendChild(b); }
-      thumb.addEventListener('click', function () { openLightbox(url); });
+      thumb.addEventListener('click', function () { openLightbox(url, thumb); });
       card.appendChild(thumb);
 
       var meta = document.createElement('div');
@@ -299,16 +313,26 @@
         mineSet.delete(p.id); saveMine();
         photos = photos.filter(function (x) { return x.id !== p.id; });
         render();
-      }
-    });
+      } else { showErr(t('errDelete')); }
+    }).catch(function () { showErr(t('errDelete')); });
   }
 
-  function openLightbox(url) {
+  var lbOpener = null; // náhled, ze kterého se lightbox otevřel — po zavření dostane fokus zpět
+  function openLightbox(url, opener) {
     if (!url) return;
+    lbOpener = opener || null;
     $('lbImg').src = url;
     $('lightbox').hidden = false;
+    $('lbClose').focus();
   }
-  function closeLightbox() { $('lightbox').hidden = true; $('lbImg').src = ''; }
+  function closeLightbox() {
+    var lb = $('lightbox');
+    if (lb.hidden) return;
+    lb.hidden = true; $('lbImg').src = '';
+    // fokus zpět na náhled, pokud po přerenderování mřížky ještě existuje
+    if (lbOpener && document.contains(lbOpener)) lbOpener.focus();
+    lbOpener = null;
+  }
 
   /* ---------- Upload flow ---------- */
   function showErr(msg) { var e = $('err'); e.textContent = msg; e.hidden = false; }
@@ -407,6 +431,9 @@
     document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
       var k = el.getAttribute('data-i18n-ph'); if (T[lang] && T[lang][k] != null) el.setAttribute('placeholder', T[lang][k]);
     });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n-aria'); if (T[lang] && T[lang][k] != null) el.setAttribute('aria-label', T[lang][k]);
+    });
     document.querySelectorAll('.va-lang').forEach(function (b) { b.setAttribute('data-on', String(b.getAttribute('data-lang') === lang)); });
     if (albumId) render();
   }
@@ -421,20 +448,28 @@
   // Načte album z Edge Function (metadata + signed URL scopnuté na album_id tokenu).
   function refreshList() {
     return fn('list').then(function (res) {
-      if (!res || res.ok !== true) { // token nevalidní / chyba -> chovej se jako gate
-        $('albumView').hidden = true; $('gateView').hidden = false; $('loading').hidden = true; return;
+      $('loading').hidden = true;
+      if (!res || res.ok !== true) {
+        // Jen chyba tokenu (token_required / token_invalid) znamená „nemáte odkaz" → gate.
+        // rpc_failed / internal je výpadek na naší straně — album necháme a řekneme,
+        // že se nenačetlo, místo zavádějícího „použijte odkaz z pobytu".
+        if (res && /^token_/.test(String(res.error || ''))) {
+          $('albumView').hidden = true; $('gateView').hidden = false;
+        } else {
+          showErr(t('errLoad'));
+        }
+        return;
       }
       albumId = res.album_id;
       loadMine();
       photos = res.photos || [];
-      $('loading').hidden = true;
       render();
     });
   }
   function initAlbum() {
     $('albumView').hidden = false;
     $('nick').value = getNick();
-    refreshList().catch(function () { $('loading').hidden = true; });
+    refreshList().catch(function () { $('loading').hidden = true; showErr(t('errLoad')); });
   }
 
   function wire() {
@@ -446,7 +481,12 @@
     $('dlAll').addEventListener('click', downloadAll);
     $('lbClose').addEventListener('click', closeLightbox);
     $('lightbox').addEventListener('click', function (e) { if (e.target === $('lightbox')) closeLightbox(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+      if ($('lightbox').hidden) return;
+      if (e.key === 'Escape') { closeLightbox(); return; }
+      // jediný ovládací prvek dialogu je „zavřít" — Tab z něj nesmí utéct pod overlay
+      if (e.key === 'Tab') { e.preventDefault(); $('lbClose').focus(); }
+    });
   }
 
   /* ---------- Start ---------- */
