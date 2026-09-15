@@ -4,7 +4,7 @@
 navrhovat — ať jsi člověk nebo AI session — přečti si tuhle tabulku. Systém je rozdělený do
 několika repozitářů a bez mapy se v nich nedá poznat, které je živé.
 
-Aktualizováno: 9. 9. 2026
+Aktualizováno: 15. 9. 2026
 
 ## Součásti
 
@@ -93,7 +93,7 @@ vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatř�
 1. **Jedno repo = jedna práce.** Napsaná na prvním řádku jeho `CLAUDE.md`.
 2. **Každá nová session začíná touhle mapou**, ne prohledáváním repozitářů.
 3. **Živý systém je `villa-rudolf-site`.** Když něco vypadá, že to má být „nový modul", nejdřív
-   ověř, jestli to už není v `/sprava/` — `sprava.js` má přes 1 600 řádků a umí víc, než se zdá.
+   ověř, jestli to už není v `/sprava/` — `sprava.js` má přes 2 300 řádků a umí víc, než se zdá.
 4. **Schéma databáze se ověřuje proti živé DB**, ne proti souboru v repu. Kopie `schema.sql`
    v jiných repech jsou zastaralé.
 5. **Žádné PII do žádného repa.** Jména hostů patří jen do Supabase.
@@ -113,5 +113,8 @@ vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatř�
 - **Bezpečnost:** `vr_purge_expired` má heslo natvrdo ve veřejném repu a `grant to anon` —
   spustit tu mazací funkci může kdokoli. Oprava je napsaná
   (`supabase/migrations/20260908_vr_purge_lockdown.sql`), čeká na nasazení. Viz `STAV.md`.
+- **Heslo Wi-Fi** bylo natvrdo ve veřejném repu (a v git historii zůstává). Kód od 15. 9. čte
+  `vr_admin_config.wifi_password`; zbývá migrace `20260915_vr_admin_config_wifi.sql`, vyplnění
+  v Nastavení `/sprava/`, změna hesla na routeru a uzel v n8n `VrDailyTasks`. Viz `STAV.md`.
 - **Schéma není úplné:** `vr_request` / `vr_requests` (formulář homepage) v migracích chybí —
   vytáhnout z živé DB. Viz `STAV.md`, audit 8. 9.

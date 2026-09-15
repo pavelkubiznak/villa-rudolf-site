@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 9. 9. 2026
+Aktualizováno: 15. 9. 2026
 
 ---
 
@@ -17,7 +17,7 @@ Aktualizováno: 9. 9. 2026
 | Anonymizace veřejných dat | ✅ nasazeno |
 | Šrafování matoucí pro úklid | ✅ **vyřešeno 13. 8.** |
 | Nepotvrzené záznamy strašily jako dvojitá rezervace | ✅ **vyřešeno 9. 9.** |
-| Stejná falešná hláška v `/sprava/` a v hlídači n8n | 🟡 **opraveno v repu, hlídač čeká na import do n8n** |
+| Stejná falešná hláška v `/sprava/` a v hlídači n8n | ✅ **vyřešeno 12. 9. na všech třech místech** (po #8 hlídač znovu čeká na re-import, viz Předrezervace) |
 | Číst 4 feedy zvlášť místo e-chalupy hubu | 🟡 **kód hotov, čeká na 3 secrety** |
 | **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | 🟡 **migrace napsaná 8. 9., čeká na nasazení** |
 
@@ -46,7 +46,9 @@ z `n8n/VrConflictWatch/VrConflictWatch.detect.js`, živé == reference). První 
 `desiredCount` 3 → 0, všechny čtyři řádky ve `vr_conflicts` mají `resolved_at`, banner zhasl.
 Všechny tři duchy navíc ověřeny přímo v extranetech (Booking do 31. 3. 2028, Airbnb, FeWo)
 a vyřazeny ve `verified.json` kalendáře — ten je od 12. 9. konečně commitnutý a živý na Pages
-(do té doby byl jen lokální a `/sprava/` i kalendář ho četly jako 404).
+(do té doby byl jen lokální a kalendář ho četl jako 404). **Pozor:** `/sprava/` ten soubor nečte
+vůbec — pracuje jen s `history.json`. Kdo by chtěl ručně ověřené duchy vyřazovat i v adminu,
+musí to teprve dopsat.
 
 **✅ Třetí místo: denní e-mail `VrDailyTasks` — vyřešeno 12. 9.** Hlídač už mlčel, ale denní
 souhrn v 7:30 poslal ty **stejné tři „dvojité rezervace"** ještě jednou — jeho `buildStays()`
@@ -103,7 +105,7 @@ kalendáře taky 18měsíční prune `history.json`.
 | Pojistka měna ⇒ účet (klient i databáze) | ✅ hotovo |
 | Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
 | Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
-| `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód upraven, čeká na re-import** |
+| `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód v `main` od 15. 9. (i s filtrem duchů z 12. 9.), čeká na re-import** |
 | Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **kód hotov + otestován, čeká na 3 tokeny a migraci** |
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
 | Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
@@ -202,21 +204,49 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 
 ## Doporučené pořadí
 
+Všechno v repu je napsané a zmergované; **co zbývá, jsou ruční kroky mimo repo** (živá DB,
+n8n, extranety, router). Nic z toho nejde udělat z GitHubu.
+
 1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
    v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
 2. **`vr_purge_expired`** — migrace `20260908_vr_purge_lockdown.sql` je napsaná, zbývá nasadit
    podle postupu v její hlavičce (nový secret, hash do configu, service klíč u volajícího)
-3. **Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`** — bez nich nemají
-   sekce Předrezervace a Platby kam ukládat
-4. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
-5. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
+3. **Heslo Wi-Fi** — migrace `20260915_vr_admin_config_wifi.sql`, vyplnit v `/sprava/` →
+   Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
+   uzel „Načíst konfiguraci" do n8n `VrDailyTasks` (postup v hlavičce migrace)
+4. **Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`** — bez nich nemají
+   sekce Předrezervace a Platby kam ukládat; pak **re-import `VrConflictWatch`**
+5. **Ověřit `supabase functions deploy album`** — oprava uploadu bez tokenu je v repu od 8. 9.,
+   ale že nasazení proběhlo, není nikde zapsáno
+6. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
+7. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
-6. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
-7. **Polština u výletů** — podle toho, jestli chodí polští hosté
-8. **Zprávy** — až bude jasné zadání
+8. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
+9. **Polština u výletů** — podle toho, jestli chodí polští hosté
+10. **Zprávy** — až bude jasné zadání
 
 ~~Šrafování v kalendáři~~ — hotovo 13. 8. · ~~Nepotvrzené záznamy v kalendáři~~ — hotovo 9. 9. ·
-~~Import `VrConflictWatch` do n8n~~ — nahráno 12. 9.
+~~Import `VrConflictWatch` do n8n~~ — nahráno 12. 9. · ~~Úklid PR~~ — 15. 9.
+
+---
+
+## 🧹 Stav repa 15. 9. 2026
+
+Průchod celého repa proti tomuhle souboru. Kód sedí s tím, co tu stojí: filtr duchů je
+opravdu na všech třech místech, testy v `tools/` procházejí, žádné `TODO`, žádné rozbité
+odkazy, žádné otevřené issue. Uděláno v ten den:
+
+- **PR #4** (adresa není v jednom zdroji pravdy) zmergován — `MAPA-SYSTEMU.md` do té doby
+  tvrdila opak.
+- **PR #5** zavřen jako překonaný — jeho jediná změna už byla v `main` přes #6.
+- **PR #8** (předrezervace + platby) byl založený **před** opravou duchů (#7): jeho verze
+  `detect.js` a `sprava.js` filtr `stale` neměly a jeho export `VrConflictWatch.workflow.json`
+  by po nahrání do n8n vrátil tři falešné konflikty. Do větve zamergován `main`, konflikt
+  v exportu vyřešen znovuvložením sloučeného `detect.js` (konvence: embedded == celý soubor),
+  ověřeno na všech třech místech, pak zmergováno.
+- **Heslo Wi-Fi ven z repa** — viz audit níž, položka „Opraveno 15. 9.".
+- Migrace `20260915_vr_interests.sql` (zájmy party, z portálu) je v `main` a **aplikovaná
+  v živé DB 15. 9.** — tím je v migracích konečně i `vr_verify_token`.
 
 ---
 
@@ -228,7 +258,8 @@ jen u části (limit účtu), zbytek ověřen ručně. Opravené je níž, neopr
 **Opraveno (druhý commit, ostatní oblasti):**
 - **Edge Function `album`: akce `upload` vydávala podepsanou upload URL bez ověření tokenu**
   — kdokoli s libovolným řetězcem mohl plnit bucket `vr-album` (cizí album ne, úložiště ano).
-  Teď se před podpisem volá `vr_album_open`. **Nasadit:** `supabase functions deploy album`.
+  Teď se před podpisem volá `vr_album_open`. **Nasadit:** `supabase functions deploy album`
+  — *15. 9.: že nasazení proběhlo, není nikde zapsáno; ověřit a doplnit sem datum.*
 - `?lang=constructor` stejnou chybou shazoval i `/podminky/`, `/info/`, `/vylety/`, plánovač,
   `/registrace/` a `/checkin/` → whitelist `isLang()` všude; `/registrace/` a `/checkin/` navíc
   čtou jazyk zvolený jinde na webu (`localStorage vrLang`).
@@ -267,6 +298,13 @@ jen u části (limit účtu), zbytek ověřen ručně. Opravené je níž, neopr
   → odstraněno (v git historii zůstává).
 - Zastaralý komentář v `index.html` odkazoval na neexistující `VR_SEASON_SLOTS`.
 
+**Opraveno 15. 9. (heslo Wi-Fi):** konstanta `WIFI` zmizela ze `sprava/sprava.js` i z n8n
+`VrDailyTasks.code.js`. `/sprava/` čte `wifi_password` z `vr_admin_config` (pole v Nastavení),
+n8n ho čte novým uzlem „Načíst konfiguraci (service-role)" (definice a zapojení v exportu).
+Když hodnota chybí, zůstane ve zprávě viditelně `{WIFI_HESLO}` — nic nespadne, jen to
+připomene chybějící krok. **Zbývá ručně:** migrace `20260915_vr_admin_config_wifi.sql`,
+vyplnit Nastavení, změnit heslo na routeru (staré je v git historii), uzel do n8n.
+
 **Zjištěno, neopraveno — na rozhodnutí majitele:**
 - **`vr_request` a tabulka `vr_requests` nejsou v migracích.** Formulář homepage na nich stojí
   (jediné backendové volání) a přijímá PII, ale „zdroj pravdy" je neobsahuje — nejde je z repa
@@ -282,9 +320,8 @@ jen u části (limit účtu), zbytek ověřen ručně. Opravené je níž, neopr
 - **Schéma v migracích je neúplné:** kromě `vr_request`/`vr_requests` chybí i `vr_bookings`,
   `vr_verify_token`, `vr_checkin`, `vr_album_*`, tabulka `vr_album_photos` a bucket `vr-album`
   (policies, `file_size_limit`). Vytáhnout z živé DB jednou baseline migrací. Pět souborů má
-  stejný prefix `20260724` — abecední pořadí neodpovídá pořadí nasazení.
-- **Heslo Wi-Fi natvrdo** v `sprava/sprava.js` (`WIFI`) i v n8n `VrDailyTasks.code.js` — veřejné
-  repo. Přesunout do `vr_admin_config` (čte se přes `vr_admin_get_config`, whitelist rozšířit).
+  stejný prefix `20260724` — abecední pořadí neodpovídá pořadí nasazení. *15. 9.:* `vr_verify_token`
+  už v migracích je (`20260915_vr_interests.sql`), zbytek dál chybí.
 - `_vr_admin_auth`: rate-limit nepočítá neúspěšné pokusy (insert stopy se s výjimkou
   odrolluje) — online brute-force není throttlovaný. Řešení: stopu zapisovat mimo transakci
   nebo vracet boolean místo výjimky.

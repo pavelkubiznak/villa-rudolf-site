@@ -8,7 +8,17 @@ const SUPA = 'https://fpknbrzbqpalguajskut.supabase.co';
 const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA';
 const CAL_URL = 'https://pavelkubiznak.github.io/villa-booking-calendar/data/history.json';
 const SPRAVA_URL = 'https://villarudolf.com/sprava/';
-const WIFI = 'Rudolf519';
+// Heslo Wi-Fi se sem NEPÍŠE (repo je veřejné) — čte se z vr_admin_config, klíč
+// wifi_password, uzlem „Načíst konfiguraci (service-role)“ (jménem uzlu, jako žádosti).
+// Když uzel chybí nebo klíč není vyplněný, zůstane v textu viditelně {WIFI_HESLO}:
+// e-mail odejde dál, jen připomene, že krok nasazení chybí.
+let WIFI = '';
+try {
+  const cfgItems = $('Načíst konfiguraci (service-role)').all();
+  const cfgRaw = (cfgItems.length === 1 && Array.isArray(cfgItems[0].json)) ? cfgItems[0].json : cfgItems.map(i => i.json);
+  const cfgRow = cfgRaw.find(r => r && r.k === 'wifi_password');
+  WIFI = cfgRow && cfgRow.v ? String(cfgRow.v).trim() : '';
+} catch (e) { WIFI = ''; }
 const DEPOSIT_CZK = 5000;
 const REVOLUT_URL = 'https://revolut.me/pavelhuqh';
 
@@ -109,7 +119,7 @@ function reviewVariant(platform,lang){ const T=TPL[lang]||TPL.en; const p=(platf
 function fill(tpl,ctx){ return tpl
   .replace(/\{JMENO\}/g,ctx.jmeno).replace(/\{TERMIN\}/g,ctx.termin)
   .replace(/\{DOSPELI\}/g,ctx.dospeli).replace(/\{DETI\}/g,ctx.deti).replace(/\{NOCI\}/g,ctx.noci)
-  .replace(/\{CASTKA\}/g,ctx.castka).replace(/\{KOD_DVERI\}/g,ctx.kod).replace(/\{WIFI_HESLO\}/g,WIFI)
+  .replace(/\{CASTKA\}/g,ctx.castka).replace(/\{KOD_DVERI\}/g,ctx.kod).replace(/\{WIFI_HESLO\}/g,WIFI||'{WIFI_HESLO}')
   .replace(/\{KAUCE\}/g,DEPOSIT_CZK.toLocaleString('cs-CZ'))
   .replace(/\{REGISTRACNI_LINK\}/g,ctx.regLink||'{REGISTRACNI_LINK}'); }
 

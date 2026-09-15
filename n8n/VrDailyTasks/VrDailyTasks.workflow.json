@@ -5,6 +5,9 @@
   "__jak_nasadit__": [
     "1. Záloha: docker exec n8n n8n export:workflow --id=VrDailyTasks001 --output=/tmp/bak.json",
     "2. V exportu nahraď JEN parameters.jsCode Code node „Spočítat úkoly“ obsahem",
+    "   NOVÉ (15. 9. 2026): před „Načíst pobyty (service-role)“ musí být v řetězu uzel „Načíst konfiguraci (service-role)“",
+    "   (HTTP GET /rest/v1/vr_admin_config?select=k,v&k=eq.wifi_password, stejné service-role credentials, Always Output Data = ON).",
+    "   Definice uzlu i zapojení jsou v tomhle souboru. Bez něj zůstane v e-mailu viditelně {WIFI_HESLO} — e-mail odejde, nic nespadne.",
     "   VrDailyTasks.code.js BEZ úvodního blokového komentáře (prvních 5 řádků, tj. od řádku `const SUPA = ` dál).",
     "   POZOR: kód čte uzel „Načíst žádosti (service-role)“ (GET /rest/v1/vr_requests) — v tomhle exportu není,",
     "   v živé instanci musí existovat a být zapojený do „Spočítat úkoly“, jinak denní e-mail žádosti z webu tiše vynechá.",
@@ -37,6 +40,58 @@
           180,
           300
         ]
+      },
+      {
+        "parameters": {
+          "url": "https://fpknbrzbqpalguajskut.supabase.co/rest/v1/vr_admin_config",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "k,v"
+              },
+              {
+                "name": "k",
+                "value": "eq.wifi_password"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "id": "a1000000-0000-4000-8000-000000000005",
+        "name": "Načíst konfiguraci (service-role)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          200,
+          300
+        ],
+        "alwaysOutputData": true,
+        "notes": "Heslo Wi-Fi (wifi_password) z vr_admin_config — čte ho Code node jménem uzlu. alwaysOutputData MUSÍ být zapnuté: bez vyplněného klíče by jinak řetěz skončil tady a denní e-mail by neodešel.",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "VrSupaService01",
+            "name": "Supabase service-role (VR)"
+          }
+        }
       },
       {
         "parameters": {
@@ -131,6 +186,17 @@
     ],
     "connections": {
       "Každý den 07:30": {
+        "main": [
+          [
+            {
+              "node": "Načíst konfiguraci (service-role)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Načíst konfiguraci (service-role)": {
         "main": [
           [
             {
