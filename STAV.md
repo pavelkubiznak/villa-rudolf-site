@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 15. 9. 2026
+Aktualizováno: 16. 9. 2026
 
 ---
 
@@ -19,6 +19,7 @@ Aktualizováno: 15. 9. 2026
 | Nepotvrzené záznamy strašily jako dvojitá rezervace | ✅ **vyřešeno 9. 9.** |
 | Stejná falešná hláška v `/sprava/` a v hlídači n8n | ✅ **vyřešeno 12. 9. na všech třech místech** (po #8 hlídač znovu čeká na re-import, viz Předrezervace) |
 | Číst 4 feedy zvlášť místo e-chalupy hubu | 🟡 **kód hotov, čeká na 3 secrety** |
+| Nálezy Codexu na publikaci předrezervací | 🟡 **opraveno, kalendář PR #14 čeká na merge** (viz Předrezervace) |
 | **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | ✅ **zamčeno 15. 9. 2026** — `execute` jen `service_role` |
 
 **✅ Šrafování — hotovo a nasazeno 13. 8.** Šrafuje se **jen skutečná dvojitá rezervace**
@@ -107,6 +108,7 @@ kalendáře taky 18měsíční prune `history.json`.
 | Pojistka měna ⇒ účet (klient i databáze) | ✅ hotovo |
 | Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
 | Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
+| Nálezy revize na té publikaci (kalendář PR #14) | 🟡 **opraveno, čeká na merge** — sedm kol, poslední čisté |
 | `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód v `main` od 15. 9. (i s filtrem duchů z 12. 9.), čeká na re-import** |
 | Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **migrace v DB 15. 9., čeká na 3 tokeny Fia** |
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
@@ -117,6 +119,29 @@ kalendáře taky 18měsíční prune `history.json`.
 `/sprava/` o něm nevěděla a homepage ten termín dál nabízela jako volný. Tak zmizel termín
 **14.–21. 8. 2027**: zálohová faktura vystavená i uhrazená, peníze v bance, a v systému nic.
 Spouštěčem proto **není platba, ale vystavení zálohové faktury**.
+
+**🟡 Revize kalendářní části: sedm kol nálezů, opravené, čeká na merge.** Codex review nad PR #9
+v kalendáři se rozběhlo přechodem z draftu na „ready", jenže merge o čtrnáct vteřin později ho
+utnul — nálezy tak dorazily až nad živý kód. Dohnáno v kalendářním PR #14 (`d562b54`, mergeable,
+poslední kolo revize čisté; každý nález reprodukovaný proti tehdejší hlavě, žádný nebyl falešný
+poplach). **Poučení: nech review doběhnout, než mergneš** — trvá 4–7 minut, a push sám další kolo
+nespustí, musí se napsat `@codex review`.
+
+Pro tenhle repo jsou z toho podstatné tři věci:
+
+- **Rozbitá odpověď z `vr_public_holds()` nesmí uvolnit prodaný termín.** `valid_holds()` v repu
+  kalendáře vracela prázdný seznam i tehdy, když řádky přišly a jen neprošly validací — a prázdný
+  seznam je pro `apply_holds()` rozkaz „žádné předrezervace neexistují": z archivu by zmizel
+  všechen přímý prodej a ty termíny by se začaly nabízet jako volné. Nově je nepoužitelná odpověď
+  `None` (nedostupný zdroj) a **částečně** rozbitá jen přidává, nemaže. Prázdné pole dál znamená
+  „nic nedržíme", takže propadlý hold se pořád uvolní sám.
+- **Cache prohlížeče v kalendáři držela zrušený hold** až do 18měsíčního prune a proti blokaci
+  z platformy z něj dělala červenou dvojitou rezervaci. **`/sprava/` tuhle past nemá:**
+  `history.json` si tahá načisto při každém načtení (`cache: 'no-store'`), v `localStorage` drží
+  jen admin token. Kdyby se sem někdy cache doplňovala, tohle je přesně to místo, kde se to zvrtne.
+- **Hold se do čísel nepočítá jako pobyt** — ani do obsazenosti, ani do tržeb, dokud není
+  potvrzený. V kalendáři je to teď sjednocené napříč oběma stránkami; `/sprava/` to nemění, ale
+  při porovnávání čísel s owner KPI je dobré s tím počítat.
 
 *Zbývá:*
 1. ~~Spustit migraci `20260909_vr_holds.sql`~~ — **hotovo 15. 9. 2026** (i `20260910_vr_payments.sql`
