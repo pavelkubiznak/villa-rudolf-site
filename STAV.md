@@ -75,14 +75,28 @@ kanálu jiné UID než v hubu, takže bez ošetření by každá živá rezervac
 a vazba `vr_bookings.uidh` by se utrhla. Skript při shodě `(start, end, platform)` převezme
 archivní klíč. **Kvůli přepnutí se v `/sprava/` nemusí měnit nic.**
 
-**✅ `vr_purge_expired` — zamčeno 15. 9. 2026.** Do té doby bylo heslo té mazací funkce
-napsané otevřeně v `20260724_vr_retention.sql` (repo je veřejné) a funkce měla `grant execute … to anon`,
-takže ji mohl spustit kdokoli. Nasazeno přes konektor Supabase: `20260915_vr_purge_secret.sql`
-(hash náhodného secretu vygenerovaného přímo v DB — **secret nikdo nezná**, funkce je tím zamčená,
-dokud si majitel nenastaví vlastní, postup v hlavičce migrace) a `20260908_vr_purge_lockdown.sql`
-(heslo z těla funkce pryč, ověřuje se proti `vr_admin_config.purge_secret_sha256`, `execute` jen
-`service_role` + vlastník). Ověřeno dotazem: `anon` ani `authenticated` už právo nemají, staré heslo
-v definici není, pg_cron v projektu neexistuje — funkci dnes nic nevolá.
+**✅ `vr_purge_expired` — zamčeno 15. 9. 2026, vlastní secret nastaven 16. 9. 2026.**
+Do té doby bylo heslo té mazací funkce napsané otevřeně v `20260724_vr_retention.sql` (repo je
+veřejné) a funkce měla `grant execute … to anon`, takže ji mohl spustit kdokoli. Nasazeno přes
+konektor Supabase: `20260915_vr_purge_secret.sql` (založí klíč hashem náhodného secretu
+vygenerovaného přímo v DB) a `20260908_vr_purge_lockdown.sql` (heslo z těla funkce pryč, ověřuje
+se proti `vr_admin_config.purge_secret_sha256`, `execute` jen `service_role` + vlastník).
+
+**Secret si majitel od 16. 9. drží.** Původní stav „secret nikdo nezná" byl bezpečný, ale funkce
+se pak nedala spustit ani oprávněně. Vygenerován nový (48 znaků `[A-Za-z0-9]`, vznikl mimo DB
+i mimo repo, do databáze šel **jen jeho sha256**) a předán majiteli do správce hesel. Migrace
+`20260915_vr_purge_secret.sql` je idempotentní (`where not exists`), takže tenhle klíč nepřepíše.
+
+Ověřeno dotazem 16. 9.: `proacl` funkce = `postgres` + `service_role` a nic jiného; staré heslo
+z git historie vrací `unauthorized` (SQLSTATE 28000), stejně jako krátké heslo a `null`; data
+netknutá (31 bookingů, 0 anonymizovaných). `pg_cron` ani `pg_net` v projektu nejsou — funkci
+dnes nic nevolá, spouští se jen ručně service_role klíčem.
+
+⚠️ **Než ji poprvé spustíš, přečti si „Retence pobytů" níž.** V DB je **0 záznamů ve `vr_persons`**,
+takže pravidlo „smazat bookingy 30+ dní po odjezdu bez evidovaných osob" se dnes týká úplně
+každého proběhlého pobytu. Teď by nesmazal nic (nejstarší odjezd 22. 8. 2026), ale hranici
+překročí **21. 9., 27. 9., 6. 10. a 13. 10. 2026** — po jednom pobytu. Pustit purge bez rozmyslu
+znamená přijít o historii přímých prodejů.
 
 **🟡 Další dvě migrace z auditu 8. 9. (čekají na spuštění — Actions „DB migrace" nebo SQL editor):**
 `20260908100100_vr_album_bucket.sql` — limit 15 MB a whitelist MIME typů přímo na bucketu
