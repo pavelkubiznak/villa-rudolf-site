@@ -95,9 +95,19 @@ dnes nic nevolá, spouští se jen ručně service_role klíčem.
 
 ⚠️ **Než ji poprvé spustíš, přečti si „Retence pobytů" níž.** V DB je **0 záznamů ve `vr_persons`**,
 takže pravidlo „smazat bookingy 30+ dní po odjezdu bez evidovaných osob" se dnes týká úplně
-každého proběhlého pobytu. Teď by nesmazal nic (nejstarší odjezd 22. 8. 2026), ale hranici
-překročí **21. 9., 27. 9., 6. 10. a 13. 10. 2026** — po jednom pobytu. Pustit purge bez rozmyslu
-znamená přijít o historii přímých prodejů.
+každého proběhlého pobytu — **každý pobyt se stane smazatelným 30. den po odjezdu** a od
+21. 9. 2026 jich pár už za hranicí je (k 22. 9. jeden, dál přibývá zhruba po týdnu:
+27. 9., 6. 10., 13. 10., 26. 10., 3. 11. …). Pustit purge bez rozmyslu znamená přijít
+o historii přímých prodejů.
+
+Konkrétní číslo si **nepiš z tohohle souboru, ale z databáze** — datum vydání jakéhokoli
+snapshotu ho vzápětí přebije:
+
+```sql
+select count(*) from public.vr_bookings b
+where b.departure < (now() - interval '30 days')
+  and not exists (select 1 from public.vr_persons p where p.booking_id = b.id);
+```
 
 **🟡 Další dvě migrace z auditu 8. 9. (čekají na spuštění — Actions „DB migrace" nebo SQL editor):**
 `20260908100100_vr_album_bucket.sql` — limit 15 MB a whitelist MIME typů přímo na bucketu
