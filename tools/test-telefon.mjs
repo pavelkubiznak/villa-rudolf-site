@@ -2,7 +2,7 @@
 // Test normalizace telefonu. Spusť: node tools/test-telefon.mjs
 //
 // Logika je schválně na třech místech — v prohlížeči (/sprava/, normPhone)
-// a ve dvou n8n Code nodech (VrDailyTasks, VrEchalupyInquiry — intlPhone),
+// a ve třech n8n Code nodech (VrDailyTasks, VrEchalupyInquiry, VrMailIngest — intlPhone),
 // protože n8n běží bez stránky a Code node nemá jak sdílet modul.
 // Tenhle test hlídá, že se kopie nerozejdou. Když měníš jednu, spusť ho.
 
@@ -25,6 +25,8 @@ const normPhone = extract('sprava/sprava.js',
 const intlPhone = extract('n8n/VrDailyTasks/VrDailyTasks.code.js',
   'const DIAL=[', 'function waPhone(b)', 'intlPhone');
 const intlPhoneEch = extract('n8n/VrEchalupyInquiry/VrEchalupyInquiry.code.js',
+  'const DIAL=[', '// ---------- Pomocné ----------', 'intlPhone');
+const intlPhoneMail = extract('n8n/VrMailIngest/VrMailIngest.code.js',
   'const DIAL=[', '// ---------- Pomocné ----------', 'intlPhone');
 
 // [vstup, jazyk hosta, očekávaný mezinárodní tvar bez plusu ('' = nepoužitelné), doplnili jsme předvolbu?]
@@ -76,15 +78,16 @@ for (const [input, lang, want, wantGuessed] of CASES) {
   else console.log('  ok  ' + detail);
 }
 
-console.log('\n— shoda /sprava/ × VrDailyTasks × VrEchalupyInquiry —');
+console.log('\n— shoda /sprava/ × VrDailyTasks × VrEchalupyInquiry × VrMailIngest —');
 for (const [input, lang] of CASES) {
   const a = normPhone(input, lang), sprava = a.ok ? a.e164.slice(1) : '';
-  const daily = intlPhone(input, lang), ech = intlPhoneEch(input, lang);
-  if (sprava !== daily || sprava !== ech)
+  const daily = intlPhone(input, lang), ech = intlPhoneEch(input, lang),
+        mail = intlPhoneMail(input, lang);
+  if (sprava !== daily || sprava !== ech || sprava !== mail)
     bad(JSON.stringify(input) + ' ' + lang + ': sprava=' + (sprava || '—') +
-        ' daily=' + (daily || '—') + ' echalupy=' + (ech || '—'));
+        ' daily=' + (daily || '—') + ' echalupy=' + (ech || '—') + ' mail=' + (mail || '—'));
 }
-if (!fail) console.log('  ok  všechny tři kopie souhlasí na všech vstupech');
+if (!fail) console.log('  ok  všechny čtyři kopie souhlasí na všech vstupech');
 
 // Kód dveří = posledních 5 číslic. Předvolba je prefix, takže normalizace
 // nesmí změnit navržený kód u pobytů, které už v DB jsou.

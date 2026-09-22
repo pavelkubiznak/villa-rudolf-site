@@ -1,4 +1,6 @@
 /* VrEchalupyInquiry — Code node „Naparsovat poptávku" (n8n na Hetzneru sintera-radar).
+ * ⚠️ 17. 9. 2026: NAHRAZENO workflow n8n/VrMailIngest (čte všechny platformy najednou
+ * a poptávku ukládá do vr_mail). Tenhle soubor se nenasazuje; zůstává kvůli testům.
  * STAV: PŘIPRAVENO, zatím NENASAZENO. Referenční kopie kódu do Code node
  * (bez tohoto úvodního komentáře, jinak 1:1) — stejná konvence jako VrDailyTasks.
  *

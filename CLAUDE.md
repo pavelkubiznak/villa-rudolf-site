@@ -22,7 +22,7 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 | `/album/` | fotoalbum pobytu | hosté |
 | `/vylety/`, `/pruvodce/` | tipy na výlety (data z repa `villa-rudolf-portal`) | hosté |
 | `/info/`, `/podminky/` | informace, podmínky | hosté |
-| `/n8n/` | exporty n8n workflow (importovatelné) | provoz |
+| `/n8n/` | exporty n8n workflow a referenční kód Code nodů | provoz |
 | `supabase/migrations/` | **schéma databáze — zdroj pravdy** (neúplný, viz `STAV.md`) | vývoj |
 | `supabase/functions/album/` | Edge Function `album` — jediná brána ke Storage bucketu `vr-album`, autorizace tokenem pobytu | vývoj |
 
@@ -156,6 +156,19 @@ to přímo z iDokladu je další krok; jeho API se sem nepsalo naslepo.
 
 ⚠️ **`n8n/VrConflictWatch` je potřeba znovu importovat** — referenční kód byl upraven, aby
 překryv dvou přímých prodejů („Přímá" × „Přímá") neschoval mezi artefakty kalendáře.
+
+## Údaje o hostech z e-mailů (`vr_mail`, `n8n/VrMailIngest`)
+
+Feedy kalendáře o hostovi neříkají nic; jméno, číslo rezervace a kontakt chodí majiteli poštou.
+n8n je přečte (`VrMailIngest.code.js`), databáze rozhodne, ke kterému pobytu patří
+(`20260917_vr_mail.sql`), a `/sprava/` ukáže v sekci **Z pošty**, co čeká na člověka.
+
+- **Jen doplňuje prázdná pole, nic nehádá, pobyty nezakládá.** Nespárovaný e-mail se zkouší
+  znovu při každém běhu — pobyt vzniká z kalendáře (kvůli `uidh`) klidně až po e-mailu.
+- **FeWo je vždy jen návrh**, e-chalupy se párují **příjmením** (poptaný termín ≠ sjednaný).
+- `WRITE = false` / `p_write = false` = zkušební režim, stejná logika jako `AUTOCONFIRM` u plateb.
+- Obsah e-mailu je nedůvěryhodný vstup; do repa jen vymyšlené vzorky, do logu n8n žádná PII.
+- Co která platforma opravdu posílá: `n8n/VrMailIngest/README.md` (ověřeno na poště 17. 9. 2026).
 
 ## Na co si dát pozor
 

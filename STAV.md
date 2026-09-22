@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 15. 9. 2026
+Aktualizováno: 17. 9. 2026
 
 ---
 
@@ -134,6 +134,43 @@ Spouštěčem proto **není platba, ale vystavení zálohové faktury**.
    (`AUTOCONFIRM = false`) a přečti, co párování navrhlo — teprve pak povol zápis.
 6. Až bude párování usazené: napojit **iDoklad** a číst z něj, na jaký účet je faktura
    opravdu vystavená (dnes se to bere z toho, co se zapíše ručně v `/sprava/`).
+
+---
+
+## ✉️ Údaje o hostech z e-mailů → `vr_mail` + `n8n/VrMailIngest` + `/sprava/` „Z pošty"
+
+| | Stav |
+|---|---|
+| Zmapování skutečné pošty (co která platforma posílá) | ✅ 17. 9. 2026 — tabulka v `n8n/VrMailIngest/README.md` |
+| Tabulka `vr_mail` + příjem, párování, admin RPC (`20260917_vr_mail.sql`) | 🟡 **napsáno, v živé DB NENÍ** — čeká na svolení majitele; test `supabase/tests/test_vr_mail.sql` zatím nikdo nespustil (na Macu není Postgres) |
+| Čtečka pošty pro n8n (`n8n/VrMailIngest`) | 🟡 **kód hotov + offline testy, čeká na Gmail credential v n8n a složení workflow** |
+| Sekce „Z pošty" v `/sprava/` + řádek „z e-mailů" v detailu pobytu | 🟡 kód hotov, **v prohlížeči neověřeno** (bez migrace se sekce neukáže — RPC vrátí 404 → prázdno) |
+| Airbnb | 🔴 potvrzení rezervací do schránky **nechodí** — zapnout oznámení v Airbnb, pak dopsat parser |
+| Výplaty platforem k rezervacím (Booking „Měsíční finanční přehled" = PDF příloha) | ⏭️ nezačato; FeWo cenu a odhad výplaty nese už e-mail a ukládá se do `vr_mail` |
+
+**Proč to vzniklo.** Feedy kalendáře o hostovi neříkají nic, takže se jméno, číslo rezervace
+a kontakt opisovaly do `/sprava/` ručně — 17. 9. 2026 mělo číslo rezervace 5 pobytů z 31
+a e-mail 9. Přitom to všechno chodí majiteli poštou.
+
+**Zásady (v migraci i v kódu):** jen doplňovat prázdná pole · nic nehádat (víc kandidátů = čeká
+na kliknutí) · pobyty nezakládat (vznikají z kalendáře kvůli `uidh`; nespárovaný e-mail se zkouší
+znovu při každém běhu) · FeWo vždy jen návrh (z e-mailu nejde poznat dotaz od rezervace) ·
+e-chalupy se párují **příjmením, ne termínem** (poptaný termín bývá jiný než sjednaný) ·
+obsah e-mailu je nedůvěryhodný vstup · žádné PII do logu n8n ani do repa.
+
+**Zjištěno cestou:** poptávek z e-chalup chodí ~2 měsíčně (ne „jedna ročně", jak tvrdí hlavička
+`VrEchalupyInquiry`) a **obě přímé rezervace 8/2027 začaly právě jimi**. `VrEchalupyInquiry` je
+novým workflow nahrazen. Pošta chodí na `pavel.kubiznak@gmail.com` (ne na adresu Sintery).
+
+*Zbývá:*
+1. **Svolení majitele → nasadit migraci** (konektor Supabase) a pustit `test_vr_mail.sql`.
+2. **Gmail credential v n8n** (`gmailOAuth2`, vytváří majitel účtu v editoru) a složit workflow
+   podle `n8n/VrMailIngest/README.md`. **První běhy ve zkušebním režimu** (`WRITE = false`),
+   přečíst sekci „Z pošty", pak přepnout. V nastavení workflow vypnout ukládání úspěšných běhů.
+3. Jednorázově dotáhnout historii (`newer_than:1y`).
+4. Zapnout v Airbnb e-mailová oznámení o rezervacích a dopsat parser podle skutečného vzorku.
+5. `vr_purge_expired` o `vr_mail` neví — úklid PII dělá `vr_ingest_mail` při každém běhu
+   (anonymizovaný pobyt → údaje pryč, sirotci po 400 dnech). Když se n8n vypne, úklid neběží.
 
 ---
 
@@ -275,6 +312,7 @@ v Claude Code, kterým proběhlo nasazení 15. 9.
 6. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
 7. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
+8. **Údaje o hostech z e-mailů** — migrace `20260917_vr_mail.sql` + Gmail credential v n8n (viz sekce výš)
 8. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
 9. **Polština u výletů** — podle toho, jestli chodí polští hosté
 10. **Zprávy** — až bude jasné zadání

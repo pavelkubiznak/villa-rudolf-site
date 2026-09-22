@@ -4,7 +4,7 @@
 navrhovat — ať jsi člověk nebo AI session — přečti si tuhle tabulku. Systém je rozdělený do
 několika repozitářů a bez mapy se v nich nedá poznat, které je živé.
 
-Aktualizováno: 15. 9. 2026
+Aktualizováno: 17. 9. 2026
 
 ## Součásti
 
@@ -52,6 +52,7 @@ takže ho kalendář musí dostat z `/sprava/` — jinak ho web dál nabízí ja
 | **CO** — výlety, počasí | `villa-rudolf-portal/data/` | `site` je odtud čte |
 | **SPOJKA** mezi kalendářem a rezervací | `uidh` (= `sha256(iCal UID)[:16]`) | používá `sprava.js` i `vr_admin_upsert_booking(p_uidh)` |
 | **PŘÍMÝ PRODEJ** — předrezervace ze zálohové faktury, potvrzené přímé rezervace | Supabase `vr_holds` (tady) | jediná věc, kterou `site` posílá **do** kalendáře — přes `vr_public_holds()`; `uidh` = `sha256('vr-hold:'+id)[:16]` |
+| **KONTAKT A ČÍSLO REZERVACE z e-mailů platforem** | Supabase `vr_mail` (tady) → doplňuje prázdná pole ve `vr_bookings` | n8n `VrMailIngest` čte majitelův Gmail; **nikdy** do kalendáře ani do repa. 🟡 17. 9. 2026 napsáno, nenasazeno |
 | **NÁVŠTĚVNOST** webu — kolik lidí, odkud, kam, jak dlouho | Umami na Hetzneru | cookieless, bez PII; skript na všech stránkách kromě `/sprava/`, tokeny `?t=` se nezapisují |
 
 ## Infrastruktura
@@ -82,6 +83,7 @@ příjemce, řeší to štítkem v Gmailu, ne novou adresou.
 | Host → vila | `rezervace@villarudolf.com` | přeposílá se do majitelovy Gmail schránky, **ověřeno 26. 8. 2026** |
 | Vila → host (ručně) | odchází z majitelova Gmailu | ⚠️ **nesedí s adresou na webu** — host vidí v odpovědi jiného odesílatele |
 | Vila → host (zálohová faktura) | z fakturační schránky Sintery | ⚠️ host pak odpovídá do účetní schránky cizí firmy |
+| Platformy → majitel | potvrzení a zprávy hostů (Booking, FeWo, e-chalupy) chodí do majitelova Gmailu | n8n `VrMailIngest` je odtud čte (jen čtení) a plní `vr_mail`; Airbnb potvrzení nechodí |
 | Systém → majitel | n8n přes Gmail SMTP (`VrSmtpGmail0001`) | v pořádku, majitel sám sobě — hosta to nevidí |
 
 Dvě „⚠️" nejsou chyba v kódu, řeší se v nastavení pošty (Gmail „Odeslat poštu jako" nad

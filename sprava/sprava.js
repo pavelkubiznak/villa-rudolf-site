@@ -37,6 +37,8 @@
   var holdsShowClosed = false;  // propadlé a zrušené jsou schované, dokud si je nevyžádáš
   var lastHolds = [];       // právě vykreslené pořadí (pro obsluhu tlačítek)
   var payments = [];        // bankovní pohyby z Fia (vr_admin_list_payments)
+  var mails = [];           // údaje o hostech vyčtené z e-mailů (vr_admin_list_mail)
+  var lastMails = [];       // právě vykreslené pořadí (pro obsluhu tlačítek)
   var lastPays = [];        // právě vykreslené pořadí (pro obsluhu tlačítek)
   var requests = [];        // žádosti z webového formuláře (vr_admin_list_requests)
   var verified = {};        // verified.json kalendáře: 'start..end' → {status} (service = blok majitele)
@@ -716,7 +718,7 @@
   // Pod konfliktním bannerem, nad DNES. Řazeno podle blízkosti příjezdu.
   //  (a) pobyt bez telefonu  (b) příjezd do 7 dnů bez kódu dveří
   //  (c) nespárovaný pobyt z kalendáře  (d) odkaz na aktivní konflikt (jen link na banner)
-  function refreshBoards() { renderRequests(); renderHolds(); renderPayments(); renderProblems(); renderToday(); renderStays(); }
+  function refreshBoards() { renderRequests(); renderHolds(); renderPayments(); renderMails(); renderProblems(); renderToday(); renderStays(); }
 
   /* ============ Render: ŽÁDOSTI Z WEBU ============ */
   // Formulář na homepage zapisuje do vr_requests přes RPC vr_request. Do 12. 8. 2026
@@ -1400,6 +1402,161 @@
     });
   }
 
+  /* ============ Z POŠTY (vr_mail) ============ */
+  // Jméno, číslo rezervace a kontakt hosta vyčtené z e-mailů platforem (n8n, VrMailIngest).
+  // Automat JEN doplňuje prázdná pole a nic nehádá — sem patří to, co čeká na člověka:
+  //   * NÁVRH — e-mail má pobyt a je co doplnit, ale nedoplnilo se samo (zkušební režim,
+  //     nebo FeWo, kde z e-mailu nejde poznat dotaz od potvrzené rezervace),
+  //   * NEPŘIŘAZENO — potvrzení z Bookingu, ke kterému se nenašel pobyt (typicky ještě
+  //     nedorazil kalendář; automat to při dalším běhu zkusí znovu sám).
+  // Poptávky bez pobytu se neukazují — většina se jich v pobyt nepromění.
+  var MAIL_HOW = {
+    ref:      'sedí číslo rezervace',
+    term:     'sedí platforma i termín',
+    term_any: 'sedí přesný termín (jiná platforma)',
+    contact:  'sedí příjmení',
+    ruka:     'přiřazeno ručně'
+  };
+  var MAIL_KIND = {
+    new_booking: 'nová rezervace', guest_message: 'zpráva hosta', inquiry: 'poptávka',
+    booking_request: 'dotaz / žádost', booking: 'rezervace'
+  };
+  var MAIL_FIELD = { booking_ref: 'číslo rezervace', first_name: 'jméno', last_name: 'příjmení', phone: 'telefon', email: 'e-mail' };
+
+  function loadMails() {
+    // Bez migrace 20260917_vr_mail.sql vrátí RPC 404 → prázdno, sekce se neukáže.
+    return rpc('vr_admin_list_mail', {}).then(function (res) {
+      return (res.data && res.data.ok && res.data.mail) ? res.data.mail : [];
+    }).catch(function () { return []; });
+  }
+
+  function mailNeedsMe(m) {
+    if (m.ignored_at || m.applied_at) return false;
+    if (m.matched_booking) return (m.proposed || []).length > 0;
+    return m.platform === 'Booking.com' && m.arrival && m.arrival >= isoToday();
+  }
+
+  function mailBooking(m) {
+    for (var i = 0; i < bookings.length; i++) if (bookings[i].id === m.matched_booking) return bookings[i];
+    return null;
+  }
+
+  // Cena a číslo rezervace z e-mailů k jednomu pobytu — pro detail pobytu.
+  function mailFactsFor(bookingId) {
+    var out = [];
+    mails.forEach(function (m) {
+      if (m.matched_booking !== bookingId || m.ignored_at) return;
+      if (m.booking_ref && m.kind !== 'inquiry' && out.indexOf('č. rezervace ' + m.booking_ref) < 0) out.push('č. rezervace ' + m.booking_ref);
+      if (m.price != null) out.push('cena ' + fmtMoney(m.price, m.currency)
+        + (m.payout != null ? ' (výplata ≈ ' + fmtMoney(m.payout, m.currency) + ')' : ''));
+    });
+    return out;
+  }
+
+  function mailCard(m, idx) {
+    var b = mailBooking(m), unmatched = !b;
+    var name = [m.first_name, m.last_name].filter(Boolean).join(' ');
+    var lines = [];
+    lines.push('✉️ ' + esc(m.platform) + ' · ' + esc(MAIL_KIND[m.kind] || m.kind)
+      + (m.received_at ? ' · přišlo ' + esc(fmtDayShort(String(m.received_at).slice(0, 10))) : ''));
+    var facts = [];
+    if (m.booking_ref && m.kind !== 'inquiry') facts.push('č. ' + m.booking_ref);
+    if (m.phone) facts.push(m.phone);
+    if (m.email) facts.push(m.email);
+    if (m.adults != null) facts.push(m.adults + ' dosp.' + (m.children ? ' + ' + m.children + ' dětí' : ''));
+    if (m.price != null) facts.push(fmtMoney(m.price, m.currency));
+    if (facts.length) lines.push('👤 ' + esc(facts.join(' · ')));
+    if (m.incomplete) lines.push('⚠️ nepodařilo se přečíst: ' + esc(m.incomplete));
+    if (!unmatched) {
+      lines.push('📎 k pobytu ' + esc(fmtShort(b.arrival, b.departure)) + ' · ' + esc(b.platform || '')
+        + ' · ' + esc(MAIL_HOW[m.matched_how] || m.matched_how || '')
+        + ' → doplní se: <b>' + esc((m.proposed || []).map(function (f) { return MAIL_FIELD[f] || f; }).join(', ')) + '</b>');
+    }
+
+    var btns = '';
+    if (!unmatched) btns += '<button type="button" class="btn btn-sm btn-primary" data-mail-ok="' + idx + '">Doplnit</button>';
+    btns += '<button type="button" class="btn btn-sm btn-outline" data-mail-pick="' + idx + '">'
+      + (unmatched ? 'Přiřadit' : 'Jinam') + '</button>';
+    btns += '<button type="button" class="btn btn-sm btn-ghost" data-mail-skip="' + idx + '">Nepatří sem</button>';
+
+    var term = m.arrival ? (m.departure ? fmtShort(m.arrival, m.departure) : 'příjezd ' + fmtDayShort(m.arrival)) : '';
+    return '<div class="pay' + (unmatched ? ' pay-open' : '') + '">'
+      + '<div class="pay-main">'
+      + '<div class="pay-t">' + esc(name || 'host beze jména') + (term ? ' · ' + esc(term) : '')
+      + '<span class="pay-st">' + (unmatched ? '❓ bez pobytu' : '📎 návrh k odklepnutí') + '</span></div>'
+      + '<div class="pay-d">' + lines.join('<br>') + '</div>'
+      + '</div><div class="pay-actions">' + btns + '</div></div>';
+  }
+
+  function renderMails() {
+    var panel = $('mails-panel'), host = $('mails');
+    if (!panel || !host) return;
+    lastMails = mails.filter(mailNeedsMe);
+    if (!lastMails.length) { panel.hidden = true; return; }
+    panel.hidden = false;
+    host.innerHTML = lastMails.map(mailCard).join('');
+
+    var on = function (attr, fn) {
+      Array.prototype.forEach.call(host.querySelectorAll('[' + attr + ']'), function (btn) {
+        btn.addEventListener('click', function () {
+          var m = lastMails[+btn.getAttribute(attr)];
+          if (m) fn(m, btn);
+        });
+      });
+    };
+    on('data-mail-ok', function (m, btn) { btn.disabled = true; applyMail(m, m.matched_booking); });
+    on('data-mail-pick', function (m) { openMailPicker(m); });
+    on('data-mail-skip', function (m, btn) {
+      if (!window.confirm('Odložit tenhle e-mail? Zůstane uložený, jen zmizí ze seznamu a nic se z něj nedoplní.')) return;
+      btn.disabled = true;
+      rpc('vr_admin_ignore_mail', { p_mail_id: m.id, p_note: null }).then(function (res) {
+        if (res.data && res.data.ok) { toast('Odloženo.'); reload(); }
+        else { btn.disabled = false; toast('Uložení se nepodařilo.'); }
+      }).catch(function () { btn.disabled = false; toast('Uložení se nepodařilo.'); });
+    });
+  }
+
+  function applyMail(m, bookingId) {
+    return rpc('vr_admin_apply_mail', { p_mail_id: m.id, p_booking_id: bookingId }).then(function (res) {
+      if (res.data && res.data.ok) {
+        var f = (res.data.filled || []).map(function (x) { return MAIL_FIELD[x] || x; });
+        toast(f.length ? 'Doplněno: ' + f.join(', ') + '.' : 'Pobyt už měl všechno vyplněné — nic se nepřepsalo.');
+        return reload();
+      }
+      toast('Uložení se nepodařilo.');
+    }).catch(function () { toast('Uložení se nepodařilo.'); });
+  }
+
+  // Ruční přiřazení: nadcházející a běžící pobyty, nejbližší termínu z e-mailu nahoře.
+  function openMailPicker(m) {
+    var today = isoToday();
+    var list = bookings.filter(function (b) { return b.departure >= today; });
+    var ref = m.arrival || today;
+    list.sort(function (a, b) { return Math.abs(daysBetween(ref, a.arrival)) - Math.abs(daysBetween(ref, b.arrival)); });
+    list = list.slice(0, 12);
+    $('sheet-title').textContent = 'Ke kterému pobytu e-mail patří';
+    $('sheet-body').innerHTML =
+      '<div class="notice">' + esc([m.first_name, m.last_name].filter(Boolean).join(' ') || 'host beze jména')
+      + ' · ' + esc(m.platform) + (m.arrival ? ' · ' + esc(m.departure ? fmtShort(m.arrival, m.departure) : fmtDayShort(m.arrival)) : '') + '</div>'
+      + (list.length
+        ? '<div class="picklist">' + list.map(function (b, i) {
+            return '<button type="button" class="pick" data-pick="' + i + '">'
+              + '<b>' + esc(fmtShort(b.arrival, b.departure)) + '</b>'
+              + '<span>' + esc(b.platform || '—') + ' · ' + esc(guestName(b)) + '</span></button>';
+          }).join('') + '</div>'
+        : '<p class="hint">Žádný nadcházející pobyt. Nejdřív ho založ z kalendáře v sekci Pobyty.</p>')
+      + '<p class="hint">Doplní se jen pole, která jsou u pobytu prázdná. Co je zapsané ručně, se nepřepíše.</p>';
+    openOverlay();
+    Array.prototype.forEach.call($('sheet-body').querySelectorAll('[data-pick]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var b = list[+btn.getAttribute('data-pick')];
+        if (!b) return;
+        btn.disabled = true;
+        applyMail(m, b.id).then(closeOverlay);
+      });
+    });
+  }
+
   /* ============ Render: DNES ============ */
   function collectTasks() {
     var today = isoToday();
@@ -1811,6 +1968,7 @@
     body.innerHTML =
       '<div class="block">' +
       '<div class="stay-sub" style="margin-bottom:10px">' + esc(fmtTermin(b.arrival, b.departure)) + ' · ' + nights(b.arrival, b.departure) + ' nocí · ' + esc(stay.platform) + '</div>' +
+      (mailFactsFor(b.id).length ? '<div class="stay-sub" style="margin-bottom:10px">✉️ z e-mailů: ' + esc(mailFactsFor(b.id).join(' · ')) + '</div>' : '') +
       '<button type="button" class="btn btn-sm btn-outline" id="d-edit">Upravit údaje pobytu</button>' +
       '</div>' +
 
@@ -2311,9 +2469,9 @@
   /* ============ Reload ============ */
   function reload() {
     $('loadline').hidden = false; $('loadline').textContent = 'Načítám pobyty a kalendář…';
-    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests(), loadHolds(), loadPayments(), loadVerified()]).then(function (r) {
+    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests(), loadHolds(), loadPayments(), loadVerified(), loadMails()]).then(function (r) {
       calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {}; serverConflicts = r[3] || [];
-      requests = r[4] || []; holds = r[5] || []; payments = r[6] || []; verified = r[7] || {};
+      requests = r[4] || []; holds = r[5] || []; payments = r[6] || []; verified = r[7] || {}; mails = r[8] || [];
       buildStays();
       $('loadline').hidden = true;
       renderConflicts(); refreshBoards();
