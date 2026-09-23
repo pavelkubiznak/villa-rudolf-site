@@ -143,6 +143,7 @@ kalendáře taky 18měsíční prune `history.json`.
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
 | Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
 | Napojení na iDoklad (kontrola účtu na faktuře přímo ze zdroje) | ⏭️ **nezačato** — API se nepsalo naslepo |
+| Přenos ověřených přímých prodejů z `verified.json` (`supabase/seed/`) | ✅ **spuštěno v živé DB 23. 9. 2026** |
 
 **Proč to vzniklo.** Pobyt prodaný napřímo nebyl v žádném feedu, takže pro systém neexistoval —
 `/sprava/` o něm nevěděla a homepage ten termín dál nabízela jako volný. Tak zmizel termín
@@ -240,7 +241,8 @@ Pro tenhle repo jsou z toho podstatné tři věci:
    v `history.json` i ve výstupních feedech (platformy ho importují od 17. 9.).
 4. ~~Předrezervace 21.–28. 8. a 7.–14. 8. 2027~~ — **obě založené**: 7.–14. 8. potvrzená
    (23. 9.), 21.–28. 8. předrezervace s fakturou i smlouvou — **splatnost 22. 9. prošla,
-   propadá 25. 9.**, viz výš. 7.–14. 8. s pobytem propojená 23. 9.
+   propadá 25. 9.**, viz výš. 7.–14. 8. s pobytem propojená 23. 9. Její hold založil 23. 9. přenos z `verified.json` (PR #13)
+   **bez čísla faktury a částky** — doplnit v `/sprava/` → Předrezervace.
 5. **Založit tři read-only tokeny Fia** (VR korunový, VR eurový, hlavní účet Sintery),
    vložit je do prostředí n8n jako `FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA` a poskládat
    workflow podle `n8n/VrPaymentWatch/README.md`. **První běhy nech read-only**
@@ -373,15 +375,18 @@ Actions „DB migrace (Supabase)"; obě potřebují repo secret `SUPABASE_DB_URL
 postup v hlavičce `.github/workflows/db-migrate.yml`). Třetí cesta je konektor Supabase
 v Claude Code, kterým proběhlo nasazení 15. 9.
 
-1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
-   v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
+1. ~~Zablokovat 14.–21. 8. a 21.–28. 8. 2027 na platformách~~ — **není potřeba**: všechny tři
+   srpnové přímé prodeje (7.–14., 14.–21., 21.–28. 8.) jsou ve všech čtyřech výstupních feedech
+   kalendáře (`data/out/*.ics`, ověřeno 23. 9. večer) a platformy je importují od 17. 9.
+   U 21.–28. 8. zbývá **ověřit platbu**, než předrezervace 25. 9. propadne (viz Předrezervace, bod 4).
 2. ~~`vr_purge_expired`~~ — **zamčeno 15. 9.** (viz sekce Kalendář)
 3. **Heslo Wi-Fi** — ~~migrace `20260915_vr_admin_config_wifi.sql`~~ nasazena 15. 9.; zbývá vyplnit
    v `/sprava/` → Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
    uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá
    `python3 tools/n8n-patch-vrdailytasks.py <export.json> <patched.json>` (postup v jeho hlavičce)
 4. ~~Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`~~ — **hotovo 15. 9.**
-   (i `20260915_vr_contracts.sql`). Faktura + smlouva na 21.–28. 8. vystavené 15. 9.;
+   (i `20260915_vr_contracts.sql`). Faktura + smlouva na 21.–28. 8. vystavené 15. 9.; přenos
+   z `verified.json` do `vr_holds` spuštěn 23. 9. (PR #13);
    teď **ověřit platbu před 25. 9.** a **re-import `VrConflictWatch`**
 5. **Ověřit `supabase functions deploy album`** — oprava uploadu bez tokenu je v repu od 8. 9.,
    ale že nasazení proběhlo, není nikde zapsáno

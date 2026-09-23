@@ -436,3 +436,21 @@ a{color:var(--ember-2)}
   .prob{flex-direction:column;align-items:stretch}
   .prob .btn{align-self:flex-start}
 }
+
+/* ===== Poplatek z pobytu ===== */
+.badge.fee{background:color-mix(in oklab,var(--ember),transparent 80%);color:var(--ember-2)}
+.badge.free{background:var(--field);color:var(--muted)}
+.badge-btn{border:0;cursor:pointer;font-family:inherit}
+.badge-btn:hover{filter:brightness(1.15)}
+.exempt-ed{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;width:100%}
+.exempt-ed select,.exempt-ed input{flex:1 1 180px;min-width:0;background:var(--field);border:1px solid var(--line-2);color:var(--text);
+  border-radius:var(--radius-sm);padding:7px 9px;font:inherit;font-size:13px}
+.person{flex-wrap:wrap}
+.fee-periods{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.fee-table{overflow-x:auto;margin-top:12px}
+.fee-table table{width:100%;border-collapse:collapse;font-size:13px}
+.fee-table th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.fee-table td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.fee-table .num{text-align:right;white-space:nowrap}
+.fee-sub{font-size:12px;color:var(--dim);margin-top:2px}
+.fee-miss{color:var(--err)}
