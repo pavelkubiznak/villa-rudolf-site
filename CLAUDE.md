@@ -79,11 +79,28 @@ rezervaci potvrdí (host svoje udělal), ale zůstane v záznamu, že je potřeb
 zablokovaný na platformách** — dokud není, může ho kterýkoli kanál prodat znovu, hub nás
 neochrání.
 
-**Párování s blokací na platformě.** Když majitel termín zablokuje v e-chalupách, vrátí se
-zpátky feedem. Skript kalendáře proto hold se **shodným** `(start, end)` nepublikuje a
-`buildStays()` v `sprava.js` ho ke stejnému termínu přilepí — jeden pobyt, ne dva, a žádná
-falešná dvojitá rezervace. Naopak **částečný** překryv předrezervace s cizí rezervací je
-skutečný konflikt a vyskočí červený banner.
+**Blokace na platformách dělá kalendář sám (od 17. 9. 2026).** Přímý prodej, který Action
+publikuje do `history.json`, jde i do výstupních feedů kalendáře (`data/out/*.ics`) a ty si
+platformy importují. Termín tedy není potřeba blokovat ručně; „není zablokovaný" hlásí
+`/sprava/` jen u předrezervace, kterou kalendář ještě nepublikoval (Action běží po 3 h).
+
+**Párování s kalendářem.** Přímý prodej je v `history.json` pod **`uidh` své předrezervace**
+(`vr_hold_uidh(id)`), ne pod `uidh` pobytu — ten mají pobyty z `/smlouvy/` a z tlačítka
+„+ Předrezervace" prázdný. `buildStays()` v `sprava.js` proto hosta ke kalendářnímu řádku
+hledá přes `vr_holds.booking_id`, a když vazba chybí, bere **jediný** ruční pobyt na přesně
+tentýž termín (dva kandidáti = nehádá). Bez toho byl každý přímý prodej v přehledu dvakrát
+(zjištěno 23. 9. 2026).
+
+**Ozvěna blokace.** Blok z výstupního feedu (nebo ruční blokace majitele) se vrací zpátky feedem
+platformy se **shodným** `(start, end)`. Skript kalendáře takovou událost **zahazuje** a platí
+záznam ze správy (do 17. 9. to bylo obráceně — zahazoval se hold). `buildStays()` drží stejné
+pravidlo: záznam z feedu na termín přímého prodeje, který už kalendář nese pod vlastním
+`uidh`, přeskočí; když ho ještě nenese, spáruje ho s předrezervací. Jeden pobyt, ne dva,
+a žádná falešná dvojitá rezervace. Naopak **částečný** překryv předrezervace s cizí
+rezervací je skutečný konflikt a vyskočí červený banner.
+
+Totéž párování má kopii v n8n `VrDailyTasks` (`buildStays` v `VrDailyTasks.code.js`), která
+předrezervace nenačítá — přímý prodej tam zatím páruje jen přes `uidh` (viz `STAV.md`).
 
 ## Ubytovací smlouvy (`/smlouvy/`, `vr_contracts`)
 
