@@ -136,7 +136,8 @@ kalendáře taky 18měsíční prune `history.json`.
 | Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
 | Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
 | Nálezy revize na té publikaci (kalendář PR #14) | 🟡 **opraveno, čeká na merge** — 7 kol, po srovnání s `main` 23. 9. dalších 5, poslední čisté (`55770d2`) |
-| Přímý prodej v přehledu `/sprava/` dvakrát + falešné „nezablokováno" | ✅ **opraveno 23. 9.** (PR #22, živé po merge) — `VrDailyTasks` zatím ne, viz níž |
+| Přímý prodej v přehledu `/sprava/` dvakrát + falešné „nezablokováno" | ✅ **opraveno 23. 9.** (PR #22, živé po merge) |
+| Totéž v denním e-mailu `n8n/VrDailyTasks` | 🟡 **kód v PR #22, čeká na merge + nasazení na server** (patch skript přidá uzel „Načíst předrezervace") |
 | `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód v `main` od 15. 9. (i s filtrem duchů z 12. 9.), čeká na re-import** |
 | Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **migrace v DB 15. 9., čeká na 3 tokeny Fia** |
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
@@ -190,10 +191,14 @@ ručně v DB 23. 9.** (`vr_holds.booking_id` → pobyt se stejným termínem; je
 *Zbývá z toho:*
 - **Editor předrezervace vazbu na pobyt nastavit neumí** — jen ji teď nezahodí. Nová vazba
   vzniká přes `/smlouvy/` (smlouva z pobytu → Vystavit); jinak jen v DB.
-- **`n8n/VrDailyTasks`** má kopii `buildStays()` a předrezervace nenačítá — přímý prodej tam
-  je pořád dvakrát (kalendářní řádek bez hosta + ruční). Dnes neškodí (e-mail z toho dělá
-  „nespárovaný pobyt" až 35 dní před příjezdem, tedy v červenci 2027), ale chce to načíst
-  `vr_holds` a párovat stejně, pak re-import do n8n.
+- **`n8n/VrDailyTasks`** — ✅ kód opravený 23. 9. (PR #22): načítá `vr_holds` a páruje stejně
+  jako `/sprava/`, včetně přeskočení ozvěny a eskalace „Přímá" × „Přímá". Ověřeno spuštěním
+  celého Code node nad živým `history.json`: srpen 2027 ze 7 řádků + falešného konfliktu
+  7.–14. 8. na 3 pobyty s hosty a 0 konfliktů; skutečný částečný překryv hlásí dál; bez nového
+  uzlu vyjdou pobyty i konflikty stejně jako dřív. `uidh` z vlastního SHA-256 sedí s `vr_hold_uidh()` (ověřeno
+  na reálné předrezervaci 7.–14. 8.). **Zbývá nasadit na server:** po merge
+  `python3 tools/n8n-patch-vrdailytasks.py <export> <patched>` (přidá a zapojí uzel
+  „Načíst předrezervace (service-role)"), import, publish, restart — viz `__jak_nasadit__`.
 - **Kalendářní stránky** (úklid i `owner.html`) ukazují na 7.–14. 8. 2027 do 25. 9. taky
   červenou dvojitou rezervaci — týž dobíhající záznam `a86a13…`. Samo zmizí; trvale by to
   chtělo, aby skript kalendáře při zahození ozvěny rovnou zestárnul i její archivní záznam.

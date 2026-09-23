@@ -105,8 +105,13 @@ pravidlo: záznam z feedu na termín přímého prodeje, který už kalendář n
 a žádná falešná dvojitá rezervace. Naopak **částečný** překryv předrezervace s cizí
 rezervací je skutečný konflikt a vyskočí červený banner.
 
-Totéž párování má kopii v n8n `VrDailyTasks` (`buildStays` v `VrDailyTasks.code.js`), která
-předrezervace nenačítá — přímý prodej tam zatím páruje jen přes `uidh` (viz `STAV.md`).
+Totéž párování má kopii v n8n `VrDailyTasks` (stavba `stays` v `VrDailyTasks.code.js`) — od
+23. 9. 2026 i s předrezervacemi. Čte je uzel „Načíst předrezervace (service-role)" (GET
+`vr_holds`, jen `id,arrival,departure,status,hold_until,booking_id`); `uidh` tabulka nemá,
+kód si ho dopočítá stejně jako `vr_hold_uidh()` — `sha256('vr-hold:' + id)[:16]`, vlastní
+implementací SHA-256, protože `require('crypto')` v Code node nemusí být povolený.
+Bez toho uzlu páruje jako dřív (jen přes `uidh`). Kdo mění párování v `sprava.js`, mění ho
+i tam.
 
 ## Ubytovací smlouvy (`/smlouvy/`, `vr_contracts`)
 
