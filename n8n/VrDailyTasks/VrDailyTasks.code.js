@@ -328,6 +328,10 @@ holds.forEach(h => { if (!holdOpen(h) || holdExpired(h)) return;
 // Které přímé prodeje kalendář už nese pod vlastním uidh — i s termínem, protože
 // přesunutá předrezervace má pod tímtéž uidh do příštího běhu Action staré datum.
 const calUidh = {}; calendar.forEach(c => { if (c.uidh) calUidh[c.uidh + '|' + c.start + '|' + c.end] = true; });
+// Záznam z feedu je ozvěnou předrezervace, jen když nemá vlastního hosta (nebo je to
+// host té předrezervace). Rezervace se spárovaným hostem na tentýž termín je druhý
+// nárok — sloučit ji s předrezervací by dvojitou rezervaci schovalo.
+function echoOfHold(c, h){ const cb = byUidh[c.uidh]; if (!cb) return true; const hb = bookingOfHold(h); return !!hb && hb.id === cb.id; }
 
 // sloučené pobyty (kalendář + předrezervace + ruční), stejně jako buildStays()
 const stays = []; const usedIds = {};
@@ -342,7 +346,8 @@ calendar.forEach(c => { if (c.end < cutoff) return;
   // přesunutá předrezervace: starý termín pod jejím uidh už nic nedrží (krok 2 ji vezme s novým)
   if (h && (h.arrival !== c.start || h.departure !== c.end)) return;
   if (!h) {
-    const hs = holdBySpan[c.start + '|' + c.end] || null;
+    let hs = holdBySpan[c.start + '|' + c.end] || null;
+    if (hs && !echoOfHold(c, hs)) hs = null; // vlastní host = samostatná rezervace
     // Ozvěna přímého prodeje (blok z data/out/*.ics nebo ruční blokace se shodným
     // termínem), který má v kalendáři vlastní řádek → ten stačí. Jinak by šel dvakrát
     // a hlídač by z něj udělal konflikt sám se sebou.
@@ -387,8 +392,10 @@ tasks.sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
 const problems = [];
 stays.forEach(s => {
   const b = s.booking;
-  // Předrezervace bez hosta: host se doplňuje až po zaplacení, do „nespárovaných" nepatří.
-  if (!b && s.hold) return;
+  // Nezaplacená předrezervace bez hosta: host se doplňuje až po zaplacení, do
+  // „nespárovaných" nepatří. Uhrazená (confirmed) ale je pobyt jako každý jiný — bez
+  // hosta nedostane zprávy ani kód a e-mail je jediné místo, kde se to dozví.
+  if (!b && s.hold && s.hold.status === 'hold') return;
   if (!b) { // nespárovaný pobyt z kalendáře: start v [dnes−14, dnes+35] — potvrzení je T−30, hlásit dřív.
     // Servisní blok majitele a nepotvrzený termín (verified.json) hosta nemají → nehlásit. Stejně jako sprava.js.
     const vs = verifiedStatus(s);

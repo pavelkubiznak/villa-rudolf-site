@@ -578,6 +578,16 @@
     // Action ještě staré datum pod tímtéž uidh, a ten řádek nový termín nenese.
     var calUidh = {};
     calendar.forEach(function (c) { if (c.uidh) calUidh[c.uidh + '|' + c.start + '|' + c.end] = true; });
+    // Záznam z feedu je ozvěnou předrezervace jen tehdy, když nemá vlastního hosta —
+    // nebo když je jeho host právě host té předrezervace. Rezervace z platformy se
+    // spárovaným hostem na tentýž termín je druhý nárok (dvojitá rezervace), ne ozvěna:
+    // sloučit ji s předrezervací by konflikt schovalo.
+    function echoOfHold(c, h) {
+      var cb = byUidh[c.uidh];
+      if (!cb) return true;
+      var hb = bookingOfHold(h);
+      return !!hb && hb.id === cb.id;
+    }
 
     stays = [];
     var usedBookingIds = {};
@@ -599,6 +609,7 @@
       if (h && (h.arrival !== c.start || h.departure !== c.end)) return;
       if (!h) {
         var hs = holdBySpan[c.start + '|' + c.end] || null;
+        if (hs && !echoOfHold(c, hs)) hs = null;   // vlastní host = samostatná rezervace
         // Ozvěna přímého prodeje, který má v kalendáři vlastní řádek → ten řádek stačí.
         if (hs && hs.uidh && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) return;
         // přímý prodej v kalendáři ještě není (Action po 3 h) → spárovat s blokací.
