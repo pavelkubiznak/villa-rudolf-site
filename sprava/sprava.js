@@ -636,6 +636,7 @@
       if (!holdOpen(h) || holdExpired(h)) return;
       if (h.departure < cutoff) return;
       var hb = bookingOfHold(h);
+      if (hb && usedBookingIds[hb.id]) hb = null;   // host patří jen jednomu řádku
       if (hb) usedBookingIds[hb.id] = true;
       stays.push({
         source: 'hold', uidh: h.uidh || null,

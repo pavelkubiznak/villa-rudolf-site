@@ -371,7 +371,8 @@ calendar.forEach(c => { if (c.end < cutoff) return;
 // předrezervace, které v kalendáři ještě nejsou (Action po 3 h) — PŘED ručními pobyty,
 // jinak by se jejich host přidal ještě jednou jako ruční pobyt
 holds.forEach(h => { if (usedHoldIds[h.id] || !holdOpen(h) || holdExpired(h) || h.departure < cutoff) return;
-  const b = bookingOfHold(h); if (b) usedIds[b.id] = true;
+  let b = bookingOfHold(h); if (b && usedIds[b.id]) b = null; // host patří jen jednomu řádku
+  if (b) usedIds[b.id] = true;
   stays.push({ source:'hold', uidh:h.uidh, start:h.arrival, end:h.departure, platform:'Přímá', booking:b, hold:h }); });
 bookings.forEach(b => { if (usedIds[b.id]) return; if (b.departure < cutoff) return;
   stays.push({ source:'manual', uidh:b.uidh||null, start:b.arrival, end:b.departure, platform:b.platform||'Přímá', booking:b, hold:null }); });
