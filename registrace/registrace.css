@@ -183,3 +183,8 @@ body{margin:0;background:#0E1311}
 @media (prefers-reduced-motion:reduce){
   .vp-spin,.vp-ok{animation:none}
 }
+
+/* lednice: kód od dveří */
+.vp-code-sec{margin-top:22px}
+.vp-code-b{font-size:14.5px;line-height:1.6;color:var(--vp-muted);margin:6px 0 14px;max-width:48ch}
+.vp-code-form #f-code{font-size:22px;letter-spacing:.18em;text-align:center;max-width:220px}

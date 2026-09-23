@@ -433,8 +433,9 @@ připomene chybějící krok. Migrace `20260915_vr_admin_config_wifi.sql` **nasa
 - `_vr_admin_auth`: rate-limit nepočítá neúspěšné pokusy (insert stopy se s výjimkou
   odrolluje) — online brute-force není throttlovaný. Řešení: stopu zapisovat mimo transakci
   nebo vracet boolean místo výjimky.
-- `vr_persons_add_by_date` (lednicový QR): kdokoli na internetu může zapisovat osoby do zákonné
-  evidence — chybí druhý faktor (kód pobytu na QR).
+- ~~`vr_persons_add_by_date` (lednicový QR): kdokoli na internetu může zapisovat osoby do zákonné
+  evidence — chybí druhý faktor (kód pobytu na QR).~~ **Vyřešeno 23. 9. 2026:** lednice vyžaduje
+  kód od dveří (`vr_fridge_open`, migrace `20260923_vr_fridge_code.sql`), stará cesta vrací `code_required`.
 - Edge Function `album`: limit 15 MB a whitelist typů vynucuje jen klient — nastavit
   `file_size_limit` a `allowed_mime_types` na bucketu `vr-album`.
 - `/sprava/`: výpadek `history.json` hlásí falešné „storno" u všech spárovaných pobytů

@@ -2,7 +2,8 @@
  * Vanilla JS. Supabase RPC (SECURITY DEFINER, jen anon klíč, RLS deny-all).
  *  - s ?t=TOKEN  -> vr_verify_token (hlavička), vr_persons_list (seznam),
  *                   vr_persons_add / vr_persons_delete
- *  - bez tokenu  -> lednicová cesta: vr_persons_add_by_date (statický QR)
+ *  - bez tokenu  -> lednicová cesta: kód od dveří → vr_fridge_open → klíč relace,
+ *                   dál stejné RPC jako s odkazem (vr_persons_add_by_date je zavřené)
  * Čísla dokladů se NIKDY nevrací (list vrací jen doc_filled bool).
  */
 (function () {
@@ -63,6 +64,11 @@
       errToken: 'Odkaz je neplatný nebo vypršel. Použijte prosím aktuální odkaz ze zprávy.',
       errGeneric: 'Uložení se nepodařilo. Zkuste to prosím znovu.',
       errLoad: 'Seznam se nepodařilo načíst. Zkuste prosím obnovit stránku.',
+      codeTitle: 'Zadejte kód od dveří',
+      codeBody: 'Registraci otevřete stejným kódem, kterým odemykáte vchodové dveře. Uvidíte pak celou svou skupinu a termín pobytu bude předvyplněný.',
+      codeLabel: 'Kód od dveří', codeSubmit: 'Pokračovat',
+      errCode: 'Kód nesedí. Zadejte prosím kód, kterým otevíráte vchodové dveře. Kdyby to nešlo, napište nám.',
+      errCodeRate: 'Příliš mnoho pokusů. Zkuste to prosím za hodinu, nebo použijte odkaz ze zprávy.',
       citCommon: 'Časté', citOthers: 'Ostatní země'
     },
     en: {
@@ -112,6 +118,11 @@
       errToken: 'The link is invalid or has expired. Please use the current link from your message.',
       errGeneric: 'Saving failed. Please try again.',
       errLoad: 'The list couldn’t be loaded. Please reload the page.',
+      codeTitle: 'Enter the door code',
+      codeBody: 'Open the registration with the same code you use to unlock the front door. You will then see your whole group, with your stay dates already filled in.',
+      codeLabel: 'Door code', codeSubmit: 'Continue',
+      errCode: 'That code doesn’t match. Please enter the code you use to open the front door. If it doesn’t work, send us a message.',
+      errCodeRate: 'Too many attempts. Please try again in an hour, or use the link from your message.',
       citCommon: 'Common', citOthers: 'Other countries'
     },
     de: {
@@ -161,6 +172,11 @@
       errToken: 'Der Link ist ungültig oder abgelaufen. Bitte den aktuellen Link aus Ihrer Nachricht nutzen.',
       errGeneric: 'Speichern fehlgeschlagen. Bitte erneut versuchen.',
       errLoad: 'Die Liste konnte nicht geladen werden. Bitte die Seite neu laden.',
+      codeTitle: 'Türcode eingeben',
+      codeBody: 'Öffnen Sie die Registrierung mit demselben Code, mit dem Sie die Haustür aufschließen. Danach sehen Sie Ihre ganze Gruppe, und der Aufenthalt ist bereits eingetragen.',
+      codeLabel: 'Türcode', codeSubmit: 'Weiter',
+      errCode: 'Der Code passt nicht. Bitte geben Sie den Code ein, mit dem Sie die Haustür öffnen. Falls es nicht klappt, schreiben Sie uns.',
+      errCodeRate: 'Zu viele Versuche. Bitte in einer Stunde erneut versuchen oder den Link aus Ihrer Nachricht nutzen.',
       citCommon: 'Häufig', citOthers: 'Weitere Länder'
     },
     pl: {
@@ -210,6 +226,11 @@
       errToken: 'Link jest nieprawidłowy lub wygasł. Skorzystaj z aktualnego linku z wiadomości.',
       errGeneric: 'Zapis się nie powiódł. Spróbuj ponownie.',
       errLoad: 'Nie udało się wczytać listy. Odśwież proszę stronę.',
+      codeTitle: 'Wpisz kod do drzwi',
+      codeBody: 'Rejestrację otworzysz tym samym kodem, którym otwierasz drzwi wejściowe. Zobaczysz wtedy całą swoją grupę, a termin pobytu będzie już wpisany.',
+      codeLabel: 'Kod do drzwi', codeSubmit: 'Dalej',
+      errCode: 'Kod się nie zgadza. Wpisz kod, którym otwierasz drzwi wejściowe. Jeśli to nie działa, napisz do nas.',
+      errCodeRate: 'Zbyt wiele prób. Spróbuj ponownie za godzinę albo skorzystaj z linku z wiadomości.',
       citCommon: 'Częste', citOthers: 'Pozostałe kraje'
     }
   };
@@ -287,6 +308,8 @@
   var token = (qs.get('t') || '').trim();
   var lang = 'cs';
   var booking = null;         // { arrival, departure, lastName }
+  var fridge = false;         // token je klíč relace z kódu od dveří, ne osobní odkaz
+  var SESSION_KEY = 'vr_reg_session';
   var docConfirmed = false;   // uživatel odklikl „je to správně, pokračovat"
 
   /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel. */
@@ -389,7 +412,7 @@
     // pokud už je seznam načtený, přerenderuj kvůli lokalizaci
     if (lastPersons) renderList(lastPersons);
     // submit label (mimo busy stav)
-    var sl = document.querySelector('.vp-submit-label');
+    var sl = $('submit').querySelector('.vp-submit-label');   // ne tlačítko u kódu od dveří
     if (sl && $('submit').getAttribute('data-busy') !== 'true') sl.textContent = L.submit;
     // stay hint podle režimu
     var sh = document.querySelector('[data-i18n="stayHint"]');
@@ -483,6 +506,8 @@
       // Neplatný / prošlý odkaz: řekni to hned při načtení, ne až po odeslání
       // formuláře. Prázdná hlavička „Zaregistrovaní" by jinak tvrdila, že je vše OK.
       if (d.error === 'token_invalid' || d.error === 'token_required') {
+        // relace z lednice vypršela (po odjezdu) → zpátky na zadání kódu
+        if (fridge) { clearSession(); showCodeGate(); return; }
         $('listSection').hidden = true;
         showError(T[lang].errToken);
         return;
@@ -613,6 +638,8 @@
         return;
       }
       if (d.error === 'no_active_stay') { showClosed(); return; }
+      // stará lednicová cesta bez kódu je zavřená; prošlá relace z lednice
+      if (d.error === 'code_required' || (fridge && d.error === 'token_invalid')) { clearSession(); showCodeGate(); return; }
       showError(mapError(d.error), ERR_FIELD[d.error]);
     }).catch(function () { setBusy(false); showError(L.errGeneric); });
   }
@@ -626,6 +653,7 @@
     window.scrollTo(0, 0);
   }
   function showForm() {
+    $('codeSection').hidden = true;
     $('closedView').hidden = true;
     $('formSection').hidden = false;
     $('gdprSection').hidden = false;
@@ -643,6 +671,61 @@
       var t = isoToday();
       from.value = t; to.value = t;
     }
+  }
+
+  /* ===================== lednice: kód od dveří ===================== */
+  // Statický QR na lednici nemá token. Host zadá kód od dveří (zná ho jen skupina
+  // ve vile), vr_fridge_open vrátí klíč relace platný do dne odjezdu a dál se
+  // chová stejně jako osobní odkaz — seznam skupiny, termín z rezervace.
+  function loadSession() {
+    try {
+      var s = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+      if (s && s.token && s.booking && s.booking.departure >= isoToday()) return s;
+    } catch (e) {}
+    return null;
+  }
+  function saveSession(s) { try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {} }
+  function clearSession() { try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {} }
+  function useSession(s) {
+    token = s.token; fridge = true;
+    booking = { arrival: s.booking.arrival, departure: s.booking.departure, lastName: s.booking.last_name || '' };
+    renderHeader(); setStayDefaults(); showForm(); loadList();
+  }
+  function showCodeGate(msg) {
+    token = ''; fridge = false; booking = null;
+    $('codeSection').hidden = false;
+    $('formSection').hidden = true;
+    $('listSection').hidden = true;
+    $('closedView').hidden = true;
+    $('gdprSection').hidden = false;
+    renderHeader();
+    var e = $('codeErr');
+    if (msg) { e.textContent = msg; e.hidden = false; } else { e.hidden = true; }
+  }
+  function submitCode(ev) {
+    ev.preventDefault();
+    var L = T[lang], code = $('f-code').value.trim(), e = $('codeErr');
+    e.hidden = true;
+    if (!code) { e.textContent = L.errCode; e.hidden = false; $('f-code').focus(); return; }
+    var btn = $('codeSubmit');
+    btn.disabled = true; btn.setAttribute('data-busy', 'true');
+    rpc('vr_fridge_open', { p_code: code }).then(function (res) {
+      btn.disabled = false; btn.removeAttribute('data-busy');
+      var d = res.data || {};
+      if (d.ok === true && d.token) {
+        var s = { token: d.token, booking: d.booking || {} };
+        saveSession(s);
+        $('f-code').value = '';
+        useSession(s);
+        return;
+      }
+      e.textContent = d.error === 'rate_limited' ? L.errCodeRate : L.errCode;
+      e.hidden = false;
+      $('f-code').select();
+    }).catch(function () {
+      btn.disabled = false; btn.removeAttribute('data-busy');
+      e.textContent = L.errGeneric; e.hidden = false;
+    });
   }
 
   /* ===================== init ===================== */
@@ -679,6 +762,7 @@
     });
 
     $('form').addEventListener('submit', submit);
+    $('codeForm').addEventListener('submit', submitCode);
     // pole označené aria-invalid se odznačí, jakmile do něj uživatel sáhne
     ['input', 'change'].forEach(function (evName) {
       $('form').addEventListener(evName, function (ev) {
@@ -702,7 +786,9 @@
       }).catch(function () { renderHeader(); setStayDefaults(); });
       setStayDefaults();
     } else {
-      setStayDefaults();
+      // lednice: platná relace z dřívějška (reload stránky), jinak kód od dveří
+      var sess = loadSession();
+      if (sess) useSession(sess); else showCodeGate();
     }
   }
 
