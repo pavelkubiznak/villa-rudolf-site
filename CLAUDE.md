@@ -180,6 +180,36 @@ to přímo z iDokladu je další krok; jeho API se sem nepsalo naslepo.
 ⚠️ **`n8n/VrConflictWatch` je potřeba znovu importovat** — referenční kód byl upraven, aby
 překryv dvou přímých prodejů („Přímá" × „Přímá") neschoval mezi artefakty kalendáře.
 
+## Hlášení cizinců (UbyPort) — lhůta a záznam o odeslání
+
+Ubytování cizince se hlásí policii **do 3 pracovních dnů ode dne ubytování** (§ 102 zák.
+326/1999 Sb.). Cizinec = každý bez českého občanství, **včetně občanů EU**. Od 23. 9. 2026
+(migrace `20260923_vr_ubyport_lhuta.sql`) systém ví, jestli a kdy hlášení odešlo:
+
+| | |
+|---|---|
+| Lhůta | `vr_ubyport_deadline(stay_from)` = 3. pracovní den po dni ubytování; víkendy a státní svátky vč. Velikonoc počítá `vr_cz_is_workday()`. **Počítá se od `stay_from` každé osoby**, ne od příjezdu rezervace. |
+| Záznam | `vr_ubyport_reports` (kdy, jak: `unl`/`form`/`ws`, pseudorazítko z doručenky) + `vr_persons.ubyport_report_id` |
+| `/sprava/` | Problémy: 🛂 nenahlášení cizinci (červeně poslední den a po lhůtě), 📝 běžící pobyt s neúplnou registrací. Detail pobytu: stav u každého cizince, UNL jen z dosud nenahlášených, tlačítko „Nahlášeno…“, „Vrátit“ pro omyl. |
+| Denní e-mail | sekce 🛂 HLÁŠENÍ CIZINCŮ z `vr_ubyport_due()` (grant jen `service_role`, vrací objekt `{due:[…]}` — pole by n8n rozsekal na položky a „Načíst pobyty“ by běžel víckrát). Uzel přidává `tools/n8n-patch-vrdailytasks.py`. |
+
+Nahlášenou osobu si host v registraci **smazat nemůže** (`already_reported`) — evidence se
+uchovává 6 let. „Vrátit“ ve `/sprava/` mění jen náš záznam; v UbyPortu nic nezruší.
+
+**Registrace z lednice = kód od dveří** (migrace `20260923_vr_fridge_code.sql`). Statický QR
+na lednici vede na `/registrace/` bez tokenu; host zadá kód, kterým odemyká vchod, a
+`vr_fridge_open()` vydá klíč relace (platí do dne odjezdu, `vr_fridge_sessions`). Dál jede
+stejně jako osobní odkaz: seznam skupiny, termín z rezervace, `source = 'fridge'`. Kód =
+`door_code`, jinak posledních 5 číslic telefonu (stejně jako `doorCodeFor` ve `/sprava/`).
+Max 20 neúspěšných pokusů za hodinu. Stará otevřená cesta `vr_persons_add_by_date` je
+zavřená (vrací `code_required`) — zapsat k běžícímu pobytu mohl kdokoli z internetu.
+**Bez uloženého kódu i telefonu se skupina z lednice nezaregistruje** — Problémy ve `/sprava/`
+hlásí chybějící kód 7 dní před příjezdem.
+
+**Odesílá se zatím ručně** (UNL soubor nebo formulář v UbyPortu). Webová služba WS_UBY (SOAP,
+NTLM, bez captchy, vrací PDF potvrzení) je další krok — o testovací přístup se žádalo 23. 9. 2026
+za Sinteru („TEST WS - Sintera Czech s.r.o.“), podává se datovou schránkou na `ybndqw9`.
+
 ## Na co si dát pozor
 
 1. **Žádné PII do repa.** Jména, kontakty a doklady hostů patří výhradně do Supabase (EU).
