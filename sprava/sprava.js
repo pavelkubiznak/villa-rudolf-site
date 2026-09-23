@@ -861,8 +861,10 @@
       var hasPhone = phoneUsable(b);
       // (a) bez telefonu — v 30denním pipeline (od T−30 začínají zprávy) nebo běžící
       if (!hasPhone && s.end >= today && s.start <= addDaysISO(today, 30)) probs.push({ kind: 'nophone', stay: s, date: s.start });
-      // (b) příjezd do 7 dnů bez uloženého kódu dveří
-      if (hasPhone && !b.door_code && s.start >= today && daysBetween(today, s.start) <= 7)
+      // (b) příjezd do 7 dnů (nebo pobyt běží) bez uloženého kódu dveří. Hlásí se
+      //     i bez telefonu: kód je od 9/2026 zároveň vstup do registrace z lednice
+      //     (vr_fridge_open) — bez něj se skupina na místě nezaregistruje.
+      if (!b.door_code && s.end >= today && daysBetween(today, s.start) <= 7)
         probs.push({ kind: 'nocode', stay: s, date: s.start });
       // (g) nenahlášení cizinci — lhůta 3 pracovních dnů od ubytování (§ 102 zák.
       //     326/1999 Sb.). Pracovní dny a svátky počítá DB, tady se jen řadí podle lhůty.
@@ -939,7 +941,8 @@
           + ' — připomeň hostům registraci. Poplatek se počítá taky z registrací.', i, 'Otevřít');
       } else if (p.kind === 'nocode') {
         html += probCard('soon', '🔑 ' + esc(guestName(b)) + ' — chybí kód dveří',
-          'Příjezd za ' + daysBetween(today, s.start) + ' dní (' + esc(fmtShort(s.start, s.end)) + ') — není uložený kód dveří.', i, 'Doplnit kód');
+          (s.start <= today ? 'Pobyt běží' : 'Příjezd za ' + daysBetween(today, s.start) + ' dní') + ' (' + esc(fmtShort(s.start, s.end)) + ') — není uložený kód dveří. '
+          + 'Ulož ho, i když ho nastavuješ v Yale: stejným kódem hosté otevírají registraci na lednici.', i, 'Doplnit kód');
       }
     });
     if (activeConfl) {
