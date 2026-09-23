@@ -187,6 +187,26 @@ hlásí chybějící kód 7 dní před příjezdem.
 NTLM, bez captchy, vrací PDF potvrzení) je další krok — o testovací přístup se žádalo 23. 9. 2026
 za Sinteru („TEST WS - Sintera Czech s.r.o.“), podává se datovou schránkou na `ybndqw9`.
 
+## Poplatek z pobytu a evidenční kniha
+
+Svoboda nad Úpou, **OZV č. 2/2023** (účinná od 1. 1. 2024, ověřeno 23. 9. 2026 proti PDF na
+musvoboda.cz): **25 Kč za každý den pobytu kromě dne příjezdu**, jen pobyt do 60 dnů,
+poplatník = kdo není v obci přihlášený, **osvobození jen podle zákona (§ 3b) — senioři
+osvobození nemají**, odvod **za pololetí do 20. 7. a 20. 1.** Migrace `20260923_vr_poplatek.sql`:
+
+| | |
+|---|---|
+| Sazba | `vr_fee_rates` (platnost od data) — změnu vyhlášky zapiš novým řádkem, stará pololetí se počítají starou sazbou |
+| Výpočet | `_vr_person_fee()` po osobách a po dnech: den příjezdu ne, do 18. narozenin ne (i během pobytu), `fee_exempt` ne; bez data narození = dospělý |
+| Osvobození | host sám jen `ztp` (nevidomý, ZTP/P a průvodce, závislý na pomoci); `resident` / `other` zapisuje majitel kliknutím na štítek poplatku u osoby |
+| `/sprava/` | blok Místní poplatek z registrací, **💰 Poplatek** = přehled za pololetí + CSV evidenční knihy (§ 3g) + „Odvedeno“ (`fee_odvod_RRRR_1/2` v configu); Problémy připomínají odvod v lednu a v červenci |
+
+Evidenční kniha (§ 3g zák. 565/1990 Sb.) chce u **každého** hosta i Čecha: den počátku a konce,
+jméno, **adresu**, **datum narození**, **číslo a druh dokladu**, poplatek nebo důvod osvobození;
+uchovává se 6 let. Proto `/registrace/` od 9/2026 vyžaduje datum narození a ulici, doklad je
+povinný pro cizince **a pro dospělé**, přibyl druh dokladu (`ID`/`P`/`O`). `vr_persons_add` má
+nové parametry s DEFAULT — stará stránka v mezipaměti volá dál tutéž funkci.
+
 ## Na co si dát pozor
 
 1. **Žádné PII do repa.** Jména, kontakty a doklady hostů patří výhradně do Supabase (EU).

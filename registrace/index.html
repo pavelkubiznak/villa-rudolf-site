@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="registrace.css?v=3">
+<link rel="stylesheet" href="registrace.css?v=4">
 </head>
 <body>
 <div class="vp-root">
@@ -103,8 +103,8 @@
           </div>
 
           <label class="vp-field">
-            <span class="vp-lbl" data-i18n="fBirth">Datum narození</span>
-            <input type="date" id="f-birth">
+            <span class="vp-lbl"><span data-i18n="fBirth">Datum narození</span> <em>*</em></span>
+            <input type="date" id="f-birth" required>
           </label>
 
           <label class="vp-field">
@@ -120,7 +120,14 @@
               <em id="docStar">*</em>
               <span class="vp-lbl-opt" id="docOpt" data-i18n="fDocOptional" hidden>(nepovinné)</span>
             </label>
-            <input type="text" id="f-doc" autocomplete="off" maxlength="40" inputmode="latin" autocapitalize="characters" spellcheck="false" aria-describedby="docHint">
+            <div class="vp-docrow">
+              <select id="f-dtype" aria-label="Druh dokladu" data-i18n-aria="fDocType">
+                <option value="ID" data-i18n="dtID">Občanský průkaz</option>
+                <option value="P" data-i18n="dtP">Cestovní pas</option>
+                <option value="O" data-i18n="dtO">Jiný doklad</option>
+              </select>
+              <input type="text" id="f-doc" autocomplete="off" maxlength="40" inputmode="latin" autocapitalize="characters" spellcheck="false" aria-describedby="docHint">
+            </div>
             <span class="vp-hint" id="docHint" data-i18n="docHintCz">Cestovní pas nebo občanský průkaz. U českých občanů nepovinné.</span>
             <div class="vp-docwarn" id="docWarn" hidden>
               <p id="docWarnMsg"></p>
@@ -130,6 +137,11 @@
               </div>
             </div>
           </div>
+
+          <label class="vp-field">
+            <span class="vp-lbl"><span data-i18n="fStreet">Ulice a číslo domu</span> <em>*</em></span>
+            <input type="text" id="f-street" autocomplete="off" maxlength="150" required>
+          </label>
 
           <div class="vp-row2">
             <label class="vp-field">
@@ -156,6 +168,11 @@
             </div>
             <span class="vp-hint" data-i18n="stayHint">Předvyplněno termínem pobytu — upravte, pokud přijíždíte nebo odjíždíte jindy.</span>
           </div>
+
+          <label class="vp-check">
+            <input type="checkbox" id="f-ztp">
+            <span><span data-i18n="fZtp">Osvobození od poplatku: …</span><span class="vp-hint" data-i18n="ztpHint">Průkaz si můžeme vyžádat k nahlédnutí.</span></span>
+          </label>
 
           <p class="vp-err" id="err" role="alert" hidden></p>
 
@@ -187,7 +204,7 @@
 
   </div>
 </div>
-<script src="registrace.js?v=3" defer></script>
+<script src="registrace.js?v=4" defer></script>
 <!-- Umami analytics (self-hosted, cookieless). data-exclude-search: v URL je
      hostovský token ?t=…, do analytiky smí jen cesta bez parametrů. -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-exclude-search="true"></script>

@@ -188,3 +188,12 @@ body{margin:0;background:#0E1311}
 .vp-code-sec{margin-top:22px}
 .vp-code-b{font-size:14.5px;line-height:1.6;color:var(--vp-muted);margin:6px 0 14px;max-width:48ch}
 .vp-code-form #f-code{font-size:22px;letter-spacing:.18em;text-align:center;max-width:220px}
+
+/* druh dokladu vedle čísla */
+.vp-docrow{display:flex;gap:8px}
+.vp-docrow select{flex:0 0 42%;min-width:0}
+.vp-docrow input{flex:1 1 auto;min-width:0}
+/* osvobození od poplatku */
+.vp-check{display:flex;gap:10px;align-items:flex-start;margin:4px 0 14px;font-size:13.5px;line-height:1.45;cursor:pointer}
+.vp-check input{flex:0 0 auto;width:18px;height:18px;margin-top:2px;accent-color:var(--vp-ember, #D68A4C)}
+.vp-check .vp-hint{display:block;margin-top:2px}
