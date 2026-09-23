@@ -608,6 +608,7 @@
       }
       if (h) usedHoldIds[h.id] = true;
       var b = byUidh[c.uidh] || null;
+      if (b && usedBookingIds[b.id]) b = null;   // host patří jen jednomu řádku
       if (!b && h) { var hb0 = bookingOfHold(h); if (hb0 && !usedBookingIds[hb0.id]) b = hb0; }
       if (b) usedBookingIds[b.id] = true;
       stays.push({
