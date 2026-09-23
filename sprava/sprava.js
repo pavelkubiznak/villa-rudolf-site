@@ -538,12 +538,20 @@
     // běžely podle starého. Nesoulad radši ukázat jako dva řádky.
     // Pobyt, na který už odkazuje NĚJAKÁ předrezervace, patří jí — i když s ní právě
     // nesedí termínem. Náhradní párování podle data ho jiné předrezervaci nedá.
-    var linkedToHold = {};
-    holds.forEach(function (h) { if (h.booking_id) linkedToHold[h.booking_id] = true; });
+    // A párování podle data musí být jedna ku jedné: dvě nepropojené předrezervace
+    // na tentýž termín by si jinak obě vzaly téhož hosta (a úkoly by se zdvojily).
+    var linkedToHold = {}, unlinkedHoldsBySpan = {};
+    holds.forEach(function (h) {
+      if (h.booking_id) { linkedToHold[h.booking_id] = true; return; }
+      if (!holdOpen(h) || holdExpired(h)) return;
+      var k = h.arrival + '|' + h.departure;
+      unlinkedHoldsBySpan[k] = (unlinkedHoldsBySpan[k] || 0) + 1;
+    });
     function bookingOfHold(h) {
       if (!h) return null;
       var sameSpan = function (b) { return b && b.arrival === h.arrival && b.departure === h.departure; };
       if (h.booking_id) { var lb = byId[h.booking_id]; return sameSpan(lb) ? lb : null; }
+      if ((unlinkedHoldsBySpan[h.arrival + '|' + h.departure] || 0) > 1) return null;
       var same = bookings.filter(function (b) {
         return !b.uidh && !linkedToHold[b.id] && (b.platform || 'Přímá') === 'Přímá' && sameSpan(b);
       });
