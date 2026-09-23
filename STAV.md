@@ -160,13 +160,14 @@ předrezervace výš. Všechny tři jsou v `history.json` i ve výstupních feed
 
 **✅ `/sprava/` srovnaná s kalendářním #17 — opraveno 23. 9.** Od #17 nese přímý prodej
 v `history.json` **`uidh` své předrezervace** (`vr_hold_uidh(id)`), jenže `buildStays()`
-párovalo pobyt z `vr_bookings` jen přes `vr_bookings.uidh` — a ten mají všechny tři srpnové
-pobyty prázdný. Nad živými daty 23. 9. to dělalo v srpnu 2027 **7 řádků místo 3**: každý
-přímý prodej jednou bez hosta („neznámý host") a jednou jako ruční pobyt s hostem. K tomu dvě
-chyby stejného původu:
-- **falešná červená dvojitá rezervace na 7.–14. 8.** — v archivu je ještě živá ozvěna
-  z e-chalupy (`a86a13…`, lastSeen 23. 9.), kterou kalendář od zapsání přímého prodeje
-  zahazuje; zestárne sama do 25. 9.;
+párovalo pobyt z `vr_bookings` jen přes `vr_bookings.uidh`. Pobyty 14.–21. a 21.–28. 8. ho
+mají prázdný; pobyt 7.–14. 8. je přes `uidh` navázaný na **záznam z e-chalupy** na tentýž
+termín (`a86a13…`, ve feedu od 22. 8.), který kalendář od zapsání přímého prodeje (23. 9.)
+zahazuje jako ozvěnu. Nad živými daty 23. 9. to dělalo v srpnu 2027 **7 řádků místo 3**
+(přímý prodej bez hosta + týž pobyt s hostem jako ruční, u 7.–14. 8. jako záznam z e-chalupy).
+K tomu dvě chyby stejného původu:
+- **falešná červená dvojitá rezervace na 7.–14. 8.** — záznam z e-chalupy `a86a13…` je
+  v archivu ještě živý (lastSeen 23. 9.) a přímý prodej leží přes něj; zestárne sám do 25. 9.;
 - **„termín není zablokovaný"** u 21.–28. 8. — `blockedOnPlatform()` hledala blokaci podle
   ozvěny z feedu, kterou #17 zahazuje; u 7.–14. a 14.–21. 8. „vycházela" jen díky archivním
   duchům. Blokaci teď dělá kalendář sám přes výstupní feedy.
@@ -176,28 +177,26 @@ tentýž termín (dva nebo jiná platforma = nehádat), a pobyt i hold musí né
 přímý prodej je v kalendáři pod svým `uidh`, nebo termín kryje živý (ne archivní) záznam
 platformy. Při tom opravená i starší duplicita: čerstvá předrezervace s hostem (do 3 h, než ji
 Action publikuje) byla v přehledu taky dvakrát. Ověřeno v Node nad živým `history.json`
-(7 → 4 řádky: 14.–21. a 21.–28. 8. jednou s hostem, 7.–14. 8. dvakrát, dokud se nepropojí —
-viz níž; 0 červených, 3/3 zablokované) i nad podvrženými daty
+(7 → 3 řádky, všechny s hostem, 0 červených, 3/3 zablokované — i po zestárnutí `a86a13…`) i nad podvrženými daty
 (skutečná kolize pořád červeně; nepublikovaná předrezervace bez blokace pořád hlásí
 „nezablokováno"). V prohlížeči zatím ne — `/sprava/` je za tokenem.
 
 **🔴 Editor předrezervace v `/sprava/` mazal vazbu na pobyt a poptávku — opraveno 23. 9.**
 `vr_admin_upsert_hold` při úpravě přepíše `booking_id` i `request_id` tím, co přijde, a editor
 je neposílal — každé „Upravit" tedy předrezervaci odpojilo od hosta. Teď je posílá zpátky.
-Jestli tím přišla o vazbu i předrezervace 7.–14. 8., se z dat určit nedá.
+Jestli tím přišla o vazbu i předrezervace 7.–14. 8., se z dat určit nedá — **propojená
+ručně v DB 23. 9.** (`vr_holds.booking_id` → pobyt se stejným termínem; jediný kandidát).
 
 *Zbývá z toho:*
-- **Propojit předrezervaci 7.–14. 8. 2027 s pobytem** — nemá `booking_id` a pobyt vede
-  platformu „E-chalupy" (poptávka přišla přes e-chalupy), takže ho `/sprava/` sama nespáruje
-  a ukáže dva řádky. Editor vazbu nastavit neumí; jde to přes `/smlouvy/` (smlouva z pobytu
-  → Vystavit), nebo jedním `update` v DB.
+- **Editor předrezervace vazbu na pobyt nastavit neumí** — jen ji teď nezahodí. Nová vazba
+  vzniká přes `/smlouvy/` (smlouva z pobytu → Vystavit); jinak jen v DB.
 - **`n8n/VrDailyTasks`** má kopii `buildStays()` a předrezervace nenačítá — přímý prodej tam
   je pořád dvakrát (kalendářní řádek bez hosta + ruční). Dnes neškodí (e-mail z toho dělá
   „nespárovaný pobyt" až 35 dní před příjezdem, tedy v červenci 2027), ale chce to načíst
   `vr_holds` a párovat stejně, pak re-import do n8n.
 - **Kalendářní stránky** (úklid i `owner.html`) ukazují na 7.–14. 8. 2027 do 25. 9. taky
-  červenou dvojitou rezervaci — stejná dobíhající ozvěna. Samo zmizí; trvale by to chtělo, aby
-  skript kalendáře při zahození ozvěny rovnou zestárnul i její archivní záznam.
+  červenou dvojitou rezervaci — týž dobíhající záznam `a86a13…`. Samo zmizí; trvale by to
+  chtělo, aby skript kalendáře při zahození ozvěny rovnou zestárnul i její archivní záznam.
   Stejně tak `n8n/VrConflictWatch` může do té doby poslat e-mail o konfliktu 7.–14. 8.
 
 **🟡 Revize kalendářní části: opravené, čeká na merge.** Codex review nad PR #9
@@ -236,7 +235,7 @@ Pro tenhle repo jsou z toho podstatné tři věci:
    v `history.json` i ve výstupních feedech (platformy ho importují od 17. 9.).
 4. ~~Předrezervace 21.–28. 8. a 7.–14. 8. 2027~~ — **obě založené**: 7.–14. 8. potvrzená
    (23. 9.), 21.–28. 8. předrezervace s fakturou i smlouvou — **splatnost 22. 9. prošla,
-   propadá 25. 9.**, viz výš. **Propojit 7.–14. 8. s pobytem** (`booking_id`).
+   propadá 25. 9.**, viz výš. 7.–14. 8. s pobytem propojená 23. 9.
 5. **Založit tři read-only tokeny Fia** (VR korunový, VR eurový, hlavní účet Sintery),
    vložit je do prostředí n8n jako `FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA` a poskládat
    workflow podle `n8n/VrPaymentWatch/README.md`. **První běhy nech read-only**
