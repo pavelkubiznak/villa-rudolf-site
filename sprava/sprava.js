@@ -355,7 +355,9 @@
       jmeno: guestName(booking),
       termin: fmtTermin(booking.arrival, booking.departure, msgLang(booking)),
       dospeli: dospeli, deti: deti, noci: noci,
-      castka: dospeli * noci * 25,
+      // Po registraci skutečný poplatek z DB (po dnech, děti a ZTP/P zdarma);
+      // do té doby odhad z rezervace. Sazba 25 Kč = OZV Svoboda nad Úpou č. 2/2023.
+      castka: (reg && p.fee_czk != null) ? p.fee_czk : dospeli * noci * 25,
       kod: booking.door_code || '{KOD_DVERI}',
       token: token,
       regLink: token ? (location.origin + '/registrace/?t=' + token + '&lang=' + (booking.lang || 'en')) : null,
@@ -877,6 +879,10 @@
       if (b.arrival <= today && today <= b.departure && (ps.registered || 0) < expected)
         probs.push({ kind: 'ubyreg', stay: s, date: ps.arrival_deadline || b.arrival });
     });
+    // (i) odvod poplatku z pobytu městu za uplynulé pololetí do 20. 1. / 20. 7.
+    //     (OZV č. 2/2023, čl. 6). Hlásí se celý leden / červenec, dokud není označeno.
+    var fd = feeDuePeriod(today);
+    if (fd && !(adminConfig || {})[fd.key]) probs.push({ kind: 'feedue', fee: fd, date: fd.deadline });
     probs.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
     lastProblems = probs;
 
@@ -939,6 +945,12 @@
           'Zaregistrováno ' + (pr.registered || 0) + ' z ' + exp + ' osob. Jestli mezi chybějícími jsou cizinci, '
           + 'hlášení je potřeba' + (pr.arrival_deadline ? ' do ' + esc(fmtDay(pr.arrival_deadline)) : ' do 3 pracovních dnů od příjezdu')
           + ' — připomeň hostům registraci. Poplatek se počítá taky z registrací.', i, 'Otevřít');
+      } else if (p.kind === 'feedue') {
+        var late = today > p.fee.deadline;
+        html += probCard(late || daysBetween(today, p.fee.deadline) <= 5 ? 'red' : 'soon',
+          '💰 Odvést poplatek z pobytu za ' + esc(p.fee.label),
+          (late ? '<b>Termín ' + esc(fmtDay(p.fee.deadline)) + ' uplynul.</b> ' : 'Splatné městu do ' + esc(fmtDay(p.fee.deadline)) + ' ')
+          + 'Částku a evidenční knihu najdeš v přehledu poplatku; po zaplacení ho označ „Odvedeno“.', i, 'Přehled');
       } else if (p.kind === 'nocode') {
         html += probCard('soon', '🔑 ' + esc(guestName(b)) + ' — chybí kód dveří',
           (s.start <= today ? 'Pobyt běží' : 'Příjezd za ' + daysBetween(today, s.start) + ' dní') + ' (' + esc(fmtShort(s.start, s.end)) + ') — není uložený kód dveří. '
@@ -955,6 +967,7 @@
         var p = lastProblems[+btn.getAttribute('data-prob')];
         if (!p) return;
         if (p.kind === 'unpaired') openEditor({ stay: p.stay });
+        else if (p.kind === 'feedue') openFeeReport(p.fee);
         else if (p.pay) openPayPicker(p.pay);
         else if (p.hold) openHoldEditor(p.hold);
         else openDetail(p.stay);
@@ -1892,39 +1905,36 @@
       '<button class="btn btn-sm btn-outline copybtn" data-copy="' + esc(url) + '">Kopírovat</button></div>';
   }
 
+  function fmtCzk(n) { return (Number(n) || 0).toLocaleString('cs-CZ') + ' Kč'; }
+  // Poplatek z pobytu (OZV Svoboda nad Úpou č. 2/2023): za každý den pobytu kromě
+  // dne příjezdu, osvobozeno do 18 let a podle § 3b (ZTP/P…). Počítá DB po osobách
+  // a po dnech; tady se jen sčítá. Senioři osvobození NEMAJÍ.
   function renderFee(b, ctx) {
-    var box = $('d-fee');
-    box.innerHTML =
-      '<div class="feebox">' +
-      '<div class="feeline"><span>Dospělí × noci × 25 Kč</span><span>' + ctx.dospeli + ' × ' + ctx.noci + ' × 25</span></div>' +
-      '<div class="feeline"><span>Poplatek celkem</span><span class="big">' + ctx.castka + ' Kč</span></div>' +
-      '<div class="feenote">Dospělí: ' + (ctx._reg ? 'z registrovaných osob (18+).' : 'odhad z rezervace — přesně se spočítá po registraci.') + '</div>' +
-      '<button type="button" class="btn btn-sm btn-outline" id="d-recalc" style="margin-top:10px">Přepočítat z registrací</button>' +
-      '</div>';
-    $('d-recalc').addEventListener('click', function () {
-      var btn = $('d-recalc'); btn.disabled = true; btn.textContent = 'Počítám…';
-      rpc('vr_admin_persons', { p_booking_id: b.id }).then(function (res) {
-        var persons = (res.data && res.data.persons) || [];
-        var stat = statsFromPersons(persons, b.arrival);
-        b.persons = stat;               // aktualizuj lokálně
-        var ctx2 = buildCtx(b);
-        renderFee(b, ctx2);
-        renderTimeline(currentStay, b, ctx2);
-        toast('Přepočítáno z ' + stat.registered + ' registrací.');
-      }).catch(function () { btn.disabled = false; btn.textContent = 'Přepočítat z registrací'; });
-    });
-  }
-
-  function statsFromPersons(persons, arrival) {
-    var reg = persons.length, adults = 0, children = 0, foreigners = 0, missing = 0;
-    var cutoff = addDaysISO(arrival, 0);
-    persons.forEach(function (p) {
-      var isAdult = !p.birth_date || (daysBetween(p.birth_date, cutoff) >= 18 * 365.25 - 1);
-      if (isAdult) adults++; else children++;
-      if ((p.citizenship || 'CZ') !== 'CZ') foreigners++;
-      if (!p.doc_number) missing++;
-    });
-    return { registered: reg, adults: adults, children: children, foreigners: foreigners, missing_doc: missing };
+    var box = $('d-fee'); if (!box) return;
+    var ps = b._persons, st = b.persons || {};
+    var czk, days, exempt, noBirth, reg;
+    if (ps) {
+      reg = ps.length > 0; czk = 0; days = 0; exempt = 0; noBirth = 0;
+      ps.forEach(function (p) {
+        var f = p.fee || {};
+        czk += f.czk || 0; days += f.paid_days || 0;
+        if (f.reason && f.reason !== 'under18_part') exempt++;
+        if (!p.birth_date) noBirth++;
+      });
+    } else {
+      reg = (st.registered || 0) > 0; czk = st.fee_czk; days = st.fee_paid_days;
+      exempt = st.fee_exempt || 0; noBirth = st.missing_birth || 0;
+    }
+    if (reg && czk != null) {
+      box.innerHTML = '<div class="feebox">' +
+        '<div class="feeline"><span>Poplatek podle registrací</span><span class="big">' + fmtCzk(czk) + '</span></div>' +
+        '<div class="feenote">' + (days || 0) + ' placených dní · osvobozeno ' + exempt + ' os. (do 18 let, ZTP/P…) · rozpis u osob v Registraci níže.' +
+        (noBirth ? ' <b>⚠️ ' + noBirth + '× chybí datum narození</b> — počítá se jako dospělý.' : '') + '</div></div>';
+    } else {
+      box.innerHTML = '<div class="feebox">' +
+        '<div class="feeline"><span>Odhad z rezervace: dospělí × noci × 25 Kč</span><span>' + ctx.dospeli + ' × ' + ctx.noci + ' × 25 = ' + fmtCzk(ctx.castka) + '</span></div>' +
+        '<div class="feenote">Přesně se spočítá z registrací — po dnech, děti do 18 let a ZTP/P zdarma.</div></div>';
+    }
   }
 
   var currentStay = null;
@@ -2070,8 +2080,10 @@
       var persons = (r[0].data && r[0].data.persons) || [];
       b._persons = persons;              // uchováme vč. čísel dokladů pro Ubyport export
       b._ubyReports = (r[1] && r[1].data && r[1].data.reports) || [];
+      personsBooking = b;
       renderPersons(persons);
       renderUbyport(b);
+      renderFee(b, buildCtx(b));
     }).catch(function () { $('d-persons').innerHTML = '<p class="persons-empty">Nepodařilo se načíst.</p>'; });
   }
 
@@ -2079,13 +2091,45 @@
     if (!/^[A-Za-z]{2}$/.test(code || '')) return '🏳️';
     return code.toUpperCase().replace(/./g, function (c) { return String.fromCodePoint(0x1F1A5 + c.charCodeAt(0)); });
   }
+  var personsBooking = null;   // pobyt, ke kterému patří vykreslené osoby (úprava osvobození)
+  var FEE_REASON = {
+    under18: 'do 18 let — bez poplatku', under18_part: '18 let během pobytu',
+    ztp: 'osvobozen: ZTP/P', resident: 'osvobozen: přihlášen v obci', other: 'osvobozen', over60: 'pobyt nad 60 dní'
+  };
+  function feeBadge(p) {
+    var f = p.fee; if (!f) return '';
+    var txt = f.czk ? ('poplatek ' + fmtCzk(f.czk)) : (FEE_REASON[f.reason] || 'bez poplatku');
+    if (f.czk && f.reason === 'under18_part') txt += ' · ' + FEE_REASON.under18_part;
+    var cls = f.czk ? 'fee' : 'free';
+    return ' <button type="button" class="badge ' + cls + ' badge-btn" data-exempt="' + esc(p.id) + '" title="Osvobození od poplatku">' + esc(txt) +
+      (p.fee_exempt_note ? ' (' + esc(p.fee_exempt_note) + ')' : '') + '</button>';
+  }
+  function openExempt(p, row) {
+    var old = row.querySelector('.exempt-ed'); if (old) { old.remove(); return; }
+    var ed = document.createElement('div'); ed.className = 'exempt-ed';
+    ed.innerHTML = '<select>' +
+      [['', 'bez osvobození'], ['ztp', 'ZTP/P, nevidomý, závislý na pomoci, průvodce'], ['resident', 'přihlášen v obci Svoboda n. Ú.'], ['other', 'jiný důvod § 3b (napiš)']]
+        .map(function (o) { return '<option value="' + o[0] + '"' + ((p.fee_exempt || '') === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') +
+      '</select><input type="text" maxlength="300" placeholder="poznámka / důvod" value="' + esc(p.fee_exempt_note || '') + '">' +
+      '<button type="button" class="btn btn-sm btn-primary">Uložit</button>';
+    row.appendChild(ed);
+    ed.querySelector('button').addEventListener('click', function () {
+      var btn = this; btn.disabled = true;
+      rpc('vr_admin_person_exempt', { p_person_id: p.id, p_reason: ed.querySelector('select').value || null, p_note: ed.querySelector('input').value || null })
+        .then(function (res) {
+          var d = res.data || {};
+          if (d.ok) { toast('Osvobození uloženo.'); if (personsBooking) loadPersons(personsBooking); reload(); }
+          else { btn.disabled = false; toast(d.error === 'note_required' ? 'U jiného důvodu napiš, jaký.' : 'Uložení se nepodařilo.'); }
+        }).catch(function () { btn.disabled = false; toast('Uložení se nepodařilo.'); });
+    });
+  }
   function renderPersons(persons) {
     var wrap = $('d-persons');
     if (!persons.length) { wrap.innerHTML = '<p class="persons-empty">Zatím nikdo neregistroval. Až hosté vyplní registraci, objeví se tu — vč. cizinců a chybějících dokladů (podklad pro Ubyport).</p>'; return; }
     wrap.innerHTML = '<div class="persons">' + persons.map(function (p) {
       var foreign = (p.citizenship || 'CZ') !== 'CZ';
       var docBadge = p.doc_number
-        ? '<span class="badge ok">✓ doklad</span> <span class="doc-num">' + esc(p.doc_number) + '</span>'
+        ? '<span class="badge ok">✓ ' + esc({ ID: 'OP', P: 'pas', O: 'doklad' }[p.doc_type] || 'doklad') + '</span> <span class="doc-num">' + esc(p.doc_number) + '</span>'
         : '<span class="badge no">✗ bez dokladu</span>';
       var meta = [fmtShort(p.stay_from, p.stay_to)];
       if (foreign) meta.push('<span class="badge foreign">cizinec</span>');
@@ -2094,8 +2138,14 @@
       return '<div class="person' + (foreign ? ' foreign' : '') + '">' +
         '<span class="person-flag" title="' + esc(p.citizenship) + '">' + flagEmoji(p.citizenship) + '</span>' +
         '<div class="person-main"><div class="person-nm">' + esc((p.first_name + ' ' + p.last_name).trim()) + '</div>' +
-        '<div class="person-meta">' + meta.join(' ') + ' ' + docBadge + '</div></div></div>';
+        '<div class="person-meta">' + meta.join(' ') + ' ' + docBadge + feeBadge(p) + '</div></div></div>';
     }).join('') + '</div>';
+    Array.prototype.forEach.call(wrap.querySelectorAll('[data-exempt]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var p = persons.filter(function (x) { return x.id === btn.getAttribute('data-exempt'); })[0];
+        if (p) openExempt(p, btn.closest('.person'));
+      });
+    });
   }
 
   /* ============ KAUCE: přepínač ============ */
@@ -2209,7 +2259,7 @@
   function ubyGuestLine(p) {
     var c = adminConfig || {};
     var ucel = ubyField(c.ubyport_ucel_default) || '10';   // 10 = TURISTIKA
-    var bydliste = [ubyField(p.residence_city), (p.residence_country ? ubyCountry(p.residence_country).code : '')]
+    var bydliste = [ubyField(p.residence_street), ubyField(p.residence_city), (p.residence_country ? ubyCountry(p.residence_country).code : '')]
       .filter(function (x) { return x; }).join(', ');
     return ['U',
       ubyDate(p.stay_from), ubyDate(p.stay_to),
@@ -2410,6 +2460,110 @@
     }).catch(function () { btn.disabled = false; toast('Nepodařilo se uložit.'); });
   }
 
+  /* ============ POPLATEK Z POBYTU: pololetí, evidenční kniha, odvod ============ */
+  function halfOf(y, h) {
+    return { year: y, half: h, key: 'fee_odvod_' + y + '_' + h,
+      from: y + (h === 1 ? '-01-01' : '-07-01'), to: y + (h === 1 ? '-06-30' : '-12-31'),
+      deadline: (h === 1 ? y : y + 1) + (h === 1 ? '-07-20' : '-01-20'),
+      label: (h === 1 ? '1. pololetí ' : '2. pololetí ') + y };
+  }
+  // V lednu (za 2. pololetí minulého roku) a v červenci (za 1. pololetí) je odvod na řadě.
+  function feeDuePeriod(today) {
+    var y = +today.slice(0, 4), m = +today.slice(5, 7);
+    if (m === 1) return halfOf(y - 1, 2);
+    if (m === 7) return halfOf(y, 1);
+    return null;
+  }
+  function currentHalf(today) { var y = +today.slice(0, 4), m = +today.slice(5, 7); return halfOf(y, m <= 6 ? 1 : 2); }
+  function prevHalf(h) { return h.half === 1 ? halfOf(h.year - 1, 2) : halfOf(h.year, 1); }
+
+  var DOC_TYPE_TXT = { ID: 'občanský průkaz', P: 'cestovní pas', O: 'jiný doklad' };
+  function openFeeReport(period) {
+    var today = isoToday();
+    var cur = currentHalf(today);
+    period = period || feeDuePeriod(today) || cur;
+    var opts = [cur, prevHalf(cur), prevHalf(prevHalf(cur)), prevHalf(prevHalf(prevHalf(cur)))];
+    $('sheet-title').textContent = 'Poplatek z pobytu';
+    $('sheet-body').innerHTML =
+      '<div class="fee-periods">' + opts.map(function (o) {
+        return '<button type="button" class="btn btn-sm ' + (o.key === period.key ? 'btn-primary' : 'btn-outline') + '" data-fp="' + o.key + '">' + esc(o.label) + '</button>';
+      }).join('') + '</div><div id="fee-rep"><p class="persons-empty">Načítám…</p></div>';
+    openOverlay();
+    Array.prototype.forEach.call($('sheet-body').querySelectorAll('[data-fp]'), function (btn) {
+      btn.addEventListener('click', function () {
+        openFeeReport(opts.filter(function (o) { return o.key === btn.getAttribute('data-fp'); })[0]);
+      });
+    });
+    rpc('vr_admin_fee_report', { p_from: period.from, p_to: period.to }).then(function (res) {
+      var d = res.data || {};
+      if (!d.ok) { $('fee-rep').innerHTML = '<p class="form-err">Přehled se nepodařilo načíst.</p>'; return; }
+      renderFeeReport(period, d);
+    }).catch(function () { $('fee-rep').innerHTML = '<p class="form-err">Přehled se nepodařilo načíst.</p>'; });
+  }
+  function renderFeeReport(period, d) {
+    var rows = d.rows || [], paid = (adminConfig || {})[period.key];
+    var missing = rows.filter(function (r) { return !r.birth_date || !r.residence_street || (!r.doc_number && isAdultOn(r.birth_date, r.stay_from)); }).length;
+    var html = '<div class="feebox">' +
+      '<div class="feeline"><span>Odvést městu za ' + esc(period.label) + '</span><span class="big">' + fmtCzk(d.total_czk) + '</span></div>' +
+      '<div class="feenote">' + rows.length + ' osob v evidenci · sazba ' + (d.rate_czk || 25) + ' Kč/den · splatnost do ' + esc(fmtDay(period.deadline)) + ' ' + period.deadline.slice(0, 4) +
+      (paid ? ' · <b>✓ odvedeno ' + esc(paid) + '</b>' : '') + '</div>' +
+      (missing ? '<div class="uby-warn" style="margin-top:10px"><b>⚠️ ' + missing + '× neúplný záznam</b> (chybí datum narození, adresa nebo doklad dospělého) — evidenční kniha má být úplná (§ 3g).</div>' : '') +
+      '</div>' +
+      '<div class="uby-actions" style="margin-top:12px">' +
+      '<button type="button" class="btn btn-sm btn-primary" id="fee-csv"' + (rows.length ? '' : ' disabled') + '>Stáhnout evidenční knihu (CSV)</button>' +
+      '<button type="button" class="btn btn-sm btn-outline" id="fee-paid">' + (paid ? 'Zrušit „odvedeno“' : '✓ Odvedeno městu') + '</button>' +
+      '</div>' +
+      '<p class="hint">Poplatek platí každý host za každý den pobytu kromě dne příjezdu. Osvobozeni jsou jen lidé do 18 let a podle § 3b zákona (nevidomí, ZTP/P a průvodce, závislí na pomoci…); '
+        + 'senioři osvobození nemají (OZV Svoboda nad Úpou č. 2/2023). Pobyt přes přelom pololetí se rozdělí po dnech.</p>';
+    if (rows.length) {
+      html += '<div class="fee-table"><table><thead><tr><th>Pobyt</th><th>Host</th><th>Narozen</th><th>Doklad</th><th class="num">Poplatek</th></tr></thead><tbody>' +
+        rows.map(function (r) {
+          return '<tr><td>' + esc(fmtShort(r.stay_from, r.stay_to)) + '</td><td>' + esc((r.first_name + ' ' + r.last_name).trim()) +
+            '<div class="fee-sub">' + esc([r.residence_street, r.residence_city, r.residence_country].filter(Boolean).join(', ') || '— chybí adresa') + '</div></td>' +
+            '<td>' + (r.birth_date ? esc(ubyDate(r.birth_date)) : '<span class="fee-miss">chybí</span>') + '</td>' +
+            '<td>' + (r.doc_number ? esc((DOC_TYPE_TXT[r.doc_type] || 'doklad') + ' ' + r.doc_number) : '—') + '</td>' +
+            '<td class="num">' + (r.czk ? fmtCzk(r.czk) : esc(FEE_REASON[r.reason] || 'bez poplatku')) + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    $('fee-rep').innerHTML = html;
+    if ($('fee-csv')) $('fee-csv').addEventListener('click', function () { downloadFeeCsv(period, rows); });
+    $('fee-paid').addEventListener('click', function () {
+      var btn = this; btn.disabled = true;
+      var val = paid ? '' : fmtDay(isoToday()) + ' ' + isoToday().slice(0, 4);
+      rpc('vr_admin_set_config', { p_key: period.key, p_value: val }).then(function (res) {
+        if (res.data && res.data.ok) {
+          adminConfig[period.key] = val || undefined;
+          toast(val ? 'Označeno jako odvedené.' : 'Označení zrušeno.');
+          renderFeeReport(period, d); refreshBoards();
+        } else { btn.disabled = false; toast('Uložení se nepodařilo.'); }
+      }).catch(function () { btn.disabled = false; toast('Uložení se nepodařilo.'); });
+    });
+  }
+  function isAdultOn(birth, at) {
+    if (!birth) return true;
+    var b = parseISO(birth); b.setFullYear(b.getFullYear() + 18);
+    return b <= parseISO(at);
+  }
+  // Evidenční kniha podle § 3g zák. 565/1990 Sb. — středník + BOM, ať to Excel otevře česky.
+  function downloadFeeCsv(period, rows) {
+    var cell = function (v) { v = String(v == null ? '' : v); return /[";\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var head = ['Den počátku pobytu', 'Den konce pobytu', 'Příjmení', 'Jméno', 'Datum narození', 'Adresa (ulice)', 'Město', 'Stát',
+      'Druh dokladu', 'Číslo dokladu', 'Dny poplatku v období', 'Vybraný poplatek (Kč)', 'Důvod osvobození'];
+    var lines = [head.join(';')].concat(rows.map(function (r) {
+      return [ubyDate(r.stay_from), ubyDate(r.stay_to), r.last_name, r.first_name, ubyDate(r.birth_date),
+        r.residence_street, r.residence_city, r.residence_country, DOC_TYPE_TXT[r.doc_type] || (r.doc_number ? 'neuvedeno' : ''), r.doc_number,
+        r.paid_days, r.czk, r.czk ? '' : ((FEE_REASON[r.reason] || '') + (r.fee_exempt_note ? ' – ' + r.fee_exempt_note : ''))].map(cell).join(';');
+    }));
+    lines.push(['', '', '', '', '', '', '', '', '', '', 'Celkem', rows.reduce(function (s, r) { return s + (r.czk || 0); }, 0), ''].join(';'));
+    var blob = new Blob(['\ufeff' + lines.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url;
+    a.download = 'evidencni-kniha_' + period.year + '-' + period.half + 'pol_villarudolf.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+    toast('Evidenční kniha stažena.');
+  }
+
   /* ============ NASTAVENÍ (heslo Wi-Fi + Ubyport konfigurace ubytovatele) ============ */
   var SETTINGS_FIELDS = [
     ['wifi_password', 'Heslo Wi-Fi (do uvítací zprávy, síť „Rudolf Wi-Fi“)', 'bez něj zůstane ve zprávě {WIFI_HESLO}'],
@@ -2522,6 +2676,7 @@
     });
     $('btn-refresh').addEventListener('click', function () { reload(); });
     $('btn-settings').addEventListener('click', function () { openSettings(); });
+    $('btn-fee').addEventListener('click', function () { openFeeReport(); });
     $('btn-lock').addEventListener('click', function () { lockOut(); $('lock-input').value = ''; });
     $('sheet-close').addEventListener('click', closeOverlay);
     $('overlay').addEventListener('click', function (e) { if (e.target === $('overlay')) closeOverlay(); });

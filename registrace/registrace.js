@@ -37,7 +37,7 @@
       fCitizenship: 'Občanství', fDoc: 'Číslo dokladu', fDocOptional: '(nepovinné)',
       fResCity: 'Bydliště – město', fResCountry: 'Bydliště – země',
       fStay: 'Termín pobytu', fFrom: 'Od', fTo: 'Do',
-      docHintCz: 'Cestovní pas nebo občanský průkaz. U českých občanů nepovinné.',
+      docHintCz: 'Občanský průkaz nebo pas. U dětí bez dokladu nechte prázdné.',
       docHintForeign: 'Zákonná evidence pro cizineckou policii — u cizinců povinné.',
       stayHint: 'Předvyplněno termínem pobytu — upravte, pokud přijíždíte nebo odjíždíte jindy.',
       stayHintFridge: 'Zadejte datum svého příjezdu a odjezdu.',
@@ -69,6 +69,16 @@
       codeLabel: 'Kód od dveří', codeSubmit: 'Pokračovat',
       errCode: 'Kód nesedí. Zadejte prosím kód, kterým otevíráte vchodové dveře. Kdyby to nešlo, napište nám.',
       errCodeRate: 'Příliš mnoho pokusů. Zkuste to prosím za hodinu, nebo použijte odkaz ze zprávy.',
+      fStreet: 'Ulice a číslo domu',
+      fDocType: 'Druh dokladu',
+      dtID: 'Občanský průkaz',
+      dtP: 'Cestovní pas',
+      dtO: 'Jiný doklad',
+      fZtp: 'Osvobození od poplatku: jsem nevidomý/á, držitel/ka průkazu ZTP/P nebo jeho průvodce, nebo osoba závislá na pomoci jiné osoby',
+      ztpHint: 'Průkaz si můžeme vyžádat k nahlédnutí.',
+      errBirthReq: 'Vyplňte prosím datum narození — je povinné pro evidenci ubytovaných.',
+      errDocAdult: 'U dospělých je číslo dokladu povinné (evidence ubytovaných).',
+      errStreet: 'Vyplňte prosím ulici a číslo domu.',
       citCommon: 'Časté', citOthers: 'Ostatní země'
     },
     en: {
@@ -91,7 +101,7 @@
       fCitizenship: 'Citizenship', fDoc: 'Document number', fDocOptional: '(optional)',
       fResCity: 'Residence – city', fResCountry: 'Residence – country',
       fStay: 'Dates of stay', fFrom: 'From', fTo: 'To',
-      docHintCz: 'Passport or national ID. Optional for Czech citizens.',
+      docHintCz: 'ID card or passport. Leave empty for children without a document.',
       docHintForeign: 'Legal record for the foreign police — required for non-Czech guests.',
       stayHint: 'Pre-filled from the booking — adjust if you arrive or leave on different dates.',
       stayHintFridge: 'Enter your own arrival and departure dates.',
@@ -123,6 +133,16 @@
       codeLabel: 'Door code', codeSubmit: 'Continue',
       errCode: 'That code doesn’t match. Please enter the code you use to open the front door. If it doesn’t work, send us a message.',
       errCodeRate: 'Too many attempts. Please try again in an hour, or use the link from your message.',
+      fStreet: 'Street and house number',
+      fDocType: 'Document type',
+      dtID: 'ID card',
+      dtP: 'Passport',
+      dtO: 'Other document',
+      fZtp: 'Exempt from the tourist fee: I am blind, hold a Czech ZTP/P disability card or accompany its holder, or depend on another person’s care',
+      ztpHint: 'We may ask to see the card.',
+      errBirthReq: 'Please enter the date of birth — it is required for the guest register.',
+      errDocAdult: 'A document number is required for adults (guest register).',
+      errStreet: 'Please enter street and house number.',
       citCommon: 'Common', citOthers: 'Other countries'
     },
     de: {
@@ -145,7 +165,7 @@
       fCitizenship: 'Staatsangehörigkeit', fDoc: 'Dokumentnummer', fDocOptional: '(optional)',
       fResCity: 'Wohnort – Stadt', fResCountry: 'Wohnort – Land',
       fStay: 'Aufenthaltszeitraum', fFrom: 'Von', fTo: 'Bis',
-      docHintCz: 'Reisepass oder Personalausweis. Für tschechische Bürger optional.',
+      docHintCz: 'Personalausweis oder Reisepass. Bei Kindern ohne Ausweis leer lassen.',
       docHintForeign: 'Gesetzlicher Nachweis für die Fremdenpolizei — für ausländische Gäste erforderlich.',
       stayHint: 'Aus der Buchung vorausgefüllt — passen Sie an, falls Sie anders an- oder abreisen.',
       stayHintFridge: 'Bitte Ihr An- und Abreisedatum eingeben.',
@@ -177,6 +197,16 @@
       codeLabel: 'Türcode', codeSubmit: 'Weiter',
       errCode: 'Der Code passt nicht. Bitte geben Sie den Code ein, mit dem Sie die Haustür öffnen. Falls es nicht klappt, schreiben Sie uns.',
       errCodeRate: 'Zu viele Versuche. Bitte in einer Stunde erneut versuchen oder den Link aus Ihrer Nachricht nutzen.',
+      fStreet: 'Straße und Hausnummer',
+      fDocType: 'Art des Ausweises',
+      dtID: 'Personalausweis',
+      dtP: 'Reisepass',
+      dtO: 'Anderes Dokument',
+      fZtp: 'Befreiung von der Kurtaxe: Ich bin blind, Inhaber eines tschechischen ZTP/P-Ausweises bzw. dessen Begleitperson oder auf fremde Hilfe angewiesen',
+      ztpHint: 'Wir können Sie bitten, den Ausweis vorzuzeigen.',
+      errBirthReq: 'Bitte das Geburtsdatum angeben — es ist für das Gästeverzeichnis erforderlich.',
+      errDocAdult: 'Für Erwachsene ist die Ausweisnummer Pflicht (Gästeverzeichnis).',
+      errStreet: 'Bitte Straße und Hausnummer angeben.',
       citCommon: 'Häufig', citOthers: 'Weitere Länder'
     },
     pl: {
@@ -199,7 +229,7 @@
       fCitizenship: 'Obywatelstwo', fDoc: 'Numer dokumentu', fDocOptional: '(opcjonalnie)',
       fResCity: 'Miejsce zamieszkania – miasto', fResCountry: 'Miejsce zamieszkania – kraj',
       fStay: 'Termin pobytu', fFrom: 'Od', fTo: 'Do',
-      docHintCz: 'Paszport lub dowód osobisty. Dla obywateli Czech opcjonalne.',
+      docHintCz: 'Dowód osobisty lub paszport. U dzieci bez dokumentu zostaw puste.',
       docHintForeign: 'Ustawowa ewidencja dla policji ds. cudzoziemców — dla cudzoziemców obowiązkowe.',
       stayHint: 'Wstępnie wypełnione terminem rezerwacji — zmień, jeśli przyjeżdżasz lub wyjeżdżasz inaczej.',
       stayHintFridge: 'Podaj datę swojego przyjazdu i wyjazdu.',
@@ -231,6 +261,16 @@
       codeLabel: 'Kod do drzwi', codeSubmit: 'Dalej',
       errCode: 'Kod się nie zgadza. Wpisz kod, którym otwierasz drzwi wejściowe. Jeśli to nie działa, napisz do nas.',
       errCodeRate: 'Zbyt wiele prób. Spróbuj ponownie za godzinę albo skorzystaj z linku z wiadomości.',
+      fStreet: 'Ulica i numer domu',
+      fDocType: 'Rodzaj dokumentu',
+      dtID: 'Dowód osobisty',
+      dtP: 'Paszport',
+      dtO: 'Inny dokument',
+      fZtp: 'Zwolnienie z opłaty: jestem osobą niewidomą, posiadaczem czeskiej legitymacji ZTP/P lub jej opiekunem, albo osobą zależną od pomocy innych',
+      ztpHint: 'Możemy poprosić o okazanie legitymacji.',
+      errBirthReq: 'Podaj datę urodzenia — jest wymagana w ewidencji gości.',
+      errDocAdult: 'U dorosłych numer dokumentu jest obowiązkowy (ewidencja gości).',
+      errStreet: 'Podaj ulicę i numer domu.',
       citCommon: 'Częste', citOthers: 'Pozostałe kraje'
     }
   };
@@ -289,11 +329,19 @@
     if (r && r.type) return r.type[l] || r.type.en;
     return { cs:'dokladu', en:'document', de:'Dokument', pl:'dokumentu' }[l];
   }
+  // Doklad je povinný u cizinců (UbyPort) a u dospělých (evidenční kniha § 3g).
+  // Bez data narození bereme osobu jako dospělou — datum je stejně povinné.
+  function isAdultAt(birth, at) {
+    if (!birth) return true;
+    var b = new Date(birth + 'T00:00:00'), a = new Date((at || isoToday()) + 'T00:00:00');
+    b.setFullYear(b.getFullYear() + 18);
+    return b <= a;
+  }
+  function docRequired(cit) { return cit !== 'CZ' || isAdultAt($('f-birth').value, $('f-from').value); }
   // vrátí 'hard-empty' | 'hard-short' | 'hard-chars' | 'soft' | 'ok'
   function checkDoc(val, cit) {
     var v = (val || '').trim();
-    var foreign = cit !== 'CZ';
-    if (v === '') return foreign ? 'hard-empty' : 'ok';
+    if (v === '') return docRequired(cit) ? 'hard-empty' : 'ok';
     if (!DOC_HARD_RE.test(v)) return 'hard-chars';
     if (v.replace(/-/g, '').length < 5) return 'hard-short';
     var up = v.toUpperCase();
@@ -440,8 +488,9 @@
   function updateDocUi() {
     var L = T[lang];
     var foreign = currentCit() !== 'CZ';
-    $('docStar').hidden = !foreign;              // hvězdička jen u cizinců
-    $('docOpt').hidden = foreign;                // „(nepovinné)" jen u CZ
+    var req = docRequired(currentCit());
+    $('docStar').hidden = !req;                  // povinné: cizinec nebo dospělý
+    $('docOpt').hidden = req;                    // „(nepovinné)" jen u dětí z ČR
     $('docHint').textContent = foreign ? L.docHintForeign : L.docHintCz;
   }
   function hideDocWarn() { $('docWarn').hidden = true; $('f-doc').classList.remove('warn'); }
@@ -480,6 +529,7 @@
       case 'doc_required': return L.errDocRequired;
       case 'doc_invalid': return L.errDocChars;
       case 'birth_invalid': return L.errBirth;
+      case 'birth_required': return L.errBirthReq;
       case 'dates_invalid': return L.errDates;
       case 'out_of_window': return L.errWindow;
       case 'rate_limited': return L.errRate;
@@ -491,7 +541,7 @@
   // které pole patří k chybovému kódu ze serveru (pro aria-invalid)
   var ERR_FIELD = {
     first_required: ['f-first'], last_required: ['f-last'], citizenship_invalid: ['f-cit'],
-    doc_required: ['f-doc'], doc_invalid: ['f-doc'], birth_invalid: ['f-birth'],
+    doc_required: ['f-doc'], doc_invalid: ['f-doc'], birth_invalid: ['f-birth'], birth_required: ['f-birth'],
     dates_invalid: ['f-from', 'f-to'], out_of_window: ['f-from', 'f-to']
   };
 
@@ -566,8 +616,9 @@
   function resetPersonFields() {
     $('f-first').value = ''; $('f-last').value = '';
     $('f-birth').value = ''; $('f-doc').value = '';
-    $('f-city').value = '';
-    // občanství/země bydliště i termín necháme (skupina bývá stejného původu)
+    $('f-ztp').checked = false;
+    // občanství, adresu i termín necháme — skupina bývá rodina z jednoho místa
+    updateDocUi();
     hideDocWarn();
     docConfirmed = false;
     $('f-first').focus();
@@ -582,6 +633,9 @@
     // honeypot
     if ($('hp').value.trim() !== '') { resetPersonFields(); showOk(); return; }
 
+    var street = $('f-street').value.trim();
+    var dtype = $('f-dtype').value || null;
+    var ztp = $('f-ztp').checked;
     var first = $('f-first').value.trim();
     var last = $('f-last').value.trim();
     var birth = $('f-birth').value || null;
@@ -594,12 +648,14 @@
 
     if (!first) { showError(L.errFirst, ['f-first']); return; }
     if (!last) { showError(L.errLast, ['f-last']); return; }
+    if (!birth) { showError(L.errBirthReq, ['f-birth']); $('f-birth').focus(); return; }
+    if (!street) { showError(L.errStreet, ['f-street']); $('f-street').focus(); return; }
     if (!from || !to) { showError(L.errStay, [].concat(from ? [] : ['f-from'], to ? [] : ['f-to'])); return; }
     if (to < from) { showError(L.errDates, ['f-to']); return; }
 
     // --- validace dokladu ---
     var dc = checkDoc(doc, cit);
-    if (dc === 'hard-empty') { showError(L.errDocRequired, ['f-doc']); $('f-doc').focus(); return; }
+    if (dc === 'hard-empty') { showError(cit !== 'CZ' ? L.errDocRequired : L.errDocAdult, ['f-doc']); $('f-doc').focus(); return; }
     if (dc === 'hard-chars') { showError(L.errDocChars, ['f-doc']); $('f-doc').focus(); return; }
     if (dc === 'hard-short') { showError(L.errDocShort, ['f-doc']); $('f-doc').focus(); return; }
     if (dc === 'soft' && !docConfirmed) {
@@ -617,7 +673,8 @@
 
     var payload = {
       p_first: first, p_last: last, p_birth: birth, p_citizenship: cit,
-      p_doc: doc, p_res_city: city, p_res_country: rescnt, p_from: from, p_to: to
+      p_doc: doc, p_res_city: city, p_res_country: rescnt, p_from: from, p_to: to,
+      p_res_street: street, p_doc_type: doc ? dtype : null, p_fee_exempt: ztp ? 'ztp' : null
     };
     var fn = 'vr_persons_add_by_date';
     if (token) { payload.p_token = token; fn = 'vr_persons_add'; }
@@ -746,6 +803,8 @@
     });
     $('f-rescnt').addEventListener('change', function () { this.setAttribute('data-touched', 'true'); });
     $('f-doc').addEventListener('input', function () { hideDocWarn(); docConfirmed = false; });
+    $('f-birth').addEventListener('change', updateDocUi);
+    $('f-from').addEventListener('change', updateDocUi);
 
     // doc warning tlačítka
     $('docWarnFix').addEventListener('click', function () { hideDocWarn(); $('f-doc').focus(); });
