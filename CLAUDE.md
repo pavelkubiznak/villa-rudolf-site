@@ -87,9 +87,15 @@ platformy importují. Termín tedy není potřeba blokovat ručně; „není zab
 **Párování s kalendářem.** Přímý prodej je v `history.json` pod **`uidh` své předrezervace**
 (`vr_hold_uidh(id)`), ne pod `uidh` pobytu — ten mají pobyty z `/smlouvy/` a z tlačítka
 „+ Předrezervace" prázdný. `buildStays()` v `sprava.js` proto hosta ke kalendářnímu řádku
-hledá přes `vr_holds.booking_id`, a když vazba chybí, bere **jediný** ruční pobyt na přesně
-tentýž termín (dva kandidáti = nehádá). Bez toho byl každý přímý prodej v přehledu dvakrát
-(zjištěno 23. 9. 2026).
+hledá přes `vr_holds.booking_id`, a když vazba chybí, bere **jediný** ruční pobyt s platformou
+„Přímá" na přesně tentýž termín (dva kandidáti nebo jiná platforma = nehádá). Pobyt i hold
+musí nést **stejný termín** — po přesunu jen jednoho z nich se ukážou jako dva řádky, ať je
+nesoulad vidět. Bez toho byl každý přímý prodej v přehledu dvakrát (zjištěno 23. 9. 2026).
+
+⚠️ **`vr_admin_upsert_hold` při úpravě přepíše `booking_id` i `request_id` tím, co přijde**
+(`null` = odpojit). Kdo ho volá s `p_id` existujícího holdu, musí obě vazby poslat zpátky.
+Editor v `/sprava/` to do 23. 9. 2026 nedělal, takže každé „Upravit" předrezervaci odpojilo
+od pobytu i od poptávky; `/smlouvy/` je posílá správně.
 
 **Ozvěna blokace.** Blok z výstupního feedu (nebo ruční blokace majitele) se vrací zpátky feedem
 platformy se **shodným** `(start, end)`. Skript kalendáře takovou událost **zahazuje** a platí

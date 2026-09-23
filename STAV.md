@@ -171,16 +171,26 @@ chyby stejného původu:
   ozvěny z feedu, kterou #17 zahazuje; u 7.–14. a 14.–21. 8. „vycházela" jen díky archivním
   duchům. Blokaci teď dělá kalendář sám přes výstupní feedy.
 
-Oprava v `sprava.js`: host přes `hold.booking_id`, jinak **jediný** ruční pobyt na tentýž
-termín (dva = nehádat); ozvěna přímého prodeje, který už kalendář nese, se přeskočí; blokace =
+Oprava v `sprava.js`: host přes `hold.booking_id`, jinak **jediný** ruční pobyt „Přímá" na
+tentýž termín (dva nebo jiná platforma = nehádat), a pobyt i hold musí nést týž termín; ozvěna přímého prodeje, který už kalendář nese, se přeskočí; blokace =
 přímý prodej je v kalendáři pod svým `uidh`, nebo termín kryje živý (ne archivní) záznam
 platformy. Při tom opravená i starší duplicita: čerstvá předrezervace s hostem (do 3 h, než ji
 Action publikuje) byla v přehledu taky dvakrát. Ověřeno v Node nad živým `history.json`
-(7 → 3 řádky, všechny s hostem, 0 červených, 3/3 zablokované) i nad podvrženými daty
+(7 → 4 řádky: 14.–21. a 21.–28. 8. jednou s hostem, 7.–14. 8. dvakrát, dokud se nepropojí —
+viz níž; 0 červených, 3/3 zablokované) i nad podvrženými daty
 (skutečná kolize pořád červeně; nepublikovaná předrezervace bez blokace pořád hlásí
 „nezablokováno"). V prohlížeči zatím ne — `/sprava/` je za tokenem.
 
+**🔴 Editor předrezervace v `/sprava/` mazal vazbu na pobyt a poptávku — opraveno 23. 9.**
+`vr_admin_upsert_hold` při úpravě přepíše `booking_id` i `request_id` tím, co přijde, a editor
+je neposílal — každé „Upravit" tedy předrezervaci odpojilo od hosta. Teď je posílá zpátky.
+Jestli tím přišla o vazbu i předrezervace 7.–14. 8., se z dat určit nedá.
+
 *Zbývá z toho:*
+- **Propojit předrezervaci 7.–14. 8. 2027 s pobytem** — nemá `booking_id` a pobyt vede
+  platformu „E-chalupy" (poptávka přišla přes e-chalupy), takže ho `/sprava/` sama nespáruje
+  a ukáže dva řádky. Editor vazbu nastavit neumí; jde to přes `/smlouvy/` (smlouva z pobytu
+  → Vystavit), nebo jedním `update` v DB.
 - **`n8n/VrDailyTasks`** má kopii `buildStays()` a předrezervace nenačítá — přímý prodej tam
   je pořád dvakrát (kalendářní řádek bez hosta + ruční). Dnes neškodí (e-mail z toho dělá
   „nespárovaný pobyt" až 35 dní před příjezdem, tedy v červenci 2027), ale chce to načíst

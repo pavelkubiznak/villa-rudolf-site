@@ -531,12 +531,17 @@
     // (vr_hold_uidh), ne pod uidh pobytu — pobyt ve vr_bookings ho má prázdný. Párovat
     // jen přes byUidh proto nestačí: kalendářní řádek by zůstal bez hosta a pobyt
     // s hostem by se přidal podruhé jako ruční. Primárně vazba booking_id; když chybí,
-    // JEDINÝ ruční pobyt (bez uidh) na přesně tentýž termín. Víc kandidátů = nehádat.
+    // JEDINÝ ruční PŘÍMÝ pobyt (bez uidh, platforma „Přímá") na přesně tentýž termín.
+    // Víc kandidátů = nehádat; ruční rezervace z jiné platformy je jiný nárok, ne host
+    // přímého prodeje. Ve všech případech musí pobyt nést TÝŽ termín jako předrezervace:
+    // po přesunu jen jedné z nich by karta ukazovala nové datum a zprávy a úkoly by
+    // běžely podle starého. Nesoulad radši ukázat jako dva řádky.
     function bookingOfHold(h) {
       if (!h) return null;
-      if (h.booking_id) return byId[h.booking_id] || null;
+      var sameSpan = function (b) { return b && b.arrival === h.arrival && b.departure === h.departure; };
+      if (h.booking_id) { var lb = byId[h.booking_id]; return sameSpan(lb) ? lb : null; }
       var same = bookings.filter(function (b) {
-        return !b.uidh && b.arrival === h.arrival && b.departure === h.departure;
+        return !b.uidh && (b.platform || 'Přímá') === 'Přímá' && sameSpan(b);
       });
       return same.length === 1 ? same[0] : null;
     }
@@ -1302,7 +1307,11 @@
       p_invoice_issued: $('hd-issued').value || null,
       p_invoice_due: $('hd-due').value || null,
       p_invoice_account: $('hd-account').value,
-      p_note: $('hd-note').value.trim()
+      p_note: $('hd-note').value.trim(),
+      // vr_admin_upsert_hold při úpravě přepíše OBĚ vazby tím, co přijde — bez nich
+      // by každé „Upravit" odpojilo předrezervaci od pobytu (hosta) i od poptávky.
+      p_booking_id: existing ? (existing.booking_id || null) : null,
+      p_request_id: existing ? (existing.request_id || null) : null
     };
     var btn = $('hd-save'); btn.disabled = true; btn.textContent = 'Ukládám…';
     rpc('vr_admin_upsert_hold', payload).then(function (res) {
