@@ -173,6 +173,16 @@ Ubytování cizince se hlásí policii **do 3 pracovních dnů ode dne ubytován
 Nahlášenou osobu si host v registraci **smazat nemůže** (`already_reported`) — evidence se
 uchovává 6 let. „Vrátit“ ve `/sprava/` mění jen náš záznam; v UbyPortu nic nezruší.
 
+**Registrace z lednice = kód od dveří** (migrace `20260923_vr_fridge_code.sql`). Statický QR
+na lednici vede na `/registrace/` bez tokenu; host zadá kód, kterým odemyká vchod, a
+`vr_fridge_open()` vydá klíč relace (platí do dne odjezdu, `vr_fridge_sessions`). Dál jede
+stejně jako osobní odkaz: seznam skupiny, termín z rezervace, `source = 'fridge'`. Kód =
+`door_code`, jinak posledních 5 číslic telefonu (stejně jako `doorCodeFor` ve `/sprava/`).
+Max 20 neúspěšných pokusů za hodinu. Stará otevřená cesta `vr_persons_add_by_date` je
+zavřená (vrací `code_required`) — zapsat k běžícímu pobytu mohl kdokoli z internetu.
+**Bez uloženého kódu i telefonu se skupina z lednice nezaregistruje** — Problémy ve `/sprava/`
+hlásí chybějící kód 7 dní před příjezdem.
+
 **Odesílá se zatím ručně** (UNL soubor nebo formulář v UbyPortu). Webová služba WS_UBY (SOAP,
 NTLM, bez captchy, vrací PDF potvrzení) je další krok — o testovací přístup se žádalo 23. 9. 2026
 za Sinteru („TEST WS - Sintera Czech s.r.o.“), podává se datovou schránkou na `ybndqw9`.

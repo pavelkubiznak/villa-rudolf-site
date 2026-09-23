@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="registrace.css?v=2">
+<link rel="stylesheet" href="registrace.css?v=3">
 </head>
 <body>
 <div class="vp-root">
@@ -50,6 +50,23 @@
         </div>
         <h2 class="vp-closed-t" data-i18n="closedTitle">Registrace zatím není otevřená</h2>
         <p class="vp-closed-b" data-i18n="closedBody">Registrace se otevírá v den příjezdu. Použijte prosím odkaz, který jste dostali ve zprávě k pobytu.</p>
+      </section>
+
+      <!-- ===== LEDNICE: kód od dveří (statický QR bez tokenu) ===== -->
+      <section class="vp-code-sec" id="codeSection" hidden>
+        <h2 class="vp-h2" data-i18n="codeTitle">Zadejte kód od dveří</h2>
+        <p class="vp-code-b" data-i18n="codeBody">Registraci otevřete stejným kódem, kterým odemykáte vchodové dveře. Uvidíte pak celou svou skupinu a termín pobytu bude předvyplněný.</p>
+        <form class="vp-form vp-code-form" id="codeForm" novalidate autocomplete="off">
+          <label class="vp-field">
+            <span class="vp-lbl" data-i18n="codeLabel">Kód od dveří</span>
+            <input type="text" id="f-code" inputmode="numeric" autocomplete="off" maxlength="20" spellcheck="false" enterkeyhint="go">
+          </label>
+          <p class="vp-err" id="codeErr" role="alert" hidden></p>
+          <button type="submit" class="vp-submit" id="codeSubmit">
+            <span class="vp-submit-label" data-i18n="codeSubmit">Pokračovat</span>
+            <span class="vp-spin" aria-hidden="true"></span>
+          </button>
+        </form>
       </section>
 
       <!-- ===== SEZNAM zaregistrovaných (jen s tokenem) ===== -->
@@ -170,7 +187,7 @@
 
   </div>
 </div>
-<script src="registrace.js?v=2" defer></script>
+<script src="registrace.js?v=3" defer></script>
 <!-- Umami analytics (self-hosted, cookieless). data-exclude-search: v URL je
      hostovský token ?t=…, do analytiky smí jen cesta bez parametrů. -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-exclude-search="true"></script>

@@ -303,7 +303,8 @@ stays.forEach(s => {
     return; }
   const hasPhone = phoneUsable(b); // použitelný = vznikne z něj wa.me odkaz
   if (!hasPhone && s.end >= today && s.start <= addDaysISO(today,30)) problems.push({ kind:'nophone', stay:s, date:s.start }); // 30denní pipeline / běžící
-  if (hasPhone && !b.door_code && s.start >= today && daysBetween(today, s.start) <= 7)
+  // kód dveří = i vstup do registrace z lednice → hlásit i bez telefonu a i během pobytu (jako sprava.js)
+  if (!b.door_code && s.end >= today && daysBetween(today, s.start) <= 7)
     problems.push({ kind:'nocode', stay:s, date:s.start });
 });
 problems.sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
@@ -409,7 +410,7 @@ if (problems.length) {
           : 'bez telefonu nejde poslat zprávy ani připravit kód dveří.')+'</div>');
     }
     return probCard('<div style="font-weight:700;color:#8a5a11;font-size:15px">🔑 '+esc(guestName(b))+' — chybí kód dveří</div>'+
-      '<div style="color:#555;font-size:13px;margin-top:3px">Příjezd za '+daysBetween(today,s.start)+' dní ('+esc(fmtShort(s.start,s.end))+') — není uložený kód dveří.</div>');
+      '<div style="color:#555;font-size:13px;margin-top:3px">'+(s.start<=today?'Pobyt běží':'Příjezd za '+daysBetween(today,s.start)+' dní')+' ('+esc(fmtShort(s.start,s.end))+') — není uložený kód dveří. Ulož ho v /sprava/: stejným kódem hosté otevírají registraci na lednici.</div>');
   });
   problemsHtml = '<div style="margin:2px 0 6px"><span style="display:inline-block;background:#c47b1a;color:#fff;font-weight:700;font-size:12px;letter-spacing:.05em;padding:4px 10px;border-radius:6px">⚙️ PROBLÉMY</span></div>'+
     pParts.join('')+
