@@ -536,12 +536,16 @@
     // přímého prodeje. Ve všech případech musí pobyt nést TÝŽ termín jako předrezervace:
     // po přesunu jen jedné z nich by karta ukazovala nové datum a zprávy a úkoly by
     // běžely podle starého. Nesoulad radši ukázat jako dva řádky.
+    // Pobyt, na který už odkazuje NĚJAKÁ předrezervace, patří jí — i když s ní právě
+    // nesedí termínem. Náhradní párování podle data ho jiné předrezervaci nedá.
+    var linkedToHold = {};
+    holds.forEach(function (h) { if (h.booking_id) linkedToHold[h.booking_id] = true; });
     function bookingOfHold(h) {
       if (!h) return null;
       var sameSpan = function (b) { return b && b.arrival === h.arrival && b.departure === h.departure; };
       if (h.booking_id) { var lb = byId[h.booking_id]; return sameSpan(lb) ? lb : null; }
       var same = bookings.filter(function (b) {
-        return !b.uidh && (b.platform || 'Přímá') === 'Přímá' && sameSpan(b);
+        return !b.uidh && !linkedToHold[b.id] && (b.platform || 'Přímá') === 'Přímá' && sameSpan(b);
       });
       return same.length === 1 ? same[0] : null;
     }
