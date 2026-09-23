@@ -154,6 +154,13 @@ def patch(w):
         conns[UBY_NODE] = {'main': [[{'node': BOOKINGS_NODE, 'type': 'main', 'index': 0}]]}
     else:
         by_name[UBY_NODE]['alwaysOutputData'] = True
+
+    # 4) Execute Once na uzlech za „Načíst žádosti“: ten vrací pole a n8n ho rozseká
+    #    na položky — bez tohohle by konfigurace, hlášení i pobyty běžely jednou za
+    #    každou otevřenou žádost a úkoly v e-mailu by se zdvojovaly.
+    by_name = {n['name']: n for n in nodes}
+    for name in (CONFIG_NODE, UBY_NODE, BOOKINGS_NODE):
+        by_name[name]['executeOnce'] = True
     return w
 
 
