@@ -601,10 +601,14 @@
         var hs = holdBySpan[c.start + '|' + c.end] || null;
         // Ozvěna přímého prodeje, který má v kalendáři vlastní řádek → ten řádek stačí.
         if (hs && hs.uidh && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) return;
-        h = hs;   // přímý prodej v kalendáři ještě není (Action po 3 h) → spárovat s blokací
+        // přímý prodej v kalendáři ještě není (Action po 3 h) → spárovat s blokací.
+        // Jen s JEDNÍM řádkem: kryje-li termín víc záznamů z feedu, dostal by každý
+        // tutéž předrezervaci i hosta a jeho zprávy a úkoly by se zdvojily.
+        h = (hs && !usedHoldIds[hs.id]) ? hs : null;
       }
       if (h) usedHoldIds[h.id] = true;
-      var b = byUidh[c.uidh] || bookingOfHold(h);
+      var b = byUidh[c.uidh] || null;
+      if (!b && h) { var hb0 = bookingOfHold(h); if (hb0 && !usedBookingIds[hb0.id]) b = hb0; }
       if (b) usedBookingIds[b.id] = true;
       stays.push({
         source: 'calendar', uidh: c.uidh,
