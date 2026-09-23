@@ -305,6 +305,21 @@ a{color:var(--ember-2)}
 .uby-warn li{margin:3px 0}
 .uby-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
 .uby-actions .btn[aria-disabled="true"]{opacity:.55}
+/* stav hlášení: kolik zbývá a do kdy */
+.uby-state{border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;margin:0 0 12px;border:1px solid var(--line-2)}
+.uby-state.ok{color:var(--ok);background:color-mix(in oklab,var(--ok),transparent 92%);border-color:color-mix(in oklab,var(--ok),transparent 60%)}
+.uby-state.due{background:color-mix(in oklab,var(--ember),transparent 92%);border-color:color-mix(in oklab,var(--ember),transparent 60%)}
+.uby-state.late{background:color-mix(in oklab,var(--err),transparent 90%);border-color:color-mix(in oklab,var(--err),transparent 55%)}
+.badge.soon{background:color-mix(in oklab,var(--warn),transparent 80%);color:var(--warn)}
+.uby-mf{border:1px solid var(--line-2);border-radius:var(--radius-sm);padding:12px;margin:4px 0 12px}
+.uby-chk{display:flex;align-items:center;justify-content:flex-start;gap:8px;font-size:14px;color:var(--text);padding:3px 0}
+/* .field input má width:100% — zaškrtávátko by se roztáhlo přes celý řádek */
+.field .uby-chk input{width:18px;height:18px;flex:0 0 auto;margin:0;padding:0;accent-color:var(--ember)}
+.uby-reports{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.uby-rep{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);
+  border-top:1px solid var(--line);padding-top:6px}
+.uby-rep-main{flex:1 1 auto;min-width:0}
+.uby-rep-note{font-size:12.5px;color:var(--dim);margin-top:2px}
 
 /* ===== Systém D: jazyk zprávy + sekce Problémy ===== */
 /* značka jazyka u zprávy v timeline (např. · DE) */

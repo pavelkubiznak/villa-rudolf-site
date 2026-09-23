@@ -3,8 +3,9 @@
 
 Vezme export živého workflow (n8n export:workflow), do Code node „Spočítat úkoly"
 vloží aktuální VrDailyTasks.code.js (bez úvodního blokového komentáře) a před
-„Načíst pobyty (service-role)" zapojí uzel „Načíst konfiguraci (service-role)"
-(heslo Wi-Fi z vr_admin_config), pokud tam ještě není. Nic jiného nemění:
+„Načíst pobyty (service-role)" zapojí uzly „Načíst konfiguraci (service-role)"
+(heslo Wi-Fi z vr_admin_config) a „Načíst hlášení cizinců (service-role)"
+(RPC vr_ubyport_due — lhůty UbyPort), pokud tam ještě nejsou. Nic jiného nemění:
 credentials, ostatní uzly, active — všechno zůstává z živého exportu.
 
 Použití na serveru (sintera-velin), viz __jak_nasadit__ v VrDailyTasks.workflow.json:
@@ -28,6 +29,7 @@ REF_JSON = os.path.join(REPO, 'n8n', 'VrDailyTasks', 'VrDailyTasks.workflow.json
 CODE_NODE = 'Spočítat úkoly'
 BOOKINGS_NODE = 'Načíst pobyty (service-role)'
 CONFIG_NODE = 'Načíst konfiguraci (service-role)'
+UBY_NODE = 'Načíst hlášení cizinců (service-role)'
 
 
 def load_workflow(obj):
@@ -109,6 +111,49 @@ def patch(w):
         conns[CONFIG_NODE] = {'main': [[{'node': BOOKINGS_NODE, 'type': 'main', 'index': 0}]]}
     else:
         by_name[CONFIG_NODE]['alwaysOutputData'] = True
+
+    # 3) lhůty hlášení cizinců — RPC vr_ubyport_due() (grant jen service_role).
+    #    Zapojí se těsně před „Načíst pobyty", stejně jako konfigurace.
+    if UBY_NODE not in by_name:
+        src = by_name[BOOKINGS_NODE]
+        uby = {
+            'parameters': {
+                'method': 'POST',
+                'url': 'https://fpknbrzbqpalguajskut.supabase.co/rest/v1/rpc/vr_ubyport_due',
+                'authentication': src['parameters'].get('authentication', 'genericCredentialType'),
+                'genericAuthType': src['parameters'].get('genericAuthType', 'httpHeaderAuth'),
+                'sendHeaders': src['parameters'].get('sendHeaders', True),
+                'headerParameters': copy.deepcopy(src['parameters'].get('headerParameters', {'parameters': []})),
+                'sendBody': True,
+                'specifyBody': 'json',
+                'jsonBody': '{}',
+                'options': {'response': {'response': {'responseFormat': 'json'}}},
+            },
+            'id': 'a1000000-0000-4000-8000-000000000006',
+            'name': UBY_NODE,
+            'type': 'n8n-nodes-base.httpRequest',
+            'typeVersion': src.get('typeVersion', 4.2),
+            'position': [src['position'][0] - 110, src['position'][1] + 160],
+            # Chyba (např. migrace ještě není v DB) nesmí zastavit denní e-mail.
+            'alwaysOutputData': True,
+            'onError': 'continueRegularOutput',
+            'notes': 'Lhůty UbyPort (vr_ubyport_due) — čte je „Spočítat úkoly" jménem uzlu.',
+        }
+        if 'credentials' in src:
+            uby['credentials'] = copy.deepcopy(src['credentials'])
+        nodes.insert(nodes.index(src), uby)
+        redirected = 0
+        for from_name, outs in conns.items():
+            for branch in outs.get('main', []):
+                for link in branch:
+                    if link.get('node') == BOOKINGS_NODE:
+                        link['node'] = UBY_NODE
+                        redirected += 1
+        if redirected == 0:
+            sys.exit(f'do „{BOOKINGS_NODE}" nevede žádné spojení — nečekaný tvar workflow')
+        conns[UBY_NODE] = {'main': [[{'node': BOOKINGS_NODE, 'type': 'main', 'index': 0}]]}
+    else:
+        by_name[UBY_NODE]['alwaysOutputData'] = True
     return w
 
 
@@ -143,6 +188,8 @@ def main():
     print(f'jsCode: {len(code)} znaků, začíná: {code[:40]!r}')
     if CONFIG_NODE not in after or after.index(CONFIG_NODE) > after.index(BOOKINGS_NODE):
         sys.exit('KONTROLA SELHALA: konfigurace není před „Načíst pobyty"')
+    if UBY_NODE not in after or after.index(UBY_NODE) > after.index(BOOKINGS_NODE):
+        sys.exit('KONTROLA SELHALA: hlášení cizinců není před „Načíst pobyty"')
     if dst:
         with open(dst, 'w', encoding='utf-8') as f:
             json.dump(wrap(w2), f, ensure_ascii=False, indent=2)
