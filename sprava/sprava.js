@@ -864,6 +864,16 @@
       // (b) příjezd do 7 dnů bez uloženého kódu dveří
       if (hasPhone && !b.door_code && s.start >= today && daysBetween(today, s.start) <= 7)
         probs.push({ kind: 'nocode', stay: s, date: s.start });
+      // (g) nenahlášení cizinci — lhůta 3 pracovních dnů od ubytování (§ 102 zák.
+      //     326/1999 Sb.). Pracovní dny a svátky počítá DB, tady se jen řadí podle lhůty.
+      var ps = b.persons || {};
+      if (ps.foreign_unreported > 0 && ps.uby_deadline)
+        probs.push({ kind: 'ubydue', stay: s, date: ps.uby_deadline });
+      // (h) pobyt běží a zaregistrovaných je méně, než kolik má rezervace osob.
+      //     Kdo chybí, může být cizinec — a jeho lhůta běží od příjezdu.
+      var expected = (b.adults || 0) + (b.children || []).length;
+      if (b.arrival <= today && today <= b.departure && (ps.registered || 0) < expected)
+        probs.push({ kind: 'ubyreg', stay: s, date: ps.arrival_deadline || b.arrival });
     });
     probs.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
     lastProblems = probs;
@@ -913,6 +923,20 @@
         html += probCard('soon', '📅 Předrezervace ' + esc(fmtShort(p.hold.arrival, p.hold.departure)) + ' — termín není zablokovaný',
           'Na platformách je ten termín pořád volný, takže ho může kterýkoli kanál prodat znovu. '
           + 'Zablokuj ho v e-chalupách (cross-iCal ho rozešle dál).', i, 'Otevřít');
+      } else if (p.kind === 'ubydue') {
+        var dd = b.persons.uby_deadline, left = daysBetween(today, dd), nf = b.persons.foreign_unreported;
+        html += probCard(left <= 0 ? 'red' : 'soon',
+          '🛂 ' + esc(guestName(b)) + ' — nahlásit ' + nf + ' ' + (nf === 1 ? 'cizince' : 'cizinců') + ' do UbyPortu',
+          (left < 0 ? 'Lhůta uplynula ' + esc(fmtDay(dd)) + ' — nahlas co nejdřív, pozdní hlášení je lepší než žádné.'
+            : left === 0 ? '<b>Dnes je poslední den lhůty.</b>'
+            : 'Lhůta do ' + esc(fmtDay(dd)) + ' (3 pracovní dny od ubytování).')
+          + ' Po odeslání označ v detailu pobytu „Nahlášeno“.', i, 'Nahlásit');
+      } else if (p.kind === 'ubyreg') {
+        var pr = b.persons || {}, exp = (b.adults || 0) + (b.children || []).length;
+        html += probCard('warn', '📝 ' + esc(guestName(b)) + ' — registrace neúplná',
+          'Zaregistrováno ' + (pr.registered || 0) + ' z ' + exp + ' osob. Jestli mezi chybějícími jsou cizinci, '
+          + 'hlášení je potřeba' + (pr.arrival_deadline ? ' do ' + esc(fmtDay(pr.arrival_deadline)) : ' do 3 pracovních dnů od příjezdu')
+          + ' — připomeň hostům registraci. Poplatek se počítá taky z registrací.', i, 'Otevřít');
       } else if (p.kind === 'nocode') {
         html += probCard('soon', '🔑 ' + esc(guestName(b)) + ' — chybí kód dveří',
           'Příjezd za ' + daysBetween(today, s.start) + ' dní (' + esc(fmtShort(s.start, s.end)) + ') — není uložený kód dveří.', i, 'Doplnit kód');
@@ -2034,9 +2058,15 @@
   }
 
   function loadPersons(b) {
-    rpc('vr_admin_persons', { p_booking_id: b.id }).then(function (res) {
-      var persons = (res.data && res.data.persons) || [];
+    Promise.all([
+      rpc('vr_admin_persons', { p_booking_id: b.id }),
+      // Záznamy o odeslání do UbyPortu. Selhání (např. před nasazením migrace)
+      // nesmí shodit výpis osob — jen se neukážou.
+      rpc('vr_admin_ubyport_reports', { p_booking_id: b.id }).catch(function () { return null; })
+    ]).then(function (r) {
+      var persons = (r[0].data && r[0].data.persons) || [];
       b._persons = persons;              // uchováme vč. čísel dokladů pro Ubyport export
+      b._ubyReports = (r[1] && r[1].data && r[1].data.reports) || [];
       renderPersons(persons);
       renderUbyport(b);
     }).catch(function () { $('d-persons').innerHTML = '<p class="persons-empty">Nepodařilo se načíst.</p>'; });
@@ -2056,6 +2086,8 @@
         : '<span class="badge no">✗ bez dokladu</span>';
       var meta = [fmtShort(p.stay_from, p.stay_to)];
       if (foreign) meta.push('<span class="badge foreign">cizinec</span>');
+      if (foreign && p.ubyport_sent_at) meta.push('<span class="badge ok">✓ nahlášeno ' + esc(fmtStamp(p.ubyport_sent_at)) + '</span>');
+      else if (foreign && p.ubyport_deadline) meta.push('<span class="badge ' + (p.ubyport_deadline <= isoToday() ? 'no' : 'soon') + '">UbyPort do ' + esc(fmtDay(p.ubyport_deadline)) + '</span>');
       return '<div class="person' + (foreign ? ' foreign' : '') + '">' +
         '<span class="person-flag" title="' + esc(p.citizenship) + '">' + flagEmoji(p.citizenship) + '</span>' +
         '<div class="person-main"><div class="person-nm">' + esc((p.first_name + ' ' + p.last_name).trim()) + '</div>' +
@@ -2137,11 +2169,16 @@
     var p = String(iso).slice(0, 10).split('-');
     return p.length === 3 ? (p[2] + '.' + p[1] + '.' + p[0]) : '';
   }
+  // Věta A, pole 14 „datum a čas exportu“: yyyy.mm.dd hh:mm:ss (UbyPortPr3, kap. 3.2).
+  // Pozor, v U větách je datum obráceně (dd.mm.yyyy) — tak to spec chce.
   function ubyNow() {
     var d = new Date(), z = function (n) { return String(n).padStart(2, '0'); };
-    return z(d.getDate()) + '.' + z(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' +
+    return d.getFullYear() + '.' + z(d.getMonth() + 1) + '.' + z(d.getDate()) + ' ' +
       z(d.getHours()) + ':' + z(d.getMinutes()) + ':' + z(d.getSeconds());
   }
+  // Číslo dokladu: jen A–Z a 0–9, velkými písmeny (UbyPortPr3, „Specifické – Doklad“).
+  // Pomlčku z registrace by UbyPort odmítl, mezery vynechává sám.
+  function ubyDoc(s) { return String(s == null ? '' : s).toUpperCase().replace(/[^A-Z0-9]/g, ''); }
   function foreignersOf(b) {
     return (b._persons || []).filter(function (p) { return (p.citizenship || 'CZ').toUpperCase() !== 'CZ'; });
   }
@@ -2150,6 +2187,7 @@
     foreigners.forEach(function (p) {
       var probs = [];
       if (!p.doc_number) probs.push('chybí číslo dokladu');
+      else if (ubyDoc(p.doc_number).length < 6) probs.push('číslo dokladu má méně než 6 znaků (UbyPort ho odmítne)');
       if (!p.birth_date) probs.push('chybí datum narození');
       if (!ubyCountry(p.citizenship).ok) probs.push('neznámý kód země „' + (p.citizenship || '?') + '"');
       if (probs.length) issues.push({ name: (p.first_name + ' ' + p.last_name).trim(), probs: probs });
@@ -2175,14 +2213,24 @@
       ubyField(p.last_name), ubyField(p.first_name), '',
       ubyDate(p.birth_date), '', '',
       ubyCountry(p.citizenship).code,
-      bydliste, ubyField(p.doc_number), '', ucel, '', ''
+      bydliste, ubyDoc(p.doc_number), '', ucel, '', ''
     ].join('|');
   }
+  function unreportedOf(b) {
+    return foreignersOf(b).filter(function (p) { return !p.ubyport_report_id; });
+  }
+  // Do souboru jdou jen dosud nenahlášení — ať se nikdo nehlásí dvakrát.
+  // Když jsou nahlášení všichni, soubor obsahuje všechny (kopie pro archiv).
+  function ubyTargets(b) {
+    var u = unreportedOf(b);
+    return u.length ? u : foreignersOf(b);
+  }
   function buildUnl(b) {
-    var foreigners = foreignersOf(b);
+    var foreigners = ubyTargets(b);
     var lines = [ubyHeaderLine()];
     foreigners.forEach(function (p) { lines.push(ubyGuestLine(p)); });
-    return toCp1250Bytes(lines.join('\r\n'));
+    // každý záznam včetně posledního končí CRLF (UbyPortPr3, kap. 3.1)
+    return toCp1250Bytes(lines.join('\r\n') + '\r\n');
   }
   function unlFilename(b) {
     var idub = ubyField((adminConfig || {}).ubyport_idub) || 'IDUB';
@@ -2201,7 +2249,7 @@
     toast('UNL soubor stažen.');
   }
   function ubyPlainText(b) {
-    var fs = foreignersOf(b);
+    var fs = ubyTargets(b);
     if (!fs.length) return '';
     return fs.map(function (p) {
       return [
@@ -2228,7 +2276,8 @@
       wrap.innerHTML = '<p class="persons-empty">Žádní registrovaní cizinci — hlášení Ubyport se tohoto pobytu netýká. (Hlásí se jen ubytovaní cizinci; občané ČR ne.)</p>';
       return;
     }
-    var issues = ubyValidate(fs);
+    var todo = unreportedOf(b);
+    var issues = todo.length ? ubyValidate(todo) : [];   // hotové už nekontrolujeme
     var issuesHtml = '';
     if (issues.length) {
       issuesHtml = '<div class="uby-warn"><b>⚠️ Před odesláním zkontrolujte:</b><ul>' +
@@ -2238,16 +2287,124 @@
     }
     var idubHtml = hasIdub ? '' :
       '<div class="uby-warn"><b>Doplňte IDUB v Nastavení</b> — bez identifikátoru ubytovatele (z vašeho účtu Ubyport) nelze soubor vygenerovat. Adresa vily je předvyplněná.</div>';
+
+    // Stav: kolik zbývá nahlásit a do kdy (lhůtu počítá DB i se svátky).
+    var today = isoToday();
+    var deadline = todo.reduce(function (m, p) {
+      return p.ubyport_deadline && (!m || p.ubyport_deadline < m) ? p.ubyport_deadline : m;
+    }, null);
+    var statusHtml;
+    if (!todo.length) {
+      statusHtml = '<div class="uby-state ok">✓ Všichni cizinci (' + fs.length + ') jsou nahlášení.</div>';
+    } else {
+      var late = deadline && deadline < today, last = deadline === today;
+      statusHtml = '<div class="uby-state ' + (late || last ? 'late' : 'due') + '">' +
+        'K nahlášení: <b>' + todo.length + '</b> z ' + fs.length +
+        (deadline ? (late ? ' · <b>lhůta uplynula ' + esc(fmtDay(deadline)) + '</b>'
+          : last ? ' · <b>dnes je poslední den lhůty</b>'
+          : ' · lhůta do <b>' + esc(fmtDay(deadline)) + '</b>') : '') +
+        '</div>';
+    }
+
+    var reports = b._ubyReports || [];
+    var METHOD = { unl: 'soubor UNL', form: 'ruční formulář', ws: 'webová služba' };
+    var reportsHtml = reports.length ? '<div class="uby-reports">' + reports.map(function (r) {
+      return '<div class="uby-rep"><div class="uby-rep-main">Odesláno <b>' + esc(fmtStamp(r.sent_at)) + '</b> · ' +
+        esc(METHOD[r.method] || r.method) + ' · ' + r.persons + ' ' + (r.persons === 1 ? 'osoba' : (r.persons <= 4 ? 'osoby' : 'osob')) +
+        (r.receipt ? ' · potvrzení <code>' + esc(r.receipt) + '</code>' : '') +
+        (r.note ? '<div class="uby-rep-note">' + esc(r.note) + '</div>' : '') + '</div>' +
+        '<button type="button" class="btn btn-sm btn-ghost" data-uby-undo="' + esc(r.id) + '">Vrátit</button></div>';
+    }).join('') + '</div>' : '';
+
     wrap.innerHTML =
-      '<p class="uby-count">Registrovaní cizinci k nahlášení: <b>' + fs.length + '</b></p>' +
+      statusHtml +
       issuesHtml + idubHtml +
       '<div class="uby-actions">' +
       '<button type="button" class="btn btn-sm btn-primary" id="uby-dl"' + (hasIdub ? '' : ' aria-disabled="true"') + '>Stáhnout hlášení Ubyport (UNL)</button>' +
       '<button type="button" class="btn btn-sm btn-outline" id="uby-copy">Zkopírovat seznam cizinců</button>' +
+      (todo.length ? '<button type="button" class="btn btn-sm btn-outline" id="uby-mark">✓ Nahlášeno…</button>' : '') +
       '</div>' +
-      '<p class="hint">Soubor je v oficiálním formátu UNL (CP1250), účel pobytu 10 = turistika. Nahrajete ho ve svém účtu Ubyport (modul UpLoad). Kopie jako text slouží pro ruční zadání.</p>';
+      '<div id="uby-mark-form" hidden></div>' +
+      '<p class="hint">Soubor je v oficiálním formátu UNL (CP1250), účel pobytu 10 = turistika, a obsahuje jen dosud nenahlášené. Nahrajete ho ve svém účtu Ubyport (modul UpLoad). '
+        + 'Po odeslání klikněte na „Nahlášeno“ — systém pak přestane hlídat lhůtu. Lhůta jsou 3 pracovní dny ode dne ubytování (§ 102 zák. 326/1999 Sb.).</p>' +
+      reportsHtml;
     $('uby-dl').addEventListener('click', function () { downloadUnl(b); });
     $('uby-copy').addEventListener('click', function () { copyForeigners(b); });
+    if ($('uby-mark')) $('uby-mark').addEventListener('click', function () { openUbyMark(b, todo); });
+    Array.prototype.forEach.call(wrap.querySelectorAll('[data-uby-undo]'), function (btn) {
+      btn.addEventListener('click', function () { undoUbyReport(b, btn.getAttribute('data-uby-undo'), btn); });
+    });
+  }
+
+  function localInputNow() {
+    var d = new Date(), z = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + 'T' + z(d.getHours()) + ':' + z(d.getMinutes());
+  }
+  function fmtStamp(ts) {
+    var d = new Date(ts); if (isNaN(d)) return '';
+    return d.getDate() + '. ' + (d.getMonth() + 1) + '. ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+
+  // Záznam, že hlášení odešlo. Nic neodesílá — to zatím dělá majitel v UbyPortu
+  // (UNL / formulář). Webová služba WS_UBY se napojí, až policie vydá přístup.
+  function openUbyMark(b, todo) {
+    var box = $('uby-mark-form');
+    if (!box.hidden) { box.hidden = true; return; }
+    box.innerHTML =
+      '<form id="uby-mf" class="uby-mf" autocomplete="off">' +
+      '<div class="field"><span class="field-lbl">Kdo odešel</span>' +
+      todo.map(function (p) {
+        return '<label class="uby-chk"><input type="checkbox" name="uby-p" value="' + esc(p.id) + '" checked> ' +
+          flagEmoji(p.citizenship) + ' ' + esc((p.first_name + ' ' + p.last_name).trim()) + '</label>';
+      }).join('') + '</div>' +
+      '<div class="field"><label for="uby-m-method">Jak</label><select id="uby-m-method">' +
+      '<option value="unl">Soubor UNL (UpLoad)</option><option value="form">Ruční formulář v UbyPortu</option></select></div>' +
+      '<div class="field"><label for="uby-m-at">Kdy odešlo</label><input type="datetime-local" id="uby-m-at" value="' + localInputNow() + '" max="' + localInputNow() + '"></div>' +
+      '<div class="field"><label for="uby-m-rec">Potvrzení z UbyPortu (nepovinné)</label><input id="uby-m-rec" maxlength="120" placeholder="pseudorazítko / číslo z doručenky"></div>' +
+      '<div class="field"><label for="uby-m-note">Poznámka (nepovinné)</label><input id="uby-m-note" maxlength="500"></div>' +
+      '<p class="form-err" id="uby-m-err" hidden></p>' +
+      '<button type="submit" class="btn btn-primary" id="uby-m-save" style="width:100%">Uložit jako nahlášené</button>' +
+      '</form>';
+    box.hidden = false;
+    $('uby-mf').addEventListener('submit', function (ev) { ev.preventDefault(); saveUbyMark(b); });
+  }
+  var UBY_ERR = {
+    nothing_to_report: 'Vybraní už jsou nahlášení (nebo to nejsou cizinci).',
+    sent_in_future: 'Čas odeslání je v budoucnosti.',
+    method_invalid: 'Neznámý způsob odeslání.',
+    too_long: 'Potvrzení nebo poznámka jsou moc dlouhé.'
+  };
+  function saveUbyMark(b) {
+    var ids = Array.prototype.map.call(document.querySelectorAll('#uby-mf input[name="uby-p"]:checked'), function (x) { return x.value; });
+    var err = $('uby-m-err'); err.hidden = true;
+    if (!ids.length) { err.textContent = 'Vyber aspoň jednu osobu.'; err.hidden = false; return; }
+    var at = $('uby-m-at').value;
+    var btn = $('uby-m-save'); btn.disabled = true; btn.textContent = 'Ukládám…';
+    rpc('vr_admin_ubyport_mark', {
+      p_booking_id: b.id, p_person_ids: ids, p_method: $('uby-m-method').value,
+      p_sent_at: at ? new Date(at).toISOString() : null,
+      p_receipt: $('uby-m-rec').value.trim() || null, p_note: $('uby-m-note').value.trim() || null
+    }).then(function (res) {
+      if (res.data && res.data.ok) {
+        toast('Uloženo: nahlášeno ' + res.data.persons + '×.');
+        loadPersons(b); reload();
+      } else {
+        btn.disabled = false; btn.textContent = 'Uložit jako nahlášené';
+        err.textContent = UBY_ERR[res.data && res.data.error] || 'Uložení se nepodařilo.'; err.hidden = false;
+      }
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = 'Uložit jako nahlášené';
+      err.textContent = 'Uložení se nepodařilo.'; err.hidden = false;
+    });
+  }
+  function undoUbyReport(b, id, btn) {
+    if (!window.confirm('Vrátit tenhle záznam? Osoby se vrátí mezi nenahlášené a znovu se začne hlídat lhůta. '
+      + 'V UbyPortu to nic nezruší — slouží jen k opravě omylu.')) return;
+    btn.disabled = true;
+    rpc('vr_admin_ubyport_undo', { p_report_id: id }).then(function (res) {
+      if (res.data && res.data.ok) { toast('Záznam vrácen.'); loadPersons(b); reload(); }
+      else { btn.disabled = false; toast('Nepodařilo se uložit.'); }
+    }).catch(function () { btn.disabled = false; toast('Nepodařilo se uložit.'); });
   }
 
   /* ============ NASTAVENÍ (heslo Wi-Fi + Ubyport konfigurace ubytovatele) ============ */

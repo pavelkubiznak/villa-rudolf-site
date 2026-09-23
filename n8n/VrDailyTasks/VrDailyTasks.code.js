@@ -321,9 +321,21 @@ try {
   rqOpen = raw.filter(r => r && r.id && r.status !== 'done');
 } catch (e) { rqOpen = []; }
 
+/* ---------- hlášení cizinců (UbyPort) ---------- */
+// Lhůta 3 pracovních dnů od ubytování (§ 102 zák. 326/1999 Sb.). Pracovní dny
+// i svátky počítá DB (vr_ubyport_due), tady se nic nepřepočítává — stejná
+// pravda jako sekce Problémy v /sprava/. Uzel vrací objekt {due:[…]}.
+// Chybějící uzel / chyba dotazu = prázdný seznam: denní e-mail se kvůli tomu nezastaví.
+let ubyDue = [];
+try {
+  const u = $('Načíst hlášení cizinců (service-role)').first().json;
+  ubyDue = (u && Array.isArray(u.due)) ? u.due : [];
+} catch (e) { ubyDue = []; }
+const ubyUrgent = ubyDue.filter(u => (u.foreign_unreported > 0 && u.deadline && u.deadline <= today)).length;
+
 // Nevyřízená žádost je sama o sobě důvod e-mail poslat — bez rqOpen v téhle
 // podmínce by v klidný den (0 úkolů, 0 problémů) zůstala zase neviditelná.
-if (!tasks.length && !problems.length && !hasConflicts && !rqOpen.length) return []; // nic → žádný e-mail
+if (!tasks.length && !problems.length && !hasConflicts && !rqOpen.length && !ubyDue.length) return []; // nic → žádný e-mail
 
 /* ---------- HTML e-mail ---------- */
 function card(inner){ return '<div style="background:#fff;border:1px solid #e6e8e7;border-radius:12px;padding:14px 16px;margin:10px 0">'+inner+'</div>'; }
@@ -404,6 +416,32 @@ if (problems.length) {
     '<p style="color:#6b736f;font-size:13px;margin:2px 0 18px">Konfigurační mezery — doplň v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a>.</p>';
 }
 
+// sekce HLÁŠENÍ CIZINCŮ — červeně po lhůtě / poslední den, jinak ember
+let ubyHtml = '';
+if (ubyDue.length) {
+  const uParts = ubyDue.map(u => {
+    const who = esc(u.guest || 'pobyt') + ' · ' + esc(fmtShort(u.arrival, u.departure));
+    if (u.foreign_unreported > 0) {
+      const left = daysBetween(today, u.deadline);
+      const col = left <= 0 ? '#c0392b' : '#D68A4C';
+      const when = left < 0 ? ('lhůta uplynula ' + esc(fmtDay(u.deadline)) + ' — nahlas co nejdřív')
+        : left === 0 ? '<b>dnes je poslední den lhůty</b>'
+        : ('lhůta do ' + esc(fmtDay(u.deadline)));
+      return '<div style="background:#fff;border:1px solid #efd0d0;border-left:4px solid '+col+';border-radius:12px;padding:12px 15px;margin:8px 0">'+
+        '<div style="font-weight:700;color:#182019;font-size:15px">🛂 '+who+'</div>'+
+        '<div style="color:#555;font-size:13px;margin-top:3px">Nenahlášení cizinci: <b>'+u.foreign_unreported+'</b> · '+when+
+        (u.missing_data ? ' · <span style="color:#c0392b">'+u.missing_data+'× chybí doklad nebo datum narození</span>' : '')+'</div></div>';
+    }
+    return '<div style="background:#fff;border:1px solid #f0e2cf;border-left:4px solid #c47b1a;border-radius:12px;padding:12px 15px;margin:8px 0">'+
+      '<div style="font-weight:700;color:#8a5a11;font-size:15px">📝 '+who+' — registrace neúplná</div>'+
+      '<div style="color:#555;font-size:13px;margin-top:3px">Zaregistrováno '+u.registered+' z '+u.expected+' osob. Jestli mezi chybějícími jsou cizinci, hlášení je potřeba do '+
+      esc(fmtDay(u.arrival_deadline))+' — připomeň hostům registraci.</div></div>';
+  });
+  ubyHtml = '<div style="margin:2px 0 6px"><span style="display:inline-block;background:#c0392b;color:#fff;font-weight:700;font-size:12px;letter-spacing:.05em;padding:4px 10px;border-radius:6px">🛂 HLÁŠENÍ CIZINCŮ</span></div>'+
+    uParts.join('')+
+    '<p style="color:#6b736f;font-size:13px;margin:2px 0 18px">Lhůta 3 pracovní dny od ubytování. UNL soubor stáhneš a po odeslání označíš „Nahlášeno" v detailu pobytu v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a>.</p>';
+}
+
 const pn = problems.length;
 // sekce ŽÁDOSTI Z WEBU — ember rámeček (příležitost, ne chyba)
 function reqCard(inner){ return '<div style="background:#fff;border:1px solid #f0dfc9;border-left:4px solid #D68A4C;border-radius:12px;padding:12px 15px;margin:8px 0">'+inner+'</div>'; }
@@ -432,28 +470,34 @@ const subjectBase = hasConflicts
     ? ('Villa Rudolf — dnes: '+n+' '+word)
     : (pn>0)
       ? ('Villa Rudolf — '+pn+' '+(pn===1?'problém':(pn>=2&&pn<=4?'problémy':'problémů'))+' ke kontrole')
-      : ('Villa Rudolf — '+rqOpen.length+'× žádost z webu');
+      : rqOpen.length
+        ? ('Villa Rudolf — '+rqOpen.length+'× žádost z webu')
+        : 'Villa Rudolf — hlášení cizinců';
 // Žádost patří do předmětu, ne až do těla — jinak se e-mail v mobilu tváří
 // jako běžná denní připomínka a otevře se až večer.
 // Prefix jen tehdy, když v předmětu už něco jiného je — jinak by v klidný den
 // vyšlo „1× žádost z webu · Villa Rudolf — 1× žádost z webu".
-const subject = (rqOpen.length && (n>0 || hasConflicts || pn>0))
+const subject0 = (rqOpen.length && (n>0 || hasConflicts || pn>0))
   ? ('🏔️ ' + rqOpen.length + '× žádost z webu · ' + subjectBase)
   : subjectBase;
+// Lhůta pro policii dnes nebo prošlá → musí být vidět už v předmětu.
+const subject = ubyUrgent ? ('🛂 UbyPort: '+ubyUrgent+'× lhůta dnes/prošlá · ' + subject0) : subject0;
 const heading = (n>0) ? ('Dnes na řadě: '+n+' '+word)
   : hasConflicts ? 'Konflikt v kalendáři'
   : (pn>0) ? 'Problémy ke kontrole'
-  : (rqOpen.length===1 ? 'Nová žádost z webu' : rqOpen.length+' žádosti z webu');
+  : rqOpen.length ? (rqOpen.length===1 ? 'Nová žádost z webu' : rqOpen.length+' žádosti z webu')
+  : 'Hlášení cizinců';
 const html = '<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'+
   '<body style="margin:0;background:#f4f5f4"><div style="max-width:640px;margin:0 auto;padding:22px 14px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1f2422">'+
   '<p style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#D68A4C;font-weight:700;margin:0 0 2px">Villa Rudolf · správa pobytů</p>'+
   '<h1 style="font-size:21px;margin:0 0 2px">'+esc(heading)+'</h1>'+
   '<p style="color:#6b736f;font-size:14px;margin:0 0 14px">'+esc(dnes)+' · přehled a odeslání také v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a></p>'+
   conflHtml +
+  ubyHtml +
   reqHtml +
   problemsHtml +
   rows +
   '<p style="color:#8a918d;font-size:12px;margin-top:22px;border-top:1px solid #e6e8e7;padding-top:12px">Automatická denní připomínka (n8n · VrDailyTasks). Šablony a wa.me odkazy jsou v jazyce pobytu a zrcadlí sekci DNES v /sprava/. Odkazy odesílají zprávu ručně z tvého WhatsAppu — nic se neposílá samo.</p>'+
   '</div></body></html>';
 
-return [{ json: { subject, html, to: 'pavel.kubiznak@gmail.com', count: n, problems: pn, conflicts: cn } }];
+return [{ json: { subject, html, to: 'pavel.kubiznak@gmail.com', count: n, problems: pn, conflicts: cn, ubyport: ubyDue.length } }];
