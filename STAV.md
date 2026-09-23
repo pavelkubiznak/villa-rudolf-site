@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 16. 9. 2026
+Aktualizováno: 23. 9. 2026
 
 ---
 
@@ -138,6 +138,7 @@ kalendáře taky 18měsíční prune `history.json`.
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
 | Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
 | Napojení na iDoklad (kontrola účtu na faktuře přímo ze zdroje) | ⏭️ **nezačato** — API se nepsalo naslepo |
+| Přenos ověřených přímých prodejů z `verified.json` (`supabase/seed/`) | ✅ **spuštěno v živé DB 23. 9. 2026** |
 
 **Proč to vzniklo.** Pobyt prodaný napřímo nebyl v žádném feedu, takže pro systém neexistoval —
 `/sprava/` o něm nevěděla a homepage ten termín dál nabízela jako volný. Tak zmizel termín
@@ -171,12 +172,14 @@ Pro tenhle repo jsou z toho podstatné tři věci:
 1. ~~Spustit migraci `20260909_vr_holds.sql`~~ — **hotovo 15. 9. 2026** (i `20260910_vr_payments.sql`
    a `20260915_vr_contracts.sql`; po každé `notify pgrst, 'reload schema'`).
 2. **Znovu importovat `n8n/VrConflictWatch`** (Code node „Detekce konfliktů").
-3. **Zapsat termín 14.–21. 8. 2027** jako uhrazenou přímou rezervaci a **zablokovat ho na
-   platformách** — dneska je v očích všech kanálů volný. Pobyt ve `vr_bookings` je (Stibalová,
-   „Přímá“), předrezervace ne — založí se přes `/smlouvy/` nebo tlačítkem „+ Předrezervace“.
-4. **Předrezervace pro Sabáčkovou (21.–28. 8. 2027) a Rohrberg (7.–14. 8. 2027)** — obě mají pobyt
-   ve `vr_bookings`, ani jedna nemá hold; Sabáčková navíc **nemá vystavenou zálohovou fakturu**
-   (15. 9. se ozvala, že jí nic nepřišlo).
+3. **Zablokovat 14.–21. 8. 2027 na platformách.** V systému už je jako potvrzená přímá
+   rezervace i s údaji o platbě (doplněno 23. 9.). Kalendář i web ho drží jako obsazený —
+   **platformy ne**, v žádném feedu k 23. 9. není.
+4. **21.–28. 8. 2027** — předrezervace s vystavenou zálohovou fakturou; k 23. 9. **neuhrazená**,
+   **drží jen krátce** a taky **není zablokovaná na platformách**. Ověřit platbu na účtu; bez
+   „Uhrazeno“ nebo prodloužení se termín uvolní (datum v `/sprava/` → Předrezervace).
+   **7.–14. 8. 2027** má od 23. 9. potvrzený hold ze seedu (bez čísla faktury a částky —
+   doplnit v `/sprava/`); na platformách je zablokovaný přes e-chalupy.
 5. **Založit tři read-only tokeny Fia** (VR korunový, VR eurový, hlavní účet Sintery),
    vložit je do prostředí n8n jako `FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA` a poskládat
    workflow podle `n8n/VrPaymentWatch/README.md`. **První běhy nech read-only**
@@ -309,16 +312,17 @@ Actions „DB migrace (Supabase)"; obě potřebují repo secret `SUPABASE_DB_URL
 postup v hlavičce `.github/workflows/db-migrate.yml`). Třetí cesta je konektor Supabase
 v Claude Code, kterým proběhlo nasazení 15. 9.
 
-1. **Zapsat 14.–21. 8. 2027 a zablokovat ho na platformách** — zaplacený termín je dneska
-   v očích všech kanálů volný. Do jednoho z nich může kdykoli spadnout druhá rezervace.
+1. **Zablokovat 14.–21. 8. a 21.–28. 8. 2027 na platformách** — v kalendáři i na webu jsou
+   obsazené, ale v žádném feedu nejsou, takže je kterýkoli kanál může prodat znovu.
+   U 21.–28. 8. navíc **ověřit platbu**, než předrezervace propadne (viz Předrezervace, bod 4).
 2. ~~`vr_purge_expired`~~ — **zamčeno 15. 9.** (viz sekce Kalendář)
 3. **Heslo Wi-Fi** — ~~migrace `20260915_vr_admin_config_wifi.sql`~~ nasazena 15. 9.; zbývá vyplnit
    v `/sprava/` → Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
    uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá
    `python3 tools/n8n-patch-vrdailytasks.py <export.json> <patched.json>` (postup v jeho hlavičce)
 4. ~~Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`~~ — **hotovo 15. 9.**
-   (i `20260915_vr_contracts.sql`). Teď: **vystavit fakturu + smlouvu Sabáčkové ve `/smlouvy/`**;
-   pak **re-import `VrConflictWatch`**
+   (i `20260915_vr_contracts.sql`); faktura na 21.–28. 8. 2027 vystavená 15. 9.; seed z `verified.json`
+   spuštěn 23. 9. Zbývá **re-import `VrConflictWatch`**
 5. **Ověřit `supabase functions deploy album`** — oprava uploadu bez tokenu je v repu od 8. 9.,
    ale že nasazení proběhlo, není nikde zapsáno
 6. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
