@@ -557,8 +557,10 @@
     // Které přímé prodeje už kalendář nese pod vlastním uidh (vr_hold_uidh) — od
     // kalendářního #17 platí záznam ze správy a ozvěna z feedu se zahazuje. Dobíhající
     // ozvěnu (v archivu živá ještě STALE_AFTER_DAYS) pak tady přeskočíme stejně.
+    // Klíč je uidh + TERMÍN: přesunutá předrezervace má v kalendáři do příštího běhu
+    // Action ještě staré datum pod tímtéž uidh, a ten řádek nový termín nenese.
     var calUidh = {};
-    calendar.forEach(function (c) { if (c.uidh) calUidh[c.uidh] = true; });
+    calendar.forEach(function (c) { if (c.uidh) calUidh[c.uidh + '|' + c.start + '|' + c.end] = true; });
 
     stays = [];
     var usedBookingIds = {};
@@ -577,7 +579,7 @@
       if (!h) {
         var hs = holdBySpan[c.start + '|' + c.end] || null;
         // Ozvěna přímého prodeje, který má v kalendáři vlastní řádek → ten řádek stačí.
-        if (hs && hs.uidh && calUidh[hs.uidh]) return;
+        if (hs && hs.uidh && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) return;
         h = hs;   // přímý prodej v kalendáři ještě není (Action po 3 h) → spárovat s blokací
       }
       if (h) usedHoldIds[h.id] = true;
@@ -1012,11 +1014,13 @@
   // v kalendáři pod svým uidh, NEBO termín kryje živý záznam z platformy (ruční
   // blokace). Ozvěnu z feedu už podle toho hledat nejde — kalendář ji od #17 zahazuje.
   // Archivní duch (stale, pobyt teprve má proběhnout) blokací není: z feedu vypadl.
+  // Vlastní řádek musí nést AKTUÁLNÍ termín: po přesunu předrezervace drží kalendář
+  // (a tím i výstupní feedy) do příštího běhu Action pořád ten starý.
   function blockedOnPlatform(h) {
     var today = isoToday();
     return calendar.some(function (c) {
-      if (h.uidh && c.uidh === h.uidh) return true;
       if (c.stale === true && c.end > today) return false;
+      if (h.uidh && c.uidh === h.uidh) return c.start === h.arrival && c.end === h.departure;
       return c.platform !== 'Přímá' && c.start < h.departure && h.arrival < c.end;
     });
   }
