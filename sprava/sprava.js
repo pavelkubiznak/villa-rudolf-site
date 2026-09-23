@@ -576,6 +576,10 @@
       // Stejné pravidlo jako isGhost() ve villa-booking-calendar.
       if (c.stale === true && c.end > today) return;
       var h = holdByUidh[c.uidh] || null;
+      // Přesunutá předrezervace: kalendář do příštího běhu Action nese pod jejím uidh
+      // ještě STARÝ termín. Ten řádek už nic nedrží — přeskočit a předrezervaci nechat
+      // na kroku 2, který ji ukáže s aktuálním datem (i pro hlídač překryvů).
+      if (h && (h.arrival !== c.start || h.departure !== c.end)) return;
       if (!h) {
         var hs = holdBySpan[c.start + '|' + c.end] || null;
         // Ozvěna přímého prodeje, který má v kalendáři vlastní řádek → ten řádek stačí.
