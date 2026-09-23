@@ -223,7 +223,13 @@ function detectConflicts(stays, calendar, bookings, today){
     const A=stays[i], B=stays[j];
     // kalendář + předrezervace, které v něm ještě nejsou; ruční „Přímá" bývají
     // nespárované kopie feedu, ne dvojitá rezervace (stejně jako sprava.js)
-    if(A.source==='manual' || B.source==='manual') continue;
+    // Výjimka: ruční rezervace z jiné platformy než „Přímá" proti předrezervaci —
+    // kopií přímého prodeje být nemůže a nic jiného ji nezachytí (nemá uidh).
+    if(A.source==='manual' || B.source==='manual'){
+      if(A.source==='manual' && B.source==='manual') continue;
+      const M=A.source==='manual'?A:B, O=M===A?B:A;
+      if(!O.hold || (M.platform||'Přímá')==='Přímá') continue;
+    }
     if(A.uidh && B.uidh && A.uidh===B.uidh) continue;
     if(!overlapsRange(A,B)) continue;
     const samePlatform=(A.platform||'')===(B.platform||'');
@@ -235,8 +241,10 @@ function detectConflicts(stays, calendar, bookings, today){
       known:!!(A.uidh&&B.uidh&&KNOWN_UIDH.indexOf(A.uidh)>=0&&KNOWN_UIDH.indexOf(B.uidh)>=0) });
   }}
   const cal={}; calendar.forEach(c=>{ if(c.uidh) cal[c.uidh]=1; });
+  // host předrezervace je pod jejím řádkem — jeho starý uidh (zahozená ozvěna) nic neznamená
+  const held={}; stays.forEach(s=>{ if(s.hold && s.booking) held[s.booking.id]=1; });
   const horizon=addMonthsISO(today,12);
-  bookings.forEach(b=>{ if(!b.uidh||cal[b.uidh]) return; if(b.departure<today) return; if(b.arrival>horizon) return;
+  bookings.forEach(b=>{ if(!b.uidh||cal[b.uidh]||held[b.id]) return; if(b.departure<today) return; if(b.arrival>horizon) return;
     vanished.push({ booking:b }); });
   return { overlaps, vanished };
 }

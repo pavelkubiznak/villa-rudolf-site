@@ -671,9 +671,15 @@
       for (var j = i + 1; j < stays.length; j++) {
         var A = stays[i], B = stays[j];
         // Kalendářní pobyty (stejně jako VrConflictWatch) plus předrezervace, které
-        // v kalendáři ještě nejsou. Ruční „Přímá" záznamy zůstávají venku — bývají
-        // to nespárované kopie feedu, ne dvojitá rezervace.
-        if (A.source === 'manual' || B.source === 'manual') continue;
+        // v kalendáři ještě nejsou. Ruční záznamy zůstávají venku — bývají to
+        // nespárované kopie feedu, ne dvojitá rezervace. Výjimka: ruční rezervace
+        // z JINÉ platformy než „Přímá" proti předrezervaci. Kopií přímého prodeje
+        // být nemůže a v kalendáři ani ve „zmizelých" (nemá uidh) ji nic jiného nezachytí.
+        if (A.source === 'manual' || B.source === 'manual') {
+          if (A.source === 'manual' && B.source === 'manual') continue;
+          var M = A.source === 'manual' ? A : B, O = M === A ? B : A;
+          if (!O.hold || (M.platform || 'Přímá') === 'Přímá') continue;
+        }
         if (A.uidh && B.uidh && A.uidh === B.uidh) continue;
         if (!overlapsRange(A, B)) continue;
         var samePlatform = (A.platform || '') === (B.platform || '');
@@ -693,9 +699,13 @@
       }
     }
     var calUidh = {}; calendar.forEach(function (c) { if (c.uidh) calUidh[c.uidh] = 1; });
+    // Host předrezervace je v přehledu pod jejím řádkem; jeho starý uidh (třeba ozvěna
+    // z e-chalup, kterou kalendář od zapsání přímého prodeje zahazuje) nic neznamená.
+    var heldIds = {};
+    stays.forEach(function (s) { if (s.hold && s.booking) heldIds[s.booking.id] = true; });
     var horizon = addMonthsISO(today, 12); // feed má 13měsíční cutoff dopředu → jen do 12 měsíců
     bookings.forEach(function (b) {
-      if (!b.uidh || calUidh[b.uidh]) return;
+      if (!b.uidh || calUidh[b.uidh] || heldIds[b.id]) return;
       if (b.departure < today) return;
       if (b.arrival > horizon) return;
       res.vanished.push({ booking: b });

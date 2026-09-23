@@ -104,7 +104,10 @@ pravidlo: záznam z feedu na termín přímého prodeje, který už kalendář n
 `uidh`, přeskočí; když ho ještě nenese, spáruje ho s předrezervací. Jeden pobyt, ne dva,
 a žádná falešná dvojitá rezervace. **Ozvěna je to ale jen bez vlastního hosta** (nebo s hostem
 té předrezervace) — rezervace z platformy se spárovaným hostem na tentýž termín je druhý
-nárok a zůstane samostatně, i s červeným konfliktem (`echoOfHold()`). Naopak **částečný** překryv předrezervace s cizí
+nárok a zůstane samostatně, i s červeným konfliktem (`echoOfHold()`). Hlídač překryvů ruční pobyty
+jinak ignoruje (bývají to kopie feedu), ale **ruční rezervaci z jiné platformy než „Přímá"
+proti předrezervaci počítá** — nic jiného by ji nezachytilo. A host předrezervace se nehlásí
+mezi „zmizelými" jen proto, že jeho starý `uidh` (zahozená ozvěna) z kalendáře vypadl. Naopak **částečný** překryv předrezervace s cizí
 rezervací je skutečný konflikt a vyskočí červený banner.
 
 Totéž párování má kopii v n8n `VrDailyTasks` (stavba `stays` v `VrDailyTasks.code.js`) — od
