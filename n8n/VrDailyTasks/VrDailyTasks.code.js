@@ -364,7 +364,10 @@ calendar.forEach(c => { if (c.end < cutoff) return;
     // termínem), který má v kalendáři vlastní řádek → ten stačí. Jinak by šel dvakrát
     // a hlídač by z něj udělal konflikt sám se sebou.
     if (hs && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) return;
-    h = (hs && !usedHoldIds[hs.id]) ? hs : null; // přímý prodej v kalendáři ještě není → spárovat s blokací
+    // přímý prodej v kalendáři ještě není → spárovat s blokací; další ozvěny téhož
+    // termínu (i z jiné platformy) jsou tentýž nárok → přeskočit, jinak falešný konflikt
+    if (hs && usedHoldIds[hs.id]) return;
+    h = hs;
   }
   if (h) usedHoldIds[h.id] = true;
   let b = byUidh[c.uidh] || null;
