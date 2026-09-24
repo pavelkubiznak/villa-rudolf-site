@@ -573,6 +573,16 @@
       // přímé rezervace vyskočil červený konflikt sám se sebou.
       holdBySpan[h.arrival + '|' + h.departure] = h;
     });
+    // Host, kterého si živá předrezervace drží (bookingOfHold = týž termín). Když se
+    // přesunou oba a kalendář do příštího běhu Action nese pod starým platformním
+    // uidh pobytu ještě starý termín, nesmí si hosta vzít ten zastaralý řádek —
+    // patří k aktuálnímu termínu předrezervace.
+    var heldBooking = {};
+    holds.forEach(function (h) {
+      if (!holdOpen(h) || holdExpired(h)) return;
+      var hb = bookingOfHold(h);
+      if (hb) heldBooking[hb.id] = true;
+    });
     // Které přímé prodeje už kalendář nese pod vlastním uidh (vr_hold_uidh) — od
     // kalendářního #17 platí záznam ze správy a ozvěna z feedu se zahazuje. Dobíhající
     // ozvěnu (v archivu živá ještě STALE_AFTER_DAYS) pak tady přeskočíme stejně.
@@ -622,6 +632,7 @@
       if (h) usedHoldIds[h.id] = true;
       var b = byUidh[c.uidh] || null;
       if (b && usedBookingIds[b.id]) b = null;   // host patří jen jednomu řádku
+      if (b && heldBooking[b.id] && (b.arrival !== c.start || b.departure !== c.end)) b = null;
       if (!b && h) { var hb0 = bookingOfHold(h); if (hb0 && !usedBookingIds[hb0.id]) b = hb0; }
       if (b) usedBookingIds[b.id] = true;
       stays.push({

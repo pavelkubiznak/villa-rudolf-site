@@ -333,6 +333,10 @@ function bookingOfHold(h){
 const holdByUidh = {}, holdBySpan = {}, usedHoldIds = {};
 holds.forEach(h => { if (!holdOpen(h) || holdExpired(h)) return;
   holdByUidh[h.uidh] = h; holdBySpan[h.arrival + '|' + h.departure] = h; });
+// Host, kterého si živá předrezervace drží (týž termín). Přesunou-li se oba a kalendář
+// nese pod starým platformním uidh pobytu ještě starý termín, hosta si nevezme ten řádek.
+const heldBooking = {};
+holds.forEach(h => { if (!holdOpen(h) || holdExpired(h)) return; const hb = bookingOfHold(h); if (hb) heldBooking[hb.id] = true; });
 // Které přímé prodeje kalendář už nese pod vlastním uidh — i s termínem, protože
 // přesunutá předrezervace má pod tímtéž uidh do příštího běhu Action staré datum.
 const calUidh = {}; calendar.forEach(c => { if (c.uidh) calUidh[c.uidh + '|' + c.start + '|' + c.end] = true; });
@@ -365,6 +369,7 @@ calendar.forEach(c => { if (c.end < cutoff) return;
   if (h) usedHoldIds[h.id] = true;
   let b = byUidh[c.uidh] || null;
   if (b && usedIds[b.id]) b = null; // host patří jen jednomu řádku
+  if (b && heldBooking[b.id] && (b.arrival !== c.start || b.departure !== c.end)) b = null;
   if (!b && h) { const hb = bookingOfHold(h); if (hb && !usedIds[hb.id]) b = hb; }
   if (b) usedIds[b.id] = true;
   stays.push({ source:'calendar', uidh:c.uidh, start:c.start, end:c.end, platform:c.platform, booking:b, hold:h }); });

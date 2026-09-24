@@ -90,7 +90,8 @@ platformy importují. Termín tedy není potřeba blokovat ručně; „není zab
 hledá přes `vr_holds.booking_id`, a když vazba chybí, bere **jediný** ruční pobyt s platformou
 „Přímá" na přesně tentýž termín (dva kandidáti nebo jiná platforma = nehádá). Pobyt i hold
 musí nést **stejný termín** — po přesunu jen jednoho z nich se ukážou jako dva řádky, ať je
-nesoulad vidět. Bez toho byl každý přímý prodej v přehledu dvakrát (zjištěno 23. 9. 2026).
+nesoulad vidět. Po přesunu **obou** jde host s předrezervací na nový termín, i když kalendář
+do příštího běhu Action nese pod platformním `uidh` pobytu ještě ten starý. Bez toho byl každý přímý prodej v přehledu dvakrát (zjištěno 23. 9. 2026).
 
 ⚠️ **`vr_admin_upsert_hold` při úpravě přepíše `booking_id` i `request_id` tím, co přijde**
 (`null` = odpojit). Kdo ho volá s `p_id` existujícího holdu, musí obě vazby poslat zpátky.
