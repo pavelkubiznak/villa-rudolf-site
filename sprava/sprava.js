@@ -625,9 +625,11 @@
         // Ozvěna přímého prodeje, který má v kalendáři vlastní řádek → ten řádek stačí.
         if (hs && hs.uidh && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) return;
         // přímý prodej v kalendáři ještě není (Action po 3 h) → spárovat s blokací.
-        // Jen s JEDNÍM řádkem: kryje-li termín víc záznamů z feedu, dostal by každý
-        // tutéž předrezervaci i hosta a jeho zprávy a úkoly by se zdvojily.
-        h = (hs && !usedHoldIds[hs.id]) ? hs : null;
+        // Jen s JEDNÍM řádkem: kryje-li termín víc ozvěn (i z různých platforem),
+        // další jsou tentýž nárok — přeskočit. Jako samostatný pobyt by dostaly
+        // falešný konflikt s předrezervací a s hostem by se zdvojily zprávy a úkoly.
+        if (hs && usedHoldIds[hs.id]) return;
+        h = hs;
       }
       if (h) usedHoldIds[h.id] = true;
       var b = byUidh[c.uidh] || null;

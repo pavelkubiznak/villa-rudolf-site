@@ -102,7 +102,8 @@ od pobytu i od poptávky; `/smlouvy/` je posílá správně.
 platformy se **shodným** `(start, end)`. Skript kalendáře takovou událost **zahazuje** a platí
 záznam ze správy (do 17. 9. to bylo obráceně — zahazoval se hold). `buildStays()` drží stejné
 pravidlo: záznam z feedu na termín přímého prodeje, který už kalendář nese pod vlastním
-`uidh`, přeskočí; když ho ještě nenese, spáruje ho s předrezervací. Jeden pobyt, ne dva,
+`uidh`, přeskočí; když ho ještě nenese, spáruje s předrezervací první takový záznam a další ozvěny téhož termínu
+(i z jiné platformy) přeskočí. Jeden pobyt, ne dva,
 a žádná falešná dvojitá rezervace. **Ozvěna je to ale jen bez vlastního hosta** (nebo s hostem
 té předrezervace) — rezervace z platformy se spárovaným hostem na tentýž termín je druhý
 nárok a zůstane samostatně, i s červeným konfliktem (`echoOfHold()`). Hlídač překryvů ruční pobyty
