@@ -18,8 +18,11 @@ Aktualizováno: 23. 9. 2026
 | Šrafování matoucí pro úklid | ✅ **vyřešeno 13. 8.** |
 | Nepotvrzené záznamy strašily jako dvojitá rezervace | ✅ **vyřešeno 9. 9.** |
 | Stejná falešná hláška v `/sprava/` a v hlídači n8n | ✅ **vyřešeno 12. 9. na všech třech místech** (po #8 hlídač znovu čeká na re-import, viz Předrezervace) |
-| Číst 4 feedy zvlášť místo e-chalupy hubu | 🟡 **kód hotov, čeká na 3 secrety** |
-| Nálezy Codexu na publikaci předrezervací | 🟡 **opraveno, kalendář PR #14 čeká na merge** (viz Předrezervace) |
+| Číst feedy zvlášť místo e-chalupy hubu | 🟡 **kód hotov, čeká na secrety** (Airbnb, Booking, FeWo, nově i Megaubytko) |
+| Nálezy Codexu na publikaci předrezervací | 🟡 **opraveno, kalendář PR #14 čeká na merge** — 23. 9. srovnaný s `main`, poslední kolo revize čisté (viz Předrezervace) |
+| Výstupní feedy `data/out/*.ics` — platformy zrcadlí náš kalendář | ✅ **kód 17. 9., importy zapojené 17. 9.** (Airbnb, Booking, FeWo, e-chalupy); v hub módu jde ven jen přímý prodej |
+| Přímý prodej má přednost před ozvěnou vlastního bloku | ✅ **17. 9.** — do `history.json` jde přímý prodej, ozvěna z platformy se zahodí (dřív obráceně) |
+| Megaubytko.cz jako pátý kanál | 🟡 **kód 17. 9., čeká na secret `ICAL_URL_MEGAUBYTKO` + import `megaubytko.ics` u Megaubytka** |
 | **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | ✅ **zamčeno 15. 9. 2026** — `execute` jen `service_role` |
 
 **✅ Šrafování — hotovo a nasazeno 13. 8.** Šrafuje se **jen skutečná dvojitá rezervace**
@@ -132,7 +135,9 @@ kalendáře taky 18měsíční prune `history.json`.
 | Pojistka měna ⇒ účet (klient i databáze) | ✅ hotovo |
 | Publikace do kalendáře (`vr_public_holds()` → `history.json`) | ✅ hotovo v `villa-booking-calendar` |
 | Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
-| Nálezy revize na té publikaci (kalendář PR #14) | 🟡 **opraveno, čeká na merge** — sedm kol, poslední čisté |
+| Nálezy revize na té publikaci (kalendář PR #14) | 🟡 **opraveno, čeká na merge** — 7 kol, po srovnání s `main` 23. 9. dalších 5, poslední čisté (`55770d2`) |
+| Přímý prodej v přehledu `/sprava/` dvakrát + falešné „nezablokováno" | ✅ **opraveno 23. 9.** (PR #22, živé po merge) |
+| Totéž v denním e-mailu `n8n/VrDailyTasks` | 🟡 **kód v PR #22, čeká na merge + nasazení na server** (patch skript přidá uzel „Načíst předrezervace") |
 | `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód v `main` od 15. 9. (i s filtrem duchů z 12. 9.), čeká na re-import** |
 | Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **migrace v DB 15. 9., čeká na 3 tokeny Fia** |
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
@@ -145,11 +150,68 @@ kalendáře taky 18měsíční prune `history.json`.
 **14.–21. 8. 2027**: zálohová faktura vystavená i uhrazená, peníze v bance, a v systému nic.
 Spouštěčem proto **není platba, ale vystavení zálohové faktury**.
 
-**🟡 Revize kalendářní části: sedm kol nálezů, opravené, čeká na merge.** Codex review nad PR #9
+**🔴 Termín 21.–28. 8. 2027 propadá 25. 9.** Předrezervace s fakturou vystavenou 15. 9.,
+splatnou **22. 9.**; platba k 23. 9. zapsaná není. Když se do `hold_until` (25. 9.) nic nezmění,
+`vr_public_holds()` ji přestane vracet a termín se sám uvolní — na webu i na platformách
+(výstupní feedy). Než se to stane: ověřit, jestli platba nedorazila (i na jiný účet), a buď
+kliknout „Uhrazeno", nebo posunout `hold_until`.
+
+Stav přímých prodejů v srpnu 2027 (živá DB + `history.json` 23. 9.): **7.–14. 8.** potvrzený
+(bez čísla faktury a bez zapsané platby), **14.–21. 8.** potvrzený a uhrazený, **21.–28. 8.**
+předrezervace výš. Všechny tři jsou v `history.json` i ve výstupních feedech.
+
+**✅ `/sprava/` srovnaná s kalendářním #17 — opraveno 23. 9.** Od #17 nese přímý prodej
+v `history.json` **`uidh` své předrezervace** (`vr_hold_uidh(id)`), jenže `buildStays()`
+párovalo pobyt z `vr_bookings` jen přes `vr_bookings.uidh`. Pobyty 14.–21. a 21.–28. 8. ho
+mají prázdný; pobyt 7.–14. 8. je přes `uidh` navázaný na **záznam z e-chalupy** na tentýž
+termín (`a86a13…`, ve feedu od 22. 8.), který kalendář od zapsání přímého prodeje (23. 9.)
+zahazuje jako ozvěnu. Nad živými daty 23. 9. to dělalo v srpnu 2027 **7 řádků místo 3**
+(přímý prodej bez hosta + týž pobyt s hostem jako ruční, u 7.–14. 8. jako záznam z e-chalupy).
+K tomu dvě chyby stejného původu:
+- **falešná červená dvojitá rezervace na 7.–14. 8.** — záznam z e-chalupy `a86a13…` je
+  v archivu ještě živý (lastSeen 23. 9.) a přímý prodej leží přes něj; zestárne sám do 25. 9.;
+- **„termín není zablokovaný"** u 21.–28. 8. — `blockedOnPlatform()` hledala blokaci podle
+  ozvěny z feedu, kterou #17 zahazuje; u 7.–14. a 14.–21. 8. „vycházela" jen díky archivním
+  duchům. Blokaci teď dělá kalendář sám přes výstupní feedy.
+
+Oprava v `sprava.js`: host přes `hold.booking_id`, jinak **jediný** ruční pobyt „Přímá" na
+tentýž termín (dva nebo jiná platforma = nehádat), a pobyt i hold musí nést týž termín; ozvěna přímého prodeje, který už kalendář nese, se přeskočí; blokace =
+přímý prodej je v kalendáři pod svým `uidh`, nebo termín kryje živý (ne archivní) záznam
+platformy. Při tom opravená i starší duplicita: čerstvá předrezervace s hostem (do 3 h, než ji
+Action publikuje) byla v přehledu taky dvakrát. Ověřeno v Node nad živým `history.json`
+(7 → 3 řádky, všechny s hostem, 0 červených, 3/3 zablokované — i po zestárnutí `a86a13…`) i nad podvrženými daty
+(skutečná kolize pořád červeně; nepublikovaná předrezervace bez blokace pořád hlásí
+„nezablokováno"). V prohlížeči zatím ne — `/sprava/` je za tokenem.
+
+**🔴 Editor předrezervace v `/sprava/` mazal vazbu na pobyt a poptávku — opraveno 23. 9.**
+`vr_admin_upsert_hold` při úpravě přepíše `booking_id` i `request_id` tím, co přijde, a editor
+je neposílal — každé „Upravit" tedy předrezervaci odpojilo od hosta. Teď je posílá zpátky.
+Jestli tím přišla o vazbu i předrezervace 7.–14. 8., se z dat určit nedá — **propojená
+ručně v DB 23. 9.** (`vr_holds.booking_id` → pobyt se stejným termínem; jediný kandidát).
+
+*Zbývá z toho:*
+- **Editor předrezervace vazbu na pobyt nastavit neumí** — jen ji teď nezahodí. Nová vazba
+  vzniká přes `/smlouvy/` (smlouva z pobytu → Vystavit); jinak jen v DB.
+- **`n8n/VrDailyTasks`** — ✅ kód opravený 23. 9. (PR #22): načítá `vr_holds` a páruje stejně
+  jako `/sprava/`, včetně přeskočení ozvěny a eskalace „Přímá" × „Přímá". Ověřeno spuštěním
+  celého Code node nad živým `history.json`: srpen 2027 ze 7 řádků + falešného konfliktu
+  7.–14. 8. na 3 pobyty s hosty a 0 konfliktů; skutečný částečný překryv hlásí dál; bez nového
+  uzlu vyjdou pobyty i konflikty stejně jako dřív. `uidh` z vlastního SHA-256 sedí s `vr_hold_uidh()` (ověřeno
+  na reálné předrezervaci 7.–14. 8.). **Zbývá nasadit na server:** po merge
+  `python3 tools/n8n-patch-vrdailytasks.py <export> <patched>` (přidá a zapojí uzel
+  „Načíst předrezervace (service-role)"), import, publish, restart — viz `__jak_nasadit__`.
+- **Kalendářní stránky** (úklid i `owner.html`) ukazují na 7.–14. 8. 2027 do 25. 9. taky
+  červenou dvojitou rezervaci — týž dobíhající záznam `a86a13…`. Samo zmizí; trvale by to
+  chtělo, aby skript kalendáře při zahození ozvěny rovnou zestárnul i její archivní záznam.
+  Stejně tak `n8n/VrConflictWatch` může do té doby poslat e-mail o konfliktu 7.–14. 8.
+
+**🟡 Revize kalendářní části: opravené, čeká na merge.** Codex review nad PR #9
 v kalendáři se rozběhlo přechodem z draftu na „ready", jenže merge o čtrnáct vteřin později ho
-utnul — nálezy tak dorazily až nad živý kód. Dohnáno v kalendářním PR #14 (`d562b54`, mergeable,
-poslední kolo revize čisté; každý nález reprodukovaný proti tehdejší hlavě, žádný nebyl falešný
-poplach). **Poučení: nech review doběhnout, než mergneš** — trvá 4–7 minut, a push sám další kolo
+utnul — nálezy tak dorazily až nad živý kód. Dohnáno v kalendářním PR #14: sedm kol do 15. 9.,
+pak 23. 9. srovnání s `main` (kalendářní #16–#18) a dalších pět kol, poslední čisté (`55770d2`, mergeable;
+každý nález reprodukovaný proti tehdejší hlavě). Při srovnání s kalendářním #17 zrušeno stěhování ceny
+na blokaci — po #17 už nemá co řešit a u propadlé předrezervace by její cenu započítalo
+do tržeb. **Poučení: nech review doběhnout, než mergneš** — trvá 4–7 minut, a push sám další kolo
 nespustí, musí se napsat `@codex review`.
 
 Pro tenhle repo jsou z toho podstatné tři věci:
@@ -161,7 +223,10 @@ Pro tenhle repo jsou z toho podstatné tři věci:
   `None` (nedostupný zdroj) a **částečně** rozbitá jen přidává, nemaže. Prázdné pole dál znamená
   „nic nedržíme", takže propadlý hold se pořád uvolní sám.
 - **Cache prohlížeče v kalendáři držela zrušený hold** až do 18měsíčního prune a proti blokaci
-  z platformy z něj dělala červenou dvojitou rezervaci. **`/sprava/` tuhle past nemá:**
+  z platformy z něj dělala červenou dvojitou rezervaci. Srovnává se teď jen podle **úplného**
+  `history.json` — řádek s chybějícím/nesmyslným `uidh`, nemožným datem (`2027-02-30`) nebo
+  `end ≤ start` snapshot znehodnotí a cache pak jen přidává. Skript pobyt bez jediné noci
+  z feedu do `history.json` nepustí vůbec. **`/sprava/` tuhle past nemá:**
   `history.json` si tahá načisto při každém načtení (`cache: 'no-store'`), v `localStorage` drží
   jen admin token. Kdyby se sem někdy cache doplňovala, tohle je přesně to místo, kde se to zvrtne.
 - **Hold se do čísel nepočítá jako pobyt** — ani do obsazenosti, ani do tržeb, dokud není
@@ -172,14 +237,12 @@ Pro tenhle repo jsou z toho podstatné tři věci:
 1. ~~Spustit migraci `20260909_vr_holds.sql`~~ — **hotovo 15. 9. 2026** (i `20260910_vr_payments.sql`
    a `20260915_vr_contracts.sql`; po každé `notify pgrst, 'reload schema'`).
 2. **Znovu importovat `n8n/VrConflictWatch`** (Code node „Detekce konfliktů").
-3. **Zablokovat 14.–21. 8. 2027 na platformách.** V systému už je jako potvrzená přímá
-   rezervace i s údaji o platbě (doplněno 23. 9.). Kalendář i web ho drží jako obsazený —
-   **platformy ne**, v žádném feedu k 23. 9. není.
-4. **21.–28. 8. 2027** — předrezervace s vystavenou zálohovou fakturou; k 23. 9. **neuhrazená**,
-   **drží jen krátce** a taky **není zablokovaná na platformách**. Ověřit platbu na účtu; bez
-   „Uhrazeno“ nebo prodloužení se termín uvolní (datum v `/sprava/` → Předrezervace).
-   **7.–14. 8. 2027** má od 23. 9. potvrzený hold ze seedu (bez čísla faktury a částky —
-   doplnit v `/sprava/`); na platformách je zablokovaný přes e-chalupy.
+3. ~~Zapsat termín 14.–21. 8. 2027~~ — **hotovo 17. 9.**: potvrzený a uhrazený přímý prodej,
+   v `history.json` i ve výstupních feedech (platformy ho importují od 17. 9.).
+4. ~~Předrezervace 21.–28. 8. a 7.–14. 8. 2027~~ — **obě založené**: 7.–14. 8. potvrzená
+   (23. 9.), 21.–28. 8. předrezervace s fakturou i smlouvou — **splatnost 22. 9. prošla,
+   propadá 25. 9.**, viz výš. 7.–14. 8. s pobytem propojená 23. 9. Její hold založil 23. 9. přenos z `verified.json` (PR #13)
+   **bez čísla faktury a částky** — doplnit v `/sprava/` → Předrezervace.
 5. **Založit tři read-only tokeny Fia** (VR korunový, VR eurový, hlavní účet Sintery),
    vložit je do prostředí n8n jako `FIO_TOKEN_VR_CZK` / `_VR_EUR` / `_SINTERA` a poskládat
    workflow podle `n8n/VrPaymentWatch/README.md`. **První běhy nech read-only**
@@ -312,20 +375,22 @@ Actions „DB migrace (Supabase)"; obě potřebují repo secret `SUPABASE_DB_URL
 postup v hlavičce `.github/workflows/db-migrate.yml`). Třetí cesta je konektor Supabase
 v Claude Code, kterým proběhlo nasazení 15. 9.
 
-1. **Zablokovat 14.–21. 8. a 21.–28. 8. 2027 na platformách** — v kalendáři i na webu jsou
-   obsazené, ale v žádném feedu nejsou, takže je kterýkoli kanál může prodat znovu.
-   U 21.–28. 8. navíc **ověřit platbu**, než předrezervace propadne (viz Předrezervace, bod 4).
+1. ~~Zablokovat 14.–21. 8. a 21.–28. 8. 2027 na platformách~~ — **není potřeba**: všechny tři
+   srpnové přímé prodeje (7.–14., 14.–21., 21.–28. 8.) jsou ve všech čtyřech výstupních feedech
+   kalendáře (`data/out/*.ics`, ověřeno 23. 9. večer) a platformy je importují od 17. 9.
+   U 21.–28. 8. zbývá **ověřit platbu**, než předrezervace 25. 9. propadne (viz Předrezervace, bod 4).
 2. ~~`vr_purge_expired`~~ — **zamčeno 15. 9.** (viz sekce Kalendář)
 3. **Heslo Wi-Fi** — ~~migrace `20260915_vr_admin_config_wifi.sql`~~ nasazena 15. 9.; zbývá vyplnit
    v `/sprava/` → Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
    uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá
    `python3 tools/n8n-patch-vrdailytasks.py <export.json> <patched.json>` (postup v jeho hlavičce)
 4. ~~Spustit migrace `20260909_vr_holds.sql` a `20260910_vr_payments.sql`~~ — **hotovo 15. 9.**
-   (i `20260915_vr_contracts.sql`); faktura na 21.–28. 8. 2027 vystavená 15. 9.; seed z `verified.json`
-   spuštěn 23. 9. Zbývá **re-import `VrConflictWatch`**
+   (i `20260915_vr_contracts.sql`). Faktura + smlouva na 21.–28. 8. vystavené 15. 9.; přenos
+   z `verified.json` do `vr_holds` spuštěn 23. 9. (PR #13);
+   teď **ověřit platbu před 25. 9.** a **re-import `VrConflictWatch`**
 5. **Ověřit `supabase functions deploy album`** — oprava uploadu bez tokenu je v repu od 8. 9.,
    ale že nasazení proběhlo, není nikde zapsáno
-6. **Tři secrety pro čtyři feedy** — kód čeká nasazený, stačí URL z extranetů + zkušební běh
+6. **Secrety pro feedy jednotlivých kanálů** (Airbnb, Booking, FeWo, Megaubytko) — kód čeká nasazený, stačí URL z extranetů + zkušební běh
 7. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
 8. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)

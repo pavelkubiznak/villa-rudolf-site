@@ -221,19 +221,30 @@ function detectConflicts(stays, calendar, bookings, today){
   const overlaps=[], vanished=[];
   for(let i=0;i<stays.length;i++){ for(let j=i+1;j<stays.length;j++){
     const A=stays[i], B=stays[j];
-    if(A.source!=='calendar' || B.source!=='calendar') continue; // jen feed (jako VrConflictWatch)
+    // kalendář + předrezervace, které v něm ještě nejsou; ruční „Přímá" bývají
+    // nespárované kopie feedu, ne dvojitá rezervace (stejně jako sprava.js)
+    // Výjimka: ruční rezervace z jiné platformy než „Přímá" proti předrezervaci —
+    // kopií přímého prodeje být nemůže a nic jiného ji nezachytí (nemá uidh).
+    if(A.source==='manual' || B.source==='manual'){
+      if(A.source==='manual' && B.source==='manual') continue;
+      const M=A.source==='manual'?A:B, O=M===A?B:A;
+      if(!O.hold || (M.platform||'Přímá')==='Přímá') continue;
+    }
     if(A.uidh && B.uidh && A.uidh===B.uidh) continue;
     if(!overlapsRange(A,B)) continue;
     const samePlatform=(A.platform||'')===(B.platform||'');
     const bothPaired=!!A.booking && !!B.booking;
-    if(samePlatform && !bothPaired) continue;
+    // u předrezervace je vystavená faktura — „Přímá" × „Přímá" není artefakt kalendáře
+    if(samePlatform && !bothPaired && !A.hold && !B.hold) continue;
     overlaps.push({ a:A, b:B,
       os:(A.start>B.start?A.start:B.start), oe:(A.end<B.end?A.end:B.end),
       known:!!(A.uidh&&B.uidh&&KNOWN_UIDH.indexOf(A.uidh)>=0&&KNOWN_UIDH.indexOf(B.uidh)>=0) });
   }}
   const cal={}; calendar.forEach(c=>{ if(c.uidh) cal[c.uidh]=1; });
+  // host předrezervace je pod jejím řádkem — jeho starý uidh (zahozená ozvěna) nic neznamená
+  const held={}; stays.forEach(s=>{ if(s.hold && s.booking) held[s.booking.id]=1; });
   const horizon=addMonthsISO(today,12);
-  bookings.forEach(b=>{ if(!b.uidh||cal[b.uidh]) return; if(b.departure<today) return; if(b.arrival>horizon) return;
+  bookings.forEach(b=>{ if(!b.uidh||cal[b.uidh]||held[b.id]) return; if(b.departure<today) return; if(b.arrival>horizon) return;
     vanished.push({ booking:b }); });
   return { overlaps, vanished };
 }
@@ -254,9 +265,87 @@ const verifiedStatus = s => { const e = verified[s.start + '..' + s.end]; return
 
 const today = isoToday();
 const cutoff = addDaysISO(today, -14);
-const byUidh = {}; bookings.forEach(b => { if (b.uidh) byUidh[b.uidh] = b; });
+const byUidh = {}, byId = {}; bookings.forEach(b => { if (b.uidh) byUidh[b.uidh] = b; byId[b.id] = b; });
 
-// sloučené pobyty (kalendář + ruční), stejně jako buildStays()
+/* ---------- předrezervace (vr_holds) ---------- */
+// Přímý prodej je v history.json pod uidh SVÉ předrezervace (vr_hold_uidh), ne pod
+// uidh pobytu — pobyt z /smlouvy/ nebo z „+ Předrezervace" ho má prázdný. Bez
+// předrezervací by kalendářní řádek zůstal bez hosta (→ „nespárovaný pobyt") a host
+// by šel podruhé jako ruční pobyt. Čte se JMÉNEM uzlu, jako žádosti a UbyPort.
+// Chybějící uzel / chyba dotazu = prázdný seznam: párování jede jako dřív (jen přes
+// uidh) a denní e-mail se kvůli tomu nezastaví.
+let holds = [];
+try {
+  const hItems = $('Načíst předrezervace (service-role)').all();
+  const raw = (hItems.length === 1 && Array.isArray(hItems[0].json))
+    ? hItems[0].json
+    : hItems.map(i => i.json);
+  holds = raw.filter(h => h && h.id && h.arrival && h.departure);
+} catch (e) { holds = []; }
+// uidh = vr_hold_uidh(id) = sha256('vr-hold:' + id)[:16] — tabulka ho jako sloupec
+// nemá a require('crypto') v Code node nemusí být povolený, proto vlastní SHA-256.
+// Vstup je vždy ASCII (uuid), víc tahle implementace neumí.
+function sha256hex(ascii){
+  const rot=(v,n)=>(v>>>n)|(v<<(32-n)), frac=x=>((x-Math.floor(x))*4294967296)|0;
+  const H=[], K=[];
+  for(let n=2,c=0;c<64;n++){ let prime=true; for(let d=2;d*d<=n;d++) if(n%d===0){ prime=false; break; }
+    if(!prime) continue; if(c<8) H[c]=frac(Math.sqrt(n)); K[c++]=frac(Math.cbrt(n)); }
+  const bytes=[]; for(let i=0;i<ascii.length;i++) bytes.push(ascii.charCodeAt(i)&0xff);
+  const bits=bytes.length*8; bytes.push(0x80); while(bytes.length%64!==56) bytes.push(0);
+  bytes.push(0,0,0,0,(bits>>>24)&0xff,(bits>>>16)&0xff,(bits>>>8)&0xff,bits&0xff);
+  for(let o=0;o<bytes.length;o+=64){ const W=[];
+    for(let i=0;i<16;i++) W[i]=(bytes[o+4*i]<<24)|(bytes[o+4*i+1]<<16)|(bytes[o+4*i+2]<<8)|bytes[o+4*i+3];
+    for(let i=16;i<64;i++){ const x=W[i-15], y=W[i-2];
+      W[i]=(W[i-16]+(rot(x,7)^rot(x,18)^(x>>>3))+W[i-7]+(rot(y,17)^rot(y,19)^(y>>>10)))|0; }
+    let [a,b,c,d,e,f,g,h]=H;
+    for(let i=0;i<64;i++){
+      const t1=(h+(rot(e,6)^rot(e,11)^rot(e,25))+((e&f)^(~e&g))+K[i]+W[i])|0;
+      const t2=((rot(a,2)^rot(a,13)^rot(a,22))+((a&b)^(a&c)^(b&c)))|0;
+      h=g; g=f; f=e; e=(d+t1)|0; d=c; c=b; b=a; a=(t1+t2)|0; }
+    H[0]=(H[0]+a)|0; H[1]=(H[1]+b)|0; H[2]=(H[2]+c)|0; H[3]=(H[3]+d)|0;
+    H[4]=(H[4]+e)|0; H[5]=(H[5]+f)|0; H[6]=(H[6]+g)|0; H[7]=(H[7]+h)|0; }
+  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('');
+}
+holds.forEach(h => { h.uidh = sha256hex('vr-hold:' + String(h.id).toLowerCase()).slice(0,16); });
+const holdOpen = h => h.status === 'hold' || h.status === 'confirmed';
+const holdExpired = h => h.status === 'hold' && h.hold_until && h.hold_until < today;
+
+// Host k předrezervaci — stejně jako bookingOfHold() v sprava.js: primárně vazba
+// booking_id, jinak JEDINÝ ruční pobyt „Přímá" bez uidh na přesně tentýž termín.
+// Pobyt musí nést TÝŽ termín jako předrezervace (po přesunu jen jedné z nich radši
+// dva řádky než úkoly podle starého data). Pobyt, na který už odkazuje nějaká
+// předrezervace, patří jí; dvě nepropojené předrezervace na tentýž termín = nehádat.
+const linkedToHold = {}, unlinkedHoldsBySpan = {};
+holds.forEach(h => {
+  if (h.booking_id) { linkedToHold[h.booking_id] = true; return; }
+  if (!holdOpen(h) || holdExpired(h)) return;
+  const k = h.arrival + '|' + h.departure;
+  unlinkedHoldsBySpan[k] = (unlinkedHoldsBySpan[k] || 0) + 1;
+});
+function bookingOfHold(h){
+  if (!h) return null;
+  const sameSpan = b => b && b.arrival === h.arrival && b.departure === h.departure;
+  if (h.booking_id) { const lb = byId[h.booking_id]; return sameSpan(lb) ? lb : null; }
+  if ((unlinkedHoldsBySpan[h.arrival + '|' + h.departure] || 0) > 1) return null;
+  const same = bookings.filter(b => !b.uidh && !linkedToHold[b.id] && (b.platform || 'Přímá') === 'Přímá' && sameSpan(b));
+  return same.length === 1 ? same[0] : null;
+}
+const holdByUidh = {}, holdBySpan = {}, usedHoldIds = {};
+holds.forEach(h => { if (!holdOpen(h) || holdExpired(h)) return;
+  holdByUidh[h.uidh] = h; holdBySpan[h.arrival + '|' + h.departure] = h; });
+// Host, kterého si živá předrezervace drží (týž termín). Přesunou-li se oba a kalendář
+// nese pod starým platformním uidh pobytu ještě starý termín, hosta si nevezme ten řádek.
+const heldBooking = {};
+holds.forEach(h => { if (!holdOpen(h) || holdExpired(h)) return; const hb = bookingOfHold(h); if (hb) heldBooking[hb.id] = true; });
+// Které přímé prodeje kalendář už nese pod vlastním uidh — i s termínem, protože
+// přesunutá předrezervace má pod tímtéž uidh do příštího běhu Action staré datum.
+const calUidh = {}; calendar.forEach(c => { if (c.uidh) calUidh[c.uidh + '|' + c.start + '|' + c.end] = true; });
+// Záznam z feedu je ozvěnou předrezervace, jen když nemá vlastního hosta (nebo je to
+// host té předrezervace). Rezervace se spárovaným hostem na tentýž termín je druhý
+// nárok — sloučit ji s předrezervací by dvojitou rezervaci schovalo.
+function echoOfHold(c, h){ const cb = byUidh[c.uidh]; if (!cb) return true; const hb = bookingOfHold(h); return !!hb && hb.id === cb.id; }
+
+// sloučené pobyty (kalendář + předrezervace + ruční), stejně jako buildStays()
 const stays = []; const usedIds = {};
 calendar.forEach(c => { if (c.end < cutoff) return;
   // Nepotvrzený záznam (duch) = ve feedu už není, ale pobyt teprve má proběhnout —
@@ -265,10 +354,33 @@ calendar.forEach(c => { if (c.end < cutoff) return;
   // pobyt je stale; bez té podmínky by zmizel celý archiv.
   // Stejné pravidlo jako sprava.js (buildStays) a VrConflictWatch.detect.js.
   if (c.stale === true && c.end > today) return;
-  const b = byUidh[c.uidh] || null; if (b) usedIds[b.id] = true;
-  stays.push({ source:'calendar', uidh:c.uidh, start:c.start, end:c.end, platform:c.platform, booking:b }); });
+  let h = holdByUidh[c.uidh] || null;
+  // přesunutá předrezervace: starý termín pod jejím uidh už nic nedrží (krok 2 ji vezme s novým)
+  if (h && (h.arrival !== c.start || h.departure !== c.end)) return;
+  if (!h) {
+    let hs = holdBySpan[c.start + '|' + c.end] || null;
+    if (hs && !echoOfHold(c, hs)) hs = null; // vlastní host = samostatná rezervace
+    // Ozvěna přímého prodeje (blok z data/out/*.ics nebo ruční blokace se shodným
+    // termínem), který má v kalendáři vlastní řádek → ten stačí. Jinak by šel dvakrát
+    // a hlídač by z něj udělal konflikt sám se sebou.
+    if (hs && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) return;
+    h = (hs && !usedHoldIds[hs.id]) ? hs : null; // přímý prodej v kalendáři ještě není → spárovat s blokací
+  }
+  if (h) usedHoldIds[h.id] = true;
+  let b = byUidh[c.uidh] || null;
+  if (b && usedIds[b.id]) b = null; // host patří jen jednomu řádku
+  if (b && heldBooking[b.id] && (b.arrival !== c.start || b.departure !== c.end)) b = null;
+  if (!b && h) { const hb = bookingOfHold(h); if (hb && !usedIds[hb.id]) b = hb; }
+  if (b) usedIds[b.id] = true;
+  stays.push({ source:'calendar', uidh:c.uidh, start:c.start, end:c.end, platform:c.platform, booking:b, hold:h }); });
+// předrezervace, které v kalendáři ještě nejsou (Action po 3 h) — PŘED ručními pobyty,
+// jinak by se jejich host přidal ještě jednou jako ruční pobyt
+holds.forEach(h => { if (usedHoldIds[h.id] || !holdOpen(h) || holdExpired(h) || h.departure < cutoff) return;
+  let b = bookingOfHold(h); if (b && usedIds[b.id]) b = null; // host patří jen jednomu řádku
+  if (b) usedIds[b.id] = true;
+  stays.push({ source:'hold', uidh:h.uidh, start:h.arrival, end:h.departure, platform:'Přímá', booking:b, hold:h }); });
 bookings.forEach(b => { if (usedIds[b.id]) return; if (b.departure < cutoff) return;
-  stays.push({ source:'manual', uidh:b.uidh||null, start:b.arrival, end:b.departure, platform:b.platform||'Přímá', booking:b }); });
+  stays.push({ source:'manual', uidh:b.uidh||null, start:b.arrival, end:b.departure, platform:b.platform||'Přímá', booking:b, hold:null }); });
 stays.sort((x,y)=> x.start<y.start?-1:x.start>y.start?1:0);
 
 // hlídač konfliktů (nevyřešené — jen shrnutí; detailní e-mail už poslal VrConflictWatch)
@@ -294,6 +406,10 @@ tasks.sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:0);
 const problems = [];
 stays.forEach(s => {
   const b = s.booking;
+  // Nezaplacená předrezervace bez hosta: host se doplňuje až po zaplacení, do
+  // „nespárovaných" nepatří. Uhrazená (confirmed) ale je pobyt jako každý jiný — bez
+  // hosta nedostane zprávy ani kód a e-mail je jediné místo, kde se to dozví.
+  if (!b && s.hold && s.hold.status === 'hold') return;
   if (!b) { // nespárovaný pobyt z kalendáře: start v [dnes−14, dnes+35] — potvrzení je T−30, hlásit dřív.
     // Servisní blok majitele a nepotvrzený termín (verified.json) hosta nemají → nehlásit. Stejně jako sprava.js.
     const vs = verifiedStatus(s);

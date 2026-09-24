@@ -79,11 +79,45 @@ rezervaci potvrdí (host svoje udělal), ale zůstane v záznamu, že je potřeb
 zablokovaný na platformách** — dokud není, může ho kterýkoli kanál prodat znovu, hub nás
 neochrání.
 
-**Párování s blokací na platformě.** Když majitel termín zablokuje v e-chalupách, vrátí se
-zpátky feedem. Skript kalendáře proto hold se **shodným** `(start, end)` nepublikuje a
-`buildStays()` v `sprava.js` ho ke stejnému termínu přilepí — jeden pobyt, ne dva, a žádná
-falešná dvojitá rezervace. Naopak **částečný** překryv předrezervace s cizí rezervací je
-skutečný konflikt a vyskočí červený banner.
+**Blokace na platformách dělá kalendář sám (od 17. 9. 2026).** Přímý prodej, který Action
+publikuje do `history.json`, jde i do výstupních feedů kalendáře (`data/out/*.ics`) a ty si
+platformy importují. Termín tedy není potřeba blokovat ručně; „není zablokovaný" hlásí
+`/sprava/` jen u předrezervace, kterou kalendář ještě nepublikoval (Action běží po 3 h).
+
+**Párování s kalendářem.** Přímý prodej je v `history.json` pod **`uidh` své předrezervace**
+(`vr_hold_uidh(id)`), ne pod `uidh` pobytu — ten mají pobyty z `/smlouvy/` a z tlačítka
+„+ Předrezervace" prázdný. `buildStays()` v `sprava.js` proto hosta ke kalendářnímu řádku
+hledá přes `vr_holds.booking_id`, a když vazba chybí, bere **jediný** ruční pobyt s platformou
+„Přímá" na přesně tentýž termín (dva kandidáti nebo jiná platforma = nehádá). Pobyt i hold
+musí nést **stejný termín** — po přesunu jen jednoho z nich se ukážou jako dva řádky, ať je
+nesoulad vidět. Po přesunu **obou** jde host s předrezervací na nový termín, i když kalendář
+do příštího běhu Action nese pod platformním `uidh` pobytu ještě ten starý. Bez toho byl každý přímý prodej v přehledu dvakrát (zjištěno 23. 9. 2026).
+
+⚠️ **`vr_admin_upsert_hold` při úpravě přepíše `booking_id` i `request_id` tím, co přijde**
+(`null` = odpojit). Kdo ho volá s `p_id` existujícího holdu, musí obě vazby poslat zpátky.
+Editor v `/sprava/` to do 23. 9. 2026 nedělal, takže každé „Upravit" předrezervaci odpojilo
+od pobytu i od poptávky; `/smlouvy/` je posílá správně.
+
+**Ozvěna blokace.** Blok z výstupního feedu (nebo ruční blokace majitele) se vrací zpátky feedem
+platformy se **shodným** `(start, end)`. Skript kalendáře takovou událost **zahazuje** a platí
+záznam ze správy (do 17. 9. to bylo obráceně — zahazoval se hold). `buildStays()` drží stejné
+pravidlo: záznam z feedu na termín přímého prodeje, který už kalendář nese pod vlastním
+`uidh`, přeskočí; když ho ještě nenese, spáruje ho s předrezervací. Jeden pobyt, ne dva,
+a žádná falešná dvojitá rezervace. **Ozvěna je to ale jen bez vlastního hosta** (nebo s hostem
+té předrezervace) — rezervace z platformy se spárovaným hostem na tentýž termín je druhý
+nárok a zůstane samostatně, i s červeným konfliktem (`echoOfHold()`). Hlídač překryvů ruční pobyty
+jinak ignoruje (bývají to kopie feedu), ale **ruční rezervaci z jiné platformy než „Přímá"
+proti předrezervaci počítá** — nic jiného by ji nezachytilo. A host předrezervace se nehlásí
+mezi „zmizelými" jen proto, že jeho starý `uidh` (zahozená ozvěna) z kalendáře vypadl. Naopak **částečný** překryv předrezervace s cizí
+rezervací je skutečný konflikt a vyskočí červený banner.
+
+Totéž párování má kopii v n8n `VrDailyTasks` (stavba `stays` v `VrDailyTasks.code.js`) — od
+23. 9. 2026 i s předrezervacemi. Čte je uzel „Načíst předrezervace (service-role)" (GET
+`vr_holds`, jen `id,arrival,departure,status,hold_until,booking_id`); `uidh` tabulka nemá,
+kód si ho dopočítá stejně jako `vr_hold_uidh()` — `sha256('vr-hold:' + id)[:16]`, vlastní
+implementací SHA-256, protože `require('crypto')` v Code node nemusí být povolený.
+Bez toho uzlu páruje jako dřív (jen přes `uidh`). Kdo mění párování v `sprava.js`, mění ho
+i tam.
 
 ## Ubytovací smlouvy (`/smlouvy/`, `vr_contracts`)
 

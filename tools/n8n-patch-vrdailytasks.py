@@ -30,6 +30,7 @@ CODE_NODE = 'Spočítat úkoly'
 BOOKINGS_NODE = 'Načíst pobyty (service-role)'
 CONFIG_NODE = 'Načíst konfiguraci (service-role)'
 UBY_NODE = 'Načíst hlášení cizinců (service-role)'
+HOLDS_NODE = 'Načíst předrezervace (service-role)'
 
 
 def load_workflow(obj):
@@ -155,11 +156,55 @@ def patch(w):
     else:
         by_name[UBY_NODE]['alwaysOutputData'] = True
 
-    # 4) Execute Once na uzlech za „Načíst žádosti“: ten vrací pole a n8n ho rozseká
+    # 4) předrezervace — bez nich se přímý prodej (v kalendáři pod uidh předrezervace)
+    #    nespáruje s hostem a jde v e-mailu dvakrát. Ze vr_holds jen termín, stav a vazba
+    #    na pobyt; uidh si kód dopočítá z id. Zapojí se těsně před „Načíst pobyty".
+    if HOLDS_NODE not in by_name:
+        src = by_name[BOOKINGS_NODE]
+        hn = {
+            'parameters': {
+                'url': 'https://fpknbrzbqpalguajskut.supabase.co/rest/v1/vr_holds',
+                'authentication': src['parameters'].get('authentication', 'genericCredentialType'),
+                'genericAuthType': src['parameters'].get('genericAuthType', 'httpHeaderAuth'),
+                'sendQuery': True,
+                'queryParameters': {'parameters': [
+                    {'name': 'select', 'value': 'id,arrival,departure,status,hold_until,booking_id'},
+                ]},
+                'sendHeaders': src['parameters'].get('sendHeaders', True),
+                'headerParameters': copy.deepcopy(src['parameters'].get('headerParameters', {'parameters': []})),
+                'options': {'response': {'response': {'responseFormat': 'json'}}},
+            },
+            'id': 'a1000000-0000-4000-8000-000000000007',
+            'name': HOLDS_NODE,
+            'type': 'n8n-nodes-base.httpRequest',
+            'typeVersion': src.get('typeVersion', 4.2),
+            'position': [src['position'][0] - 110, src['position'][1] - 160],
+            # Prázdná tabulka ani chyba nesmí zastavit denní e-mail — kód pak páruje jako dřív.
+            'alwaysOutputData': True,
+            'onError': 'continueRegularOutput',
+            'notes': 'Předrezervace (vr_holds) — čte je „Spočítat úkoly" jménem uzlu.',
+        }
+        if 'credentials' in src:
+            hn['credentials'] = copy.deepcopy(src['credentials'])
+        nodes.insert(nodes.index(src), hn)
+        redirected = 0
+        for from_name, outs in conns.items():
+            for branch in outs.get('main', []):
+                for link in branch:
+                    if link.get('node') == BOOKINGS_NODE:
+                        link['node'] = HOLDS_NODE
+                        redirected += 1
+        if redirected == 0:
+            sys.exit(f'do „{BOOKINGS_NODE}" nevede žádné spojení — nečekaný tvar workflow')
+        conns[HOLDS_NODE] = {'main': [[{'node': BOOKINGS_NODE, 'type': 'main', 'index': 0}]]}
+    else:
+        by_name[HOLDS_NODE]['alwaysOutputData'] = True
+
+    # 5) Execute Once na uzlech za „Načíst žádosti“: ten vrací pole a n8n ho rozseká
     #    na položky — bez tohohle by konfigurace, hlášení i pobyty běžely jednou za
     #    každou otevřenou žádost a úkoly v e-mailu by se zdvojovaly.
     by_name = {n['name']: n for n in nodes}
-    for name in (CONFIG_NODE, UBY_NODE, BOOKINGS_NODE):
+    for name in (CONFIG_NODE, UBY_NODE, HOLDS_NODE, BOOKINGS_NODE):
         by_name[name]['executeOnce'] = True
     return w
 
@@ -197,6 +242,8 @@ def main():
         sys.exit('KONTROLA SELHALA: konfigurace není před „Načíst pobyty"')
     if UBY_NODE not in after or after.index(UBY_NODE) > after.index(BOOKINGS_NODE):
         sys.exit('KONTROLA SELHALA: hlášení cizinců není před „Načíst pobyty"')
+    if HOLDS_NODE not in after or after.index(HOLDS_NODE) > after.index(BOOKINGS_NODE):
+        sys.exit('KONTROLA SELHALA: předrezervace nejsou před „Načíst pobyty"')
     if dst:
         with open(dst, 'w', encoding='utf-8') as f:
             json.dump(wrap(w2), f, ensure_ascii=False, indent=2)
