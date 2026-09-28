@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  var VERZE = '2026-09-28';
+  var VERZE = '2026-09-28b';
   var PORTAL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/';
   var WEB = 'https://villarudolf.com/';
   /* Odkaz na aplikaci pro hosty z jiného repa — dokud je null, dlaždice se neukáže. */
@@ -160,7 +160,11 @@
         (tipy.length ? '<h2>' + esc(t.dnesSeHodi) + '</h2><div class="grid">' + tipy.map(tripKarta).join('') + '</div>' : '');
     },
     dum: function (t) { return '<h1>' + esc(t.menu.dum) + '</h1><p class="sub">Villa Rudolf · Luční 519, Svoboda nad Úpou</p>' + karty(t.dum); },
-    sauna: function (t) { return '<h1>' + esc(t.saunaTitul) + '</h1><p class="sub">' + esc(t.saunaUvod) + '</p>' + karty(t.sauna); },
+    sauna: function (t) {
+      /* první dvě karty jsou fakta (zapnutí, nahřátí), zbytek doporučení */
+      return '<h1>' + esc(t.saunaTitul) + '</h1><p class="sub">' + esc(t.saunaUvod) + '</p>' + karty(t.sauna.slice(0, 2)) +
+        '<h2>' + esc(t.doporuceni) + '</h2>' + karty(t.sauna.slice(2));
+    },
     bazen: function (t) {
       var mimo = !bazenSezona(dnes());
       return '<h1>' + esc(t.bazenTitul) + '</h1><p class="sub">' + esc(mimo ? t.bazenMimoText : t.bazenUvod) + '</p>' + karty(t.bazen);

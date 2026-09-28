@@ -37,13 +37,14 @@ window.VR_TEXTY = {
     saunaTitul: 'Finská sauna',
     saunaUvod: 'V suterénu, s předsálím a sprchou. Je jen vaše, v ceně pobytu a bez rezervací.',
     sauna: [
+      ['power', 'Zapnutí', 'Saunu zapnete ručně přímo dole v sauně. Na dálku ji zapnout nejde – schválně, kvůli bezpečnosti.'],
       ['clock', 'Nahřátí', 'Sauna se nahřeje zhruba za půl hodiny.'],
-      ['power', 'Zapnutí', ''],
       ['shower', 'Před saunou', 'Osprchujte se a osušte. Seďte a lehejte vždy na ručníku.'],
       ['timer', 'Jedno kolo', '8–15 minut, podle toho, jak je vám dobře. Pak se zchlaďte a aspoň stejně dlouho odpočívejte.'],
       ['water', 'Pijte vodu', 'Mezi koly pijte vodu. Alkohol nechte až na potom.'],
       ['kids', 'Děti', 'Děti do sauny jen s dospělým.']
     ],
+    doporuceni: 'Doporučujeme',
     bazenTitul: 'Bazén',
     bazenUvod: 'Zastřešený a vyhřívaný, večer nasvícený. Dá se zamknout.',
     bazen: [
@@ -119,13 +120,14 @@ window.VR_TEXTY = {
     saunaTitul: 'Finnische Sauna',
     saunaUvod: 'Im Untergeschoss, mit Vorraum und Dusche. Nur für euch, im Preis inbegriffen, ohne Reservierung.',
     sauna: [
+      ['power', 'Einschalten', 'Die Sauna wird von Hand direkt unten in der Sauna eingeschaltet. Aus der Ferne geht das bewusst nicht – aus Sicherheitsgründen.'],
       ['clock', 'Aufheizen', 'Die Sauna ist in etwa einer halben Stunde warm.'],
-      ['power', 'Einschalten', ''],
       ['shower', 'Vor der Sauna', 'Duschen und abtrocknen. Immer auf einem Handtuch sitzen und liegen.'],
       ['timer', 'Ein Saunagang', '8–15 Minuten, je nach Wohlbefinden. Danach abkühlen und mindestens genauso lange ruhen.'],
       ['water', 'Wasser trinken', 'Zwischen den Gängen Wasser trinken. Alkohol lieber erst danach.'],
       ['kids', 'Kinder', 'Kinder nur mit Erwachsenen in die Sauna.']
     ],
+    doporuceni: 'Unsere Empfehlungen',
     bazenTitul: 'Pool',
     bazenUvod: 'Überdacht und beheizt, abends beleuchtet. Er lässt sich abschließen.',
     bazen: [
@@ -201,13 +203,14 @@ window.VR_TEXTY = {
     saunaTitul: 'Finnish sauna',
     saunaUvod: 'In the basement, with a lounge and shower. Private, included in your stay, no booking needed.',
     sauna: [
+      ['power', 'Switching on', 'Switch the sauna on by hand, right downstairs in the sauna. It deliberately cannot be switched on remotely – for safety.'],
       ['clock', 'Heating up', 'The sauna takes about half an hour to heat up.'],
-      ['power', 'Switching on', ''],
       ['shower', 'Before the sauna', 'Shower and dry off. Always sit and lie on a towel.'],
       ['timer', 'One round', '8–15 minutes, as long as you feel good. Then cool down and rest at least as long.'],
       ['water', 'Drink water', 'Drink water between rounds. Save the alcohol for later.'],
       ['kids', 'Children', 'Children only with an adult.']
     ],
+    doporuceni: 'Our recommendations',
     bazenTitul: 'Pool',
     bazenUvod: 'Covered and heated, lit in the evening. It can be locked.',
     bazen: [
@@ -283,13 +286,14 @@ window.VR_TEXTY = {
     saunaTitul: 'Sauna fińska',
     saunaUvod: 'W piwnicy, z przedsionkiem i prysznicem. Tylko dla was, w cenie pobytu, bez rezerwacji.',
     sauna: [
+      ['power', 'Włączanie', 'Saunę włączacie ręcznie, na dole w saunie. Zdalnie włączyć się jej celowo nie da – ze względów bezpieczeństwa.'],
       ['clock', 'Nagrzewanie', 'Sauna nagrzewa się mniej więcej pół godziny.'],
-      ['power', 'Włączanie', ''],
       ['shower', 'Przed sauną', 'Weźcie prysznic i wytrzyjcie się. Siedźcie i leżcie zawsze na ręczniku.'],
       ['timer', 'Jedna runda', '8–15 minut, zależnie od samopoczucia. Potem schłodźcie się i odpoczywajcie co najmniej tyle samo.'],
       ['water', 'Pijcie wodę', 'Między rundami pijcie wodę. Alkohol zostawcie na później.'],
       ['kids', 'Dzieci', 'Dzieci do sauny tylko z dorosłym.']
     ],
+    doporuceni: 'Polecamy',
     bazenTitul: 'Basen',
     bazenUvod: 'Zadaszony i podgrzewany, wieczorem oświetlony. Można go zamknąć na klucz.',
     bazen: [
