@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Villa Rudolf</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<!-- Průvodce pro hosty na televizi (aplikace Villa Rudolf na TV ve vile).
+     Ovládání šipkami ovladače. Stejná stránka je zabalená i v aplikaci pro případ výpadku internetu. -->
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="tv.css">
+</head>
+<body>
+<div class="app">
+  <nav class="side">
+    <div class="brand">
+      <span class="brand-eye">Svoboda nad Úpou · Krkonoše</span>
+      <span class="brand-name">Villa Rudolf</span>
+    </div>
+    <div class="clock"><span id="cas">--:--</span><span id="datum"></span></div>
+    <ul class="menu" id="menu"></ul>
+    <div class="langs" id="langs"></div>
+    <svg class="hory" viewBox="0 0 440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 120V78l40-18 36 10 50-34 38 20 30-12 44 26 52-40 44 30 36-8 70 32v36z" fill="rgba(233,185,73,.10)"/>
+      <path d="M0 120V96l60-14 44 8 56-22 50 16 60-26 48 20 52-10 70 22v30z" fill="rgba(233,185,73,.16)"/>
+    </svg>
+  </nav>
+  <main class="main" id="main"></main>
+</div>
+<div class="detail" id="detail" hidden></div>
+<div class="toast" id="toast" hidden></div>
+<script src="lib/qrcode.js"></script>
+<script src="texty.js"></script>
+<script src="tv.js"></script>
+</body>
+</html>
