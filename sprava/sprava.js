@@ -523,11 +523,28 @@
     }).catch(function () { return []; });
   }
 
+  // Stornované na platformě: uidh, které kalendář nese JEN jako nepotvrzený záznam
+  // (stale, pobyt teprve má proběhnout) — pobyt z feedu vypadl. history.json si ho
+  // pamatuje dál, takže „je uidh v kalendáři?" nestačí: host by zůstal v přehledu jako
+  // běžný pobyt a DNES by mu nabízelo zprávy. Stejné pravidlo jako VrDailyTasks
+  // a VrConflictWatch.detect.js.
+  function cancelledOnPlatform(today) {
+    var ghost = {}, live = {};
+    calendar.forEach(function (c) {
+      if (!c.uidh) return;
+      if (c.stale === true && c.end > today) ghost[c.uidh] = 1; else live[c.uidh] = 1;
+    });
+    var res = {};
+    Object.keys(ghost).forEach(function (u) { if (!live[u]) res[u] = true; });
+    return res;
+  }
+
   function buildStays() {
     var today = isoToday();
     var cutoff = addDaysISO(today, -14);
     var byUidh = {}, byId = {};
     bookings.forEach(function (b) { if (b.uidh) byUidh[b.uidh] = b; byId[b.id] = b; });
+    var cancelled = cancelledOnPlatform(today);
 
     // Host k předrezervaci. Přímý prodej je v history.json pod uidh SVÉ předrezervace
     // (vr_hold_uidh), ne pod uidh pobytu — pobyt ve vr_bookings ho má prázdný. Párovat
@@ -662,6 +679,9 @@
     // 3) ruční pobyty (bez uidh, nebo uidh mimo kalendář) v okně
     bookings.forEach(function (b) {
       if (usedBookingIds[b.id]) return;
+      // Storno na platformě: do přehledu ani do DNES nepatří (zprávy by šly zrušenému
+      // hostovi). Hlásí ho žlutý banner „Pobyt zmizel z kalendáře", odkud jde smazat.
+      if (b.uidh && cancelled[b.uidh]) return;
       if (b.uidh && byUidh[b.uidh] && stays.some(function (s) { return s.booking && s.booking.id === b.id; })) return;
       if (b.departure < cutoff) return;
       stays.push({
@@ -712,7 +732,10 @@
         else res.overlaps.push(item);
       }
     }
-    var calUidh = {}; calendar.forEach(function (c) { if (c.uidh) calUidh[c.uidh] = 1; });
+    // Jen platné záznamy: nepotvrzený (storno) si history.json pamatuje dál, a kdyby
+    // se počítal, banner „Pobyt zmizel" by u storna nikdy nevyskočil.
+    var cancelled = cancelledOnPlatform(today);
+    var calUidh = {}; calendar.forEach(function (c) { if (c.uidh && !cancelled[c.uidh]) calUidh[c.uidh] = 1; });
     // Host předrezervace je v přehledu pod jejím řádkem; jeho starý uidh (třeba ozvěna
     // z e-chalup, kterou kalendář od zapsání přímého prodeje zahazuje) nic neznamená.
     var heldIds = {};
@@ -721,7 +744,9 @@
     bookings.forEach(function (b) {
       if (!b.uidh || calUidh[b.uidh] || heldIds[b.id]) return;
       if (b.departure < today) return;
-      if (b.arrival > horizon) return;
+      // Horizont platí jen pro pobyt, který ve feedu nikdy nebyl. Storno je doložené
+      // (záznam z feedu vypadl) i za 12 měsíci.
+      if (b.arrival > horizon && !cancelled[b.uidh]) return;
       res.vanished.push({ booking: b });
     });
     return res;
