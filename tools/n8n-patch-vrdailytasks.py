@@ -31,6 +31,7 @@ BOOKINGS_NODE = 'Načíst pobyty (service-role)'
 CONFIG_NODE = 'Načíst konfiguraci (service-role)'
 UBY_NODE = 'Načíst hlášení cizinců (service-role)'
 HOLDS_NODE = 'Načíst předrezervace (service-role)'
+REQUESTS_NODE = 'Načíst žádosti (service-role)'
 
 
 def load_workflow(obj):
@@ -206,6 +207,12 @@ def patch(w):
     by_name = {n['name']: n for n in nodes}
     for name in (CONFIG_NODE, UBY_NODE, HOLDS_NODE, BOOKINGS_NODE):
         by_name[name]['executeOnce'] = True
+
+    # 6) „Načíst žádosti“ je hned za triggerem. Bez Always Output Data vrátí při nula
+    #    otevřených žádostech prázdno, řetěz se zastaví a e-mail tiše nevznikne
+    #    (výpadek 24.–27. 9. 2026). Prázdnou položku kód odfiltruje (r && r.id).
+    if REQUESTS_NODE in by_name:
+        by_name[REQUESTS_NODE]['alwaysOutputData'] = True
     return w
 
 

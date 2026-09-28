@@ -215,6 +215,15 @@ const KNOWN_UIDH = ['44f67225fb4ecfb9','0dcf556ecb298ab7']; // známý červenco
 function addMonthsISO(iso,m){ const d=parseISO(iso); d.setMonth(d.getMonth()+m);
   return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
 function overlapsRange(a,b){ return a.start<b.end && b.start<a.end; } // [start,end)
+// Stornované na platformě: uidh, které kalendář nese JEN jako nepotvrzený záznam
+// (stale, pobyt teprve má proběhnout). history.json si ho pamatuje dál, takže bez
+// tohohle by host zůstal jako ruční pobyt s úkoly a „zmizel z kalendáře" by nevyskočil.
+// Stejné pravidlo jako cancelledOnPlatform() v sprava.js a VrConflictWatch.detect.js.
+function cancelledOnPlatform(calendar, today){
+  const ghost={}, live={};
+  calendar.forEach(c=>{ if(!c.uidh) return; if(c.stale===true && c.end>today) ghost[c.uidh]=1; else live[c.uidh]=1; });
+  const res={}; Object.keys(ghost).forEach(u=>{ if(!live[u]) res[u]=true; }); return res;
+}
 // Stejná eskalační logika jako VrConflictWatch: různá platforma NEBO oba se hostem
 // = reálný konflikt; stejná platforma bez hostů = artefakt (přeskočit).
 function detectConflicts(stays, calendar, bookings, today){
@@ -240,11 +249,13 @@ function detectConflicts(stays, calendar, bookings, today){
       os:(A.start>B.start?A.start:B.start), oe:(A.end<B.end?A.end:B.end),
       known:!!(A.uidh&&B.uidh&&KNOWN_UIDH.indexOf(A.uidh)>=0&&KNOWN_UIDH.indexOf(B.uidh)>=0) });
   }}
-  const cal={}; calendar.forEach(c=>{ if(c.uidh) cal[c.uidh]=1; });
+  const cancelled=cancelledOnPlatform(calendar, today);
+  const cal={}; calendar.forEach(c=>{ if(c.uidh && !cancelled[c.uidh]) cal[c.uidh]=1; });
   // host předrezervace je pod jejím řádkem — jeho starý uidh (zahozená ozvěna) nic neznamená
   const held={}; stays.forEach(s=>{ if(s.hold && s.booking) held[s.booking.id]=1; });
   const horizon=addMonthsISO(today,12);
-  bookings.forEach(b=>{ if(!b.uidh||cal[b.uidh]||held[b.id]) return; if(b.departure<today) return; if(b.arrival>horizon) return;
+  bookings.forEach(b=>{ if(!b.uidh||cal[b.uidh]||held[b.id]) return; if(b.departure<today) return;
+    if(b.arrival>horizon && !cancelled[b.uidh]) return; // horizont jen pro pobyt, který ve feedu nikdy nebyl
     vanished.push({ booking:b }); });
   return { overlaps, vanished };
 }
@@ -266,6 +277,7 @@ const verifiedStatus = s => { const e = verified[s.start + '..' + s.end]; return
 const today = isoToday();
 const cutoff = addDaysISO(today, -14);
 const byUidh = {}, byId = {}; bookings.forEach(b => { if (b.uidh) byUidh[b.uidh] = b; byId[b.id] = b; });
+const cancelledUidh = cancelledOnPlatform(calendar, today);
 
 /* ---------- předrezervace (vr_holds) ---------- */
 // Přímý prodej je v history.json pod uidh SVÉ předrezervace (vr_hold_uidh), ne pod
@@ -380,6 +392,7 @@ holds.forEach(h => { if (usedHoldIds[h.id] || !holdOpen(h) || holdExpired(h) || 
   if (b) usedIds[b.id] = true;
   stays.push({ source:'hold', uidh:h.uidh, start:h.arrival, end:h.departure, platform:'Přímá', booking:b, hold:h }); });
 bookings.forEach(b => { if (usedIds[b.id]) return; if (b.departure < cutoff) return;
+  if (b.uidh && cancelledUidh[b.uidh]) return; // storno na platformě → jen sekce „zmizel z kalendáře", žádné zprávy
   stays.push({ source:'manual', uidh:b.uidh||null, start:b.arrival, end:b.departure, platform:b.platform||'Přímá', booking:b, hold:null }); });
 stays.sort((x,y)=> x.start<y.start?-1:x.start>y.start?1:0);
 
