@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  var VERZE = '2026-09-28b';
+  var VERZE = '2026-09-28c';
   var PORTAL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/';
   var WEB = 'https://villarudolf.com/';
   /* Odkaz na aplikaci pro hosty z jiného repa — dokud je null, dlaždice se neukáže. */
@@ -59,6 +59,7 @@
     timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4M10 2h4"/>',
     water: '<path d="M12 3c3.5 4.5 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 2.5-6.5 6-11z"/>',
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M5 19l1.4-1.4M17.6 6.4L19 5"/>',
+    warn: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
     lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
     cloud: '<path d="M7 19h10a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.5 2A3.6 3.6 0 0 0 7 19z"/>',
     rain: '<path d="M7 15h10a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.5 2A3.6 3.6 0 0 0 7 15z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',
@@ -139,6 +140,7 @@
       return '<button class="f karta">' + ico(k[0]) + '<b>' + esc(k[1]) + '</b><p>' + esc(k[2]) + '</p></button>';
     }).join('') + '</div>';
   }
+  function riziko(t) { return '<button class="f riziko">' + ico('warn') + '<p>' + esc(t.riziko) + '</p></button>'; }
   function bazenStav() {
     var t = T(), d = dnes(), h = d.getHours();
     if (!bazenSezona(d)) return [t.bazenMimo, t.bazenMimoV];
@@ -159,15 +161,15 @@
         '</div>' +
         (tipy.length ? '<h2>' + esc(t.dnesSeHodi) + '</h2><div class="grid">' + tipy.map(tripKarta).join('') + '</div>' : '');
     },
-    dum: function (t) { return '<h1>' + esc(t.menu.dum) + '</h1><p class="sub">Villa Rudolf · Luční 519, Svoboda nad Úpou</p>' + karty(t.dum); },
+    dum: function (t) { return '<h1>' + esc(t.menu.dum) + '</h1><p class="sub">Villa Rudolf · Luční 519, Svoboda nad Úpou</p>' + karty(t.dum) + riziko(t); },
     sauna: function (t) {
       /* první dvě karty jsou fakta (zapnutí, nahřátí), zbytek doporučení */
       return '<h1>' + esc(t.saunaTitul) + '</h1><p class="sub">' + esc(t.saunaUvod) + '</p>' + karty(t.sauna.slice(0, 2)) +
-        '<h2>' + esc(t.doporuceni) + '</h2>' + karty(t.sauna.slice(2));
+        '<h2>' + esc(t.doporuceni) + '</h2>' + karty(t.sauna.slice(2)) + riziko(t);
     },
     bazen: function (t) {
       var mimo = !bazenSezona(dnes());
-      return '<h1>' + esc(t.bazenTitul) + '</h1><p class="sub">' + esc(mimo ? t.bazenMimoText : t.bazenUvod) + '</p>' + karty(t.bazen);
+      return '<h1>' + esc(t.bazenTitul) + '</h1><p class="sub">' + esc(mimo ? t.bazenMimoText : t.bazenUvod) + '</p>' + karty(t.bazen) + riziko(t);
     },
     vylety: function (t) {
       if (!S.trips) return '<h1>' + esc(t.vyletyTitul) + '</h1><p class="sub">…</p>';

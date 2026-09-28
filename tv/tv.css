@@ -65,6 +65,12 @@ h2 { font-size: .9rem; letter-spacing: .16em; text-transform: uppercase; color: 
 .karta b { font-size: 1.2rem; font-weight: 700; }
 .karta p { margin: 0; font-size: 1.05rem; line-height: 1.4; color: var(--text-2); }
 
+/* upozornění na vlastní nebezpečí */
+.riziko { display: flex; align-items: center; gap: 1.1rem; width: 100%; margin-top: 1.2rem; padding: 1rem 1.3rem; border-radius: 1rem;
+  background: rgba(233, 185, 73, .1); border: 1px solid rgba(233, 185, 73, .45); }
+.riziko svg { width: 2rem; height: 2rem; flex: none; color: var(--zluta); }
+.riziko p { margin: 0; font-size: 1.1rem; line-height: 1.4; color: var(--text); }
+
 /* úvod */
 .hero { display: grid; grid-template-columns: 1fr 19rem; gap: 2rem; align-items: start; }
 .hero h1 { font-size: 5.6rem; font-style: italic; }

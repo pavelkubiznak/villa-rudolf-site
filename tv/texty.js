@@ -45,6 +45,7 @@ window.VR_TEXTY = {
       ['kids', 'Děti', 'Děti do sauny jen s dospělým.']
     ],
     doporuceni: 'Doporučujeme',
+    riziko: 'Saunu, bazén, trampolínu, hřiště, ohniště i vše ostatní na pozemku používáte na vlastní nebezpečí. Na děti prosím dohlížejte.',
     bazenTitul: 'Bazén',
     bazenUvod: 'Zastřešený a vyhřívaný, večer nasvícený. Dá se zamknout.',
     bazen: [
@@ -128,6 +129,7 @@ window.VR_TEXTY = {
       ['kids', 'Kinder', 'Kinder nur mit Erwachsenen in die Sauna.']
     ],
     doporuceni: 'Unsere Empfehlungen',
+    riziko: 'Sauna, Pool, Trampolin, Spielplatz, Feuerstelle und alles andere auf dem Grundstück nutzt ihr auf eigene Gefahr. Bitte achtet auf die Kinder.',
     bazenTitul: 'Pool',
     bazenUvod: 'Überdacht und beheizt, abends beleuchtet. Er lässt sich abschließen.',
     bazen: [
@@ -211,6 +213,7 @@ window.VR_TEXTY = {
       ['kids', 'Children', 'Children only with an adult.']
     ],
     doporuceni: 'Our recommendations',
+    riziko: 'The sauna, pool, trampoline, playground, fire pit and everything else on the grounds are used at your own risk. Please keep an eye on children.',
     bazenTitul: 'Pool',
     bazenUvod: 'Covered and heated, lit in the evening. It can be locked.',
     bazen: [
@@ -294,6 +297,7 @@ window.VR_TEXTY = {
       ['kids', 'Dzieci', 'Dzieci do sauny tylko z dorosłym.']
     ],
     doporuceni: 'Polecamy',
+    riziko: 'Z sauny, basenu, trampoliny, placu zabaw, ogniska i wszystkiego innego na posesji korzystacie na własną odpowiedzialność. Prosimy pilnować dzieci.',
     bazenTitul: 'Basen',
     bazenUvod: 'Zadaszony i podgrzewany, wieczorem oświetlony. Można go zamknąć na klucz.',
     bazen: [
