@@ -21,6 +21,7 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 | `/checkin/` | check-in formulář | hosté |
 | `/album/` | fotoalbum pobytu | hosté |
 | `/vylety/`, `/pruvodce/` | tipy na výlety (data z repa `villa-rudolf-portal`) | hosté |
+| `/tv/` | **průvodce pro hosty na TV ve vile** – obsah aplikace Villa Rudolf na Google TV (APK v repu `jablotron - topení/tv-app`), ovládání šipkami, 4 jazyky; texty v `tv/texty.js`, bez Wi-Fi hesla (veřejné) | hosté na TV |
 | `/info/`, `/podminky/` | informace, podmínky | hosté |
 | `/n8n/` | exporty n8n workflow (importovatelné) | provoz |
 | `supabase/migrations/` | **schéma databáze — zdroj pravdy** (neúplný, viz `STAV.md`) | vývoj |
