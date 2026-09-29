@@ -118,7 +118,21 @@ Totéž párování má kopii v n8n `VrDailyTasks` (stavba `stays` v `VrDailyTas
 kód si ho dopočítá stejně jako `vr_hold_uidh()` — `sha256('vr-hold:' + id)[:16]`, vlastní
 implementací SHA-256, protože `require('crypto')` v Code node nemusí být povolený.
 Bez toho uzlu páruje jako dřív (jen přes `uidh`). Kdo mění párování v `sprava.js`, mění ho
-i tam.
+i tam — a v `vr_public_cleaning_notes()` (viz níž).
+
+## Poznámka pro úklid (`vr_bookings.cleaning_note`)
+
+Pokyn pro úklid k pobytu (postýlka, dřívější příjezd…). Píše se v detailu pobytu v `/sprava/`
+(`vr_admin_set_cleaning_note`, max 500 znaků, prázdné = smazat; `vr_admin_upsert_booking` ji
+nezná a nepřepíše) a kalendář úklidu (`villa-booking-calendar`, `index.html`) ji ukáže 📝 u dne
+příjezdu. **Je veřejná** — kalendář nemá přihlášení a čte `vr_public_cleaning_notes()`
+(`{uidh, note}`), takže žádná jména, telefony ani kódy. Interní poznámky patří do `notes`.
+
+Přímý prodej je v `history.json` pod `uidh` své předrezervace, ne pod (prázdným) `uidh`
+pobytu — `vr_public_cleaning_notes()` proto poznámku vrací i pod `vr_hold_uidh()` a hosta
+k předrezervaci páruje stejně jako `bookingOfHold()` v `sprava.js` (migrace
+`20260928_vr_cleaning_note_list.sql`). Propadlou předrezervaci kalendář nenese, takže ani
+poznámka k ní nedojde.
 
 ## Ubytovací smlouvy (`/smlouvy/`, `vr_contracts`)
 

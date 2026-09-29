@@ -1707,6 +1707,7 @@
         pills += '<span class="pill pill-hold">⏳ předrezervace'
           + (s.hold.hold_until ? ' do ' + esc(fmtDayShort(s.hold.hold_until)) : '') + '</span>';
       }
+      if (b && b.cleaning_note) pills += '<span class="pill pill-plat" title="' + esc(b.cleaning_note) + '">📝 úklid</span>';
       if (running) pills += '<span class="pill pill-run">právě probíhá</span>';
       else if (soon) pills += '<span class="pill pill-soon">za ' + daysBetween(today, s.start) + ' dní</span>';
 
@@ -1993,6 +1994,12 @@
       '<button type="button" class="btn btn-primary" id="d-door-save">Uložit</button></div>' +
       (!b.door_code && suggestDoorCode(b.phone) ? '<p class="hint">Návrh: posledních 5 číslic telefonu — uprav podle potřeby a ulož.</p>' : '') + '</div>' +
 
+      '<div class="block"><h3 class="block-h">Poznámka pro úklid</h3>' +
+      '<div class="door-row"><div class="field"><label>Co má úklid připravit (postýlka, dřívější příjezd…)</label>' +
+      '<textarea id="d-clean" maxlength="500" placeholder="např. Připravit dětskou postýlku.">' + esc(b.cleaning_note || '') + '</textarea></div>' +
+      '<button type="button" class="btn btn-primary" id="d-clean-save">Uložit</button></div>' +
+      '<p class="hint">Uvidí ho úklid v kalendáři. Žádná jména ani telefony — je veřejné.</p></div>' +
+
       '<div class="block"><h3 class="block-h">Kauce</h3>' +
       '<label class="switch"><input type="checkbox" id="d-deposit"' + (depositEnabled(b) ? ' checked' : '') + '>' +
       '<span class="switch-track"></span><span class="switch-lbl">Vybírat vratnou kauci ' + DEPOSIT_CZK.toLocaleString('cs-CZ') + ' Kč u tohoto pobytu</span></label>' +
@@ -2020,6 +2027,7 @@
       $('d-regen').addEventListener('click', function () { regenToken(b, stay); });
     }
     $('d-door-save').addEventListener('click', function () { saveDoor(b, stay); });
+    $('d-clean-save').addEventListener('click', function () { saveCleaningNote(b); });
 
     renderFee(b, ctx);
     renderTimeline(stay, b, ctx);
@@ -2165,6 +2173,24 @@
         toast('Kód uložen.');
         renderTimeline(stay, b, buildCtx(b));
       } else toast('Uložení se nepovedlo.');
+    }).catch(function () { btn.disabled = false; btn.textContent = 'Uložit'; toast('Uložení se nepovedlo.'); });
+  }
+
+  // Poznámka pro úklid — VEŘEJNÁ: kalendář úklidu (villa-booking-calendar) ji čte bez
+  // přihlášení přes vr_public_cleaning_notes() a ukáže 📝 u dne příjezdu. Vlastní RPC,
+  // ne vr_admin_upsert_booking (ten ji nezná a nepřepíše). Prázdný text = smazat.
+  // Funkce při chybě hází výjimku → PostgREST vrátí 4xx s { message }, ne { ok:false }.
+  function saveCleaningNote(b) {
+    var val = $('d-clean').value.trim();
+    var btn = $('d-clean-save'); btn.disabled = true; btn.textContent = '…';
+    rpc('vr_admin_set_cleaning_note', { p_id: b.id, p_note: val }).then(function (res) {
+      btn.disabled = false; btn.textContent = 'Uložit';
+      if (res.ok && res.data) {
+        b.cleaning_note = res.data.cleaning_note || null;
+        $('d-clean').value = b.cleaning_note || '';
+        toast(b.cleaning_note ? 'Poznámka pro úklid uložena.' : 'Poznámka pro úklid smazána.');
+        renderStays();
+      } else toast((res.data && res.data.message) || 'Uložení se nepovedlo.');
     }).catch(function () { btn.disabled = false; btn.textContent = 'Uložit'; toast('Uložení se nepovedlo.'); });
   }
 
