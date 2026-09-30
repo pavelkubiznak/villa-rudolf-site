@@ -135,6 +135,8 @@ a{color:var(--ember-2)}
 .task-when.today{background:color-mix(in oklab,var(--ember),transparent 78%);color:var(--ember-2)}
 .task-when.overdue{background:color-mix(in oklab,var(--warn),transparent 80%);color:var(--warn)}
 .task-when.warn{background:color-mix(in oklab,var(--warn),transparent 78%);color:var(--warn)}
+.task-when.ok{background:color-mix(in oklab,var(--ok),transparent 78%);color:var(--ok)}
+.task.lock-ok{border-color:color-mix(in oklab,var(--ok),transparent 60%)}
 .task-actions{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
 .task .btn{min-height:36px;padding:6px 11px;font-size:13px}
 

@@ -40,6 +40,7 @@
   var lastPays = [];        // právě vykreslené pořadí (pro obsluhu tlačítek)
   var requests = [];        // žádosti z webového formuláře (vr_admin_list_requests)
   var verified = {};        // verified.json kalendáře: 'start..end' → {status} (service = blok majitele)
+  var doorCodes = null;     // kódy v zámku Yale, jak je hlásí Home Assistant (vr_admin_door_codes)
   var requestsShowDone = false; // vyřízené žádosti jsou schované, dokud si je nevyžádáš
   var lastRequests = [];    // právě vykreslené pořadí (pro obsluhu tlačítek)
   var lastDetect = null;    // poslední klientská detekce (pro obsluhu tlačítek banneru)
@@ -374,6 +375,35 @@
   function phoneDigits(phone) { return String(phone == null ? '' : phone).replace(/\D/g, ''); }
   function suggestDoorCode(phone) { var d = phoneDigits(phone); return d.length >= 5 ? d.slice(-5) : null; }
   function doorCodeFor(b) { return b.door_code || suggestDoorCode(b.phone); }
+
+  /* ============ Kód v zámku — stav z Home Assistantu ============ */
+  // Od 30. 9. 2026 kódy na klávesnici zakládá HA ve vile sám (Seam, repo „jablotron -
+  // topení", zamek_kody.yaml) a každých 30 min sem hlásí, co v zámku je
+  // (vr_ha_report_door_codes). Úkol „Nastav v appce Yale Home" se proto ukáže, jen když
+  // kód v zámku není, nesedí, hlásí chybu — nebo když HA přes 2 h mlčí.
+  function normDoorCode(c) { return String(c || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function lockState(b) {
+    var want = normDoorCode(doorCodeFor(b));
+    var at = doorCodes && doorCodes.reported_at ? Date.parse(doorCodes.reported_at) : NaN;
+    if (isNaN(at)) return { ok: false, known: false, text: 'Home Assistant stav kódů zatím nehlásí' };
+    if (Date.now() - at > 2 * 3600 * 1000)
+      return { ok: false, known: false, text: 'Home Assistant se neozval od ' + fmtStamp(at) };
+    var c = (doorCodes.codes || []).filter(function (x) { return x.uidh === b.uidh; })[0];
+    var term = fmtDay(b.arrival) + ' 15:00 – ' + fmtDay(b.departure) + ' 10:00';
+    if (!c) return { ok: false, known: true, text: 'kód v zámku není' + (want ? '' : ' (chybí telefon i kód)') };
+    if (c.error) return { ok: false, known: true, text: 'zámek hlásí chybu: ' + c.error };
+    if (want && normDoorCode(c.code) !== want)
+      return { ok: false, known: true, text: 'v zámku je jiný kód (' + c.code + ') – HA ho do 30 min přepíše' };
+    if (c.status === 'set') return { ok: true, known: true, text: '✅ kód ' + c.code + ' je v zámku, platí ' + term };
+    if (c.status === 'unset' && !(Date.parse(c.starts_at) <= Date.now()))
+      return { ok: true, known: true, text: '🕓 kód ' + c.code + ' je v zámku naplánovaný, platí ' + term };
+    return { ok: false, known: true, text: 'kód ' + c.code + ' se pořád nastavuje (' + (c.status || '?') + ')' };
+  }
+  function loadDoorCodes() {
+    return rpc('vr_admin_door_codes', {}).then(function (res) {
+      return (res.data && res.data.ok) ? res.data : null;
+    }).catch(function () { return null; });
+  }
 
   /* ============ Telefon — normalizace na mezinárodní tvar ============ */
   // Ukládáme +49171… a z toho pak vychází wa.me. Dřív se předvolba hádala
@@ -1578,9 +1608,12 @@
       var b = s.booking;
       var sent = {};
       (b.msglog || []).forEach(function (m) { sent[m.msg_key] = true; });
-      // 🔑 Yale: den před příjezdem (a v den příjezdu, pokud nesplněno) — jen když je z čeho kód připravit
-      if (!sent.yale_set && doorCodeFor(b) && today >= addDaysISO(b.arrival, -1) && today <= b.arrival) {
-        tasks.push({ stay: s, booking: b, yale: true, date: addDaysISO(b.arrival, -1) });
+      // 🔑 Yale: den před příjezdem a v den příjezdu. Kód zakládá HA sám — když ho hlásí
+      //    v zámku, je tu jen informace (bez Hotovo); úkol pro majitele jen, když v zámku není.
+      if (doorCodeFor(b) && today >= addDaysISO(b.arrival, -1) && today <= b.arrival) {
+        var ls = lockState(b);
+        if (ls.ok || !sent.yale_set)
+          tasks.push({ stay: s, booking: b, yale: true, lock: ls, date: addDaysISO(b.arrival, -1) });
       }
       sequenceFor(b).forEach(function (msg) {
         if (sent[msg.key]) return;
@@ -1611,14 +1644,29 @@
     tasks.forEach(function (t) {
       var row = document.createElement('div');
       if (t.yale) {
-        // 🔑 Yale připomínka — poloautomat: systém připraví kód, Pavel naklape v Yale Home.
-        var by = t.booking, code = doorCodeFor(by);
-        row.className = 'task owner';
+        // 🔑 Yale — kód zakládá HA; tady je stav z HA, úkol jen když kód v zámku chybí.
+        var by = t.booking, code = doorCodeFor(by), ls = t.lock;
+        if (ls.ok) {
+          row.className = 'task lock-ok';
+          row.innerHTML =
+            '<div class="task-main"><div class="task-name">' + esc(guestName(by)) + '</div>' +
+            '<div class="task-what">🔑 ' + esc(ls.text) + '</div>' +
+            '<span class="task-when ok">Zámek</span></div>' +
+            '<div class="task-actions"></div>';
+          var oy = document.createElement('button');
+          oy.className = 'btn btn-sm btn-outline'; oy.textContent = 'Detail';
+          oy.onclick = function () { openDetail(t.stay); };
+          row.querySelector('.task-actions').appendChild(oy);
+          wrap.appendChild(row);
+          return;
+        }
+        row.className = 'task owner warn';
         row.innerHTML =
           '<div class="task-main"><div class="task-name">' + esc(guestName(by)) + '</div>' +
+          '<div class="task-what">⚠️ ' + esc(ls.known ? 'Kód v zámku: ' + ls.text : ls.text) + '</div>' +
           '<div class="task-what">🔑 Nastav v appce Yale Home: kód <b>' + esc(code) + '</b>, platnost ' +
             esc(fmtDay(by.arrival)) + ' 15:00 – ' + esc(fmtDay(by.departure)) + ' 10:00</div>' +
-          '<span class="task-when today">Yale</span></div>' +
+          '<span class="task-when warn">Yale</span></div>' +
           '<div class="task-actions"></div>';
         var ay = row.querySelector('.task-actions');
         var doneY = document.createElement('button');
@@ -1992,7 +2040,8 @@
       '<div class="door-row"><div class="field"><label>Kód (doplní se do zprávy „den příjezdu")</label>' +
       '<input id="d-door" maxlength="40" value="' + esc(b.door_code || suggestDoorCode(b.phone) || '') + '" placeholder="např. 1975"></div>' +
       '<button type="button" class="btn btn-primary" id="d-door-save">Uložit</button></div>' +
-      (!b.door_code && suggestDoorCode(b.phone) ? '<p class="hint">Návrh: posledních 5 číslic telefonu — uprav podle potřeby a ulož.</p>' : '') + '</div>' +
+      (!b.door_code && suggestDoorCode(b.phone) ? '<p class="hint">Návrh: posledních 5 číslic telefonu — uprav podle potřeby a ulož.</p>' : '') +
+      '<p class="hint">Zámek (hlásí Home Assistant): ' + esc(lockState(b).text) + '. Uložený kód HA do zámku sám přepíše do 30 min.</p>' + '</div>' +
 
       '<div class="block"><h3 class="block-h">Poznámka pro úklid</h3>' +
       '<div class="door-row"><div class="field"><label>Co má úklid připravit (postýlka, dřívější příjezd…)</label>' +
@@ -2780,9 +2829,10 @@
   /* ============ Reload ============ */
   function reload() {
     $('loadline').hidden = false; $('loadline').textContent = 'Načítám pobyty a kalendář…';
-    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests(), loadHolds(), loadPayments(), loadVerified()]).then(function (r) {
+    return Promise.all([loadCalendar(), loadBookings(), loadConfig(), loadConflicts(), loadRequests(), loadHolds(), loadPayments(), loadVerified(), loadDoorCodes()]).then(function (r) {
       calendar = r[0]; bookings = r[1]; adminConfig = r[2] || {}; serverConflicts = r[3] || [];
       requests = r[4] || []; holds = r[5] || []; payments = r[6] || []; verified = r[7] || {};
+      doorCodes = r[8];
       buildStays();
       $('loadline').hidden = true;
       renderConflicts(); refreshBoards();
