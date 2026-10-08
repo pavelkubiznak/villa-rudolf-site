@@ -412,7 +412,7 @@ const hasConflicts = conflicts.overlaps.length > 0 || conflicts.vanished.length 
 // se zamrznutí neposuzuje, jinak by to byl planý poplach každý den (Codex na #33).
 // Proti zamrzlému souboru to nevadí: ten budoucí záznamy má, jen je přestal obnovovat.
 const calLastSeen = calendar.reduce((m, c) => (c && c.lastSeen && c.lastSeen > m) ? c.lastSeen : m, '');
-const calRefreshable = calendar.some(c => c && c.end > today);
+const calRefreshable = calendar.some(c => c && c.end > today && c.stale !== true); // zrušený budoucí řádek (stale) běh neobnoví (Codex na #33)
 const calFrozen = !calendar.length ? { why: 'nenačetl' }
   : (calRefreshable && calLastSeen < addDaysISO(today, -1) ? { why: 'stojí', since: calLastSeen } : null);
 
