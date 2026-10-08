@@ -199,7 +199,12 @@ const VR_FACTS = {
   maxHostu: 22,           // maximum hostů (= VR_PRICING.maxGuests)
 };
 /* Oddělovač tisíců podle jazyka — 4 500 / 4,500 / 4.500. */
-const VR_NUM_SEP = { cs: '\u00a0', en: ',', de: '.', pl: '\u00a0' };
+const VR_NUM_SEP = { cs: '\u00a0', en: ',', de: '.', pl: '\u00a0', nl: '.', fr: '\u00a0' };
+/* Výlety, info, podmínky a průvodce hosta mají vlastní slovníky jen v těchto jazycích.
+   Z nizozemské a francouzské homepage se proto otevírají anglicky (stejnou mapu má
+   tools/gen-jazyky.mjs pro Časté dotazy). */
+const VR_SUB_LANGS = ['cs', 'en', 'de', 'pl'];
+function vrSubLang(lang) { return VR_SUB_LANGS.indexOf(lang) >= 0 ? lang : 'en'; }
 function factValue(key) {
   const v = VR_FACTS[key];
   if (v == null) return '';
@@ -1720,6 +1725,690 @@ const T = {
       ],
     },
   },
+
+  nl: {
+    photoSoon: 'Foto volgt',
+    meta: {
+      title: 'Villa Rudolf – het hele huis voor {minHostu}–{maxHostu} personen, {loznice} slaapkamers | Reuzengebergte',
+      desc: 'Het hele huis en terrein voor jullie groep van {minHostu}–{maxHostu} personen in Svoboda nad Úpou, Reuzengebergte. {loznice} slaapkamers, {koupelny} badkamers, {pozemek} m² terrein, sauna, skiruimte. Skiën en zwemmen in het seizoen.',
+      locale: 'nl_NL',
+    },
+    nav: { dum: 'Het huis', loznice: 'Interieur', lyzovani: 'Skiën', vybaveni: 'Voorzieningen', galerie: 'Foto’s', ohniste: 'Vuurplaats', lokalita: 'Ligging', vylety: 'Uitstapjes', info: 'Praktische info', cta: 'Reserveren' },
+    aria: { sections: 'Onderdelen', season: 'Seizoen', menu: 'Menu', close: 'Sluiten', interior: 'Interieur — blader door de foto’s, tik om te vergroten', prev: 'Vorige', next: 'Volgende', prevMonths: 'Vorige maanden', nextMonths: 'Volgende maanden', gallery: 'Fotogalerij' },
+    hero: {
+      eyebrow: 'Het hele huis, alleen voor jullie groep · Reuzengebergte',
+      eyebrowWinter: 'Skiën om de hoek · Reuzengebergte',
+      h1: 'Een privévilla in het Reuzengebergte (Krkonoše) voor {minHostu}–{maxHostu} gasten',
+      sub: 'De hele plek — het huis en het weidse terrein — is <em>alleen van jullie</em>.',
+      subWinter: 'Skiën om de hoek — <em>skibus vlak bij het huis</em>, Černá hora 4 km.',
+      ctaSec: 'Bekijk het huis', badge: 'Vrije data 2026', video: 'Video afspelen',
+      summer: 'Zomer', winter: 'Winter',
+      nightLine: 'Het is donker geworden. De vuurplaats, de schanskorfmuur en het zwembad lichten vanzelf op — de avond begint hier pas.',
+    },
+    facts: {
+      loznice:        { k: '{loznice}', v: 'slaapkamers' },
+      koupelny:       { k: '{koupelny}', v: 'badkamers & toiletten' },
+      luzka:          { k: '{luzka}', v: 'bedden — {luzkaDetail} extra' },
+      plocha:         { k: '{plocha} m²', v: 'woonoppervlak' },
+      wellnessSummer: { k: 'Zwembad + sauna', v: 'verwarmd zwembad met overkapping en privésauna' },
+      wellnessWinter: { k: 'Sauna + skiruimte', v: 'privésauna, skiruimte in het huis zelf' },
+      parking:        { k: 'Eigen parkeerplaats', v: 'op het terrein bij de ingang, achter jullie eigen poort' },
+    },
+    ratings: { eyebrow: 'Beoordelingen van gasten', reviewsWord: 'beoordelingen', verified: 'gecontroleerd op' },
+    direct: {
+      badge: '<b>Direct boeken = beste prijs.</b> 5% voordeliger dan via de platforms. Persoonlijk contact en eerlijke annuleringsvoorwaarden.',
+      book: '<b>Direct boeken = beste prijs.</b> 5% voordeliger dan via de platforms. Persoonlijk contact en eerlijke annuleringsvoorwaarden.',
+      sidebar: 'Direct boeken — 5% voordeliger dan via de platforms.',
+    },
+    statement: {
+      eyebrow: 'Het hele terrein, alleen voor jullie',
+      title: 'Achter de poort zijn jullie onder elkaar.',
+      lead: 'Jullie boeken geen kamers in een huis waar ook anderen logeren. Jullie huren de hele plek — het huis, het omheinde terrein, de sauna, het paviljoen en de vuurplaats. <span class="vr-sm-hide">Geen receptie, geen vreemden aan het ontbijt, geen wachten tot de sauna vrij is.</span>',
+      stats: [
+        { num: '{pozemek} m²', label: 'omheind terrein, alleen voor jullie groep' },
+        { num: '1 tafel', label: 'groot genoeg om met de hele groep tegelijk aan te zitten' },
+        { num: '1 groep', label: 'er is altijd maar één groep op het terrein, nooit twee tegelijk' },
+        { num: '0', label: 'ruimtes die jullie met vreemden delen' },
+      ],
+    },
+    band: { eyebrow: 'Een avond hier' },
+    amenities: {
+      eyebrow: 'Voorzieningen', title: 'Comfort dat de groep bij elkaar houdt', drop: 'Sleep hier een foto naartoe',
+      items: {
+        pool:     { tag: 'Wellness', name: 'Verwarmd zwembad met overkapping', desc: 'Een verwarmd zwembad onder een dak — het hele zomerseizoen open, bij elk weer, ook als het regent. Uit het water zo de sauna in.' },
+        skiroom:  { tag: 'Skiën', name: 'Skiruimte', desc: 'Een aparte ruimte alleen voor ski’s en schoenen: rekken voor ski’s en snowboards, houders voor skischoenen en een afwasbare vloer. Natte spullen blijven beneden en hoeven niet mee naar de slaapkamers — daar vragen gasten in de winter het vaakst naar.' },
+        sauna:    { tag: 'Wellness', name: 'Eigen Finse sauna', desc: 'Een Finse sauna alleen voor jullie groep, met een voorruimte en een douche. Je deelt hem met niemand en er zijn geen tijdsloten.' },
+        kitchen:  { tag: 'Samen', name: 'Keuken en een tafel voor iedereen', desc: 'Een volledig uitgeruste keuken en een grote houten tafel waar de hele groep tegelijk aan kan zitten.' },
+        firepit:  { tag: 'Buitenleven', name: 'Vuurplaats met schanskorfmuur', desc: 'Een pas aangelegde open vuurplaats waar de hele groep omheen past. Als het donker wordt, licht hij vanzelf op — warmte onder de blote hemel.' },
+        altan:    { tag: 'Buitenleven', name: 'Groot paviljoen met twee grills', desc: 'Een overdekte zitplek met twee grote elektrische grills en een tafel waar iedereen tegelijk aan past. Onder het dak blijf je droog, of het nu regent of sneeuwt.' },
+        hriste:   { tag: 'Voor gezinnen', name: 'Speeltuin', desc: 'Klimrekken, een glijbaan, schommels en touwelementen, plus een trampoline en tafeltennis. De kinderen hebben hun eigen hoek, goed te zien vanuit het paviljoen.' },
+        billiard: { tag: 'Binnen', name: 'Biljart', desc: 'Een biljarttafel in het appartement Suite — voor een luie middag of een toernooi na het eten.' },
+        lounge:   { tag: 'Binnen', name: 'Woongedeelte van de Suite', desc: 'Een lange bank onder de balken en een grote tafel — het appartement Suite heeft zijn eigen ruimte om samen te zitten.' },
+      },
+    },
+    bedrooms: {
+      eyebrow: 'Interieur',
+      title: 'Het huis van binnen',
+      note: '{loznice} slaapkamers, {koupelny} badkamers, een grote keuken, sauna en wellness — bekijk het hele huis op foto’s.',
+      noBunk: 'Geen stapelbedden — rustiger slapen, ook ideaal voor ouders met kleine kinderen.',
+      rooms: [
+        { name: 'Appartement Suite', cap: 'tot 10 gasten', beds: '3 slaapkamers met tweepersoonsbedden, 2 eenpersoonsbedden en 1 bed met onderschuifbed · eigen keuken en biljarttafel · badkamer' },
+        { name: 'Kamer 1', cap: '2 gasten', beds: 'Tweepersoonsbed · badkamer' },
+        { name: 'Kamer 2', cap: 'tot 4 gasten', beds: 'Tweepersoonsbed en 2 losse bedden (waarvan één een volwaardig bijzetbed) · badkamer' },
+        { name: 'Kamer 3', cap: 'tot 4 gasten', beds: 'Tweepersoonsbed en 2 losse bedden (waarvan één een volwaardig bijzetbed) · badkamer' },
+        { name: 'Kamer 4', cap: '2 gasten', beds: 'Tweepersoonsbed · badkamer' },
+      ],
+    },
+    interior: {
+      hint: 'Sleep met muis of vinger · tik om te vergroten',
+      open360: 'Openen in de 360°-rondleiding door het huis',
+      showOnPlan: 'Toon op de plattegrond',
+      rosterTitle: 'Waar jullie slapen',
+      rosterNote: '{luzka} bedden — {luzkaDetail} bijzetbedden. Het overzicht waarmee jullie de groep over de kamers verdelen.',
+      items: { kitchen: 'Keuken & eetkamer', suite: 'Appartement Suite', room1: 'Kamer 1', room2: 'Kamer 2', room3: 'Kamer 3', room4: 'Kamer 4', sauna: 'Finse sauna', wellness: 'Wellness & douche', bath: 'Douche bij de sauna', bath2: 'Badkamer – Kamer 2', bath3: 'Badkamer – Kamer 3', bath4: 'Badkamer – Kamer 4' },
+    },
+    plan: {
+      eyebrow: 'Plattegrond',
+      title: 'Waar je alles vindt',
+      note: 'Tik op een ruimte — dan laten we je de foto’s zien. Bovenaan wissel je van verdieping.',
+      hint: 'Tik op een ruimte met een naam om de foto’s te openen · bovenaan wissel je van verdieping',
+      levelsLabel: 'Verdiepingen',
+      floors: { basement: 'Souterrain', ground: 'Begane grond', floor1: 'Eerste verdieping', attic: 'Zolder' },
+      r: {
+        hall: 'Entreehal', corridor: 'Gang', stairs: 'Trap', storage: 'Berging',
+        kitchen: 'Keuken & eetkamer', bath: 'Badkamer', wc: 'Toilet',
+        room1: 'Kamer 1', room2: 'Kamer 2', room3: 'Kamer 3', room4: 'Kamer 4',
+        sauna: 'Sauna & wellness', ski: 'Skiruimte', boiler: 'Technische ruimte',
+        aptLiving: 'Appartement — woongedeelte', aptKitchen: 'Keuken appartement',
+        aptHall: 'Gang appartement', aptBath: 'Badkamer appartement', aptWc: 'Toilet appartement',
+        aptBedA: 'Appartement — slaapkamer A', aptBedB: 'Appartement — slaapkamer B', aptBedC: 'Appartement — slaapkamer C',
+      },
+      open: 'Foto’s openen',
+      orient: 'Indicatieve plattegrond',
+    },
+    ohniste: {
+      eyebrow: 'Nieuw middelpunt', caption: 'Detail van de vuurplaats en de schanskorfmuur',
+      title: 'Een vuurplaats met schanskorfmuur die ’s avonds tot leven komt',
+      body: 'De pas aangelegde open vuurplaats is groot genoeg voor de hele groep. Een massieve schanskorfmuur vormt er één geheel mee en wordt automatisch verlicht zodra het donker wordt — de lampen gaan vanzelf aan en uit. Het hart van de avonden onder de blote hemel.',
+    },
+    skupina: {
+      eyebrow: 'Jullie groep, hoe groot ook',
+      big: 'Zes vrienden op de motor, of een reünie van tweeëntwintig. Er is altijd plek voor het hele gezelschap.',
+      desc: 'Het draait niet om het aantal. Er slapen hier comfortabel tot {maxHostu} mensen, maar een gezin, een vriendengroep of een kleinere groep past er net zo goed — het hele huis en terrein zijn altijd alleen van jullie.',
+    },
+    ski: {
+      eyebrow: 'Skiën · SkiResort Černá hora – Pec',
+      title: 'Skiën vanaf hier',
+      note: 'We vermelden alleen wat niet per seizoen verandert. Prijzen, dienstregelingen en openingstijden vind je bij de exploitant.',
+      local: {
+        tag: '1,9 km van het huis',
+        name: 'Een skigebied in Svoboda nad Úpou zelf',
+        desc: 'De dichtstbijzijnde pistes liggen niet ‘ergens in de bergen’ — ze liggen in hetzelfde stadje als het huis. Vijf minuten met de auto, nog geen half uur te voet. Het is het kleinste gebied van het resort, en juist daarom geschikt voor kinderen en beginners, terwijl de rest van de groep naar de grote hellingen gaat.',
+        specs: [
+          'blauwe (makkelijke) pistes, elk zo’n 350 m',
+          'sleepliften — een kabelbaan is er niet',
+          'met de auto vanaf het huis — 1,9 km over de weg',
+        ],
+        school: 'In het gebied vind je een skischool, materiaalverhuur en een lopende band voor kinderen.',
+        snow: 'Eerlijk gezegd: dit is het laagst gelegen gebied van het resort (zo’n 530–600 m), dus het staat of valt met sneeuw en kunstsneeuw, en het seizoen is hier meestal korter dan hoger in de bergen. Kijk eerst of het open is voordat jullie er een heel verblijf omheen plannen.',
+      },
+      resorts: {
+        title: 'Eén skipas, meerdere gebieden',
+        lead: 'Het huis ligt in het gebied van SkiResort ČERNÁ HORA – PEC, waar volgens de exploitant één skipas geldt voor meerdere skigebieden. Rijtijden vanuit Svoboda nad Úpou:',
+      },
+      rows: {
+        cernaHora: 'het grootste gebied van het resort',
+        velkaUpa: 'kinderpark bij het dalstation van de lift',
+        cernyDul: 'bergovergang over een zadel — bochtige weg, reken op extra tijd',
+        pec: 'het op één na grootste gebied, pistes van elk niveau',
+        malaUpa: 'andere exploitant — check of je skipas er geldig is',
+      },
+      notes: {
+        connect: { t: 'De gebieden zijn niet via pistes verbonden',
+          b: 'Verwacht geen aaneengesloten skigebied. De enige verbinding op ski’s is de SkiTour van de Černá hora naar Pec — die werkt maar in één richting en op twee van de vier stukken trekt een pistenbully je mee; terug ga je met de skibus. Tussen de andere gebieden rijd je met de auto of neem je de skibus; wat ze verbindt, is de gezamenlijke skipas.' },
+        skibus: { t: 'Skiën kan ook zonder auto',
+          b: 'De skibus op de hoofdlijn van het SkiResort stopt in Svoboda nad Úpou zelf — onder meer bij Maršov II, Maršov I, Sokolovna, het busstation en Hotel PROM. Het aantal lijnen en de vervoersvoorwaarden veranderen per seizoen, dus check ze bij de exploitant.' },
+        evening: { t: 'Avondskiën',
+          b: 'In het seizoen kan dat op verlichte pistes; de langste daarvan is de Protěž op de Černá hora — volgens de exploitant 1,6 km. De precieze dagen en tijden wisselen, dus kijk voor het actuele schema bij de exploitant.' },
+      },
+      plan: {
+        title: 'Als er niet geskied wordt',
+        lead: 'In een grotere groep is er altijd wel iemand die niet skiet — en van zeven nachten zijn er realistisch gezien vier of vijf skidagen. Dit is de rest van het programma.',
+        tiles: [
+          { n: 'Aquacentrum Janské Lázně', m: 'binnenzwembad, op loopafstand' },
+          { n: 'Langlaufloipes', m: 'startpunten bij de Černá hora, ≈ 4 km met de auto' },
+          { n: 'Glasblazerij Harrachov', m: 'rondleiding binnen in de warmte, ≈ 50 min met de auto' },
+          { n: 'Fort Stachelberg', m: 'ondergrondse vestingwerken bij Trutnov' },
+          { n: 'Waterpark Karpacz (PL)', m: 'groot overdekt waterpark, ≈ 45 min met de auto' },
+        ],
+      },
+      cta: 'Winteruitstapjes in de planner',
+      ctaSub: 'Kaart, filters en een tip voor een bepaalde dag — zonder aanmelden.',
+    },
+    lokalita: {
+      eyebrow: 'Ligging · Svoboda nad Úpou',
+      title: 'In de bergen, niet aan het eind van de wereld.',
+      lead: 'We zitten in Svoboda nad Úpou, 150 meter van het centrum — winkel, restaurant, trein en bus zijn allemaal op loopafstand. En naar de Sněžka is het twintig minuten met de auto.',
+      leadWinter: 'De skibus naar SkiResort Černá hora–Pec stopt 200 meter van de poort — je komt bij de liften zonder auto en zonder een parkeerplek te zoeken. De auto kan dan de hele week op het terrein blijven staan. Actuele tarieven en dienstregelingen vind je bij de exploitant.',
+      doorstepSummer: [
+        { num: '150 m', label: 'naar het centrum van Svoboda — winkel, restaurant en station te voet' },
+        { num: '20 min', label: 'met de auto naar de Sněžka — omhoog met de kabelbaan of op eigen kracht' },
+        { num: '4 km', label: 'Janské Lázně — het boomkroonpad en de gondelbaan naar de Černá hora' },
+        { num: '11 km', label: 'Trutnov — openluchtzwembad, klimwand en grote winkels' },
+      ],
+      doorstep: [
+        { num: '150 m', label: 'naar het centrum van Svoboda — zo’n twee minuten lopen' },
+        { num: '200 m', label: 'naar de skibushalte — nog geen drie minuten lopen' },
+        { num: '2 uur', label: 'ongeveer vanuit Praag en vanuit Wrocław, drie vanuit Dresden' },
+        { num: '4 km', label: 'naar de pistes van de Černá hora — de skibus stopt bij het huis' },
+      ],
+      mapTitle: ['{n} uitgeprobeerd uitstapje in drie kringen', '{n} uitgeprobeerde uitstapjes in drie kringen'],
+      mapNote: 'De afstanden op de kaart kloppen met de werkelijkheid; het terrein is met de hand getekend. De cirkel rond de villa heeft een straal van drie kilometer hemelsbreed.',
+      legend: '◆ Villa Rudolf · ○ op loopafstand · ┄ de Poolse grens · tijden en afstanden gelden over de weg',
+      mapAlt: 'Een met de hand getekende kaart van de omgeving: Villa Rudolf in Svoboda nad Úpou, de Sněžka, Janské Lázně, Pec pod Sněžkou, Trutnov en de Poolse grens.',
+      rings: [
+        { name: 'Te voet vanaf de poort', count: ['{n} bestemming', '{n} bestemmingen'],
+          body: 'Janské Lázně en het boomkroonpad, het binnenzwembad Aquacentrum, wandelen met lama’s op een familieboerderij, het boerderijpark Muchomůrka, de sprookjestentoonstelling Do Krakonošova, avonturengolf en een schietbaan. Voor geen van alle heb je een auto nodig.',
+          link: 'Bekijk in de planner →' },
+        { name: 'Tot 30 minuten met de auto', count: ['{n} bestemming', '{n} bestemmingen'],
+          body: 'De Sněžka met de kabelbaan of te voet, de Černá hora met de gondelbaan, Obří důl zelfs met een kinderwagen, de rodelbaan in Pec, uitkijktorens, het beukenoerbos van Rýchory, het openluchtzwembad en de klimwand in Trutnov.',
+          link: 'Bekijk in de planner →' },
+        { name: 'Een hele dag uit', count: ['{n} bestemming', '{n} bestemmingen'],
+          body: 'De rotsstad Adršpach, Safaripark Dvůr Králové, de glasblazerij van Harrachov met de watervallen van de Mumlava, en het waterpark Tropikana in het Poolse Karpacz — neem daar voor iedereen een identiteitsbewijs mee, ook voor de kinderen.',
+          link: 'Bekijk in de planner →' },
+      ],
+      arrive: [
+        { id: 'praha', k: 'Praag', v: 'ongeveer 2 uur met de auto' },
+        { id: 'wroclaw', k: 'Wrocław (PL)', v: 'ongeveer 2 uur met de auto' },
+        { id: 'dresden', k: 'Dresden', v: 'ongeveer 3 uur met de auto' },
+        { id: 'train', k: 'Met de trein', v: 'station Svoboda nad Úpou, dan een kort stukje lopen' },
+        { id: 'bus', k: 'Met de bus', v: 'halte in het stadje, dan een kort stukje lopen' },
+        { id: 'skibus', k: 'Skibus', v: 'halte 200 m van de poort; check de tarieven bij de exploitant' },
+        { id: 'parking', k: 'Parkeren', v: 'op het terrein zelf, achter de poort' },
+      ],
+      arriveTransitWinter: { id: 'transit', k: 'Trein & bus', v: 'station en halte in het stadje, dan een kort stukje lopen' },
+      arriveCarSummer: { id: 'car', k: 'Met de auto', v: 'ongeveer 2 uur vanuit Praag en Wrocław, 3 vanuit Dresden' },
+      mapLabels: {
+        villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
+        snezka: 'Sněžka', snezkaMeta: '1603 m',
+        pec: 'Pec pod Sněžkou', pecMeta: '13 km',
+        cernaHora: 'Černá hora', cernaHoraMeta: 'pistes 4 km',
+        janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
+        trutnov: 'Trutnov', trutnovMeta: '11 km',
+        hmarsov: 'Horní Maršov', obriDul: 'Obří důl', rychory: 'Rýchory', mladeBuky: 'Mladé Buky',
+        upa: 'Úpa', polsko: 'POLEN', ring: 'OP LOOPAFSTAND',
+        praha: 'Praag ≈ 2 uur', vratislav: 'Wrocław ≈ 2 uur', drazdany: 'Dresden ≈ 3 uur',
+        adrspach: 'Rotsstad Adršpach 45 min', safari: 'Safaripark Dvůr Králové 30 min',
+        scale: '0 — 2 km', north: 'N',
+      },
+    },
+    tour: {
+      eyebrow: 'Binnen & buiten',
+      title: 'Kijk rond, binnen en buiten — helemaal in 360°',
+      hint: 'Pak vast en sleep met muis of vinger. Onderaan wissel je van ruimte; de scènes wisselen ook vanzelf.',
+      drag: 'Pak vast om rond te kijken',
+      scenes: [
+        { name: 'Besneeuwd erf', desc: 'Het erf na flinke sneeuwval — een vrijgereden spoor tussen sparren vol sneeuw, ijspegels langs het dak en plek om met de hele groep te parkeren.' },
+        { name: 'Entreehal', desc: 'De entreehal met het schoenenrek en de trap naar boven — van hieruit kom je in de eetkamer en in de kamers op de begane grond.' },
+        { name: 'Schoenenrek en trap', desc: 'Een hoog houten schoenenrek vlak achter de deur en de trap naar boven. Door de glazen deur loop je zo de eetkamer in — de schoenen van de hele groep blijven hier.' },
+        { name: 'Grote keuken & eetkamer', desc: 'De gezamenlijke keuken met een lange houten tafel voor de hele groep, een keukenblok langs de muur en grote ramen naar de tuin — het hart van het huis, waar iedereen samenkomt.' },
+        { name: 'Kamer 1 (2 bedden)', desc: 'Een tweepersoonsbed met verlicht hoofdbord, gespikkeld behang en een erker met drie ramen naar de tuin. Eigen badkamer.' },
+        { name: 'Kamer 1 — badkamer', desc: 'De badkamer van Kamer 1 — douchecabine, wastafel met spiegelkast en een toilet.' },
+        { name: 'Kamer 2 (3+1 bedden)', desc: 'Een tweepersoonsbed en een eenpersoonsbed, grijs geweven behang achter het verlichte hoofdbord, een tafel met bankjes en twee ramen. Eigen badkamer ernaast.' },
+        { name: 'Kamer 2 — badkamer', desc: 'De badkamer van Kamer 2 — een kwartronde douchecabine, een wastafel op een houten badmeubel met spiegel, een toilet en een handdoekradiator.' },
+        { name: 'Kamer 3 (3+1 bedden)', desc: 'Een tweepersoonsbed en een eenpersoonsbed onder het schuine plafond, goudkleurig behang met bladmotief achter het verlichte hoofdbord. Eigen badkamer, direct vanuit de kamer.' },
+        { name: 'Kamer 3 — raam naar de zwembadtunnel', desc: 'Dezelfde Kamer 3 vanaf het tweede raam: een diepe donkerrode vensterbank en vlak achter het glas de glazen tunnel over het zwembad. Een hoge kledingkast en een deur die direct uitkomt in de entreehal.' },
+        { name: 'Kamer 3 — badkamer', desc: 'De badkamer van Kamer 3 — douchecabine, wastafel en een raam naar de tuin.' },
+        { name: 'Overloop eerste verdieping', desc: 'De overloop van de hoofdtrap met inbouwkasten en drie ramen — van hier gaan deuren naar een kamer en naar het appartement Suite.' },
+        { name: 'Kamer 4 (2 bedden)', desc: 'Een tweepersoonsbed in een gewelfde nis tussen houten stijlen, een erkerraam met houten vensterbank. Eigen badkamer.' },
+        { name: 'Kamer 4 — uitzicht vanaf het bed', desc: 'Dezelfde Kamer 4 vanaf het hoofdeinde van het bed: de gewelfde nis met gemarmerd behang en het verlichte lattenhoofdbord van dichtbij, dan de hele kamer door tot het raam met gordijnen, de bergprent, het raampje in de vakwerkmuur en de open deur naar de eigen badkamer.' },
+        { name: 'Kamer 4 — badkamer', desc: 'De badkamer van Kamer 4 — douchecabine, wastafel, toilet en een wasmachine.' },
+        { name: 'Suite — woongedeelte', desc: 'De eigen woonkamer van het appartement Suite: een lange bank onder de balken, een grote tafel, een tv en de trap naar de slaapkamers op zolder.' },
+        { name: 'Suite — keuken', desc: 'De eigen, volwaardige keuken van de Suite, met oven, vaatwasser en compleet servies — het appartement is zelfstandig en hoeft de grote keuken niet te delen.' },
+        { name: 'Suite — slaapkamer A', desc: 'De eerste van de drie slaapkamers van de Suite, op de eerste verdieping: een tweepersoonsbed en geometrisch behang achter het verlichte hoofdbord.' },
+        { name: 'Suite — badkamer', desc: 'De eigen badkamer van de Suite op de eerste verdieping — een glazen douchecabine, een wastafelmeubel met spiegelkast en een raam naar de besneeuwde tuin. De tegels in houtlook passen bij de rest van het appartement.' },
+        { name: 'Suite — toilet', desc: 'Het aparte toilet van de Suite — een hangtoilet met een houten wandaccent, een klein raam en een radiator. Los van de badkamer, zodat het appartement niets hoeft te delen.' },
+        { name: 'Zolder — overloop van de Suite', desc: 'De overloop boven aan de zoldertrap van de Suite, onder de schuine plafonds — een houten trapleuning, een dakraam met uitzicht op de besneeuwde bergen en deuren naar de twee zolderslaapkamers.' },
+        { name: 'Suite — slaapkamer B', desc: 'Een zolderslaapkamer van de Suite — een tweepersoonsbed en een eenpersoonsbed met onderschuifbed onder het schuine plafond, een ladekast en een nachtkastje. Hierdoor komt de Suite op 10 bedden.' },
+        { name: 'Suite — slaapkamer C', desc: 'De grootste zolderslaapkamer van de Suite: een tweepersoonsbed en twee eenpersoonsbedden onder het schuine plafond, en een dakkapel.' },
+        { name: 'Wellness bij de sauna', desc: 'De voorruimte van de sauna — een bank om af te koelen, een douche en de deur naar de Finse sauna. Helemaal voor jullie alleen.' },
+        { name: 'In de sauna', desc: 'Binnen in de verwarmde Finse sauna — banken van licht hout en de kachel.' },
+        { name: 'Skiruimte', desc: 'Een eigen skiruimte beneden — rekken voor ski’s en snowboards en houders voor skischoenen. De spullen blijven hier beneden in plaats van in de slaapkamers.' },
+        { name: 'De tuin in de winter', desc: 'De besneeuwde tuin, vanaf het paviljoen terug naar het huis — hoge sparren, platgelopen paadjes en de bergen boven de daken.' },
+        { name: 'Het paviljoen met de grills', desc: 'Hetzelfde paviljoen als in de zomer, maar dan onder de sneeuw: een stevig dak van massief hout, twee grote elektrische grills en open zijden naar de tuin.' },
+      ],
+      scenesSummer: [
+        { name: 'Aankomst bij de villa', desc: 'De parkeerplaats achter de poort, met plek voor de hele groep, en het huis aan het eind van de oprit tussen hoge bomen.' },
+        { name: 'Tuin en zwembad', desc: 'Zicht over het gazon op het huis, het zwembad met overkapping en een rij ligbedden, en de vuurplaats van schanskorven onder aan de helling.' },
+        { name: 'Het zwembad met overkapping', desc: 'Het verwarmde zwembad met overkapping en een rij ligbedden, vlak bij het huis, met rondom jullie eigen gazon.' },
+        { name: 'Het houten terras', desc: 'Een terras van eikenhout boven de schanskorfmuur — een tafel voor de hele groep, met uitzicht op het paviljoen en de bergen.' },
+        { name: 'Het paviljoen met de grills', desc: 'Onder een stevig dak van massief hout: de lange tafel, twee grote elektrische grills en open zijden naar de tuin.' },
+        { name: 'De speeltuin', desc: 'Een klimrek, een glijbaan, schommels en touwelementen in het zicht van het huis — de kinderen hebben hun eigen hoek binnen het terrein.' },
+        { name: 'De vuurplaats ’s avonds', desc: 'Als de zon onder is, lichten de schanskorven en de treden vanzelf op — stoelen rond de vuurplaats en daarachter het verlichte zwembad.' },
+      ],
+      groupsLabel: 'Scènegroepen', groupAll: 'Alles',
+      stripLabel: 'Scènes van de 360°-rondleiding', stripPrev: 'Vorige miniaturen', stripNext: 'Volgende miniaturen',
+      groups: { ground: 'Begane grond', floor1: 'Eerste verdieping', floor2: 'Zolder', basement: 'Souterrain', extSummer: 'Buiten — zomer', extWinter: 'Buiten — winter' },
+      backPhotos: 'Terug naar de foto’s ({room})', backPlan: 'Terug naar de plattegrond', backClose: 'Sluiten',
+    },
+    gallery: { eyebrow: 'Foto’s', title: 'Huis, terrein, omgeving', note: 'Alle foto’s ({n}) · klik om te vergroten' },
+    vylety: {
+      eyebrow: 'Uitstapjesplanner', title: 'De bergen beginnen bij de voordeur', note: 'We kiezen per seizoen · {n} uitgeprobeerde bestemmingen binnen een uur van het huis.', drop: 'Hier komt een foto van een uitstapje', cta: 'Open de uitstapjesplanner', ctaSub: 'Zonder aanmelden. Kaart, filters en een tip voor een bepaalde dag.',
+      items: [
+        { tag: 'Het hele jaar', name: 'Sněžka', desc: 'De hoogste berg van Tsjechië — te voet over de kammen, of met de kabelbaan vanuit Pec pod Sněžkou.' },
+        { tag: 'Wandelen', name: 'Kamwandelingen & watervallen', desc: 'Gemarkeerde routes, van makkelijke rondjes tot dagtochten. De waterval van de Mumlava is ook met kinderen goed te doen.' },
+        { tag: 'Rustig aan', name: 'Hoogveen op de Černá hora', desc: 'Vlonderpaden over een hoogveen op de Černá hora. Omhoog met de gondelbaan, dan een vlakke wandeling.' },
+        { tag: 'Met kinderen', name: 'Het boomkroonpad', desc: 'Een uitkijkpad boven Janské Lázně — in de kring van bestemmingen die je zonder auto bereikt.' },
+      ],
+    },
+    book: {
+      summary: 'Jullie verblijf', pick: 'Kies jullie periode in de kalender',
+      total: 'Totaal', deposit: '30% aanbetaling',
+      cleaning: 'Eindschoonmaak', cityTax: 'Toeristenbelasting',
+      depositReq: '%P%% aanbetaling na bevestiging',
+      minStay: '%S% verhuren we het huis vanaf %N% nachten. Kies een langere periode.',
+      guestMax: 'Maximaal %N% gasten (volwassenen en kinderen samen).',
+      pay: 'Aanvraag versturen', stripeNote: 'Deze aanvraag is vrijblijvend — je betaalt nu nog niets. We bevestigen de data persoonlijk en sturen daarna een betaallink voor de aanbetaling.',
+      consent: 'Met het versturen van deze aanvraag neem je kennis van onze <a href="/podminky/" target="_blank" rel="noopener">boekingsvoorwaarden en de verwerking van je persoonsgegevens</a>.',
+      free: 'Vrij', booked: 'Bezet', chosen: 'Jullie verblijf', checkoutOnly: 'alleen vertrek', demo: 'Voorbeeld van de beschikbaarheid — wordt gekoppeld aan het boekingssysteem',
+      availFail: 'De beschikbaarheid kon niet worden geladen.',
+      priceHeading: 'Prijslijst', pricePerNight: '/ nacht', priceMin: 'min.',
+      weekendRate: 'Weekendprijs',
+      priceSummerFull: 'De zomer van %Y% is bijna volgeboekt — er zijn nog maar een paar data vrij.',
+      priceMinN: 'min. %N%', priceHolidayMin: 'tijdens feestdagen %N%',
+      priceLevels: {
+        mimo: { name: 'Laagseizoen', range: 'alle overige periodes' },
+        zimni: { name: 'Winter en feestdagen', range: 'januari tot half maart, Pasen, de dagen rond 1 mei, eind oktober tot begin november' },
+        letni: { name: 'Zomer', range: 'eind juni tot begin september' },
+        spicka: { name: 'Piekweken winter', range: 'bepaalde weken in februari en begin januari' },
+        vanoce: { name: 'Kerst', range: 'de week met kerstavond' },
+        silvestr: { name: 'Oud en nieuw', range: 'de week met oudejaarsavond' },
+      },
+      priceCityTax: 'Toeristenbelasting %A% per volwassene per nacht (kinderen vrijgesteld)',
+      pricePet: 'Hond / huisdier %P% per verblijf',
+      priceBond: 'Borg %B% (terugbetaalbaar) — de eindschoonmaak wordt ermee verrekend',
+      petFee: 'Hond / huisdier',
+      priceCleaning: 'Eindschoonmaak (eenmalig)', priceDeposit: '%P%% aanbetaling, pas nadat we jullie data hebben bevestigd', priceFxNote: 'bij benadering, betaling in CZK',
+      sending: 'Versturen…', prevMonths: 'Vorige maanden', nextMonths: 'Volgende maanden',
+      okTitle: 'Aanvraag ontvangen',
+      okBody: 'We reageren binnen 24 uur. Je betaalt nog niets — we bevestigen de data persoonlijk per e-mail.',
+      okAgain: 'Nog een aanvraag versturen',
+      errRequired: 'Vul je e-mailadres in en kies een geldige periode.',
+      errEmail: 'Controleer je e-mailadres.',
+      errRate: 'We hebben te veel aanvragen ontvangen. Probeer het later opnieuw of stuur ons een e-mail.',
+      errGeneric: 'Versturen is niet gelukt. Probeer het opnieuw of mail ons op rezervace@villarudolf.com.',
+    },
+    video: { eyebrow: 'Video', title: 'Bekijk de villa op video', note: 'De video speelt vanzelf af, zonder geluid. De ondertitels zitten in het beeld; het geluid zet je aan met de knop en via de tijdlijn spring je naar een ander moment.', summer: 'Huis, tuin, zwembad & aankomst', winter: 'Rondleiding door het huis, sauna & skibus', start: 'Video afspelen', soundOn: 'Geluid aan', soundOff: 'Geluid uit', onYoutube: 'Bekijken op YouTube' },
+    share: { eyebrow: 'Het leven in de villa', title: 'Zo ziet het er bij ons echt uit', body: 'Kijk mee in het dagelijkse leven van de villa op ons Instagram-account — de wisseling van de seizoenen, avonden bij het vuur en momenten van onze gasten. En als jullie bij ons zijn geweest, tag dan @villarudolfretreat en #villarudolf, zodat anderen jullie foto’s ook zien.', ig: 'Volg ons op Instagram' },
+    cta: {
+      eyebrow: 'Reserveren', title: 'Boek het hele huis voor jullie groep',
+      body: 'Kies aankomst en vertrek in de kalender, bekijk de prijsopbouw en stuur ons een vrijblijvende aanvraag. We bevestigen jullie data persoonlijk.',
+      lblAdults: 'Volwassenen', lblChildren: 'Kinderen', lblPets: 'Huisdieren',
+      lblName: 'Naam', phName: 'Je naam',
+      lblEmail: 'E-mail', phEmail: 'naam@email.nl',
+      lblPhone: 'Telefoon / WhatsApp', phPhone: '+420… (optioneel)',
+      lblMessage: 'Bericht aan de gastheer', phMessage: 'Alles wat we moeten weten — aantal kinderen, aankomsttijd, wensen… (optioneel)',
+    },
+    mail: { subject: 'Villa Rudolf — aanvraag voor een verblijf', dates: 'Periode', nights: 'Nachten', breakdown: 'Prijsopbouw', cleaning: 'Eindschoonmaak', cityTax: 'Toeristenbelasting', guests: 'Gasten', adults: 'Volwassenen', children: 'Kinderen', pets: 'Huisdieren', total: 'Totaal', deposit: '30% aanbetaling (na bevestiging)', from: 'E-mailadres', phone: 'Telefoon / WhatsApp', greeting: 'Hallo, ik wil graag een verblijf in Villa Rudolf aanvragen voor deze periode:' },
+    footer: { tagline: 'Een privévilla voor grote groepen in het hart van het Reuzengebergte.', langLabel: 'Taal', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Volg ons', host: 'Pavel — jullie gastheer', region: 'Reuzengebergte, Tsjechië', formerly: 'Voorheen Rudolfův dvůr.', terms: 'Boekingsvoorwaarden & privacy', guide: 'Uitstapjesplanner', faq: 'Veelgestelde vragen' },
+    /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
+    langbar: { text: 'Deze pagina is ook beschikbaar in het Nederlands.', go: 'Nederlands' },
+    prebook: {
+      title: 'Goed om te weten voordat je boekt', link: 'Alle praktische info →',
+      facts: [
+        { k: 'Capaciteit', v: '{minHostu}–{maxHostu} gasten in {loznice} slaapkamers' },
+        { k: 'Prijs', v: 'Het hele huis vanaf {cenaOd} per nacht' },
+        { k: 'Privacy', v: 'Het hele huis en terrein, alleen voor jullie groep' },
+        { k: 'Inchecken / uitchecken', v: 'Inchecken vanaf 15.00 uur · uitchecken uiterlijk 10.00 uur' },
+        { k: 'Huisdieren', v: 'Honden welkom — {petFee} per verblijf, per dier' },
+        { k: 'Parkeren', v: 'Gratis, op het terrein zelf, achter de poort' },
+        { k: 'Skiën', v: 'Pistes in Svoboda zelf · gratis skibus op 200 m van de poort' },
+        { k: 'Internet', v: 'Snelle wifi in het huis en op het hele terrein' },
+      ],
+    },
+  },
+
+  fr: {
+    photoSoon: 'Photo à venir',
+    meta: {
+      title: 'Villa Rudolf – toute la maison pour {minHostu} à {maxHostu} personnes, {loznice} chambres | Monts des Géants (Krkonoše)',
+      desc: 'La maison entière et son terrain, rien que pour votre groupe de {minHostu} à {maxHostu} personnes, à Svoboda nad Úpou, dans les Monts des Géants. {loznice} chambres, {koupelny} salles de bains, {pozemek} m² de terrain, sauna, local à skis. Ski et piscine selon la saison.',
+      locale: 'fr_FR',
+    },
+    nav: { dum: 'La maison', loznice: 'Intérieur', lyzovani: 'Ski', vybaveni: 'Équipements', galerie: 'Galerie', ohniste: 'Coin feu', lokalita: 'Emplacement', vylety: 'Excursions', info: 'Infos pratiques', cta: 'Réserver' },
+    aria: { sections: 'Sections', season: 'Saison', menu: 'Menu', close: 'Fermer', interior: 'Intérieur — faites défiler les photos, touchez pour agrandir', prev: 'Précédent', next: 'Suivant', prevMonths: 'Mois précédents', nextMonths: 'Mois suivants', gallery: 'Galerie' },
+    hero: {
+      eyebrow: 'Toute la maison, rien que pour votre groupe · Monts des Géants',
+      eyebrowWinter: 'Le ski à deux pas · Monts des Géants',
+      h1: 'Une villa privée dans les Monts des Géants (Krkonoše) pour {minHostu} à {maxHostu} personnes',
+      sub: 'Tout le domaine — la maison et son vaste terrain — est <em>rien qu’à vous</em>.',
+      subWinter: 'Le ski à deux pas — <em>skibus près de la maison</em>, Černá hora à 4 km.',
+      ctaSec: 'Découvrir la maison', badge: 'Dates libres 2026', video: 'Lire la vidéo',
+      summer: 'Été', winter: 'Hiver',
+      nightLine: 'La nuit est tombée. Le coin feu, le mur en gabions et la piscine se sont allumés tout seuls — ici, la soirée ne fait que commencer.',
+    },
+    facts: {
+      loznice:        { k: '{loznice}', v: 'chambres' },
+      koupelny:       { k: '{koupelny}', v: 'salles de bains et WC' },
+      luzka:          { k: '{luzka}', v: 'couchages — {luzkaDetail} d’appoint' },
+      plocha:         { k: '{plocha} m²', v: 'surface habitable' },
+      wellnessSummer: { k: 'Piscine + sauna', v: 'piscine couverte et chauffée, sauna privé' },
+      wellnessWinter: { k: 'Sauna + local à skis', v: 'sauna privé, local à skis dans la maison' },
+      parking:        { k: 'Parking privé', v: 'sur le terrain, juste à l’entrée, derrière votre propre portail' },
+    },
+    ratings: { eyebrow: 'Avis des voyageurs', reviewsWord: 'avis', verified: 'vérifié le' },
+    direct: {
+      badge: '<b>Réservation directe = meilleur prix.</b> 5 % moins cher qu’en passant par les plateformes. Un contact personnel et des conditions d’annulation équitables.',
+      book: '<b>Réservation directe = meilleur prix.</b> 5 % moins cher qu’en passant par les plateformes. Un contact personnel et des conditions d’annulation équitables.',
+      sidebar: 'Réservation directe — 5 % moins cher qu’en passant par les plateformes.',
+    },
+    statement: {
+      eyebrow: 'Tout le domaine, rien que pour vous',
+      title: 'Passé le portail, vous êtes entre vous.',
+      lead: 'Vous ne réservez pas de chambres dans une maison où logent aussi d’autres personnes. Vous prenez tout le domaine — la maison, le parc clôturé, le sauna, l’abri couvert et le coin feu. <span class="vr-sm-hide">Pas de réception, pas d’inconnus au petit-déjeuner, pas besoin d’attendre que le sauna se libère.</span>',
+      stats: [
+        { num: '{pozemek} m²', label: 'de parc clôturé, rien que pour votre groupe' },
+        { num: '1 table', label: 'assez grande pour que tout le monde s’y assoie en même temps' },
+        { num: '1 groupe', label: 'toujours un seul sur le domaine, jamais deux à la fois' },
+        { num: '0', label: 'espace partagé avec des inconnus' },
+      ],
+    },
+    band: { eyebrow: 'Une soirée ici' },
+    amenities: {
+      eyebrow: 'Équipements', title: 'Un confort qui rassemble tout le groupe', drop: 'Déposez une photo ici',
+      items: {
+        pool:     { tag: 'Bien-être', name: 'Piscine couverte et chauffée', desc: 'Une piscine chauffée, sous un toit — ouverte pendant toute la saison d’été, par tous les temps, même quand il pleut. Après la baignade, direction le sauna.' },
+        skiroom:  { tag: 'Ski', name: 'Local à skis', desc: 'Une pièce à part, rien que pour les skis et les chaussures : des râteliers pour les skis et les snowboards, des supports pour les chaussures et un sol lavable. Le matériel mouillé reste en bas et ne monte jamais dans les chambres — en hiver, c’est la question qu’on nous pose le plus souvent.' },
+        sauna:    { tag: 'Bien-être', name: 'Sauna finlandais privé', desc: 'Un sauna finlandais rien que pour votre groupe, avec vestiaire et douche. Pas de partage, pas de créneaux horaires.' },
+        kitchen:  { tag: 'Ensemble', name: 'Cuisine et table pour tout le groupe', desc: 'Une cuisine entièrement équipée et une grande table en bois où tout le groupe s’installe en même temps.' },
+        firepit:  { tag: 'Vie au grand air', name: 'Coin feu avec mur en gabions', desc: 'Un coin feu ouvert, tout juste terminé, où tout le groupe trouve sa place. À la nuit tombée, il s’éclaire tout seul — de la chaleur à la belle étoile.' },
+        altan:    { tag: 'Vie au grand air', name: 'Grand abri couvert avec deux barbecues', desc: 'Un coin repas couvert avec deux grands barbecues électriques et une table assez grande pour tout le monde à la fois. Le toit tient bon, qu’il pleuve ou qu’il neige.' },
+        hriste:   { tag: 'Pour les familles', name: 'Aire de jeux', desc: 'Des jeux d’escalade, un toboggan, des balançoires et des jeux de cordes, plus un trampoline et une table de ping-pong. Les enfants ont leur propre coin, visible depuis l’abri couvert.' },
+        billiard: { tag: 'À l’intérieur', name: 'Billard', desc: 'Une table de billard dans l’appartement Suite — pour un après-midi tranquille ou un tournoi en soirée.' },
+        lounge:   { tag: 'À l’intérieur', name: 'Séjour de la Suite', desc: 'Un long canapé sous les poutres et une grande table — l’appartement Suite a son propre espace pour se retrouver.' },
+      },
+    },
+    bedrooms: {
+      eyebrow: 'Intérieurs',
+      title: 'À l’intérieur de la maison',
+      note: '{loznice} chambres, {koupelny} salles de bains, une grande cuisine, un sauna et un espace bien-être — parcourez toute la maison en photos.',
+      noBunk: 'Pas de lits superposés — un sommeil plus paisible, y compris pour les parents de jeunes enfants.',
+      rooms: [
+        { name: 'Appartement Suite', cap: 'jusqu’à 10 personnes', beds: '3 chambres avec lits doubles, 2 lits simples et 1 lit gigogne · sa propre cuisine et un billard · salle de bains' },
+        { name: 'Chambre 1', cap: '2 personnes', beds: 'Lit double · salle de bains' },
+        { name: 'Chambre 2', cap: 'jusqu’à 4 personnes', beds: 'Lit double et 2 lits simples (dont un lit d’appoint de taille normale) · salle de bains' },
+        { name: 'Chambre 3', cap: 'jusqu’à 4 personnes', beds: 'Lit double et 2 lits simples (dont un lit d’appoint de taille normale) · salle de bains' },
+        { name: 'Chambre 4', cap: '2 personnes', beds: 'Lit double · salle de bains' },
+      ],
+    },
+    interior: {
+      hint: 'Faites glisser avec la souris ou le doigt · touchez pour agrandir',
+      open360: 'Ouvrir dans la visite 360° de la maison',
+      showOnPlan: 'Voir sur le plan',
+      rosterTitle: 'Où vous dormirez',
+      rosterNote: '{luzka} couchages — {luzkaDetail} d’appoint. Le détail pour répartir le groupe dans les chambres.',
+      items: { kitchen: 'Cuisine et salle à manger', suite: 'Appartement Suite', room1: 'Chambre 1', room2: 'Chambre 2', room3: 'Chambre 3', room4: 'Chambre 4', sauna: 'Sauna finlandais', wellness: 'Espace bien-être et douche', bath: 'Douche près du sauna', bath2: 'Salle de bains – Chambre 2', bath3: 'Salle de bains – Chambre 3', bath4: 'Salle de bains – Chambre 4' },
+    },
+    plan: {
+      eyebrow: 'Plan de la maison',
+      title: 'Où se trouve chaque pièce',
+      note: 'Touchez une pièce — nous vous montrons ses photos. Changez d’étage juste au-dessus.',
+      hint: 'Touchez une pièce nommée pour voir ses photos · changez d’étage au-dessus',
+      levelsLabel: 'Étages de la maison',
+      floors: { basement: 'Sous-sol', ground: 'Rez-de-chaussée', floor1: '1er étage', attic: 'Combles' },
+      r: {
+        hall: 'Hall d’entrée', corridor: 'Couloir', stairs: 'Escalier', storage: 'Débarras',
+        kitchen: 'Cuisine et salle à manger', bath: 'Salle de bains', wc: 'WC',
+        room1: 'Chambre 1', room2: 'Chambre 2', room3: 'Chambre 3', room4: 'Chambre 4',
+        sauna: 'Sauna et bien-être', ski: 'Local à skis', boiler: 'Local technique',
+        aptLiving: 'Suite — séjour', aptKitchen: 'Suite — cuisine',
+        aptHall: 'Suite — couloir', aptBath: 'Suite — salle de bains', aptWc: 'Suite — WC',
+        aptBedA: 'Suite — chambre A', aptBedB: 'Suite — chambre B', aptBedC: 'Suite — chambre C',
+      },
+      open: 'Voir les photos',
+      orient: 'Plan indicatif',
+    },
+    ohniste: {
+      eyebrow: 'Nouvelle pièce maîtresse', caption: 'Détail du coin feu et du mur en gabions',
+      title: 'Un coin feu avec mur en gabions qui s’anime le soir',
+      body: 'Le coin feu ouvert, tout juste terminé, accueille tout le groupe. Un mur massif en gabions forme un ensemble avec lui et s’éclaire automatiquement à la tombée de la nuit — les lumières s’allument et s’éteignent toutes seules. Le cœur des soirées à la belle étoile.',
+    },
+    skupina: {
+      eyebrow: 'Votre groupe, quelle que soit sa taille',
+      big: 'Six amis à moto ou des retrouvailles à vingt-deux. Le lieu accueille toujours toute la bande.',
+      desc: 'Ce n’est pas une question de nombre. Jusqu’à {maxHostu} personnes dorment ici confortablement, mais une famille, une bande d’amis ou un groupe plus petit y trouvent tout aussi bien leur place — la maison et tout le terrain sont toujours rien qu’à vous.',
+    },
+    ski: {
+      eyebrow: 'Ski · SkiResort Černá hora – Pec',
+      title: 'Skier depuis la villa',
+      note: 'Nous ne publions que ce qui ne change pas d’une saison à l’autre. Tarifs, horaires et heures d’ouverture : à consulter auprès de l’exploitant.',
+      local: {
+        tag: '1,9 km de la maison',
+        name: 'Un domaine skiable à Svoboda nad Úpou même',
+        desc: 'Les pistes les plus proches ne sont pas quelque part là-haut dans la montagne : elles sont dans la même petite ville que la maison. Cinq minutes en voiture, moins d’une demi-heure à pied. C’est le plus petit domaine du SkiResort, et c’est justement pour ça qu’il convient aux enfants et aux débutants qui découvrent le ski, pendant que le reste du groupe part sur les grandes pistes.',
+        specs: [
+          'pistes bleues (faciles), d’environ 350 m chacune',
+          'téléskis — pas de télésiège ni de télécabine ici',
+          'en voiture depuis la maison — 1,9 km par la route',
+        ],
+        school: 'Sur place : une école de ski, une location de matériel et un tapis roulant pour les enfants.',
+        snow: 'Honnêtement : c’est le domaine le plus bas du SkiResort (environ 530–600 m). Il dépend donc entièrement de l’enneigement, naturel et artificiel, et sa saison est souvent plus courte que plus haut en montagne. Avant d’organiser tout votre séjour autour de lui, vérifiez qu’il est ouvert.',
+      },
+      resorts: {
+        title: 'Un seul forfait, plusieurs domaines',
+        lead: 'La maison se trouve dans la zone du SkiResort ČERNÁ HORA – PEC, où, selon l’exploitant, un seul forfait est valable dans plusieurs domaines skiables. Temps de trajet en voiture depuis Svoboda nad Úpou :',
+      },
+      rows: {
+        cernaHora: 'le plus grand domaine du SkiResort',
+        velkaUpa: 'espace enfants au départ de la remontée',
+        cernyDul: 'passage de montagne par un col — route sinueuse, prévoyez de la marge',
+        pec: 'le deuxième plus grand domaine, pistes de tous niveaux',
+        malaUpa: 'géré par une autre société — vérifiez la validité de votre forfait',
+      },
+      notes: {
+        connect: { t: 'Les domaines ne sont pas reliés par les pistes',
+          b: 'Ne vous attendez pas à un domaine d’un seul tenant. La seule liaison à skis est le SkiTour de Černá hora à Pec — il ne fonctionne que dans un sens et, sur deux de ses quatre tronçons, c’est une dameuse qui vous tracte ; le retour se fait en skibus. Entre les autres domaines, on circule en voiture ou en skibus ; ce qui les relie, c’est le forfait commun.' },
+        skibus: { t: 'On peut skier sans voiture',
+          b: 'La ligne principale de skibus du SkiResort s’arrête à Svoboda nad Úpou même — notamment à Maršov II, Maršov I, Sokolovna, à la gare routière et à l’hôtel PROM. Le nombre de lignes et les conditions de transport changent d’une saison à l’autre : vérifiez-les auprès de l’exploitant.' },
+        evening: { t: 'Ski nocturne',
+          b: 'En saison, il se pratique sur des pistes éclairées ; la plus longue est la Protěž, sur Černá hora — 1,6 km selon l’exploitant. Les jours et horaires exacts changent : consultez le programme à jour auprès de l’exploitant.' },
+      },
+      plan: {
+        title: 'Quand on ne skie pas',
+        lead: 'Dans un grand groupe, il y a toujours quelqu’un qui ne skie pas — et sur sept nuits, on skie en général quatre ou cinq jours. Voici le reste du programme.',
+        tiles: [
+          { n: 'Aquacentrum Janské Lázně', m: 'piscine intérieure, accessible à pied' },
+          { n: 'Pistes de ski de fond', m: 'départs près de Černá hora, ≈ 4 km en voiture' },
+          { n: 'Verrerie de Harrachov', m: 'visite au chaud, ≈ 50 min en voiture' },
+          { n: 'Fort de Stachelberg', m: 'fortifications souterraines près de Trutnov' },
+          { n: 'Parc aquatique de Karpacz (PL)', m: 'grand complexe aquatique couvert, ≈ 45 min en voiture' },
+        ],
+      },
+      cta: 'Les excursions d’hiver dans le planificateur',
+      ctaSub: 'Carte, filtres et une idée pour un jour précis — sans inscription.',
+    },
+    lokalita: {
+      eyebrow: 'Emplacement · Svoboda nad Úpou',
+      title: 'À la montagne, pas au bout du monde.',
+      lead: 'Nous sommes à Svoboda nad Úpou, à 150 mètres du centre — magasin, restaurant, train et bus, tout est accessible à pied. Et la Sněžka est à vingt minutes en voiture.',
+      leadWinter: 'Le skibus pour le SkiResort Černá hora–Pec s’arrête à 200 mètres du portail — vous rejoignez les remontées sans voiture et sans chercher de place de parking. La voiture peut ensuite rester garée sur le terrain toute la semaine. Les tarifs et horaires à jour sont publiés par l’exploitant.',
+      doorstepSummer: [
+        { num: '150 m', label: 'jusqu’au centre de Svoboda — magasin, restaurant et gare à pied' },
+        { num: '20 min', label: 'en voiture jusqu’au pied de la Sněžka — on monte en téléphérique ou à pied' },
+        { num: '4 km', label: 'Janské Lázně — le Sentier des cimes et la télécabine de Černá hora' },
+        { num: '11 km', label: 'Trutnov — piscine en plein air, mur d’escalade et grandes surfaces' },
+      ],
+      doorstep: [
+        { num: '150 m', label: 'jusqu’au centre de Svoboda — environ deux minutes à pied' },
+        { num: '200 m', label: 'jusqu’à l’arrêt du skibus — moins de trois minutes à pied' },
+        { num: '2 h', label: 'environ depuis Prague et depuis Wrocław, trois depuis Dresde' },
+        { num: '4 km', label: 'jusqu’aux pistes de Černá hora — le skibus s’arrête près de la maison' },
+      ],
+      mapTitle: ['{n} excursion testée, en trois cercles', '{n} excursions testées, en trois cercles'],
+      mapNote: 'Les distances sur la carte sont réelles, le relief est dessiné à la main. Le cercle autour de la villa a un rayon de trois kilomètres à vol d’oiseau.',
+      legend: '◆ Villa Rudolf · ○ accessible à pied · ┄ frontière polonaise · temps et distances par la route',
+      mapAlt: 'Carte des environs dessinée à la main : Villa Rudolf à Svoboda nad Úpou, la Sněžka, Janské Lázně, Pec pod Sněžkou, Trutnov et la frontière polonaise.',
+      rings: [
+        { name: 'À pied depuis le portail', count: ['{n} lieu', '{n} lieux'],
+          body: 'Janské Lázně et le Sentier des cimes, la piscine intérieure Aquacentrum, une balade avec des lamas dans une ferme familiale, la ferme pédagogique Muchomůrka, l’exposition de contes Do Krakonošova, un minigolf aventure et un stand de tir. Tous sont accessibles sans voiture.',
+          link: 'Voir dans le planificateur →' },
+        { name: 'À moins de 30 minutes en voiture', count: ['{n} lieu', '{n} lieux'],
+          body: 'La Sněžka en téléphérique ou à pied, Černá hora en télécabine, Obří důl même avec une poussette, la luge d’été de Pec, des tours panoramiques, la hêtraie primaire de Rýchory, la piscine en plein air et le mur d’escalade de Trutnov.',
+          link: 'Voir dans le planificateur →' },
+        { name: 'Pour une journée entière', count: ['{n} lieu', '{n} lieux'],
+          body: 'Les rochers d’Adršpach, le Safari Park de Dvůr Králové, la verrerie de Harrachov avec les chutes de la Mumlava, et le parc aquatique Tropikana à Karpacz, en Pologne — pour celui-là, emportez les papiers d’identité de tout le monde, enfants compris.',
+          link: 'Voir dans le planificateur →' },
+      ],
+      arrive: [
+        { id: 'praha', k: 'Prague', v: 'environ 2 heures en voiture' },
+        { id: 'wroclaw', k: 'Wrocław (PL)', v: 'environ 2 heures en voiture' },
+        { id: 'dresden', k: 'Dresde', v: 'environ 3 heures en voiture' },
+        { id: 'train', k: 'En train', v: 'gare de Svoboda nad Úpou, puis à pied jusqu’à la maison' },
+        { id: 'bus', k: 'En bus', v: 'arrêt en ville, puis à pied jusqu’à la maison' },
+        { id: 'skibus', k: 'Skibus', v: 'arrêt à 200 m du portail ; vérifiez le tarif auprès de l’exploitant' },
+        { id: 'parking', k: 'Parking', v: 'directement sur le terrain, derrière le portail' },
+      ],
+      arriveTransitWinter: { id: 'transit', k: 'Train et bus', v: 'gare et arrêt en ville, puis à pied jusqu’à la maison' },
+      arriveCarSummer: { id: 'car', k: 'En voiture', v: 'environ 2 heures depuis Prague et Wrocław, 3 depuis Dresde' },
+      mapLabels: {
+        villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
+        snezka: 'Sněžka', snezkaMeta: '1603 m',
+        pec: 'Pec pod Sněžkou', pecMeta: '13 km',
+        cernaHora: 'Černá hora', cernaHoraMeta: 'pistes 4 km',
+        janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
+        trutnov: 'Trutnov', trutnovMeta: '11 km',
+        hmarsov: 'Horní Maršov', obriDul: 'Obří důl', rychory: 'Rýchory', mladeBuky: 'Mladé Buky',
+        upa: 'Úpa', polsko: 'POLOGNE', ring: 'ACCESSIBLE À PIED',
+        praha: 'Prague ≈ 2 h', vratislav: 'Wrocław ≈ 2 h', drazdany: 'Dresde ≈ 3 h',
+        adrspach: 'Rochers d’Adršpach 45 min', safari: 'Safari de Dvůr Králové 30 min',
+        scale: '0 — 2 km', north: 'N',
+      },
+    },
+    tour: {
+      eyebrow: 'Parcourez la maison et le terrain',
+      title: 'Regardez autour de vous, dedans comme dehors — à 360°',
+      hint: 'Attrapez l’image et faites-la glisser avec la souris ou le doigt. Changez de pièce en bas ; les scènes défilent aussi toutes seules.',
+      drag: 'Glissez pour regarder',
+      scenes: [
+        { name: 'La cour sous la neige', desc: 'La cour après de fortes chutes de neige — une voie dégagée entre les épicéas chargés de neige, des glaçons le long du toit et de la place pour garer les voitures de tout le groupe.' },
+        { name: 'Hall d’entrée', desc: 'Le hall d’entrée avec le meuble à chaussures et l’escalier vers l’étage — c’est d’ici qu’on rejoint la salle à manger et les chambres du rez-de-chaussée.' },
+        { name: 'Meuble à chaussures et escalier', desc: 'Un grand meuble à chaussures en bois juste derrière la porte et l’escalier vers l’étage. La porte vitrée mène directement à la salle à manger — les chaussures de tout le groupe restent ici.' },
+        { name: 'Cuisine principale et salle à manger', desc: 'La cuisine commune avec une longue table en bois pour tout le groupe, des meubles de cuisine le long du mur et de grandes fenêtres sur le jardin — le cœur convivial de la maison.' },
+        { name: 'Chambre 1 (2 couchages)', desc: 'Un lit double avec tête de lit rétroéclairée, un papier peint moucheté et un bow-window à trois fenêtres sur le jardin. Salle de bains privée.' },
+        { name: 'Chambre 1 — salle de bains', desc: 'La salle de bains de la Chambre 1 — cabine de douche, lavabo avec armoire à miroir et WC.' },
+        { name: 'Chambre 2 (3+1 couchages)', desc: 'Un lit double et un lit simple, un papier peint tissé gris derrière la tête de lit rétroéclairée, une table avec des bancs et deux fenêtres. Salle de bains privée juste à côté.' },
+        { name: 'Chambre 2 — salle de bains', desc: 'La salle de bains de la Chambre 2 — cabine de douche quart de cercle, lavabo sur meuble en bois avec miroir, WC et sèche-serviettes.' },
+        { name: 'Chambre 3 (3+1 couchages)', desc: 'Un lit double et un lit simple sous le plafond mansardé, un papier peint à motif de feuilles dorées derrière la tête de lit rétroéclairée. Salle de bains privée, accessible directement depuis la chambre.' },
+        { name: 'Chambre 3 — la fenêtre sur le tunnel de la piscine', desc: 'La même Chambre 3, vue depuis sa deuxième fenêtre : un profond rebord rouge foncé et, juste derrière la vitre, le tunnel vitré au-dessus de la piscine. Une grande armoire et une porte qui donne directement sur le hall d’entrée.' },
+        { name: 'Chambre 3 — salle de bains', desc: 'La salle de bains de la Chambre 3 — cabine de douche, lavabo et fenêtre sur le jardin.' },
+        { name: 'Palier du 1er étage', desc: 'Le palier de l’escalier principal, avec placards intégrés et trois fenêtres — des portes mènent à une chambre et à la Suite.' },
+        { name: 'Chambre 4 (2 couchages)', desc: 'Un lit double dans une alcôve voûtée entre des poteaux en bois, un bow-window avec rebord en bois. Salle de bains privée.' },
+        { name: 'Chambre 4 — la vue depuis le lit', desc: 'La même Chambre 4, vue depuis la tête du lit : de près, l’alcôve voûtée au papier peint marbré et la tête de lit à lattes rétroéclairée, puis toute la longueur de la chambre jusqu’à la fenêtre à rideaux, le tableau de montagne, la petite fenêtre dans le mur à colombages et la porte ouverte sur la salle de bains privée.' },
+        { name: 'Chambre 4 — salle de bains', desc: 'La salle de bains de la Chambre 4 — cabine de douche, lavabo, WC et lave-linge.' },
+        { name: 'Suite — séjour', desc: 'Le séjour de l’appartement Suite : un long canapé sous les poutres, une grande table, une télévision et l’escalier vers les chambres sous les combles.' },
+        { name: 'Suite — cuisine', desc: 'La cuisine de la Suite, entièrement équipée, avec four, lave-vaisselle et vaisselle complète — l’appartement est autonome et ne partage pas la cuisine principale.' },
+        { name: 'Suite — chambre A', desc: 'La première des trois chambres de la Suite, au 1er étage : un lit double et un papier peint géométrique derrière la tête de lit rétroéclairée.' },
+        { name: 'Suite — salle de bains', desc: 'La salle de bains de la Suite, au 1er étage — douche vitrée, meuble vasque avec armoire à miroir et fenêtre sur le jardin enneigé. Le revêtement effet bois s’accorde avec le reste de l’appartement.' },
+        { name: 'Suite — WC', desc: 'Les WC de la Suite — WC suspendu avec un habillage en bois derrière la cuvette, une petite fenêtre et un radiateur. Ils sont à part de la salle de bains, et l’appartement n’a ainsi rien à partager.' },
+        { name: 'Combles — palier de la Suite', desc: 'Le palier en haut de l’escalier de la Suite, sous les plafonds mansardés — une rampe en bois, une fenêtre de toit qui cadre les montagnes enneigées et les portes des deux chambres sous les combles.' },
+        { name: 'Suite — chambre B', desc: 'Une chambre de la Suite sous les combles — un lit double et un lit gigogne sous le plafond mansardé, une commode et une table de chevet. C’est grâce à elle que la Suite compte 10 couchages.' },
+        { name: 'Suite — chambre C', desc: 'La plus grande chambre de la Suite sous les combles : un lit double et deux lits simples sous le plafond mansardé, et une lucarne.' },
+        { name: 'Espace bien-être près du sauna', desc: 'La pièce devant le sauna — un banc pour se rafraîchir, une douche et la porte du sauna finlandais. Rien que pour votre groupe.' },
+        { name: 'Dans le sauna', desc: 'À l’intérieur du sauna finlandais chauffé — banquettes en bois clair et poêle.' },
+        { name: 'Local à skis', desc: 'Un local à skis à part, au sous-sol — des râteliers pour les skis et les snowboards et des supports pour les chaussures. Le matériel reste en bas au lieu de finir dans les chambres.' },
+        { name: 'Le jardin en hiver', desc: 'Le jardin enneigé, de l’abri couvert jusqu’à la maison — de grands épicéas, des sentiers tracés dans la neige et les montagnes au-dessus des toits.' },
+        { name: 'L’abri couvert et ses barbecues', desc: 'Le même abri couvert qu’en été, mais sous la neige : une charpente en bois massif, deux grands barbecues électriques et des côtés ouverts sur le jardin.' },
+      ],
+      scenesSummer: [
+        { name: 'Arrivée à la villa', desc: 'Le parking derrière le portail, où tout le groupe peut se garer, et la maison au bout de l’allée, entre de grands arbres.' },
+        { name: 'Jardin et piscine', desc: 'La maison vue de l’autre côté de la pelouse, la piscine couverte avec sa rangée de transats et le coin feu en gabions au pied du talus.' },
+        { name: 'La piscine couverte', desc: 'La piscine couverte et chauffée, avec sa rangée de transats, tout près de la maison et entourée de votre propre pelouse.' },
+        { name: 'La terrasse en bois', desc: 'Une terrasse en chêne au-dessus du mur en gabions — une table pour tout le groupe, avec vue sur l’abri couvert et les montagnes.' },
+        { name: 'L’abri couvert et ses barbecues', desc: 'Sous une charpente en bois massif : la longue table, deux grands barbecues électriques et des côtés ouverts sur le jardin.' },
+        { name: 'L’aire de jeux', desc: 'Un jeu d’escalade, un toboggan, des balançoires et des jeux de cordes, visibles depuis la maison — les enfants ont leur coin à eux, à l’intérieur du terrain.' },
+        { name: 'Le coin feu à la nuit tombée', desc: 'Une fois le soleil couché, les gabions et les marches s’illuminent tout seuls — des fauteuils autour du feu et, derrière, la piscine éclairée.' },
+      ],
+      groupsLabel: 'Groupes de scènes', groupAll: 'Toutes',
+      stripLabel: 'Scènes de la visite 360°', stripPrev: 'Miniatures précédentes', stripNext: 'Miniatures suivantes',
+      groups: { ground: 'Rez-de-chaussée', floor1: '1er étage', floor2: 'Combles', basement: 'Sous-sol', extSummer: 'Extérieur — été', extWinter: 'Extérieur — hiver' },
+      backPhotos: 'Retour aux photos ({room})', backPlan: 'Retour au plan', backClose: 'Fermer',
+    },
+    gallery: { eyebrow: 'Galerie', title: 'La maison, le terrain, les environs', note: 'Toutes les photos ({n}) · cliquez pour agrandir' },
+    vylety: {
+      eyebrow: 'Planificateur d’excursions', title: 'La montagne commence au pas de la porte', note: 'Sélection selon la saison · {n} lieux testés à moins d’une heure de la maison.', drop: 'Ici, une photo d’excursion', cta: 'Ouvrir le planificateur d’excursions', ctaSub: 'Sans inscription. Carte, filtres et une idée pour un jour précis.',
+      items: [
+        { tag: 'Toute l’année', name: 'Sněžka', desc: 'Le plus haut sommet de Tchéquie — à pied par les crêtes, ou en téléphérique depuis Pec pod Sněžkou.' },
+        { tag: 'Randonnée', name: 'Sentiers de crête et cascades', desc: 'Des itinéraires balisés, des boucles faciles aux traversées d’une journée entière. Même les enfants vont jusqu’à la cascade de la Mumlava.' },
+        { tag: 'Facile', name: 'La tourbière de Černá hora', desc: 'Des caillebotis à travers une tourbière d’altitude, sur Černá hora. On monte en télécabine, puis on se promène à plat.' },
+        { tag: 'Avec des enfants', name: 'Le Sentier des cimes', desc: 'Une passerelle au-dessus de Janské Lázně — dans le cercle des lieux accessibles sans voiture.' },
+      ],
+    },
+    book: {
+      summary: 'Votre séjour', pick: 'Choisissez vos dates dans le calendrier',
+      total: 'Total', deposit: 'Acompte de 30 %',
+      cleaning: 'Frais de ménage', cityTax: 'Taxe de séjour',
+      depositReq: 'Acompte de %P% % après confirmation',
+      minStay: '%S%, nous acceptons les séjours à partir de %N% nuits. Merci de choisir une période plus longue.',
+      guestMax: 'Jusqu’à %N% personnes (adultes et enfants compris).',
+      pay: 'Envoyer la demande de séjour', stripeNote: 'Cette demande est sans engagement — vous ne payez rien maintenant. Nous confirmons les dates personnellement, puis nous vous envoyons un lien de paiement pour l’acompte.',
+      consent: 'En envoyant cette demande, vous prenez connaissance de nos <a href="/podminky/" target="_blank" rel="noopener">conditions de réservation et du traitement de vos données personnelles</a>.',
+      free: 'Libre', booked: 'Réservé', chosen: 'Votre séjour', checkoutOnly: 'départ uniquement', demo: 'Disponibilités d’exemple — à relier au système de réservation',
+      availFail: 'Impossible de charger les disponibilités.',
+      priceHeading: 'Tarifs', pricePerNight: '/ nuit', priceMin: 'min.',
+      weekendRate: 'Tarif week-end',
+      priceSummerFull: 'L’été %Y% est presque complet — il ne reste que quelques dates.',
+      priceMinN: 'min. %N%', priceHolidayMin: '%N% les jours fériés',
+      priceLevels: {
+        mimo: { name: 'Hors saison', range: 'toutes les autres dates' },
+        zimni: { name: 'Hiver et jours fériés', range: 'de janvier à mi-mars, Pâques, les jours autour du 1er mai, de fin octobre à début novembre' },
+        letni: { name: 'Été', range: 'de fin juin à début septembre' },
+        spicka: { name: 'Haute saison d’hiver', range: 'certaines semaines de février et début janvier' },
+        vanoce: { name: 'Noël', range: 'la semaine du 24 décembre' },
+        silvestr: { name: 'Nouvel An', range: 'la semaine du 31 décembre' },
+      },
+      priceCityTax: 'Taxe de séjour %A% par adulte et par nuit (les enfants ne paient pas)',
+      pricePet: 'Chien / animal %P% par séjour',
+      priceBond: 'Caution remboursable %B% — les frais de ménage en sont déduits',
+      petFee: 'Chien / animal',
+      priceCleaning: 'Ménage (forfait unique)', priceDeposit: 'Acompte de %P% %, seulement après confirmation de vos dates', priceFxNote: 'montants indicatifs, paiement en CZK',
+      sending: 'Envoi…', prevMonths: 'Mois précédents', nextMonths: 'Mois suivants',
+      okTitle: 'Demande reçue',
+      okBody: 'Nous vous répondons sous 24 heures. Vous ne payez rien pour l’instant — nous confirmons les dates personnellement par e-mail.',
+      okAgain: 'Envoyer une autre demande',
+      errRequired: 'Merci d’indiquer votre e-mail et de choisir des dates valides.',
+      errEmail: 'Merci de vérifier votre adresse e-mail.',
+      errRate: 'Nous avons reçu trop de demandes. Merci de réessayer plus tard ou de nous écrire par e-mail.',
+      errGeneric: 'L’envoi a échoué. Merci de réessayer ou de nous écrire à rezervace@villarudolf.com.',
+    },
+    video: { eyebrow: 'Vidéo', title: 'Découvrez la villa en vidéo', note: 'La vidéo démarre toute seule, sans le son. Les sous-titres sont incrustés dans l’image ; activez le son avec le bouton et naviguez avec la barre de lecture.', summer: 'Maison, jardin, piscine et arrivée', winter: 'Visite de la maison, sauna et skibus', start: 'Lire la vidéo', soundOn: 'Activer le son', soundOff: 'Couper le son', onYoutube: 'Voir sur YouTube' },
+    share: { eyebrow: 'La vie à la villa', title: 'À quoi ressemble la vie ici', body: 'Jetez un œil au quotidien de la villa sur notre Instagram — le fil des saisons, les soirées au coin du feu et des moments partagés par nos hôtes. Et si vous avez séjourné chez nous, identifiez @villarudolfretreat et ajoutez #villarudolf pour que d’autres voient aussi vos photos.', ig: 'Suivre sur Instagram' },
+    cta: {
+      eyebrow: 'Réservation', title: 'Réservez toute la maison pour votre groupe',
+      body: 'Choisissez l’arrivée et le départ dans le calendrier, consultez le détail du prix et envoyez-nous une demande de séjour sans engagement. Nous vous confirmons les dates personnellement.',
+      lblAdults: 'Adultes', lblChildren: 'Enfants', lblPets: 'Animaux',
+      lblName: 'Nom', phName: 'Votre nom',
+      lblEmail: 'E-mail', phEmail: 'vous@email.fr',
+      lblPhone: 'Téléphone / WhatsApp', phPhone: '+420… (facultatif)',
+      lblMessage: 'Message à l’hôte', phMessage: 'Tout ce que nous devrions savoir — nombre d’enfants, heure d’arrivée, souhaits… (facultatif)',
+    },
+    mail: { subject: 'Villa Rudolf — demande de séjour', dates: 'Dates', nights: 'Nuits', breakdown: 'Détail du prix', cleaning: 'Frais de ménage', cityTax: 'Taxe de séjour', guests: 'Personnes', adults: 'Adultes', children: 'Enfants', pets: 'Animaux', total: 'Total', deposit: 'Acompte de 30 % (après confirmation)', from: 'E-mail de contact', phone: 'Téléphone / WhatsApp', greeting: 'Bonjour, je souhaiterais faire une demande de séjour à la Villa Rudolf pour les dates suivantes :' },
+    footer: { tagline: 'Un domaine de montagne privé pour les grands groupes, au cœur des Monts des Géants.', langLabel: 'Langue', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Suivez-nous', host: 'Pavel — votre hôte', region: 'Monts des Géants, Tchéquie', formerly: 'Anciennement Rudolfův dvůr.', terms: 'Conditions de réservation et confidentialité', guide: 'Planificateur d’excursions', faq: 'Questions fréquentes' },
+    /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
+    langbar: { text: 'Cette page existe aussi en français.', go: 'Français' },
+    prebook: {
+      title: 'À savoir avant de réserver', link: 'Toutes les infos pratiques →',
+      facts: [
+        { k: 'Capacité', v: '{minHostu} à {maxHostu} personnes dans {loznice} chambres' },
+        { k: 'Prix', v: 'Toute la maison à partir de {cenaOd} la nuit' },
+        { k: 'Intimité', v: 'Toute la maison et le terrain, rien que pour votre groupe' },
+        { k: 'Arrivée / départ', v: 'Arrivée à partir de 15 h · départ au plus tard à 10 h' },
+        { k: 'Animaux', v: 'Chiens bienvenus — {petFee} par séjour et par animal' },
+        { k: 'Parking', v: 'Gratuit, directement sur le terrain, derrière le portail' },
+        { k: 'Ski', v: 'Pistes à Svoboda même · skibus gratuit à 200 m du portail' },
+        { k: 'Internet', v: 'Wi-Fi rapide dans la maison et sur tout le terrain' },
+      ],
+    },
+  },
 };
 
 /* ============================ State + helpers ============================ */
@@ -1993,6 +2682,7 @@ function fmtCheckedAt(iso) {
     const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][m - 1] || m;
     return mon + ' ' + d + ', ' + y;
   }
+  if (MON_SHORT[state.lang]) return d + ' ' + (MON_SHORT[state.lang][m - 1] || m) + ' ' + y; // nl / fr: 9 okt. 2026
   return d + '. ' + m + '. ' + y; // cs / de / pl
 }
 
@@ -2246,9 +2936,11 @@ function applyVideoAria() {
 
 /* Blok vzdáleností pro sekci Lokalita (ilustrativní mapa je statická v HTML). */
 /* ---------- Lokalita: počty výletů, okruhy, „Než dorazíte", sezónní lead ---------- */
-/* Plurál: čeština a polština mají tři tvary (1 / 2–4 / 5+), angličtina a němčina dva. */
+/* Plurál: čeština a polština mají tři tvary (1 / 2–4 / 5+), ostatní dva. Francouzština
+   bere jednotné číslo i pro nulu („0 destination"). */
 function pluralForm(lang, n) {
   if (lang === 'cs') return n === 1 ? 0 : (n >= 2 && n <= 4 ? 1 : 2);
+  if (lang === 'fr') return n <= 1 ? 0 : 1;
   if (lang === 'pl') {
     if (n === 1) return 0;
     const d = n % 10, h = n % 100;
@@ -3333,16 +4025,27 @@ const MN_ALL = {
   en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   de: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
   pl: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
+  nl: ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'],
+  fr: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
 };
 const DW_ALL = {
   cs: ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'], en: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
   de: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'], pl: ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'],
+  nl: ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'],
+  fr: ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'],
+};
+/* Krátké názvy měsíců pro datum „ověřeno 9 okt. 2026" (fmtCheckedAt) — jazyky, které píšou den, měsíc slovem a rok. */
+const MON_SHORT = {
+  nl: ['jan.', 'feb.', 'mrt.', 'apr.', 'mei', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.'],
+  fr: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
 };
 const NBf = {
   cs: (n) => (n === 1 ? 'noc' : n < 5 ? 'noci' : 'nocí'),
   en: (n) => (n === 1 ? 'night' : 'nights'),
   de: (n) => (n === 1 ? 'Nacht' : 'Nächte'),
   pl: (n) => (n === 1 ? 'noc' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'noce' : 'nocy'),
+  nl: (n) => (n === 1 ? 'nacht' : 'nachten'),
+  fr: (n) => (n <= 1 ? 'nuit' : 'nuits'),
 };
 /* Skloňování slova „dospělý" pro řádek městského poplatku. */
 const ADf = {
@@ -3350,6 +4053,8 @@ const ADf = {
   en: (n) => (n === 1 ? 'adult' : 'adults'),
   de: (n) => (n === 1 ? 'Erwachsener' : 'Erwachsene'),
   pl: (n) => (n === 1 ? 'dorosły' : 'dorosłych'),
+  nl: (n) => (n === 1 ? 'volwassene' : 'volwassenen'),
+  fr: (n) => (n <= 1 ? 'adulte' : 'adultes'),
 };
 /* Lokalizované názvy sezón — pro řádky rozpisu (víc sezón v jednom pobytu). */
 /* Názvy úseků ceníku (name v VR_PRICING.periods) — generuje je tools/gen-cenik-web.mjs. */
@@ -3358,6 +4063,8 @@ const SEASON_LABEL = {
   en: { letni: 'summer', zimni: 'winter', mimo: 'off-season', svatky: 'holidays', spicka: 'winter peak', vanoce: 'Christmas', silvestr: 'New Year' },
   de: { letni: 'Sommer', zimni: 'Winter', mimo: 'Nebensaison', svatky: 'Feiertage', spicka: 'Winter-Spitze', vanoce: 'Weihnachten', silvestr: 'Silvester' },
   pl: { letni: 'sezon letni', zimni: 'sezon zimowy', mimo: 'poza sezonem', svatky: 'święta', spicka: 'szczyt zimowy', vanoce: 'Boże Narodzenie', silvestr: 'Sylwester' },
+  nl: { letni: 'zomer', zimni: 'winter', mimo: 'laagseizoen', svatky: 'feestdagen', spicka: 'winterpiek', vanoce: 'kerst', silvestr: 'oud en nieuw' },
+  fr: { letni: 'été', zimni: 'hiver', mimo: 'hors saison', svatky: 'jours fériés', spicka: 'haute saison d’hiver', vanoce: 'Noël', silvestr: 'Nouvel An' },
 };
 /* Úvod věty o minimální délce pobytu (vkládá se za %S% v book.minStay). */
 const SEASON_IN = {
@@ -3365,6 +4072,8 @@ const SEASON_IN = {
   en: { letni: 'In summer', zimni: 'In winter', mimo: 'Outside peak season', svatky: 'Over public holidays', spicka: 'In the winter peak weeks', vanoce: 'Over Christmas', silvestr: 'Over New Year' },
   de: { letni: 'Im Sommer', zimni: 'Im Winter', mimo: 'Außerhalb der Hauptsaison', svatky: 'An Feiertagen', spicka: 'In den Winter-Spitzenwochen', vanoce: 'Über Weihnachten', silvestr: 'Über Silvester' },
   pl: { letni: 'Latem', zimni: 'Zimą', mimo: 'Poza sezonem', svatky: 'W święta', spicka: 'W szczycie zimowym', vanoce: 'W Boże Narodzenie', silvestr: 'W Sylwestra' },
+  nl: { letni: 'In de zomer', zimni: 'In de winter', mimo: 'Buiten het hoogseizoen', svatky: 'Tijdens feestdagen', spicka: 'In de piekweken van de winter', vanoce: 'Met kerst', silvestr: 'Met oud en nieuw' },
+  fr: { letni: 'En été', zimni: 'En hiver', mimo: 'Hors saison', svatky: 'Les jours fériés', spicka: 'En haute saison d’hiver', vanoce: 'À Noël', silvestr: 'Au Nouvel An' },
 };
 
 /* ---------- Ceník: výpočet nabídky (čisté funkce, bez DOM) ---------- */
@@ -3444,7 +4153,7 @@ function fmtM(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' 
 function fmtNum(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
 /* Orientační přepočet CZK → €/zł pro cizojazyčné verze (cs → null, platí se v CZK). */
 function fxLine(czk, lang) {
-  if (lang === 'en' || lang === 'de') return '≈ ' + fmtNum(Math.round(czk / VR_FX.EUR / 5) * 5) + ' €';
+  if (lang === 'en' || lang === 'de' || lang === 'nl' || lang === 'fr') return '≈ ' + fmtNum(Math.round(czk / VR_FX.EUR / 5) * 5) + ' €';
   if (lang === 'pl') return '≈ ' + fmtNum(Math.round(czk / VR_FX.PLN / 10) * 10) + ' zł';
   return null;
 }
@@ -4069,8 +4778,10 @@ function applyMeta() {
   set('meta[property="og:locale"]', m.locale);
 }
 /* Odkazy s data-langlink dostanou ?lang=<aktuální jazyk>, ať jsou sdílitelné
-   (např. odkaz na /pruvodce/ z DE webu otevře DE průvodce). */
+   (např. odkaz na /pruvodce/ z DE webu otevře DE průvodce). Podstránky nizozemsky ani
+   francouzsky neumí — z /nl/ a /fr/ dostanou angličtinu (vrSubLang). */
 function applyLangLinks() {
+  const lang = vrSubLang(state.lang);
   $all('a[data-langlink]').forEach((a) => {
     const base = a.getAttribute('data-langlink');
     // carry BOTH language and season so subpages (výlety, podmínky) inherit the theme.
@@ -4078,12 +4789,12 @@ function applyLangLinks() {
     // parametry spadly dovnitř hashe → ...#planovac&lang=cs.
     try {
       const u = new URL(base, location.href);
-      u.searchParams.set('lang', state.lang);
+      u.searchParams.set('lang', lang);
       u.searchParams.set('season', state.season);
       a.setAttribute('href', u.pathname + u.search + u.hash);
     } catch (e) {
       const sep = base.indexOf('?') >= 0 ? '&' : '?';
-      a.setAttribute('href', base + sep + 'lang=' + state.lang + '&season=' + state.season);
+      a.setAttribute('href', base + sep + 'lang=' + lang + '&season=' + state.season);
     }
   });
 }
@@ -4122,8 +4833,9 @@ function wireLangLinks() {
 /* LIŠTA „TAHLE STRÁNKA JE I V …" — jazykovou verzi NABÍDNE, nikdy nepřesměruje.
    Kdy: stránka je v jiném jazyce, než si host dřív vybral přepínačem (vrLang), nebo — když
    nevybíral — než jakým mluví jeho prohlížeč, a ten jazyk web má (Čech na /de/ z odkazu
-   v ChatGPT). Na české stránce nabídne angličtinu i těm, jejichž jazyk web nemá (Nizozemci,
-   Belgičané — x-default v hreflang je taky /en/), jen slovenštinu nechá na češtině. Němce a Poláky na „/" přesměrovává už <head> (gen-jazyky.mjs);
+   v ChatGPT). Na české stránce nabídne angličtinu i těm, jejichž jazyk web nemá (Italové,
+   Maďaři… — x-default v hreflang je taky /en/), jen slovenštinu nechá na češtině. Němce, Poláky,
+   Nizozemce a frankofony na „/" přesměrovává už <head> (gen-jazyky.mjs);
    angličtinu ne, protože Googlebot má prohlížeč anglický a „/" musí vidět česky.
    Ukáže se až po prvním posunu, dotyku nebo klávese — robot, který JS spouští, ji do stránky
    nevykreslí. Zavření platí do konce návštěvy. */

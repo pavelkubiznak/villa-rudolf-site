@@ -24,9 +24,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
    (/sprava/, /registrace/, /checkin/, /album/, /smlouvy/, /pruvodce/, /tv/, /metrika/) mají
    noindex a neohlašují se. */
 function naUrl(f) {
-  if (/^(?:(?:de|pl|en)\/)?(?:faq\/)?index\.html$/.test(f)) return BASE + '/' + f.replace(/index\.html$/, '');
+  if (/^(?:(?:de|pl|en|nl|fr)\/)?(?:faq\/)?index\.html$/.test(f)) return BASE + '/' + f.replace(/index\.html$/, '');
   if (/^(?:vylety|info|podminky)\/index\.html$/.test(f)) return BASE + '/' + f.replace(/index\.html$/, '');
-  if (/^(?:(?:de|pl|en)\/)?llms\.txt$/.test(f)) return BASE + '/' + f;
+  if (/^(?:(?:de|pl|en|nl|fr)\/)?llms\.txt$/.test(f)) return BASE + '/' + f;
   return null;
 }
 

@@ -25,6 +25,8 @@ const LANG = {
   de: { flag: '🇩🇪', name: 'německy' },
   en: { flag: '🇬🇧', name: 'anglicky' },
   pl: { flag: '🇵🇱', name: 'polsky' },
+  nl: { flag: '🇳🇱', name: 'nizozemsky' },    // /nl/ od 10/2026
+  fr: { flag: '🇫🇷', name: 'francouzsky' },   // /fr/ od 10/2026 (Valonsko, Brusel, Lucembursko)
 };
 
 function esc(s) {

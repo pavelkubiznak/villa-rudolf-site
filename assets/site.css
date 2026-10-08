@@ -193,7 +193,8 @@ a.vr-lang{display:inline-block;line-height:normal;text-decoration:none}
    Barvy musí být tady: .vr-root a{color:inherit} přebije samotné .vr-segbtn. */
 .vr-mob-season .vr-segbtn{font-size:13px;padding:11px 22px;color:var(--vr-text-muted)}
 .vr-mob-season .vr-segbtn[data-active="true"]{color:var(--vr-on-accent)}
-.vr-mob-langs{display:flex;gap:22px;margin-top:24px}
+/* Šest jazyků (od 10/2026 i NL a FR): na úzkém telefonu se smí zalomit do dvou řádků. */
+.vr-mob-langs{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 22px;margin-top:24px}
 .vr-mob-langs .vr-lang{font-size:15px;opacity:1;color:var(--vr-text-muted)}
 /* Od 10/2026 jsou to odkazy a chytalo by je .vr-mob a (Newsreader 400, jiné odsazení). */
 .vr-mob-langs a.vr-lang{font-family:'Archivo',sans-serif;font-weight:600;letter-spacing:.08em;padding:6px 5px}
@@ -1323,15 +1324,21 @@ a.vr-revcard:hover .vr-revcard-plat{border-color:var(--vr-ember-2)}
   .vr-rating{flex:1 1 100%;justify-content:space-between}
   .vrp-stage{height:min(82vh,760px)}
 }
-/* Sticky spodní CTA na mobilu (nav CTA je ≤960px skryté). Skryté by default;
-   zobrazí se jen ≤960px a až po odscrollování za hero (JS přepíná data-show). */
+/* Sticky spodní CTA (nav CTA je ≤1150px skryté). Skryté by default;
+   zobrazí se jen ≤1150px a až po odscrollování za hero (JS přepíná data-show).
+   Lišta se schová do burgeru už pod 1150 px, ne až pod 960: se šesti jazyky
+   (od 10/2026 i NL a FR) a v zimě s položkou „Lyžování" přetékala tlačítkem
+   rezervace ven z okna — v němčině i nizozemštině až do ~1140 px. */
 .vr-stickycta{display:none}
-@media(max-width:960px){
+@media(max-width:960px){.vr-book{grid-template-columns:1fr}}
+/* Na telefonu do 400 px by se značka, šest jazyků a burger do lišty nevešly (burger vyjel
+   z obrazovky). Jazyky jsou i v mobilním menu (.vr-mob-langs), z lišty se tu schovají. */
+@media(max-width:400px){.vr-nav .vr-langs{display:none}}
+@media(max-width:1150px){
   .vr-navlinks{display:none}
   .vr-navcta{display:none}
   .vr-nav-season{display:none}
   .vr-burger{display:flex}
-  .vr-book{grid-template-columns:1fr}
   .vr-stickycta{display:flex;align-items:center;justify-content:center;gap:8px;
     position:fixed;left:0;right:0;bottom:0;z-index:60;
     font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;letter-spacing:.02em;
@@ -1510,7 +1517,7 @@ a.vr-revcard:hover .vr-revcard-plat{border-color:var(--vr-ember-2)}
 .vr-langbar button{background:none;border:0;color:inherit;opacity:.7;font-size:20px;line-height:1;cursor:pointer;padding:2px 6px}
 .vr-langbar button:hover{opacity:1}
 @keyframes vrLangbarIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translateX(-50%)}}
-@media(max-width:960px){
+@media(max-width:1150px){
   .vr-stickycta[data-show="true"] ~ .vr-langbar{bottom:calc(68px + env(safe-area-inset-bottom))}
 }
 @media(prefers-reduced-motion:reduce){.vr-langbar{animation:none}}

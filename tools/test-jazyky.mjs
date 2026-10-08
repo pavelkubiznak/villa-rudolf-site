@@ -5,9 +5,10 @@
 //  1. statické stránky jsou aktuální (node tools/gen-jazyky.mjs --check — ten zároveň kontroluje
 //     hreflang, canonical, JSON-LD a zbylou češtinu v DE/PL/EN),
 //  2. přesměrování na „/" (skript v <head> index.html, generuje ho gen-jazyky.mjs):
-//     staré odkazy ?lang=, uložená volba z přepínače (vrLang) a prohlížeč v němčině nebo polštině
-//     vedou na jazykovou verzi; angličtina podle prohlížeče NE (Googlebot má prohlížeč anglický),
-//  3. roboti bez JavaScriptu dostanou na /de/, /pl/ a /en/ fakta v daném jazyce (cena, kapacita,
+//     staré odkazy ?lang=, uložená volba z přepínače (vrLang) a prohlížeč v němčině, polštině,
+//     nizozemštině nebo francouzštině vedou na jazykovou verzi; angličtina podle prohlížeče NE
+//     (Googlebot má prohlížeč anglický),
+//  3. roboti bez JavaScriptu dostanou na /de/, /pl/, /en/, /nl/ a /fr/ fakta v daném jazyce (cena, kapacita,
 //     adresa, telefon) a odkaz na Časté dotazy,
 //  4. relativní odkazy a cesty (assets, fotky, podstránky) ve statických stránkách vedou na
 //     existující soubory — na /de/ musí všechno jít o adresář výš.
@@ -64,7 +65,12 @@ const pripady = [
   [{ jazyky: ['de-AT'] }, 'de/', 'prohlížeč de-AT → /de/'],
   [{ jazyky: ['pl-PL'] }, 'pl/', 'prohlížeč v polštině → /pl/'],
   [{ jazyky: ['en-US'] }, null, 'prohlížeč v angličtině (i Googlebot) → zůstává česky, nabídne lišta'],
-  [{ jazyky: ['nl-NL', 'en'] }, null, 'prohlížeč v nizozemštině → zůstává (lišta nabídne angličtinu)'],
+  [{ jazyky: ['nl-NL', 'en'] }, 'nl/', 'prohlížeč v nizozemštině → /nl/'],
+  [{ jazyky: ['nl-BE'] }, 'nl/', 'prohlížeč nl-BE (Vlámsko) → /nl/'],
+  [{ jazyky: ['fr-BE', 'fr'] }, 'fr/', 'prohlížeč ve francouzštině (Valonsko) → /fr/'],
+  [{ search: '?lang=fr&season=zima' }, 'fr/?season=zima', '?lang=fr&season=zima → /fr/?season=zima'],
+  [{ ulozeno: 'nl', jazyky: ['cs'] }, 'nl/', 'uložená volba nl → /nl/'],
+  [{ jazyky: ['it-IT', 'en'] }, null, 'prohlížeč v jazyce, který web nemá (italština) → zůstává, lišta nabídne angličtinu'],
   [{ jazyky: ['cs-CZ'] }, null, 'český prohlížeč → zůstává'],
   [{ jazyky: ['de-DE'], bezStorage: true }, 'de/', 'zablokovaný localStorage nevadí'],
   [{ search: '?lang=constructor', jazyky: ['cs'] }, null, '?lang=constructor nic nerozbije'],
@@ -92,6 +98,8 @@ const FAKTA = {
   de: ['lang="de"', '13 400 Kč', '6–22 Gäste', 'Luční 519', '+420 775 220 785', 'Check-in ab 15:00', 'Früher Rudolfův dvůr', 'Zimmer 1', 'Apartment Suite'],
   pl: ['lang="pl"', '13 400 Kč', '6–22 gości', 'Luční 519', '+420 775 220 785', 'Zameldowanie od 15:00', 'Dawniej Rudolfův dvůr', 'Pokój 1', 'Apartament Suite'],
   en: ['lang="en"', '13 400 Kč', '6–22 guests', 'Luční 519', '+420 775 220 785', 'Check-in from 15:00', 'Formerly Rudolfův dvůr', 'Room 1', 'Apartment Suite'],
+  nl: ['lang="nl"', '13 400 Kč', '6–22 gasten', 'Luční 519', '+420 775 220 785', 'Inchecken vanaf 15.00 uur', 'Voorheen Rudolfův dvůr', 'Kamer 1', 'Appartement Suite'],
+  fr: ['lang="fr"', '13 400 Kč', '6 à 22 personnes', 'Luční 519', '+420 775 220 785', 'Arrivée à partir de 15 h', 'Anciennement Rudolfův dvůr', 'Chambre 1', 'Appartement Suite'],
 };
 for (const [jazyk, fakta] of Object.entries(FAKTA)) {
   const soubor = join(root, jazyk, 'index.html');
@@ -102,7 +110,7 @@ for (const [jazyk, fakta] of Object.entries(FAKTA)) {
 }
 
 // ---------- 4. relativní odkazy a cesty ve statických stránkách vedou na existující soubory ----------
-const stranky = ['index.html', 'de/index.html', 'pl/index.html', 'en/index.html', 'faq/index.html', 'de/faq/index.html', 'pl/faq/index.html', 'en/faq/index.html'];
+const stranky = ['', 'de/', 'pl/', 'en/', 'nl/', 'fr/'].flatMap((j) => [j + 'index.html', j + 'faq/index.html']);
 for (const s of stranky) {
   if (!existsSync(join(root, s))) continue;
   const html = readFileSync(join(root, s), 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (m) => m.replace(/>[\s\S]*$/, '>'));

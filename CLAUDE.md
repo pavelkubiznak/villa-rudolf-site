@@ -14,8 +14,8 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 | Cesta | Co to je | Publikum |
 |---|---|---|
 | `/` (`index.html`, 80 kB) | homepage česky; je zároveň šablonou jazykových verzí | hosté, veřejnost |
-| `/de/`, `/pl/`, `/en/` | **jazykové verze homepage** — statické HTML generované `tools/gen-jazyky.mjs` z `T` v `site.js`, ručně se neupravují | hosté, AI roboti |
-| `/faq/` (+ `/de/faq/`, `/pl/faq/`, `/en/faq/`) | **Časté dotazy** ze skutečných poptávek, `FAQPage` schema; generuje `tools/gen-jazyky.mjs` z `tools/jazyky-obsah.mjs` | hosté, AI roboti |
+| `/de/`, `/pl/`, `/en/`, `/nl/`, `/fr/` | **jazykové verze homepage** — statické HTML generované `tools/gen-jazyky.mjs` z `T` v `site.js`, ručně se neupravují | hosté, AI roboti |
+| `/faq/` (+ `/de/faq/`, `/pl/faq/`, `/en/faq/`, `/nl/faq/`, `/fr/faq/`) | **Časté dotazy** ze skutečných poptávek, `FAQPage` schema; generuje `tools/gen-jazyky.mjs` z `tools/jazyky-obsah.mjs` | hosté, AI roboti |
 | `/sprava/` | **admin majitele** — rezervace, předrezervace, platby, kontakty hostů, zprávy, konflikty. `sprava.js` (2 300+ ř.) | jen majitel |
 | `/smlouvy/` | **generátor ubytovacích smluv** přímých hostů — šablona cs/de/en, tisk do PDF, archiv v `vr_contracts`, „Vystavit“ zakládá i předrezervaci | jen majitel |
 | `/metrika/` | přesměrování na dashboard návštěvnosti (Umami na Hetzneru), bez odkazů z webu | jen majitel |
@@ -266,8 +266,8 @@ nové parametry s DEFAULT — stará stránka v mezipaměti volá dál tutéž f
 4. Než začneš psát „nový modul", ověř `/sprava/` — hodně věcí už existuje.
 5. **Ceny se na webu ručně nepíšou.** Zdroj je `villa-rudolf-portal/docs/cenik.json`; po jeho změně
    `node tools/gen-cenik-web.mjs ../villa-rudolf-portal` (přepíše blok CENIK ve `VR_PRICING` a spustí
-   `tools/gen-jazyky.mjs`, který přegeneruje ceník, „od … Kč" a `priceRange` na `/`, `/de/`, `/pl/`
-   a `/en/`) a `node tools/test-cenik-web.mjs ../villa-rudolf-portal` (noc po noci proti ceníku
+   `tools/gen-jazyky.mjs`, který přegeneruje ceník, „od … Kč" a `priceRange` na `/` a všech
+   jazykových verzích) a `node tools/test-cenik-web.mjs ../villa-rudolf-portal` (noc po noci proti ceníku
    a statické stránky proti `site.js`). Ceny v `llms.txt` a `de/llms.txt` generátor jen kontroluje.
 
 ## AI asistenti (ChatGPT, Claude, Perplexity) — čitelnost webu
@@ -276,8 +276,8 @@ Od 8/2026 je ChatGPT největší dohledatelný zdroj návštěv webu (Umami, `ut
 polovina z nich jsou Němci. AI roboti **nespouštějí JavaScript**, takže co se do stránky dopisuje
 až z `site.js`, pro ně neexistuje.
 
-**Jazykové verze jsou skutečné stránky (od 10/2026):** `/` česky, `/de/`, `/pl/`, `/en/` a Časté
-dotazy `/faq/`, `/de/faq/`, `/pl/faq/`, `/en/faq/`. Vyrábí je `node tools/gen-jazyky.mjs` ze slovníku
+**Jazykové verze jsou skutečné stránky (od 10/2026):** `/` česky, `/de/`, `/pl/`, `/en/`, `/nl/`, `/fr/`
+a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.mjs` ze slovníku
 `T` v `assets/site.js` a z `tools/jazyky-obsah.mjs` (alt texty, `<noscript>`, JSON-LD, Časté dotazy).
 Šablonou je `index.html` — skript přegeneruje i jeho české texty, takže statická kopie neuteče od `T`.
 - **Po každé změně `T`, `VR_FACTS`, `VR_REVIEWS`, `VR_CONTACT`, `index.html` nebo `jazyky-obsah.mjs`
@@ -286,16 +286,22 @@ dotazy `/faq/`, `/de/faq/`, `/pl/faq/`, `/en/faq/`. Vyrábí je `node tools/gen-
 - Bloky, které kreslí JS (ceník, rozpis lůžek, hodnocení, patička, „Než dorazíte"), generátor kreslí
   **stejnými funkcemi ze `site.js`** (načte ho do `vm` s mini-DOMem) — statické HTML je to, co vidí host.
   Ceník staticky **bez řádku o záloze 30 %** (o záloze rozhodne Pavel).
+- **Nizozemština a francouzština (Benelux, od 9. 10. 2026)** jsou jen homepage a Časté dotazy.
+  Výlety, info, podmínky a průvodce hosta umí dál jen cs/en/de/pl. Z `/nl/` a `/fr/` se proto otevírají
+  anglicky: `vrSubLang()` v `site.js`, `jazykPodstranky()` v generátoru a mapa `NAHRADA` v jejich JS.
+  Texty jsou přeložené z EN/DE. Nizozemština oslovuje „jullie/je“, francouzština „vous“. Fakta jen
+  z `text-villa-rudolf.md`. Poptávka posílá `p_lang` nl/fr. `vr_request` je přijímá od migrace
+  `20261009_vr_request_nl_fr.sql`, dřív by je přepsal na `cs`.
 - **Jazyk = adresa.** JS bere jazyk z `<html lang>`, přepínač jazyka jsou odkazy (`vrLang` se uloží
   jen kliknutím). Na `/` vyřizuje přesměrování v `<head>`: staré odkazy `?lang=`, volbu z přepínače
-  a prohlížeč v němčině nebo polštině. **Angličtina se podle prohlížeče nepřesměrovává** — Googlebot
+  a prohlížeč v němčině, polštině, nizozemštině nebo francouzštině. **Angličtina se podle prohlížeče nepřesměrovává** — Googlebot
   má prohlížeč anglický a `/` musí vidět česky; anglicky mluvícím nabídne verzi lišta (`langSuggest`).
 - Jazykové stránky mají `<html data-root="../">` a **každou cestu k souboru skládá `site.js` přes
   `vrUrl()`** — nová cesta bez něj se na `/de/` rozbije (vedla by do `/de/media/…`).
-- hreflang: cs/de/pl/en + `x-default` = `/en/` (Nizozemci a Belgičané, 15 % hostů, česky nečtou).
+- hreflang: cs/de/pl/en/nl/fr + `x-default` = `/en/` (pro jazyky, které web nemá).
   `/vylety/`, `/info/` a `/podminky/` jazykové verze nemají (jazyk jen v JS), proto hreflang nenesou.
 - `sitemap.xml` generuje `gen-jazyky.mjs` (jazykové páry přes `xhtml:link`, `lastmod` jen při změně).
-- `/llms.txt` (CS + odstavce EN/DE/PL/NL) a `/de/llms.txt` — fakta jen z
+- `/llms.txt` (CS + odstavce EN/DE/PL/NL/FR) a `/de/llms.txt` — fakta jen z
   `villa-rudolf-portal/docs/text-villa-rudolf.md`, kap. 3. Časté dotazy taky: otázky ze skutečných
   poptávek, odpovědi jen z kap. 3; co tam není, se nepíše.
 - Schema.org (`VacationRental` + `WebPage` s `inLanguage`, na Častých dotazech `FAQPage`) smí nést jen to,
@@ -310,4 +316,4 @@ dotazy `/faq/`, `/de/faq/`, `/pl/faq/`, `/en/faq/`. Vyrábí je `node tools/gen-
 
 ## Jazyk
 
-Kód, komentáře i dokumentace česky. Uživatelské rozhraní je vícejazyčné (cs/de/en/pl).
+Kód, komentáře i dokumentace česky. Uživatelské rozhraní je vícejazyčné (cs/de/en/pl; homepage a Časté dotazy i nl/fr).

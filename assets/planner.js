@@ -984,11 +984,14 @@
     return booting;
   }
 
+  /* Nizozemsky a francouzsky tahle stránka není (homepage /nl/ a /fr/ ano) — místo češtiny angličtina. */
+  var NAHRADA = { nl: 'en', fr: 'en' };
+  function jazyk(x) { x = String(x || '').toLowerCase(); return isLang(x) ? x : (NAHRADA[x] || null); }
   function resolveLangFromPage() {
-    var qLang = (qs.get('lang') || '').toLowerCase();
-    var lsLang = null; try { lsLang = localStorage.getItem('vrLang'); } catch (e) { }
-    var navLang = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    return isLang(qLang) ? qLang : (isLang(lsLang) ? lsLang : (isLang(navLang) ? navLang : 'cs'));
+    var qLang = jazyk(qs.get('lang'));
+    var lsLang = null; try { lsLang = jazyk(localStorage.getItem('vrLang')); } catch (e) { }
+    var navLang = jazyk((navigator.language || navigator.userLanguage || '').slice(0, 2));
+    return qLang || lsLang || navLang || 'cs';
   }
 
   /* ===================== Veřejné API ===================== */

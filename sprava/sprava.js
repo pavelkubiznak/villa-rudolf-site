@@ -870,7 +870,7 @@
   // tabulku nečetl NIKDO — žádost od hosta v ní ležela devět dní, než se ozval
   // podruhé přes platformu. Tahle sekce je jedna ze dvou cest ven; druhá je
   // e-mail z n8n (VrWebRequest, kontrola po 5 minutách).
-  var REQ_FLAG = { cs: '🇨🇿', de: '🇩🇪', en: '🇬🇧', pl: '🇵🇱' };
+  var REQ_FLAG = { cs: '🇨🇿', de: '🇩🇪', en: '🇬🇧', pl: '🇵🇱', nl: '🇳🇱', fr: '🇫🇷' };   // nl/fr: /nl/ a /fr/ od 10/2026
 
   function fmtWhen(iso) {
     var d = new Date(iso);
