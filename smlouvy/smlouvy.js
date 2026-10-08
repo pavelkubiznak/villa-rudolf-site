@@ -22,12 +22,14 @@
   var TOKEN_HASH = 'b887a4a499dc6306d51fd15138f4235e680ae721edec15712c7030a589367430';
   var STORE_KEY = 'vr_sprava_key';
 
-  // Záloha pro případ, že se ceník z site.js nepodaří přečíst. Zdroj pravdy je VR_PRICING.
+  // Záloha pro případ, že se ceník z site.js nepodaří přečíst. Zdroj pravdy je VR_PRICING
+  // (blok CENIK v site.js generuje tools/gen-cenik-web.mjs z villa-rudolf-portal/docs/cenik.json).
   var PRICING = {
+    periods: [],
     seasons: [
-      { name: 'letni', from: '05-01', to: '10-31', nightly: 12900 },
-      { name: 'zimni', from: '12-15', to: '03-31', nightly: 12900 },
-      { name: 'mimo', nightly: 11900 }
+      { name: 'letni', from: '07-01', to: '08-31', nightly: 14900 },
+      { name: 'zimni', from: '01-01', to: '02-28', nightly: 14900 },
+      { name: 'mimo', nightly: 13400 }
     ],
     cleaning: 3500, cityTaxAdultNight: 25, petPerStay: 500, bond: 5000
   };
@@ -122,6 +124,9 @@
   }
   function nightlyFor(iso) {
     if (!iso) return PRICING.seasons[0].nightly;
+    // Nejdřív úseky z ceníku (konkrétní data: svátky, špičky, Vánoce), pak záloha podle měsíců.
+    var per = PRICING.periods || [];
+    for (var j = 0; j < per.length; j++) if (iso >= per[j].from && iso <= per[j].to) return per[j].nightly;
     var md = iso.slice(5);
     for (var i = 0; i < PRICING.seasons.length; i++) {
       var s = PRICING.seasons[i];
