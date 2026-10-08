@@ -183,8 +183,15 @@ function parseHtml(src) {
         k++;
         while (k < n && /\s/.test(src[k])) k++;
         const q = src[k];
-        if (q === '"' || q === "'") { const e = src.indexOf(q, k + 1); a.vStart = k + 1; a.vEnd = e; j = e + 1; }
-        else { const um = /^[^\s>]+/.exec(src.slice(k, k + 2000)); a.vStart = k; a.vEnd = k + um[0].length; j = a.vEnd; }
+        if (q === '"' || q === "'") {
+          const e = src.indexOf(q, k + 1);
+          if (e < 0) throw new Error(`HTML: neukončená uvozovka u atributu ${a.name} (řádek ${src.slice(0, j).split('\n').length})`);
+          a.vStart = k + 1; a.vEnd = e; a.uvozovky = true; j = e + 1;
+        } else {
+          const um = /^[^\s>]+/.exec(src.slice(k, k + 2000));
+          if (!um) throw new Error(`HTML: atribut ${a.name} bez hodnoty za „=" (řádek ${src.slice(0, j).split('\n').length})`);
+          a.vStart = k; a.vEnd = k + um[0].length; a.uvozovky = false; j = a.vEnd;
+        }
         a.value = src.slice(a.vStart, a.vEnd);
       }
       a.end = j;
@@ -223,7 +230,11 @@ function applyEdits(src, edits) {
 function setAttr(el, name, value, edits) {
   const a = el.attrs.find((x) => x.name === name);
   const v = escAttr(value);
-  if (a && a.vStart >= 0) { if (a.value !== v) edits.push({ start: a.vStart, end: a.vEnd, text: v }); }
+  if (a && a.vStart >= 0) {
+    // hodnota bez uvozovek (alt=x) dostane uvozovky, jinak by „Villa Rudolf im Winter" rozpadlo atributy
+    if (!a.uvozovky) edits.push({ start: a.vStart, end: a.vEnd, text: `"${v}"` });
+    else if (a.value !== v) edits.push({ start: a.vStart, end: a.vEnd, text: v });
+  }
   else if (a) edits.push({ start: a.end, end: a.end, text: `="${v}"` });
   else { const p = el.selfClose ? el.openEnd - 2 : el.openEnd - 1; edits.push({ start: p, end: p, text: ` ${name}="${v}"` }); }
 }
@@ -251,13 +262,20 @@ const ldJson = (o) => JSON.stringify(o, null, 2).replace(/</g, '\\u003c');
 /* Na „/" (česky) rozhodne o jazyku ještě před vykreslením. Přesměrovává jen staré odkazy ?lang=,
    uloženou volbu z přepínače a prohlížeč v NĚMČINĚ nebo POLŠTINĚ. Angličtinu podle prohlížeče
    ne: Googlebot má prohlížeč anglický a přesměrování by mu českou stránku schovalo. Anglicky
-   mluvícím nabídne anglickou verzi lišta (langSuggest v site.js). */
+   mluvícím nabídne anglickou verzi lišta (langSuggest v site.js).
+   Zdroj návštěvy musí přesměrování přežít: na /de/ by referrer byla vlastní doména. Proto se tu
+   uloží vrZdroj (stejně jako vrZdroj() v site.js — do události poptavka-odeslana) a původní
+   referrer pro Umami (vrRef, vrátí ho vrUmamiRef v site.js). */
 const PRESMEROVANI = `<script>/* Jazyk (tools/gen-jazyky.mjs): ?lang= ze starých odkazů → volba z přepínače → prohlížeč de/pl. */
 (function(){try{var q=location.search,m=/[?&]lang=([a-z]{2})(?![a-z])/i.exec(q),t=m?m[1].toLowerCase():null;
 if(!t){try{t=localStorage.getItem('vrLang')}catch(e){}
 if(!t){var n=String((navigator.languages&&navigator.languages[0])||navigator.language||'').slice(0,2).toLowerCase();if(n==='de'||n==='pl')t=n;}}
 if(t==='cs'&&m){try{localStorage.setItem('vrLang','cs')}catch(e){}}
-if(t==='de'||t==='pl'||t==='en'){q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(t+'/'+q+location.hash);}}catch(e){}})();</script>`;
+if(t==='de'||t==='pl'||t==='en'){
+try{var r=document.referrer,h=r?new URL(r).hostname.replace(/^www\\./,''):'',ven=!!h&&h!==location.hostname.replace(/^www\\./,'');
+if(ven)sessionStorage.setItem('vrRef',JSON.stringify({r:r,t:Date.now()}));
+if(!sessionStorage.getItem('vrZdroj')){var u=new URLSearchParams(q).get('utm_source'),z=u?u.slice(0,40):(ven?h:'');if(z)sessionStorage.setItem('vrZdroj',z);}}catch(e){}
+q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(t+'/'+q+location.hash);}}catch(e){}})();</script>`;
 
 function hlavicka(api, lang, { cesta, cesty, title, desc, jsonld, presmerovani }) {
   const loc = api.T[lang].meta.locale;
@@ -462,9 +480,10 @@ function dosadCeny(api, lang, s) {
 function faqStranka(api, lang) {
   if (!OBSAH.FAQ || !OBSAH.FAQ_STRANKA) return null;
   const S = OBSAH.FAQ_STRANKA[lang], cesta = FAQ[lang], t = api.T[lang];
-  const domu = relativni(cesta, DOMOV[lang]), koren = relativni(cesta, '');
-  /* Výlety, info a podmínky mají jazyk jen v JS (?lang=), statické verze nemají. */
-  const sJazykem = (p) => koren + p + (lang === 'cs' ? '' : '?lang=' + lang);
+  /* Česká homepage dostane ?lang=cs: „/" by jinak prohlížeč v němčině poslal na /de/.
+     Výlety, info a podmínky mají jazyk jen v JS (?lang=), statické verze nemají. */
+  const domu = relativni(cesta, DOMOV[lang]) + (lang === 'cs' ? '?lang=cs' : ''), koren = relativni(cesta, '');
+  const sJazykem = (p) => koren + p + '?lang=' + lang;
   /* {domu} = homepage téhož jazyka, {planovac} = plánovač výletů (relativně), ceny z VR_PRICING. */
   const planovac = sJazykem('vylety/') + '#planovac';
   const q = (x) => {
@@ -601,10 +620,12 @@ function sitemap(vystupy, dnes) {
     const ted = existsSync(join(ROOT, soubor)) ? readFileSync(join(ROOT, soubor), 'utf8') : null;
     return ted === vystupy[soubor] && lastmod[u] ? lastmod[u] : dnes;
   };
+  /* Samostatné stránky (bez souboru) lastmod nemají — generátor jejich změny nesleduje a zamrzlé
+     datum by bylo horší než žádné (lastmod je nepovinný). */
   const url = (cesta, soubor, changefreq, priority, alt) => [
     '  <url>',
     `    <loc>${abs(cesta)}</loc>`,
-    `    <lastmod>${datum(cesta, soubor)}</lastmod>`,
+    ...(soubor ? [`    <lastmod>${datum(cesta, soubor)}</lastmod>`] : []),
     `    <changefreq>${changefreq}</changefreq>`,
     `    <priority>${priority}</priority>`,
     ...(alt ? JAZYKY.map((L) => `    <xhtml:link rel="alternate" hreflang="${L}" href="${abs(alt[L])}"/>`)

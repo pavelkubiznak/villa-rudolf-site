@@ -188,6 +188,8 @@ a.vr-lang{display:inline-block;line-height:normal;text-decoration:none}
 .vr-mob-season{margin-top:24px}
 .vr-mob-langs{display:flex;gap:22px;margin-top:24px}
 .vr-mob-langs .vr-lang{font-size:15px;opacity:1;color:var(--vr-text-muted)}
+/* Od 10/2026 jsou to odkazy a chytalo by je .vr-mob a (Newsreader 400, jiné odsazení). */
+.vr-mob-langs a.vr-lang{font-family:'Archivo',sans-serif;font-weight:600;letter-spacing:.08em;padding:6px 5px}
 .vr-mob-langs .vr-lang[data-active="true"]{color:var(--vr-text)}
 
 /* ---------- Hero ---------- */

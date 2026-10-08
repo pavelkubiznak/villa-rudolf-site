@@ -413,7 +413,7 @@ export const FAQ = [
         q: { cs: 'Co se platí navíc k ceně za noc?', de: 'Was kommt zum Übernachtungspreis noch dazu?', pl: 'Co płaci się dodatkowo do ceny za noc?', en: 'What do you pay on top of the nightly price?' },
         a: {
           cs: 'Úklid {uklid} za pobyt a poplatek obci {poplatek} za dospělého a noc; poplatek za psa je v ceníku. Kauce je {kauce}. Energie jsou v ceně, sauna taky a parkování na pozemku je zdarma.',
-          de: 'Die Endreinigung von {uklid} pro Aufenthalt und die Kurtaxe von {poplatek} pro Erwachsenem und Nacht; die Gebühr für einen Hund steht in der Preisliste. Die Kaution beträgt {kauce}. Nebenkosten sind im Preis enthalten, die Sauna ebenfalls, und Parken auf dem Grundstück ist kostenlos.',
+          de: 'Die Endreinigung von {uklid} pro Aufenthalt und die Kurtaxe von {poplatek} pro Erwachsenen und Nacht; die Gebühr für einen Hund steht in der Preisliste. Die Kaution beträgt {kauce}. Nebenkosten sind im Preis enthalten, die Sauna ebenfalls, und Parken auf dem Grundstück ist kostenlos.',
           pl: 'Sprzątanie {uklid} za pobyt i opłata miejscowa {poplatek} za osobę dorosłą i noc; opłata za psa jest w cenniku. Kaucja wynosi {kauce}. Media są wliczone w cenę, sauna również, a parking na terenie jest bezpłatny.',
           en: 'Cleaning at {uklid} per stay and the municipal tax of {poplatek} per adult per night; the dog fee is in the price list. The deposit is {kauce}. Utilities are included in the price, so is the sauna, and parking on the grounds is free.',
         },

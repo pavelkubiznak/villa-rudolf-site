@@ -240,7 +240,6 @@
     document.querySelectorAll('.vr-lang').forEach(function (b) {
       b.setAttribute('data-active', String(b.getAttribute('data-lang') === lang));
     });
-    try { localStorage.setItem(LS_KEY, lang); } catch (e) {}
     syncSiteLinks();
   }
 
@@ -257,8 +256,12 @@
     document.querySelectorAll('.vr-brand').forEach(function (b) { b.setAttribute('href', home); });
   }
 
+  // vrLang se ukládá jen kliknutím na přepínač — podle něj přesměrovává „/" (10/2026)
   document.querySelectorAll('.vr-lang').forEach(function (b) {
-    b.addEventListener('click', function () { applyLang(b.getAttribute('data-lang')); });
+    b.addEventListener('click', function () {
+      applyLang(b.getAttribute('data-lang'));
+      try { localStorage.setItem(LS_KEY, lang); } catch (e) {}
+    });
   });
 
   /* Mobilní menu (burger) */

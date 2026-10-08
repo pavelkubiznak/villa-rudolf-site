@@ -17,9 +17,8 @@ permissions:
   contents: read
   pages: read
 
-concurrency:
-  group: indexnow
-  cancel-in-progress: false
+# Záměrně BEZ concurrency: GitHub ve skupině ruší čekající běhy (i s cancel-in-progress: false)
+# a zrušený běh by změny ze svého pushe neohlásil. Ohlásit stejnou adresu dvakrát nevadí.
 
 jobs:
   indexnow:

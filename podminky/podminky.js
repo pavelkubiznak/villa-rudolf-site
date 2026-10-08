@@ -286,7 +286,7 @@
 
   state.lang = resolveLang();
   state.season = resolveSeason();
-  try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
+  // vrLang se ukládá jen kliknutím na přepínač — podle něj přesměrovává „/" (10/2026)
   if (window.VRSeason) window.VRSeason.remember(state.season);
   document.querySelector('.pd-root').setAttribute('data-season', state.season);
   var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', state.season === 'zima' ? '#eef2f6' : '#0E1311');

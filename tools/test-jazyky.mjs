@@ -32,17 +32,21 @@ ok(aktualni, 'statické stránky odpovídají site.js a šabloně (gen-jazyky --
 const index = readFileSync(join(root, 'index.html'), 'utf8');
 const skript = (/<script>(\/\* Jazyk \(tools\/gen-jazyky\.mjs\)[\s\S]*?)<\/script>/.exec(index) || [])[1];
 ok(!!skript, 'index.html má v <head> přesměrování podle jazyka');
-let ulozil = null;
-function kam({ search = '', hash = '', ulozeno = null, jazyky = ['cs-CZ'], bezStorage = false }) {
+let ulozil = null, relace = {};
+function kam({ search = '', hash = '', ulozeno = null, jazyky = ['cs-CZ'], bezStorage = false, referrer = '', zdroj = null }) {
   let cil = null;
   ulozil = null;
+  relace = zdroj ? { vrZdroj: zdroj } : {};
   const ctx = vm.createContext({
-    location: { search, hash, replace: (u) => { cil = u; } },
+    location: { search, hash, hostname: 'villarudolf.com', replace: (u) => { cil = u; } },
+    document: { referrer },
     localStorage: {
       getItem: () => { if (bezStorage) throw new Error('blocked'); return ulozeno; },
       setItem: (k, v) => { if (bezStorage) throw new Error('blocked'); ulozil = v; },
     },
+    sessionStorage: { getItem: (k) => (k in relace ? relace[k] : null), setItem: (k, v) => { relace[k] = String(v); } },
     navigator: { languages: jazyky, language: jazyky[0] },
+    URL, URLSearchParams, JSON, Date,
   });
   vm.runInContext(skript, ctx);
   return cil;
@@ -71,6 +75,17 @@ for (const [vstup, ocekavam, popis] of pripady) {
 }
 kam({ search: '?lang=cs&season=leto', ulozeno: 'de' });
 ok(ulozil === 'cs', '?lang=cs si zapamatuje češtinu (odkaz z přepínače nebo z české podstránky)');
+// zdroj návštěvy přežije přesměrování (vrZdroj → událost poptavka-odeslana, vrRef → referrer pro Umami)
+kam({ jazyky: ['de-DE'], referrer: 'https://www.google.com/' });
+ok(relace.vrZdroj === 'google.com' && JSON.parse(relace.vrRef || '{}').r === 'https://www.google.com/', 'přesměrování z Googlu: zdroj google.com a původní referrer zůstanou');
+kam({ search: '?utm_source=chatgpt.com', jazyky: ['de-DE'], referrer: 'https://chatgpt.com/' });
+ok(relace.vrZdroj === 'chatgpt.com', 'utm_source má přednost před referrerem (ChatGPT)');
+kam({ jazyky: ['pl-PL'], referrer: 'https://villarudolf.com/vylety/' });
+ok(!relace.vrZdroj && !relace.vrRef, 'vlastní doména jako referrer se za zdroj nepovažuje');
+kam({ jazyky: ['de-DE'], referrer: 'https://www.perplexity.ai/', zdroj: 'chatgpt.com' });
+ok(relace.vrZdroj === 'chatgpt.com', 'už zapsaný zdroj návštěvy se nepřepisuje');
+kam({ jazyky: ['cs-CZ'], referrer: 'https://www.google.com/' });
+ok(!relace.vrZdroj && !relace.vrRef, 'bez přesměrování se nic neukládá (zdroj si spočítá site.js)');
 
 // ---------- 3. co dostane robot bez JavaScriptu ----------
 const FAKTA = {

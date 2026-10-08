@@ -507,7 +507,7 @@ const T = {
     tour: {
       eyebrow: 'Projděte si dům i pozemek',
       title: 'Rozhlédněte se uvnitř i venku — celých 360°',
-      hint: 'Chyťte a táhněte myší nebo prstem. Dole přepínate místnosti, scény se i samy střídají.',
+      hint: 'Chyťte a táhněte myší nebo prstem. Dole přepínáte místnosti, scény se i samy střídají.',
       drag: 'Chyť a otáčej',
       scenes: [
         { name: 'Zasněžený dvůr', desc: 'Dvůr po vydatném sněžení — projetá cesta mezi zapadanými smrky, rampouchy na střeše a místo, kam zaparkuje celá skupina.' },
@@ -1316,7 +1316,7 @@ const T = {
         vanoce: { name: 'Weihnachten', range: 'die Woche mit Heiligabend' },
         silvestr: { name: 'Silvester', range: 'die Woche mit Silvester' },
       },
-      priceCityTax: 'Kurtaxe %A% pro Erwachsenem und Nacht (Kinder frei)',
+      priceCityTax: 'Kurtaxe %A% pro Erwachsenen und Nacht (Kinder frei)',
       pricePet: 'Hund / Haustier %P% pro Aufenthalt',
       priceBond: 'Rückzahlbare Kaution %B% — die Endreinigung wird davon abgezogen',
       petFee: 'Hund / Haustier',
@@ -3671,6 +3671,21 @@ function vrZdroj() {
   try { sessionStorage.setItem('vrZdroj', z); } catch (e) {}
   return z;
 }
+/* Umami (data-before-send="vrUmamiRef" u skriptu v index.html): návštěva, kterou „/" přesměroval
+   na /de/ apod., by jinak měla jako referrer vlastní doménu a z Googlu nebo Perplexity by se
+   stala „přímou". Skript v <head> původní referrer uloží (vrRef, platí minutu) a tady se vrátí
+   do prvního pageview. Musí vždy vrátit payload, jinak Umami nic neodešle. */
+window.vrUmamiRef = function (type, payload) {
+  try {
+    const s = sessionStorage.getItem('vrRef');
+    if (s && payload && type === 'event' && !payload.name) {
+      sessionStorage.removeItem('vrRef');
+      const v = JSON.parse(s);
+      if (v && v.r && Date.now() - v.t < 60000) payload.referrer = v.r;
+    }
+  } catch (e) {}
+  return payload;
+};
 function vrTrack(name, data) {
   try { if (window.umami && typeof window.umami.track === 'function') window.umami.track(name, data || {}); } catch (e) {}
 }
