@@ -1,6 +1,7 @@
 // VrDailyTasks — spočítá dnešní úkoly STEJNOU logikou jako sekce DNES v /sprava/
 // (časová osa T0/T−7/T−5/příjezd/den2/odjezd−24h/ráno-odjezdu vs. vr_msglog;
-// + 🔑 Yale připomínka; + nespárované/chybějící kontakty do sekce „Problémy").
+// + 🔑 Yale připomínka; + nespárované/chybějící kontakty do sekce „Problémy");
+// + 🛡️ zamrzlý kalendář rezervací a propadající/propadlé předrezervace (od 6. 10. 2026).
 // Když je co, vytvoří 1 položku s předmětem + HTML e-mailem (wa.me odkazy v jazyce
 // pobytu). Když není nic, vrátí [] → e-mail se neodešle.
 
@@ -400,6 +401,36 @@ stays.sort((x,y)=> x.start<y.start?-1:x.start>y.start?1:0);
 const conflicts = detectConflicts(stays, calendar, bookings, today);
 const hasConflicts = conflicts.overlaps.length > 0 || conflicts.vanished.length > 0;
 
+/* ---------- hlídač zamrzlého kalendáře rezervací ---------- */
+// history.json píše GitHub Action každé ~3 h a každý zapisující běh razítkuje lastSeen
+// živých pobytů i přímých prodejů datem běhu (UTC). Nejnovější lastSeen starší než
+// včerejšek = kalendář nezapisuje. Přesně tak 28. 9.–6. 10. 2026 zůstal zapnutý zkušební
+// běh (CALENDAR_DRY_RUN): běhy zelené, nic se nezapsalo — úklid, /sprava/ i blokace
+// přímých prodejů na platformách stály 8 dní a nikdo to nevěděl. Práh je včerejšek, ne
+// dnešek: cron GitHubu se zpožďuje o hodiny, ranní e-mail ještě nemusí mít dnešní běh.
+// Bez jediného budoucího záznamu nemá běh co orazítkovat a lastSeen nic neříká — pak
+// se zamrznutí neposuzuje, jinak by to byl planý poplach každý den (Codex na #33).
+// Proti zamrzlému souboru to nevadí: ten budoucí záznamy má, jen je přestal obnovovat.
+const calLastSeen = calendar.reduce((m, c) => (c && c.lastSeen && c.lastSeen > m) ? c.lastSeen : m, '');
+const calRefreshable = calendar.some(c => c && c.end > today && c.stale !== true); // zrušený budoucí řádek (stale) běh neobnoví (Codex na #33)
+const calFrozen = !calendar.length ? { why: 'nenačetl' }
+  : (calRefreshable && calLastSeen < addDaysISO(today, -1) ? { why: 'stojí', since: calLastSeen } : null);
+
+/* ---------- předrezervace, které propadají / propadly ---------- */
+// Propadlou předrezervaci vr_public_holds() nevrátí → kalendář ji pustí → termín se
+// uvolní na VŠECH kanálech. Je to záměr (nezaplaceno = volno), ale nesmí se to stát
+// potichu: Sabáčková 2026 měla hold do 25. 9., zaplatila 6. 10. a týden 21.–28. 8. 2027
+// byl mezitím ~10 dní k mání na Airbnb a FeWo. Hlásí se 3 dny předem a 14 dní poté —
+// rozhodnutí (potvrdit platbu / prodloužit / nechat propadnout) je na majiteli.
+const holdAlerts = [];
+holds.forEach(h => {
+  if (h.status !== 'hold' || !h.hold_until || h.departure <= today) return;
+  if (h.hold_until >= today && h.hold_until <= addDaysISO(today, 3)) holdAlerts.push({ kind: 'expiring', hold: h });
+  else if (h.hold_until < today && h.hold_until >= addDaysISO(today, -14)) holdAlerts.push({ kind: 'expired', hold: h });
+});
+holdAlerts.sort((a, b) => a.hold.hold_until < b.hold.hold_until ? -1 : a.hold.hold_until > b.hold.hold_until ? 1 : 0);
+const hasSafety = !!calFrozen || holdAlerts.length > 0;
+
 // collectTasks() — dnešní/po termínu zprávy (v jazyce pobytu) + 🔑 Yale připomínka.
 // Nespárované / chybějící telefon → sekce Problémy (bez duplicit).
 const tasks = [];
@@ -465,7 +496,7 @@ const ubyUrgent = ubyDue.filter(u => (u.foreign_unreported > 0 && u.deadline && 
 
 // Nevyřízená žádost je sama o sobě důvod e-mail poslat — bez rqOpen v téhle
 // podmínce by v klidný den (0 úkolů, 0 problémů) zůstala zase neviditelná.
-if (!tasks.length && !problems.length && !hasConflicts && !rqOpen.length && !ubyDue.length) return []; // nic → žádný e-mail
+if (!tasks.length && !problems.length && !hasConflicts && !hasSafety && !rqOpen.length && !ubyDue.length) return []; // nic → žádný e-mail
 
 /* ---------- HTML e-mail ---------- */
 function card(inner){ return '<div style="background:#fff;border:1px solid #e6e8e7;border-radius:12px;padding:14px 16px;margin:10px 0">'+inner+'</div>'; }
@@ -520,6 +551,34 @@ if (hasConflicts) {
   conflHtml = '<div style="margin:2px 0 6px"><span style="display:inline-block;background:#c0392b;color:#fff;font-weight:700;font-size:12px;letter-spacing:.05em;padding:4px 10px;border-radius:6px">🔴 HLÍDAČ KALENDÁŘE</span></div>'+
     cParts.join('')+
     '<p style="color:#6b736f;font-size:13px;margin:2px 0 18px">Řeš to hned — čím dřív, tím levnější. Detaily a řešení v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a>.</p>';
+}
+
+// sekce BEZPEČNOST KALENDÁŘE — zamrzlý kalendář a propadající předrezervace (nahoře,
+// hned pod konflikty: obojí znamená, že termín může jít prodat dvakrát)
+let safetyHtml = '';
+if (hasSafety) {
+  const sParts = [];
+  if (calFrozen) {
+    sParts.push(conflCard('<div style="font-weight:700;color:#8a1111;font-size:15px">🧊 Kalendář rezervací '+
+      (calFrozen.why === 'nenačetl' ? 'se nepodařilo načíst' : 'nezapisuje od '+esc(fmtDay(calFrozen.since)))+'</div>'+
+      '<div style="color:#333;font-size:14px;margin:6px 0 2px">Úklid, /sprava/ ani blokace přímých prodejů na platformách se neobnovují. '+
+      'Zkontroluj běhy „Update booking history" na GitHubu a proměnnou <code>CALENDAR_DRY_RUN</code> (zkušební běh nic nezapisuje).</div>'));
+  }
+  holdAlerts.forEach(a => {
+    const h = a.hold, hb = bookingOfHold(h), who = hb ? guestName(hb) : 'přímý prodej bez hosta';
+    const head = a.kind === 'expired'
+      ? '⏳ Předrezervace propadla '+esc(fmtDay(h.hold_until))+' — '+esc(fmtTermin(h.arrival, h.departure))
+      : '⏳ Předrezervace propadne '+esc(fmtDay(h.hold_until))+' — '+esc(fmtTermin(h.arrival, h.departure));
+    const body = a.kind === 'expired'
+      ? 'Termín se uvolnil na všech kanálech. Zaplatil host? Potvrď platbu v /sprava/ — termín se při dalším běhu kalendáře znovu zablokuje. Jinak předrezervaci zruš.'
+      : 'Nepřijde-li platba, termín se po tomhle dni uvolní na všech kanálech. Prodluž ji v /sprava/, pokud host platit bude.';
+    sParts.push((a.kind === 'expired' ? conflCard : probCard)(
+      '<div style="font-weight:700;color:'+(a.kind === 'expired' ? '#8a1111' : '#8a5a11')+';font-size:15px">'+head+'</div>'+
+      '<div style="color:#333;font-size:14px;margin:6px 0 2px">'+esc(who)+' · '+body+'</div>'));
+  });
+  safetyHtml = '<div style="margin:2px 0 6px"><span style="display:inline-block;background:#8a1111;color:#fff;font-weight:700;font-size:12px;letter-spacing:.05em;padding:4px 10px;border-radius:6px">🛡️ BEZPEČNOST KALENDÁŘE</span></div>'+
+    sParts.join('')+
+    '<p style="color:#6b736f;font-size:13px;margin:2px 0 18px">Obojí znamená riziko dvojí rezervace — řeš to dnes. <a href="'+esc(SPRAVA_URL)+'">/sprava/</a></p>';
 }
 
 // sekce Problémy — konfigurační díry (chybí telefon / kód do 7 dnů / nespárováno)
@@ -602,7 +661,9 @@ const subjectBase = hasConflicts
       ? ('Villa Rudolf — '+pn+' '+(pn===1?'problém':(pn>=2&&pn<=4?'problémy':'problémů'))+' ke kontrole')
       : rqOpen.length
         ? ('Villa Rudolf — '+rqOpen.length+'× žádost z webu')
-        : 'Villa Rudolf — hlášení cizinců';
+        : ubyDue.length
+          ? 'Villa Rudolf — hlášení cizinců'
+          : 'Villa Rudolf — bezpečnost kalendáře';
 // Žádost patří do předmětu, ne až do těla — jinak se e-mail v mobilu tváří
 // jako běžná denní připomínka a otevře se až večer.
 // Prefix jen tehdy, když v předmětu už něco jiného je — jinak by v klidný den
@@ -611,9 +672,17 @@ const subject0 = (rqOpen.length && (n>0 || hasConflicts || pn>0))
   ? ('🏔️ ' + rqOpen.length + '× žádost z webu · ' + subjectBase)
   : subjectBase;
 // Lhůta pro policii dnes nebo prošlá → musí být vidět už v předmětu.
-const subject = ubyUrgent ? ('🛂 UbyPort: '+ubyUrgent+'× lhůta dnes/prošlá · ' + subject0) : subject0;
+const subject1 = ubyUrgent ? ('🛂 UbyPort: '+ubyUrgent+'× lhůta dnes/prošlá · ' + subject0) : subject0;
+// Zamrzlý kalendář a propadlá předrezervace = riziko dvojí rezervace → úplně na začátek.
+const holdsExpired = holdAlerts.filter(a => a.kind === 'expired').length;
+const safetyPrefix = calFrozen ? (calFrozen.why === 'nenačetl' ? '🧊 Kalendář rezervací nejde načíst · ' : '🧊 Kalendář rezervací nezapisuje · ')
+  : holdsExpired ? ('⏳ '+holdsExpired+'× propadlá předrezervace · ')
+  : holdAlerts.length ? ('⏳ '+holdAlerts.length+'× předrezervace propadá · ') : '';
+const subject = (safetyPrefix && subject1 !== 'Villa Rudolf — bezpečnost kalendáře') ? safetyPrefix + subject1
+  : safetyPrefix ? safetyPrefix + 'Villa Rudolf' : subject1;
 const heading = (n>0) ? ('Dnes na řadě: '+n+' '+word)
   : hasConflicts ? 'Konflikt v kalendáři'
+  : hasSafety ? 'Bezpečnost kalendáře'
   : (pn>0) ? 'Problémy ke kontrole'
   : rqOpen.length ? (rqOpen.length===1 ? 'Nová žádost z webu' : rqOpen.length+' žádosti z webu')
   : 'Hlášení cizinců';
@@ -623,6 +692,7 @@ const html = '<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta n
   '<h1 style="font-size:21px;margin:0 0 2px">'+esc(heading)+'</h1>'+
   '<p style="color:#6b736f;font-size:14px;margin:0 0 14px">'+esc(dnes)+' · přehled a odeslání také v <a href="'+esc(SPRAVA_URL)+'">/sprava/</a></p>'+
   conflHtml +
+  safetyHtml +
   ubyHtml +
   reqHtml +
   problemsHtml +
@@ -630,4 +700,5 @@ const html = '<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta n
   '<p style="color:#8a918d;font-size:12px;margin-top:22px;border-top:1px solid #e6e8e7;padding-top:12px">Automatická denní připomínka (n8n · VrDailyTasks). Šablony a wa.me odkazy jsou v jazyce pobytu a zrcadlí sekci DNES v /sprava/. Odkazy odesílají zprávu ručně z tvého WhatsAppu — nic se neposílá samo.</p>'+
   '</div></body></html>';
 
-return [{ json: { subject, html, to: 'pavel.kubiznak@gmail.com', count: n, problems: pn, conflicts: cn, ubyport: ubyDue.length } }];
+return [{ json: { subject, html, to: 'pavel.kubiznak@gmail.com', count: n, problems: pn, conflicts: cn, ubyport: ubyDue.length,
+  calendarFrozen: !!calFrozen, holdAlerts: holdAlerts.length } }];
