@@ -195,12 +195,15 @@
   /* Jazyk: ?lang= → localStorage vrLang → navigator.language → cs. */
   /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel a otrávil localStorage. */
   function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
+  /* Nizozemsky a francouzsky tahle stránka není (homepage /nl/ a /fr/ ano) — místo češtiny angličtina. */
+  var NAHRADA = { nl: 'en', fr: 'en' };
+  function jazyk(x) { x = String(x || '').toLowerCase(); return isLang(x) ? x : (NAHRADA[x] || null); }
   function resolveLang(qs) {
-    var q = (qs.get('lang') || '').toLowerCase();
-    if (isLang(q)) return q;
-    try { var s = localStorage.getItem('vrLang'); if (isLang(s)) return s; } catch (e) {}
-    var nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-    if (isLang(nav)) return nav;
+    var q = jazyk(qs.get('lang'));
+    if (q) return q;
+    try { var s = jazyk(localStorage.getItem('vrLang')); if (s) return s; } catch (e) {}
+    var nav = jazyk((navigator.language || navigator.userLanguage || '').slice(0, 2));
+    if (nav) return nav;
     return 'cs';
   }
   /* Sezóna: ?season= → DATUM → uložená volba (jen v rámci návštěvy).

@@ -3,9 +3,9 @@
 
    Proč: AI asistenti (ChatGPT, Claude, Perplexity) JavaScript nespouštějí. Do 10/2026 žily jazyky
    jen ve slovníku T v assets/site.js, takže /?lang=de vracelo robotům totéž české HTML. Tenhle
-   skript z T vyrobí skutečné stránky /de/, /pl/ a /en/ (pořadí podle trhů: DE 34 % hostů, PL 16 %,
-   EN pro ostatní) a přegeneruje i české výchozí texty v index.html — statická kopie textů tak už
-   nikdy neuteče od T.
+   skript z T vyrobí skutečné stránky /de/, /pl/, /en/, /nl/ a /fr/ (pořadí podle trhů: DE 34 % hostů,
+   PL 16 %, NL 9 % a Vlámsko 6 %, francouzština pro Valonsko, Brusel a Lucembursko, EN pro ostatní)
+   a přegeneruje i české výchozí texty v index.html — statická kopie textů tak už nikdy neuteče od T.
 
    Použití:  node tools/gen-jazyky.mjs           přepíše výstupy (seznam VÝSTUPY níž)
              node tools/gen-jazyky.mjs --check   nic nepíše, jen ověří, že jsou výstupy aktuální
@@ -22,15 +22,15 @@
         a data-alt (alt texty z jazyky-obsah.mjs),
      3. hlavičku mezi <!-- JAZYKY:START --> a <!-- JAZYKY:END --> vygeneruje celou: title,
         description, canonical, hreflang, JSON-LD, og:* (a na „/" přesměrování podle jazyka),
-     4. u /de/, /pl/ a /en/ posune relativní cesty o adresář výš (../assets/…) a nastaví
+     4. u jazykových verzí (/de/, /pl/, /en/, /nl/, /fr/) posune relativní cesty o adresář výš (../assets/…) a nastaví
         <html lang> a data-root="../" (site.js podle něj skládá cesty k fotkám),
-     5. vyrobí Časté dotazy (faq/, de/faq/, pl/faq/, en/faq/) s FAQPage schema a sitemap.xml
+     5. vyrobí Časté dotazy (faq/, de/faq/, pl/faq/, en/faq/, nl/faq/, fr/faq/) s FAQPage schema a sitemap.xml
         s jazykovými páry,
      6. zkontroluje, že v cizojazyčných stránkách nezůstala čeština, že JSON-LD je validní JSON
         a že hreflang a canonical sedí. Při chybě skončí kódem 1 a nic nezapíše.
 
-   VÝSTUPY: index.html, de/index.html, pl/index.html, en/index.html, faq/index.html,
-            de/faq/index.html, pl/faq/index.html, en/faq/index.html, sitemap.xml */
+   VÝSTUPY: index.html a <jazyk>/index.html, faq/index.html a <jazyk>/faq/index.html pro každý
+            jazyk z JAZYKY v jazyky-obsah.mjs (de, pl, en, nl, fr), sitemap.xml */
 import vm from 'node:vm';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -39,14 +39,18 @@ import * as OBSAH from './jazyky-obsah.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://villarudolf.com';
-const JAZYKY = OBSAH.JAZYKY;                                  // cs, de, pl, en
-const DOMOV = { cs: '', de: 'de/', pl: 'pl/', en: 'en/' };    // homepage v každém jazyce
-const FAQ = { cs: 'faq/', de: 'de/faq/', pl: 'pl/faq/', en: 'en/faq/' };
-/* x-default = stránka pro jazyky, které web nemá (Nizozemci a Belgičané jsou 15 % hostů,
-   česky nečtou) → anglická verze. */
+const JAZYKY = OBSAH.JAZYKY;                                  // cs, de, pl, en, nl, fr
+const DOMOV = Object.fromEntries(JAZYKY.map((L) => [L, L === 'cs' ? '' : L + '/']));   // homepage v každém jazyce
+const FAQ = Object.fromEntries(JAZYKY.map((L) => [L, (L === 'cs' ? '' : L + '/') + 'faq/']));
+/* x-default = stránka pro jazyky, které web nemá (Italové, Maďaři, Ukrajinci… česky nečtou)
+   → anglická verze. */
 const X_DEFAULT = 'en';
 /* Pořadí v přepínači jazyka — stejné jako na homepage (index.html). */
-const PREPINAC = ['cs', 'en', 'de', 'pl'];
+const PREPINAC = ['cs', 'en', 'de', 'pl', 'nl', 'fr'];
+/* Výlety, info a podmínky (a průvodce hosta) mají jazyk jen v JS (?lang=) a umí jen tyhle čtyři.
+   Z nizozemské a francouzské stránky se proto otevírají anglicky. Stejnou mapu má site.js (VR_SUB_LANG). */
+const PODSTRANKY = ['cs', 'en', 'de', 'pl'];
+const jazykPodstranky = (L) => (PODSTRANKY.includes(L) ? L : 'en');
 const CHECK = process.argv.includes('--check');
 const abs = (rel) => BASE + '/' + rel;
 
@@ -260,18 +264,18 @@ const PRESKOC = /^(?:[a-z][a-z0-9+.-]*:|\/|#|\?)/i;
 /* ============================ 3. Hlavička: title, hreflang, JSON-LD, og ============================ */
 const ldJson = (o) => JSON.stringify(o, null, 2).replace(/</g, '\\u003c');
 /* Na „/" (česky) rozhodne o jazyku ještě před vykreslením. Přesměrovává jen staré odkazy ?lang=,
-   uloženou volbu z přepínače a prohlížeč v NĚMČINĚ nebo POLŠTINĚ. Angličtinu podle prohlížeče
-   ne: Googlebot má prohlížeč anglický a přesměrování by mu českou stránku schovalo. Anglicky
-   mluvícím nabídne anglickou verzi lišta (langSuggest v site.js).
+   uloženou volbu z přepínače a prohlížeč v NĚMČINĚ, POLŠTINĚ, NIZOZEMŠTINĚ nebo FRANCOUZŠTINĚ.
+   Angličtinu podle prohlížeče ne: Googlebot má prohlížeč anglický a přesměrování by mu českou
+   stránku schovalo. Anglicky mluvícím nabídne anglickou verzi lišta (langSuggest v site.js).
    Zdroj návštěvy musí přesměrování přežít: na /de/ by referrer byla vlastní doména. Proto se tu
    uloží vrZdroj (stejně jako vrZdroj() v site.js — do události poptavka-odeslana) a původní
    referrer pro Umami (vrRef, vrátí ho vrUmamiRef v site.js). */
-const PRESMEROVANI = `<script>/* Jazyk (tools/gen-jazyky.mjs): ?lang= ze starých odkazů → volba z přepínače → prohlížeč de/pl. */
+const PRESMEROVANI = `<script>/* Jazyk (tools/gen-jazyky.mjs): ?lang= ze starých odkazů → volba z přepínače → prohlížeč de/pl/nl/fr. */
 (function(){try{var q=location.search,m=/[?&]lang=([a-z]{2})(?![a-z])/i.exec(q),t=m?m[1].toLowerCase():null;
 if(!t){try{t=localStorage.getItem('vrLang')}catch(e){}
-if(!t){var n=String((navigator.languages&&navigator.languages[0])||navigator.language||'').slice(0,2).toLowerCase();if(n==='de'||n==='pl')t=n;}}
+if(!t){var n=String((navigator.languages&&navigator.languages[0])||navigator.language||'').slice(0,2).toLowerCase();if(n==='de'||n==='pl'||n==='nl'||n==='fr')t=n;}}
 if(t==='cs'&&m){try{localStorage.setItem('vrLang','cs')}catch(e){}}
-if(t==='de'||t==='pl'||t==='en'){
+if(t==='de'||t==='pl'||t==='en'||t==='nl'||t==='fr'){
 try{var r=document.referrer,h=r?new URL(r).hostname.replace(/^www\\./,''):'',ven=!!h&&h!==location.hostname.replace(/^www\\./,'');
 if(ven)sessionStorage.setItem('vrRef',JSON.stringify({r:r,t:Date.now()}));
 if(!sessionStorage.getItem('vrZdroj')){var u=new URLSearchParams(q).get('utm_source'),z=u?u.slice(0,40):(ven?h:'');if(z)sessionStorage.setItem('vrZdroj',z);}}catch(e){}
@@ -481,9 +485,10 @@ function faqStranka(api, lang) {
   if (!OBSAH.FAQ || !OBSAH.FAQ_STRANKA) return null;
   const S = OBSAH.FAQ_STRANKA[lang], cesta = FAQ[lang], t = api.T[lang];
   /* Česká homepage dostane ?lang=cs: „/" by jinak prohlížeč v němčině poslal na /de/.
-     Výlety, info a podmínky mají jazyk jen v JS (?lang=), statické verze nemají. */
+     Výlety, info a podmínky mají jazyk jen v JS (?lang=), statické verze nemají a nizozemsky
+     ani francouzsky neumí — odtud vedou anglicky (jazykPodstranky). */
   const domu = relativni(cesta, DOMOV[lang]) + (lang === 'cs' ? '?lang=cs' : ''), koren = relativni(cesta, '');
-  const sJazykem = (p) => koren + p + '?lang=' + lang;
+  const sJazykem = (p) => koren + p + '?lang=' + jazykPodstranky(lang);
   /* {domu} = homepage téhož jazyka, {planovac} = plánovač výletů (relativně), ceny z VR_PRICING. */
   const planovac = sJazykem('vylety/') + '#planovac';
   const q = (x) => {
@@ -642,8 +647,11 @@ function sitemap(vystupy, dnes) {
 /* ============================ 7. Kontroly ============================ */
 /* Česká písmena, která v němčině, polštině ani angličtině nejsou. Slovo s nimi je chyba,
    pokud nezačíná kmenem vlastního jména (místa se nepřekládají a polština je skloňuje:
-   „Černej hory", „Adršpašskie skały"). */
-const CZ = /[ěščřžůďťňýáíéúĚŠČŘŽŮĎŤŇÝÁÍÉÚ]/;
+   „Černej hory", „Adršpašskie skały"). Francouzština a nizozemština mají vlastní é
+   (été, équipée, één, café), u nich se é nepočítá. */
+const CZ_VSE = /[ěščřžůďťňýáíéúĚŠČŘŽŮĎŤŇÝÁÍÉÚ]/;
+const CZ_BEZ_E = /[ěščřžůďťňýáíúĚŠČŘŽŮĎŤŇÝÁÍÚ]/;
+const ceskaPismena = (lang) => (lang === 'fr' || lang === 'nl' ? CZ_BEZ_E : CZ_VSE);
 const JMENA = ['adršp', 'čern', 'krkono', 'sněž', 'úp', 'lázn', 'janské', 'maršov', 'rýchor', 'králov', 'dvůr', 'rudolfův',
   'luční', 'protěž', 'mumlav', 'muchomůrk', 'krakonoš', 'velká', 'malá', 'mladé', 'obří', 'svobod', 'vratislav', 'horní',
   'kč', 'královéhrad', 'důl'];
@@ -666,9 +674,9 @@ function kontrolaStranky(html, lang, cesta, cesty) {
     .replace(/<(\w+)\b[^>]*\blang="cs"[^>]*>[\s\S]*?<\/\1>/g, '');
   const texty = [...probe.matchAll(/>([^<]+)</g)].map((m) => m[1])
     .concat([...probe.matchAll(/\b(?:alt|title|placeholder|aria-label|content)="([^"]*)"/g)].map((m) => m[1]));
-  const zbytek = new Set();
+  const zbytek = new Set(), CZ = ceskaPismena(lang);
   for (const s of texty) {
-    const zle = s.split(/[\s,.;:!?()„“"'’/–—·]+/).filter((w) => CZ.test(w) && !JMENA.some((j) => w.toLowerCase().startsWith(j)));
+    const zle = s.split(/[\s,.;:!?()„“"'’/–—·«»\u00a0\u202f]+/).filter((w) => CZ.test(w) && !JMENA.some((j) => w.toLowerCase().startsWith(j)));
     if (zle.length) zbytek.add(zle.join(' ') + '  ←  ' + s.trim().replace(/\s+/g, ' ').slice(0, 90));
   }
   for (const z of zbytek) chyba(`${kde}: zbyla čeština: „${z}"`);
