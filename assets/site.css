@@ -174,13 +174,20 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
   display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;
   opacity:0;pointer-events:none;transition:opacity .35s ease,background-color .6s ease;padding:76px clamp(20px,6vw,40px) 40px}
 .vr-mob[data-open="true"]{opacity:1;pointer-events:auto}
-.vr-mob a{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.7rem,6.4vw,2.5rem);color:var(--vr-text-soft);
+/* Velké patkové písmo jen pro položky, které leží přímo v .vr-mob. Vnořené ovladače
+   (přepínač sezóny, jazyky) mají vlastní vzhled. Obecné .vr-mob a od 7/2026 chytalo i přepínač
+   sezóny (odkaz <a class="vr-segbtn">): Newsreader 27 px bez odsazení, aktivní popisek v barvě podkladu. */
+.vr-mob > a{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.7rem,6.4vw,2.5rem);color:var(--vr-text-soft);
   padding:9px 0;letter-spacing:-.01em;transition:color .2s}
-.vr-mob a:hover{color:var(--vr-accent-2)}
-.vr-mob a[data-active="true"]{color:var(--vr-accent-2)}
+.vr-mob > a:hover{color:var(--vr-accent-2)}
+.vr-mob > a[data-active="true"]{color:var(--vr-accent-2)}
 .vr-mob .vr-mob-cta{margin-top:20px;font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;color:#10150f;
   background:var(--vr-ember);border-radius:2px;padding:15px 30px}
 .vr-mob-season{margin-top:24px}
+/* Stejná pilulka jako v liště na desktopu (.vr-nav-season), na dotyk o něco větší.
+   Barvy musí být tady: .vr-root a{color:inherit} přebije samotné .vr-segbtn. */
+.vr-mob-season .vr-segbtn{font-size:13px;padding:11px 22px;color:var(--vr-text-muted)}
+.vr-mob-season .vr-segbtn[data-active="true"]{color:var(--vr-on-accent)}
 .vr-mob-langs{display:flex;gap:22px;margin-top:24px}
 .vr-mob-langs .vr-lang{font-size:15px;opacity:1;color:var(--vr-text-muted)}
 .vr-mob-langs .vr-lang[data-active="true"]{color:var(--vr-text)}
