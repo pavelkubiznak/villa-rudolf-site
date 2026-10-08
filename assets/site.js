@@ -5,29 +5,68 @@
 'use strict';
 
 /* ============================ CENÍK ============================ */
-/* JEDINÉ místo, kde se ceny upravují.
-   Hodnoty převzaty z vlastního inzerátu majitele na e-chalupy.cz (objekt 18852)
-   a ověřeny proti němu 21. 7. 2026:
-     • letní sezóna 1. 5. – 31. 10.: 12 900 Kč/noc, víkend (2 noci) 25 800 Kč
-     • zimní sezóna 15. 12. – 31. 3.: 12 900 Kč/noc, víkend (2 noci) 25 800 Kč
-     • mimo sezónu (duben, listopad, 1.–14. 12.): 11 900 Kč/noc,
-       víkend (2 noci) 22 800 Kč — víkend mimo sezónu je zvýhodněný
-     • minimální pobyt: 2 noci ve všech obdobích
-     • úklid a prádlo: 3 500 Kč za pobyt
-     • městský poplatek: 25 Kč za dospělou osobu a noc (děti neplatí)
-     • pes / domácí mazlíček: 500 Kč za pobyt
-     • vratná kauce: 5 000 Kč (úklid se z ní odečítá)
-     • záloha po potvrzení termínu: 30 % z celkové ceny
-     • Vánoce a Silvestr: individuální cena (2026: 94 900 / 99 900 Kč za týden,
-       oba termíny už obsazené) — v ceníku jen jako „poptejte se"
-   Sezóny se zapisují jako MM-DD. 'zimni' přechází přes Nový rok (12-15 → 03-31).
-   Poslední sezóna bez from/to ('mimo') je výchozí pro všechny ostatní dny v roce. */
+/* Ceny za noc a minimální počet nocí NEJSOU tady, ale v ceníku
+   villa-rudolf-portal/docs/cenik.json (potvrzen Pavlem 21. 9. 2026) — jediný zdroj
+   pravdy pro všechny kanály. Web je přímý kanál: cena = čistý výnos, bez provize
+   (13 400 mimo sezónu, 14 900 léto a zima, 16 400 zimní špičky, 18 000 Vánoce,
+   20 000 Silvestr; min. 2 noci, o svátcích 3, v létě 5, Vánoce a Silvestr 6).
+   Blok CENIK:START … CENIK:END přepisuje `node tools/gen-cenik-web.mjs <cesta k portálu>`
+   (zároveň ceny ve statickém HTML homepage). Ručně se upravují jen poplatky pod blokem.
+   Do 8. 10. 2026 tu byly ceny opsané z e-chalup (11 900 / 12 900, víkendová sazba)
+   a web tak nabízel přímo levněji, než platí ceník. */
 const VR_PRICING = {
-  seasons: [
-    { name: 'letni', from: '05-01', to: '10-31', nightly: 12900, minNights: 2, weekend2: 25800 },
-    { name: 'zimni', from: '12-15', to: '03-31', nightly: 12900, minNights: 2, weekend2: 25800 },
-    { name: 'mimo', nightly: 11900, minNights: 2, weekend2: 22800 },
+  /* CENIK:START — vygenerováno příkazem `node tools/gen-cenik-web.mjs <villa-rudolf-portal>`
+     z docs/cenik.json verze 2026-09-21 dne 2026-10-08. NEUPRAVOVAT RUČNĚ: ceník se mění v cenik.json
+     a tenhle blok se přegeneruje. periods = noci od–do včetně (cena za noc, min. nocí podle noci příjezdu),
+     levels = přehled pro ceník nad kalendářem, seasons = záloha pro noci za koncem periods. */
+  periods: [
+    { from: '2026-10-08', to: '2026-12-18', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2026-12-19', to: '2027-01-01', name: 'vanoce', nightly: 18000, minNights: 6 },
+    { from: '2027-01-02', to: '2027-02-05', name: 'zimni', nightly: 14900, minNights: 2 },
+    { from: '2027-02-06', to: '2027-02-12', name: 'spicka', nightly: 16400, minNights: 2 },
+    { from: '2027-02-13', to: '2027-02-19', name: 'zimni', nightly: 14900, minNights: 2 },
+    { from: '2027-02-20', to: '2027-02-26', name: 'spicka', nightly: 16400, minNights: 2 },
+    { from: '2027-02-27', to: '2027-03-13', name: 'zimni', nightly: 14900, minNights: 2 },
+    { from: '2027-03-14', to: '2027-03-24', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2027-03-25', to: '2027-04-03', name: 'svatky', nightly: 14900, minNights: 3 },
+    { from: '2027-04-04', to: '2027-04-23', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2027-04-24', to: '2027-05-08', name: 'svatky', nightly: 14900, minNights: 3 },
+    { from: '2027-05-09', to: '2027-06-25', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2027-06-26', to: '2027-09-03', name: 'letni', nightly: 14900, minNights: 5 },
+    { from: '2027-09-04', to: '2027-10-22', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2027-10-23', to: '2027-11-05', name: 'svatky', nightly: 14900, minNights: 3 },
+    { from: '2027-11-06', to: '2027-12-17', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2027-12-18', to: '2027-12-24', name: 'vanoce', nightly: 18000, minNights: 6 },
+    { from: '2027-12-25', to: '2027-12-31', name: 'silvestr', nightly: 20000, minNights: 6 },
+    { from: '2028-01-01', to: '2028-01-07', name: 'spicka', nightly: 16400, minNights: 3 },
+    { from: '2028-01-08', to: '2028-02-25', name: 'zimni', nightly: 14900, minNights: 2 },
+    { from: '2028-02-26', to: '2028-03-03', name: 'spicka', nightly: 16400, minNights: 2 },
+    { from: '2028-03-04', to: '2028-03-18', name: 'zimni', nightly: 14900, minNights: 2 },
+    { from: '2028-03-19', to: '2028-04-07', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2028-04-08', to: '2028-04-22', name: 'svatky', nightly: 14900, minNights: 3 },
+    { from: '2028-04-23', to: '2028-04-28', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2028-04-29', to: '2028-05-06', name: 'svatky', nightly: 14900, minNights: 3 },
+    { from: '2028-05-07', to: '2028-06-30', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2028-07-01', to: '2028-09-01', name: 'letni', nightly: 14900, minNights: 5 },
+    { from: '2028-09-02', to: '2028-12-22', name: 'mimo', nightly: 13400, minNights: 2 },
+    { from: '2028-12-23', to: '2029-01-05', name: 'vanoce', nightly: 18000, minNights: 6 },
+    { from: '2029-01-06', to: '2029-01-10', name: 'zimni', nightly: 15500, minNights: 2 },
   ],
+  levels: {
+    mimo: { nightly: 13400, minNights: 2 },
+    zimni: { nightly: 14900, minNights: 2 },
+    svatky: { nightly: 14900, minNights: 3 },
+    letni: { nightly: 14900, minNights: 5 },
+    spicka: { nightly: 16400, minNights: 2 },
+    vanoce: { nightly: 18000, minNights: 6 },
+    silvestr: { nightly: 20000, minNights: 6 },
+  },
+  seasons: [
+    { name: 'letni', from: '07-01', to: '08-31', nightly: 14900, minNights: 5 },
+    { name: 'zimni', from: '01-01', to: '02-28', nightly: 14900, minNights: 2 },
+    { name: 'mimo', nightly: 13400, minNights: 2 },
+  ],
+  /* CENIK:END */
   cleaning: 3500,            // úklid a prádlo za pobyt (Kč)
   cityTaxAdultNight: 25,     // městský poplatek na dospělého a noc (Kč)
   petPerStay: 500,           // pes / domácí mazlíček za pobyt (Kč)
@@ -64,11 +103,16 @@ const VR_SUPABASE = {
    quote = originál v jazyce recenze; quote_cs = český překlad (null = originál je česky).
    NIKDY neměň smysl citace; zkrácení je vyznačeno „…". */
 const VR_REVIEWS = {
-  checkedAt: '2026-07-20',
+  checkedAt: '2026-10-08',
   platforms: [
-    { key: 'google',  name: 'Google',      rating: 5.0, outOf: 5,  count: 20, url: 'https://www.google.com/maps/place/Villa+Rudolf/@50.6254426,15.8135792,17z/data=!3m1!4b1!4m6!3m5!1s0x470eed010c87db09:0xb1476ac6b6a154e!8m2!3d50.6254426!4d15.8135792!16s%2Fg%2F11l_3ztv_k' },
-    { key: 'airbnb',  name: 'Airbnb',      rating: 5.0, outOf: 5,  count: 7,  url: 'https://www.airbnb.com/rooms/1122389326464885565' },
-    { key: 'booking', name: 'Booking.com', rating: 9.6, outOf: 10, count: 17, url: 'https://www.booking.com/hotel/cz/villa-with-a-covered-pool-park-and-playground.html' },
+    /* Google je SKRYTÝ (hidden: true) — rozhodnutí Pavla 8. 10. 2026. Na Mapách je zatím
+       jen nenárokovaný profil „Rudolfův dvůr" (4,4 z 53, i s recenzemi z doby bývalého
+       majitele); dřívější „5,0 (20)" s ním nesouhlasilo a odkaz vedl právě na něj.
+       Vrátit (smazat hidden, opravit čísla), až bude profil nárokovaný a přejmenovaný
+       na Villa Rudolf. Citace z Googlu v pásu recenzí zůstávají, jsou skutečné. */
+    { key: 'google',  name: 'Google',      rating: 4.4, outOf: 5,  count: 53, hidden: true, url: 'https://maps.google.com/?cid=10066458681396873296' },
+    { key: 'airbnb',  name: 'Airbnb',      rating: 5.0, outOf: 5,  count: 8,  url: 'https://www.airbnb.com/rooms/1122389326464885565' },
+    { key: 'booking', name: 'Booking.com', rating: 9.7, outOf: 10, count: 18, url: 'https://www.booking.com/hotel/cz/villa-with-a-covered-pool-park-and-playground.html' },
   ],
   items: [
     { author: 'Ryan', platform: 'airbnb', lang: 'en',
@@ -96,6 +140,7 @@ const VR_REVIEWS = {
    když je vyplněný — když je prázdný, řádek s telefonem se vůbec nevykreslí. */
 const VR_CONTACT = {
   email: 'rezervace@villarudolf.com',
+  address: 'Luční 519, 542 24 Svoboda nad Úpou', // stejně jako ve schema.org a na /info/
   phone: '+420 775 220 785', // doplní majitel — prázdné '' = řádek skrytý
 };
 
@@ -153,15 +198,22 @@ function factValue(key) {
   const sep = VR_NUM_SEP[state.lang] || VR_NUM_SEP.cs;
   return String(v).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
 }
-/* Dosadí {klic} z VR_FACTS do libovolného řetězce. Navíc umí {petFee} —
-   poplatek za mazlíčka bere z VR_PRICING, aby se částka nemusela psát do
-   překladů ve čtyřech jazycích ručně a nerozešla se s kalkulačkou.
+/* Nejnižší cena za noc z ceníku (mimo sezónu) — pro „celý dům od …". */
+function vrCenaOd() {
+  const L = VR_PRICING.levels || {};
+  const all = Object.keys(L).map((k) => L[k].nightly).concat((VR_PRICING.seasons || []).map((x) => x.nightly));
+  return Math.min.apply(null, all);
+}
+/* Dosadí {klic} z VR_FACTS do libovolného řetězce. Navíc umí {petFee} a {cenaOd} —
+   poplatek za mazlíčka a nejnižší cenu za noc bere z VR_PRICING, aby se částka
+   nemusela psát do překladů ve čtyřech jazycích ručně a nerozešla se s kalkulačkou.
    Neznámé zástupné znaky (např. {n} u počtů výletů) nechává být — o ty se
    stará applyTripCounts(). */
 function fillFacts(str) {
   if (typeof str !== 'string' || str.indexOf('{') < 0) return str;
   return str.replace(/\{([a-zA-Z]+)\}/g, (m, k) => {
     if (k === 'petFee') return fmtM(VR_PRICING.petPerStay);
+    if (k === 'cenaOd') { const n = vrCenaOd(), fx = fxLine(n, state.lang); return fmtM(n) + (fx ? ' (' + fx + ')' : ''); }
     return Object.prototype.hasOwnProperty.call(VR_FACTS, k) ? factValue(k) : m;
   });
 }
@@ -241,8 +293,8 @@ const T = {
         sauna:    { tag: 'Wellness', name: 'Privátní finská sauna', desc: 'Finská sauna jen pro vaši skupinu, s předsálím a sprchou. Žádné sdílení, žádné časové sloty.' },
         kitchen:  { tag: 'Společně', name: 'Kuchyně a stůl pro celou skupinu', desc: 'Plně vybavená kuchyně a velký dřevěný stůl, u kterého se sejdete všichni najednou.' },
         firepit:  { tag: 'Venkovní život', name: 'Ohniště s gabionovou stěnou', desc: 'Nově dokončené otevřené ohniště pojme celou skupinu. Po setmění se samo nasvítí — teplo pod širým nebem.' },
-        altan:    { tag: 'Venkovní život', name: 'Velký altán s grilem', desc: 'Kryté posezení s grilovacím pultem a stolem, kam se vejde celá skupina najednou. Střecha drží, ať prší, nebo sněží.' },
-        hriste:   { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, malá lezecká a lanová stěna. Děti mají svůj prostor na dohled od altánu.' },
+        altan:    { tag: 'Venkovní život', name: 'Velký altán se dvěma grily', desc: 'Kryté posezení se dvěma velkými elektrickými grily a stolem, kam se vejde celá skupina najednou. Střecha drží, ať prší, nebo sněží.' },
+        hriste:   { tag: 'Pro rodiny', name: 'Dětské hřiště', desc: 'Prolézačky, skluzavka, houpačky a lanové prvky, k tomu trampolína a stolní tenis. Děti mají svůj prostor na dohled od altánu.' },
         billiard: { tag: 'Uvnitř', name: 'Kulečník', desc: 'Kulečníkový stůl v apartmá Suite — na líné odpoledne i na turnaj po večeři.' },
         lounge:   { tag: 'Uvnitř', name: 'Obývací část apartmá', desc: 'Dlouhá sedací souprava pod trámy a velký stůl — vlastní společenský prostor apartmá Suite.' },
       },
@@ -260,7 +312,7 @@ const T = {
       note: '{loznice} ložnic, {koupelny} koupelen, velká kuchyň, sauna i wellness — projděte si celý dům na fotkách.',
       noBunk: 'Žádné patrové postele — klidnější spaní i pro rodiče s malými dětmi.',
       rooms: [
-        { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi, 2 samostatná lůžka a 1 lůžko s výsuvným druhým lůžkem · vlastní kuchyňka a kulečník · koupelna' },
+        { name: 'Apartmá Suite', cap: 'až 10 hostů', beds: '3 ložnice s manželskými postelemi, 2 samostatná lůžka a 1 lůžko s výsuvným druhým lůžkem · vlastní kuchyně a kulečník · koupelna' },
         { name: 'Pokoj 1', cap: '2 hosté', beds: 'Manželská postel · koupelna' },
         { name: 'Pokoj 2', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka) · koupelna' },
         { name: 'Pokoj 3', cap: 'až 4 hosté', beds: 'Manželská postel a 2 samostatná lůžka (jedno plnohodnotná přistýlka) · koupelna' },
@@ -292,7 +344,7 @@ const T = {
         kitchen: 'Kuchyň s jídelnou', bath: 'Koupelna', wc: 'WC',
         room1: 'Pokoj 1', room2: 'Pokoj 2', room3: 'Pokoj 3', room4: 'Pokoj 4',
         sauna: 'Sauna a wellness', ski: 'Lyžárna', boiler: 'Technická místnost',
-        aptLiving: 'Apartmá — obývací část', aptKitchen: 'Kuchyňka apartmá',
+        aptLiving: 'Apartmá — obývací část', aptKitchen: 'Kuchyně apartmá',
         aptHall: 'Chodbička apartmá', aptBath: 'Koupelna apartmá', aptWc: 'WC apartmá',
         aptBedA: 'Apartmá — ložnice A', aptBedB: 'Apartmá — ložnice B', aptBedC: 'Apartmá — ložnice C',
       },
@@ -431,7 +483,7 @@ const T = {
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Sněžka', snezkaMeta: '1603 m',
-        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        pec: 'Pec pod Sněžkou', pecMeta: '13 km',
         cernaHora: 'Černá hora', cernaHoraMeta: 'sjezdovky 4 km',
         janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
         trutnov: 'Trutnov', trutnovMeta: '11 km',
@@ -464,7 +516,7 @@ const T = {
         { name: 'Pokoj 4 — pohled od postele', desc: 'Týž Pokoj 4 od hlavy postele: klenutá nika s mramorovanou tapetou a podsvícené laťkové čelo zblízka, přes celý pokoj pak okno se závěsy, obrázek hory, okénko v hrázděné stěně a otevřené dveře do vlastní koupelny.' },
         { name: 'Pokoj 4 — koupelna', desc: 'Koupelna Pokoje 4 — sprchový kout, umyvadlo, toaleta a pračka.' },
         { name: 'Apartmá — obývací část', desc: 'Vlastní obývák apartmá Suite: dlouhá sedací souprava pod trámy, velký stůl, televize a schody do podkrovních ložnic.' },
-        { name: 'Apartmá — kuchyňský kout', desc: 'Kuchyňská linka apartmá s troubou a varnou deskou — apartmá má vlastní zázemí a nemusí se dělit o hlavní kuchyni.' },
+        { name: 'Apartmá — kuchyně', desc: 'Plnohodnotná kuchyně apartmá s troubou, myčkou a kompletním nádobím — apartmá má vlastní zázemí a nemusí se dělit o hlavní kuchyni.' },
         { name: 'Apartmá — ložnice A', desc: 'První ze tří ložnic apartmá, v 1. patře: manželská postel a geometrická tapeta za podsvíceným čelem.' },
         { name: 'Apartmá — koupelna', desc: 'Vlastní koupelna apartmá v 1. patře — prosklený sprchový kout, umyvadlo se zrcadlovou skříňkou a okno do zasněžené zahrady. Dřevěný obklad ladí se zbytkem apartmá.' },
         { name: 'Apartmá — WC', desc: 'Samostatné WC apartmá — závěsná toaleta s dřevěným obkladem za mísou, malé okno a vyhřívaný radiátor. Oddělené od koupelny, takže apartmá nemusí nic sdílet.' },
@@ -475,15 +527,15 @@ const T = {
         { name: 'Finská sauna', desc: 'Uvnitř vyhřáté finské sauny — lavice ze světlého dřeva a kamna.' },
         { name: 'Lyžárna', desc: 'Samostatná lyžárna v suterénu — stojany na lyže a snowboardy a držáky na boty. Vybavení zůstane dole a nemusí do pokojů.' },
         { name: 'Zahrada v zimě', desc: 'Zasněžená zahrada od altánu k domu — vzrostlé smrky, prošlapané cestičky a hory nad střechami.' },
-        { name: 'Altán s grily', desc: 'Týž altán jako v létě, jen pod sněhem: krov z masivního dřeva, grilovací pult podél stěny a otevřené strany do zahrady.' },
+        { name: 'Altán s grily', desc: 'Týž altán jako v létě, jen pod sněhem: krov z masivního dřeva, dva velké elektrické grily a otevřené strany do zahrady.' },
       ],
       scenesSummer: [
         { name: 'Příjezd k vile', desc: 'Plocha za bránou, kam zaparkuje celá skupina, a dům na konci příjezdovky mezi vzrostlými stromy.' },
         { name: 'Zahrada s bazénem', desc: 'Pohled přes trávník na dům, zastřešený bazén s řadou lehátek a gabionové ohniště pod svahem.' },
         { name: 'Zahrada s krytým bazénem', desc: 'Zastřešený vyhřívaný bazén s řadou lehátek hned u domu, kolem dokola vlastní trávník.' },
         { name: 'Terasa s posezením', desc: 'Terasa z dubových fošen nad gabionovou zdí — stůl pro celou partu a výhled na altán a hory.' },
-        { name: 'Altán s grily', desc: 'Pod krovem z masivního dřeva: dlouhý stůl, zděný grilovací pult a otevřené strany do zahrady.' },
-        { name: 'Dětské hřiště', desc: 'Lanový most, prolézačka a malá lezecká stěna na dohled od domu — děti mají svůj kout uvnitř pozemku.' },
+        { name: 'Altán s grily', desc: 'Pod krovem z masivního dřeva: dlouhý stůl, dva velké elektrické grily a otevřené strany do zahrady.' },
+        { name: 'Dětské hřiště', desc: 'Prolézačka, skluzavka, houpačky a lanové prvky na dohled od domu — děti mají svůj kout uvnitř pozemku.' },
         { name: 'Terasa s ohništěm večer', desc: 'Po setmění se gabiony i schody nasvítí samy — křesílka u ohniště a v pozadí svítící bazén.' },
       ],
       groupsLabel: 'Skupiny scén', groupAll: 'Vše',
@@ -520,11 +572,18 @@ const T = {
       free: 'Volno', booked: 'Obsazeno', chosen: 'Váš pobyt', checkoutOnly: 'pouze odjezd', demo: 'Ukázková dostupnost — napojíme na rezervační systém',
       availFail: 'Dostupnost se nepodařilo načíst.',
       priceHeading: 'Ceník', pricePerNight: '/ noc', priceMin: 'min.',
-      priceWeekend: 'víkend (2 noci)', weekendRate: 'Víkendová cena',
-      priceOffRange: 'duben, listopad a 1.–14. 12.',
+      weekendRate: 'Víkendová cena',
       priceSummerFull: 'Léto %Y% je téměř obsazené — volné jsou už jen jednotlivé termíny.',
-      priceXmas: 'Vánoce a Silvestr', priceXmasVal: 'individuální cena, poptejte se',
-      priceMinStay: 'Minimální pobyt %N% %NB%',
+      priceMinN: 'min. %N%', priceHolidayMin: 'o svátcích %N%',
+      /* Popisky úrovní ceníku (VR_PRICING.levels). Čísla sem nepatří, dosadí je kód. */
+      priceLevels: {
+        mimo: { name: 'Mimo sezónu', range: 'všechny ostatní termíny' },
+        zimni: { name: 'Zima a svátky', range: 'leden až polovina března, Velikonoce, dny kolem 1. května, přelom října a listopadu' },
+        letni: { name: 'Léto', range: 'konec června až začátek září' },
+        spicka: { name: 'Zimní špičky', range: 'vybrané týdny v únoru a na začátku ledna' },
+        vanoce: { name: 'Vánoce', range: 'týden se Štědrým dnem' },
+        silvestr: { name: 'Silvestr', range: 'týden se Silvestrem' },
+      },
       priceCityTax: 'Městský poplatek %A% za dospělou osobu a noc (děti neplatí)',
       pricePet: 'Pes / domácí mazlíček %P% za pobyt',
       priceBond: 'Vratná kauce %B% — úklid se z ní odečítá',
@@ -551,16 +610,18 @@ const T = {
       lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', pets: 'Domácí mazlíčci', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Plánovač výletů' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', formerly: 'Dříve Rudolfův dvůr.', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Plánovač výletů' },
     prebook: {
       title: 'Co potřebujete vědět před rezervací', link: 'Vše praktické →',
       facts: [
         { k: 'Kapacita', v: '{minHostu}–{maxHostu} hostů v {loznice} ložnicích' },
+        { k: 'Cena', v: 'Celý dům od {cenaOd} za noc' },
         { k: 'Soukromí', v: 'Celý dům i pozemek jen pro vaši skupinu' },
         { k: 'Příjezd / odjezd', v: 'Check-in od 15:00 · check-out do 10:00' },
         { k: 'Mazlíčci', v: 'Pes vítán — {petFee} za pobyt a zvíře' },
         { k: 'Parkování', v: 'Vlastní parkoviště na pozemku u vchodu, zdarma' },
-        { k: 'Lyžování', v: 'Sjezdovky Černá hora 4 km · zastávka skibusu 200 m' },
+        { k: 'Lyžování', v: 'Sjezdovky přímo ve Svobodě · skibus zdarma 200 m od brány' },
+        { k: 'Internet', v: 'Rychlá Wi-Fi v domě i na celém pozemku' },
       ],
     },
   },
@@ -627,8 +688,8 @@ const T = {
         sauna:    { tag: 'Wellness', name: 'Private Finnish sauna', desc: 'A Finnish sauna for your group alone, with an anteroom and a shower. No sharing, no time slots.' },
         kitchen:  { tag: 'Together', name: 'Kitchen and a table for everyone', desc: 'A fully equipped kitchen and a big wooden table that seats the whole group at once.' },
         firepit:  { tag: 'Outdoor life', name: 'Fire pit with a gabion wall', desc: 'A newly finished open fire pit that takes the whole group. After dark it lights itself — warmth under an open sky.' },
-        altan:    { tag: 'Outdoor life', name: 'Large gazebo with a grill', desc: 'Covered seating with a grill counter and a table big enough for everyone at once. The roof holds, whether it rains or snows.' },
-        hriste:   { tag: 'For families', name: 'Playground', desc: 'Climbing frames, a small climbing wall and a rope wall. The kids get their own corner within sight of the gazebo.' },
+        altan:    { tag: 'Outdoor life', name: 'Large gazebo with two grills', desc: 'Covered seating with two large electric grills and a table big enough for everyone at once. The roof holds, whether it rains or snows.' },
+        hriste:   { tag: 'For families', name: 'Playground', desc: 'Climbing frames, a slide, swings and rope elements, plus a trampoline and table tennis. The kids get their own corner within sight of the gazebo.' },
         billiard: { tag: 'Indoors', name: 'Billiards', desc: 'A billiard table in the Suite apartment — for a lazy afternoon or a tournament after dinner.' },
         lounge:   { tag: 'Indoors', name: 'Suite living area', desc: 'A long sofa under the beams and a big table — the Suite apartment has its own social space.' },
       },
@@ -639,7 +700,7 @@ const T = {
       note: '{loznice} bedrooms, {koupelny} bathrooms, a large kitchen, sauna and wellness — walk through the whole house in photos.',
       noBunk: 'No bunk beds — a calmer night, ideal for parents with small children too.',
       rooms: [
-        { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds, 2 single beds and 1 bed with a pull-out second bed · own kitchenette and billiard table · bathroom' },
+        { name: 'Apartment Suite', cap: 'up to 10 guests', beds: '3 bedrooms with double beds, 2 single beds and 1 bed with a pull-out second bed · own kitchen and billiard table · bathroom' },
         { name: 'Room 1', cap: '2 guests', beds: 'Double bed · bathroom' },
         { name: 'Room 2', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed) · bathroom' },
         { name: 'Room 3', cap: 'up to 4 guests', beds: 'Double bed and 2 separate beds (one a full-size extra bed) · bathroom' },
@@ -666,7 +727,7 @@ const T = {
         kitchen: 'Kitchen & dining', bath: 'Bathroom', wc: 'WC',
         room1: 'Room 1', room2: 'Room 2', room3: 'Room 3', room4: 'Room 4',
         sauna: 'Sauna & wellness', ski: 'Ski room', boiler: 'Utility room',
-        aptLiving: 'Apartment — living area', aptKitchen: 'Apartment kitchenette',
+        aptLiving: 'Apartment — living area', aptKitchen: 'Apartment kitchen',
         aptHall: 'Apartment hallway', aptBath: 'Apartment bathroom', aptWc: 'Apartment WC',
         aptBedA: 'Apartment — bedroom A', aptBedB: 'Apartment — bedroom B', aptBedC: 'Apartment — bedroom C',
       },
@@ -789,7 +850,7 @@ const T = {
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Sněžka', snezkaMeta: '1603 m',
-        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        pec: 'Pec pod Sněžkou', pecMeta: '13 km',
         cernaHora: 'Černá hora', cernaHoraMeta: 'ski slopes 4 km',
         janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
         trutnov: 'Trutnov', trutnovMeta: '11 km',
@@ -822,7 +883,7 @@ const T = {
         { name: 'Room 4 — the view from the bed', desc: 'The same Room 4 from the head of the bed: the vaulted alcove with its marbled wallpaper and the backlit slatted headboard up close, then the length of the room to the curtained window, the mountain print, the little window in the timbered wall and the open door to the en-suite bathroom.' },
         { name: 'Room 4 — bathroom', desc: 'Room 4’s bathroom — shower enclosure, basin, toilet and a washing machine.' },
         { name: 'Suite — living area', desc: 'The Suite apartment’s own lounge: a long sofa under the beams, a big table, a TV and the stairs up to the attic bedrooms.' },
-        { name: 'Suite — kitchenette', desc: 'The Suite’s own kitchen units with an oven and hob — the apartment is self-contained and doesn’t share the main kitchen.' },
+        { name: 'Suite — kitchen', desc: 'The Suite’s own full kitchen with an oven, a dishwasher and complete tableware — the apartment is self-contained and doesn’t share the main kitchen.' },
         { name: 'Suite — bedroom A', desc: 'The first of the Suite’s three bedrooms, on the first floor: a double bed and geometric wallpaper behind the backlit headboard.' },
         { name: 'Suite — bathroom', desc: 'The Suite’s own first-floor bathroom — a glass shower enclosure, a vanity with a mirror cabinet and a window onto the snowy garden. The wood-look tiling matches the rest of the apartment.' },
         { name: 'Suite — WC', desc: 'The Suite’s separate toilet — a wall-hung WC with a wood-panel accent, a small window and a heated radiator. Kept apart from the bathroom, so the apartment never has to share.' },
@@ -833,15 +894,15 @@ const T = {
         { name: 'Inside the sauna', desc: 'Inside the heated Finnish sauna — pale timber benches and the stove.' },
         { name: 'Ski room', desc: 'A ski room of its own downstairs — racks for skis and snowboards and holders for boots. The kit stays down here instead of in the bedrooms.' },
         { name: 'The garden in winter', desc: 'The snowbound garden from the gazebo back to the house — tall spruces, trodden paths and the mountains above the roofs.' },
-        { name: 'The gazebo with the grills', desc: 'The same gazebo as in summer, only under snow: a solid timber roof, the grill counter along the wall and open sides onto the garden.' },
+        { name: 'The gazebo with the grills', desc: 'The same gazebo as in summer, only under snow: a solid timber roof, two large electric grills and open sides onto the garden.' },
       ],
       scenesSummer: [
         { name: 'Arriving at the villa', desc: 'The parking area behind the gate with room for the whole group, and the house at the end of the drive among tall trees.' },
         { name: 'Garden and pool', desc: 'Across the lawn to the house, the covered pool with its row of loungers and the gabion fire pit below the slope.' },
         { name: 'The covered pool', desc: 'The covered heated pool and its row of sun loungers, right by the house and ringed by your own lawn.' },
         { name: 'The wooden deck', desc: 'An oak deck above the gabion wall — a table for the whole group, looking out to the gazebo and the hills.' },
-        { name: 'The gazebo with the grills', desc: 'Under a solid timber roof: the long table, a built-in grill counter and open sides onto the garden.' },
-        { name: 'The playground', desc: 'A rope bridge, a climbing frame and a small climbing wall in sight of the house — the children have their own corner inside the grounds.' },
+        { name: 'The gazebo with the grills', desc: 'Under a solid timber roof: the long table, two large electric grills and open sides onto the garden.' },
+        { name: 'The playground', desc: 'A climbing frame, a slide, swings and rope elements in sight of the house — the children have their own corner inside the grounds.' },
         { name: 'The fire pit after dark', desc: 'Once the sun is down the gabions and steps light themselves — chairs around the fire pit, the glowing pool behind.' },
       ],
       groupsLabel: 'Scene groups', groupAll: 'All',
@@ -871,11 +932,17 @@ const T = {
       free: 'Available', booked: 'Booked', chosen: 'Your stay', checkoutOnly: 'checkout only', demo: 'Sample availability — will connect to the booking system',
       availFail: 'Availability could not be loaded.',
       priceHeading: 'Price list', pricePerNight: '/ night', priceMin: 'min.',
-      priceWeekend: 'weekend (2 nights)', weekendRate: 'Weekend rate',
-      priceOffRange: 'April, November and 1–14 December',
+      weekendRate: 'Weekend rate',
       priceSummerFull: 'Summer %Y% is almost fully booked — only a few dates are left.',
-      priceXmas: 'Christmas & New Year', priceXmasVal: 'individual price, please ask',
-      priceMinStay: 'Minimum stay %N% %NB%',
+      priceMinN: 'min. %N%', priceHolidayMin: '%N% on public holidays',
+      priceLevels: {
+        mimo: { name: 'Off-season', range: 'all other dates' },
+        zimni: { name: 'Winter and holidays', range: 'January to mid-March, Easter, the days around 1 May, late October to early November' },
+        letni: { name: 'Summer', range: 'late June to early September' },
+        spicka: { name: 'Winter peak weeks', range: 'selected weeks in February and early January' },
+        vanoce: { name: 'Christmas', range: 'the week with Christmas Eve' },
+        silvestr: { name: 'New Year', range: 'the week with New Year’s Eve' },
+      },
       priceCityTax: 'City tax %A% per adult per night (children exempt)',
       pricePet: 'Dog / pet %P% per stay',
       priceBond: 'Refundable deposit %B% — the cleaning fee is deducted from it',
@@ -902,16 +969,18 @@ const T = {
       lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', pets: 'Pets', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', terms: 'Booking terms & privacy', guide: 'Trip planner' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', formerly: 'Formerly Rudolfův dvůr.', terms: 'Booking terms & privacy', guide: 'Trip planner' },
     prebook: {
       title: 'What to know before you book', link: 'All the practical info →',
       facts: [
         { k: 'Capacity', v: '{minHostu}–{maxHostu} guests across {loznice} bedrooms' },
+        { k: 'Price', v: 'The whole house from {cenaOd} a night' },
         { k: 'Privacy', v: 'The whole house and grounds, just your group' },
         { k: 'Check-in / out', v: 'Check-in from 15:00 · check-out by 10:00' },
         { k: 'Pets', v: 'Dogs welcome — {petFee} per stay, per animal' },
         { k: 'Parking', v: 'Free, right on the property behind the gate' },
-        { k: 'Skiing', v: 'Černá hora slopes 4 km · ski-bus stop 200 m' },
+        { k: 'Skiing', v: 'Slopes right here in Svoboda · free ski bus 200 m from the gate' },
+        { k: 'Internet', v: 'Fast Wi-Fi in the house and across the grounds' },
       ],
     },
   },
@@ -978,8 +1047,8 @@ const T = {
         sauna:    { tag: 'Wellness', name: 'Private finnische Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe, mit Vorraum und Dusche. Kein Teilen, keine Zeitfenster.' },
         kitchen:  { tag: 'Gemeinsam', name: 'Küche und ein Tisch für alle', desc: 'Eine voll ausgestattete Küche und ein großer Holztisch, an dem die ganze Gruppe auf einmal sitzt.' },
         firepit:  { tag: 'Draußen', name: 'Feuerstelle mit Gabionenwand', desc: 'Die neu fertiggestellte offene Feuerstelle fasst die ganze Gruppe. Nach Einbruch der Dunkelheit leuchtet sie von selbst — Wärme unter freiem Himmel.' },
-        altan:    { tag: 'Draußen', name: 'Großer Pavillon mit Grill', desc: 'Überdachte Sitzplätze mit Grilltheke und einem Tisch, an dem die ganze Gruppe auf einmal Platz hat. Das Dach hält, ob es regnet oder schneit.' },
-        hriste:   { tag: 'Für Familien', name: 'Spielplatz', desc: 'Klettergerüst, eine kleine Kletter- und eine Seilwand. Die Kinder haben ihre Ecke in Sichtweite des Pavillons.' },
+        altan:    { tag: 'Draußen', name: 'Großer Pavillon mit zwei Grills', desc: 'Überdachte Sitzplätze mit zwei großen Elektrogrills und einem Tisch, an dem die ganze Gruppe auf einmal Platz hat. Das Dach hält, ob es regnet oder schneit.' },
+        hriste:   { tag: 'Für Familien', name: 'Spielplatz', desc: 'Klettergerüst, Rutsche, Schaukeln und Seilelemente, dazu Trampolin und Tischtennis. Die Kinder haben ihre Ecke in Sichtweite des Pavillons.' },
         billiard: { tag: 'Drinnen', name: 'Billard', desc: 'Ein Billardtisch im Apartment Suite — für einen faulen Nachmittag oder ein Turnier nach dem Abendessen.' },
         lounge:   { tag: 'Drinnen', name: 'Wohnbereich des Apartments', desc: 'Eine lange Sitzgruppe unter den Balken und ein großer Tisch — das Apartment Suite hat seinen eigenen Aufenthaltsraum.' },
       },
@@ -990,7 +1059,7 @@ const T = {
       note: '{loznice} Schlafzimmer, {koupelny} Bäder, große Küche, Sauna und Wellness — das ganze Haus in Fotos.',
       noBunk: 'Keine Etagenbetten — ruhigerer Schlaf, auch ideal für Eltern mit kleinen Kindern.',
       rooms: [
-        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küchenzeile und Billardtisch · Bad' },
+        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küche und Billardtisch · Bad' },
         { name: 'Zimmer 1', cap: '2 Gäste', beds: 'Doppelbett · Bad' },
         { name: 'Zimmer 2', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett) · Bad' },
         { name: 'Zimmer 3', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett) · Bad' },
@@ -1140,7 +1209,7 @@ const T = {
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Schneekoppe', snezkaMeta: '1603 m',
-        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        pec: 'Pec pod Sněžkou', pecMeta: '13 km',
         cernaHora: 'Černá hora', cernaHoraMeta: 'Pisten 4 km',
         janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
         trutnov: 'Trutnov', trutnovMeta: '11 km',
@@ -1173,7 +1242,7 @@ const T = {
         { name: 'Zimmer 4 — Blick vom Bett', desc: 'Dasselbe Zimmer 4 vom Kopfende des Bettes: die gewölbte Nische mit marmorierter Tapete und das beleuchtete Lattenkopfteil aus der Nähe, dahinter das ganze Zimmer bis zum Fenster mit Vorhängen, dem Bergbild, dem kleinen Fenster in der Fachwerkwand und der offenen Tür ins eigene Bad.' },
         { name: 'Zimmer 4 — Bad', desc: 'Das Bad von Zimmer 4 — Duschkabine, Waschbecken, WC und Waschmaschine.' },
         { name: 'Apartment — Wohnbereich', desc: 'Der eigene Wohnbereich der Suite: eine lange Sitzgruppe unter den Balken, ein großer Tisch, TV und die Treppe zu den Dachzimmern.' },
-        { name: 'Apartment — Küchenzeile', desc: 'Die eigene Küchenzeile der Suite mit Backofen und Kochfeld — das Apartment versorgt sich selbst und teilt die Hauptküche nicht.' },
+        { name: 'Apartment — Küche', desc: 'Die eigene, voll ausgestattete Küche der Suite mit Backofen, Spülmaschine und komplettem Geschirr — das Apartment versorgt sich selbst und teilt die Hauptküche nicht.' },
         { name: 'Apartment — Schlafzimmer A', desc: 'Das erste der drei Schlafzimmer der Suite, im 1. Obergeschoss: Doppelbett und geometrische Tapete hinter dem beleuchteten Kopfteil.' },
         { name: 'Apartment — Bad', desc: 'Das eigene Bad der Suite im 1. Obergeschoss — verglaste Dusche, Waschtisch mit Spiegelschrank und ein Fenster zum verschneiten Garten. Die Holzoptik passt zum übrigen Apartment.' },
         { name: 'Apartment — WC', desc: 'Das separate WC der Suite — Wand-WC mit Holzakzent, kleines Fenster und Heizkörper. Vom Bad getrennt, damit das Apartment nichts teilen muss.' },
@@ -1184,15 +1253,15 @@ const T = {
         { name: 'In der Sauna', desc: 'Im Inneren der geheizten finnischen Sauna — helle Holzbänke und der Ofen.' },
         { name: 'Skiraum', desc: 'Ein eigener Skiraum im Untergeschoss — Ständer für Ski und Snowboards und Halterungen für Skischuhe. Die Ausrüstung bleibt unten statt in den Zimmern.' },
         { name: 'Garten im Winter', desc: 'Der verschneite Garten vom Pavillon zurück zum Haus — hohe Fichten, ausgetretene Pfade und die Berge über den Dächern.' },
-        { name: 'Pavillon mit Grills', desc: 'Derselbe Pavillon wie im Sommer, nur unter Schnee: massives Holzdach, der Grilltresen an der Wand und offene Seiten in den Garten.' },
+        { name: 'Pavillon mit Grills', desc: 'Derselbe Pavillon wie im Sommer, nur unter Schnee: massives Holzdach, zwei große Elektrogrills und offene Seiten in den Garten.' },
       ],
       scenesSummer: [
         { name: 'Ankunft an der Villa', desc: 'Der Stellplatz hinter dem Tor, auf dem die ganze Gruppe parkt, und das Haus am Ende der Zufahrt zwischen hohen Bäumen.' },
         { name: 'Garten mit Pool', desc: 'Über den Rasen zum Haus, der überdachte Pool mit seiner Liegenreihe und die Feuerstelle aus Gabionen unter dem Hang.' },
         { name: 'Überdachter Pool', desc: 'Der überdachte beheizte Pool mit Liegenreihe direkt am Haus, ringsum euer eigener Rasen.' },
         { name: 'Holzterrasse', desc: 'Eine Eichenterrasse über der Gabionenwand — ein Tisch für die ganze Gruppe mit Blick auf Pavillon und Berge.' },
-        { name: 'Pavillon mit Grills', desc: 'Unter massivem Holzdach: der lange Tisch, ein gemauerter Grilltresen und offene Seiten in den Garten.' },
-        { name: 'Spielplatz', desc: 'Hängebrücke, Klettergerüst und eine kleine Kletterwand in Sichtweite des Hauses — die Kinder haben ihre eigene Ecke auf dem Grundstück.' },
+        { name: 'Pavillon mit Grills', desc: 'Unter massivem Holzdach: der lange Tisch, zwei große Elektrogrills und offene Seiten in den Garten.' },
+        { name: 'Spielplatz', desc: 'Klettergerüst, Rutsche, Schaukeln und Seilelemente in Sichtweite des Hauses — die Kinder haben ihre eigene Ecke auf dem Grundstück.' },
         { name: 'Feuerstelle am Abend', desc: 'Nach Sonnenuntergang leuchten Gabionen und Stufen von selbst — Sessel um die Feuerstelle, dahinter der beleuchtete Pool.' },
       ],
       groupsLabel: 'Szenengruppen', groupAll: 'Alle',
@@ -1222,11 +1291,17 @@ const T = {
       free: 'Frei', booked: 'Belegt', chosen: 'Euer Aufenthalt', checkoutOnly: 'nur Abreise', demo: 'Beispielverfügbarkeit — wird ans Buchungssystem angebunden',
       availFail: 'Verfügbarkeit konnte nicht geladen werden.',
       priceHeading: 'Preisliste', pricePerNight: '/ Nacht', priceMin: 'min.',
-      priceWeekend: 'Wochenende (2 Nächte)', weekendRate: 'Wochenendpreis',
-      priceOffRange: 'April, November und 1.–14. Dezember',
+      weekendRate: 'Wochenendpreis',
       priceSummerFull: 'Der Sommer %Y% ist fast ausgebucht — es sind nur noch einzelne Termine frei.',
-      priceXmas: 'Weihnachten & Silvester', priceXmasVal: 'individueller Preis, bitte anfragen',
-      priceMinStay: 'Mindestaufenthalt %N% %NB%',
+      priceMinN: 'mind. %N%', priceHolidayMin: 'an Feiertagen %N%',
+      priceLevels: {
+        mimo: { name: 'Nebensaison', range: 'alle übrigen Termine' },
+        zimni: { name: 'Winter und Feiertage', range: 'Januar bis Mitte März, Ostern, die Tage um den 1. Mai, Ende Oktober bis Anfang November' },
+        letni: { name: 'Sommer', range: 'Ende Juni bis Anfang September' },
+        spicka: { name: 'Winter-Spitzenwochen', range: 'ausgewählte Wochen im Februar und Anfang Januar' },
+        vanoce: { name: 'Weihnachten', range: 'die Woche mit Heiligabend' },
+        silvestr: { name: 'Silvester', range: 'die Woche mit Silvester' },
+      },
       priceCityTax: 'Kurtaxe %A% pro Erwachsenem und Nacht (Kinder frei)',
       pricePet: 'Hund / Haustier %P% pro Aufenthalt',
       priceBond: 'Rückzahlbare Kaution %B% — die Endreinigung wird davon abgezogen',
@@ -1253,16 +1328,18 @@ const T = {
       lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', pets: 'Haustiere', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsplaner' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', formerly: 'Früher Rudolfův dvůr.', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsplaner' },
     prebook: {
       title: 'Was Sie vor der Buchung wissen sollten', link: 'Alle Praxis-Infos →',
       facts: [
         { k: 'Kapazität', v: '{minHostu}–{maxHostu} Gäste in {loznice} Schlafzimmern' },
+        { k: 'Preis', v: 'Das ganze Haus ab {cenaOd} pro Nacht' },
         { k: 'Privatsphäre', v: 'Ganzes Haus und Grundstück, nur Ihre Gruppe' },
         { k: 'Check-in / -out', v: 'Check-in ab 15:00 · Check-out bis 10:00' },
         { k: 'Haustiere', v: 'Hunde willkommen — {petFee} pro Aufenthalt und Tier' },
         { k: 'Parken', v: 'Kostenlos direkt auf dem Grundstück hinter dem Tor' },
-        { k: 'Skifahren', v: 'Pisten Černá hora 4 km · Skibus-Haltestelle 200 m' },
+        { k: 'Skifahren', v: 'Pisten direkt in Svoboda · kostenloser Skibus 200 m vom Tor' },
+        { k: 'Internet', v: 'Schnelles WLAN im Haus und auf dem ganzen Grundstück' },
       ],
     },
   },
@@ -1329,8 +1406,8 @@ const T = {
         sauna:    { tag: 'Wellness', name: 'Prywatna sauna fińska', desc: 'Sauna fińska tylko dla waszej grupy, z przedsionkiem i prysznicem. Bez dzielenia, bez okienek czasowych.' },
         kitchen:  { tag: 'Razem', name: 'Kuchnia i stół dla całej grupy', desc: 'W pełni wyposażona kuchnia i duży drewniany stół, przy którym zmieścicie się wszyscy naraz.' },
         firepit:  { tag: 'Na zewnątrz', name: 'Palenisko ze ścianą gabionową', desc: 'Nowo ukończone otwarte palenisko mieści całą grupę. Po zmroku podświetla się samo — ciepło pod gołym niebem.' },
-        altan:    { tag: 'Na zewnątrz', name: 'Duża altana z grillem', desc: 'Zadaszone miejsce z blatem grillowym i stołem, przy którym zmieści się cała grupa naraz. Dach trzyma, czy pada deszcz, czy śnieg.' },
-        hriste:   { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, mała ścianka wspinaczkowa i ścianka linowa. Dzieci mają swój kąt w zasięgu wzroku od altany.' },
+        altan:    { tag: 'Na zewnątrz', name: 'Duża altana z dwoma grillami', desc: 'Zadaszone miejsce z dwoma dużymi grillami elektrycznymi i stołem, przy którym zmieści się cała grupa naraz. Dach trzyma, czy pada deszcz, czy śnieg.' },
+        hriste:   { tag: 'Dla rodzin', name: 'Plac zabaw', desc: 'Drabinki, zjeżdżalnia, huśtawki i elementy linowe, do tego trampolina i stół do ping-ponga. Dzieci mają swój kąt w zasięgu wzroku od altany.' },
         billiard: { tag: 'W środku', name: 'Bilard', desc: 'Stół bilardowy w apartamencie Suite — na leniwe popołudnie i na turniej po kolacji.' },
         lounge:   { tag: 'W środku', name: 'Część dzienna apartamentu', desc: 'Długa kanapa pod belkami i duży stół — apartament Suite ma własną przestrzeń wspólną.' },
       },
@@ -1341,7 +1418,7 @@ const T = {
       note: '{loznice} sypialni, {koupelny} łazienek, duża kuchnia, sauna i wellness — cały dom na zdjęciach.',
       noBunk: 'Bez łóżek piętrowych — spokojniejszy sen, także dla rodziców z małymi dziećmi.',
       rooms: [
-        { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi, 2 pojedyncze łóżka i 1 łóżko z wysuwanym drugim · własny aneks kuchenny i stół bilardowy · łazienka' },
+        { name: 'Apartament Suite', cap: 'do 10 gości', beds: '3 sypialnie z łóżkami małżeńskimi, 2 pojedyncze łóżka i 1 łóżko z wysuwanym drugim · własna kuchnia i stół bilardowy · łazienka' },
         { name: 'Pokój 1', cap: '2 gości', beds: 'Łóżko małżeńskie · łazienka' },
         { name: 'Pokój 2', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka) · łazienka' },
         { name: 'Pokój 3', cap: 'do 4 gości', beds: 'Łóżko małżeńskie i 2 osobne łóżka (jedno pełnowymiarowa dostawka) · łazienka' },
@@ -1368,7 +1445,7 @@ const T = {
         kitchen: 'Kuchnia z jadalnią', bath: 'Łazienka', wc: 'WC',
         room1: 'Pokój 1', room2: 'Pokój 2', room3: 'Pokój 3', room4: 'Pokój 4',
         sauna: 'Sauna i wellness', ski: 'Narciarnia', boiler: 'Pomieszczenie techniczne',
-        aptLiving: 'Apartament — część dzienna', aptKitchen: 'Aneks kuchenny apartamentu',
+        aptLiving: 'Apartament — część dzienna', aptKitchen: 'Kuchnia apartamentu',
         aptHall: 'Korytarzyk apartamentu', aptBath: 'Łazienka apartamentu', aptWc: 'WC apartamentu',
         aptBedA: 'Apartament — sypialnia A', aptBedB: 'Apartament — sypialnia B', aptBedC: 'Apartament — sypialnia C',
       },
@@ -1491,7 +1568,7 @@ const T = {
       mapLabels: {
         villa: 'Villa Rudolf', villaSub: 'Svoboda nad Úpou',
         snezka: 'Śnieżka', snezkaMeta: '1603 m',
-        pec: 'Pec pod Sněžkou', pecMeta: '10 km',
+        pec: 'Pec pod Sněžkou', pecMeta: '13 km',
         cernaHora: 'Černá hora', cernaHoraMeta: 'stoki 4 km',
         janskeLazne: 'Janské Lázně', janskeLazneMeta: '4 km',
         trutnov: 'Trutnov', trutnovMeta: '11 km',
@@ -1524,7 +1601,7 @@ const T = {
         { name: 'Pokój 4 — widok od łóżka', desc: 'Ten sam Pokój 4 od strony wezgłowia: sklepiona wnęka z marmurkową tapetą i podświetlany listwowy zagłówek z bliska, a przez cały pokój okno z zasłonami, obraz z górami, małe okienko w ścianie szachulcowej i otwarte drzwi do własnej łazienki.' },
         { name: 'Pokój 4 — łazienka', desc: 'Łazienka Pokoju 4 — kabina prysznicowa, umywalka, toaleta i pralka.' },
         { name: 'Apartament — część dzienna', desc: 'Własny salon apartamentu Suite: długa sofa pod belkami, duży stół, telewizor i schody do sypialni na poddaszu.' },
-        { name: 'Apartament — aneks kuchenny', desc: 'Własna zabudowa kuchenna apartamentu z piekarnikiem i płytą — apartament jest samodzielny i nie dzieli głównej kuchni.' },
+        { name: 'Apartament — kuchnia', desc: 'Własna, w pełni wyposażona kuchnia apartamentu z piekarnikiem, zmywarką i kompletem naczyń — apartament jest samodzielny i nie dzieli głównej kuchni.' },
         { name: 'Apartament — sypialnia A', desc: 'Pierwsza z trzech sypialni apartamentu, na 1. piętrze: łóżko podwójne i geometryczna tapeta za podświetlanym zagłówkiem.' },
         { name: 'Apartament — łazienka', desc: 'Własna łazienka apartamentu na 1. piętrze — przeszklona kabina prysznicowa, umywalka z szafką z lustrem i okno na ośnieżony ogród. Okładzina w drewnie spójna z resztą apartamentu.' },
         { name: 'Apartament — WC', desc: 'Osobne WC apartamentu — wisząca toaleta z drewnianym akcentem, małe okno i grzejnik. Oddzielone od łazienki, więc apartament niczego nie musi dzielić.' },
@@ -1535,15 +1612,15 @@ const T = {
         { name: 'We wnętrzu sauny', desc: 'W środku nagrzanej sauny fińskiej — jasne drewniane ławy i piec.' },
         { name: 'Narciarnia', desc: 'Osobna narciarnia w piwnicy — stojaki na narty i deski oraz uchwyty na buty. Sprzęt zostaje na dole, a nie w pokojach.' },
         { name: 'Ogród zimą', desc: 'Zaśnieżony ogród od altany po dom — wysokie świerki, wydeptane ścieżki i góry nad dachami.' },
-        { name: 'Altana z grillami', desc: 'Ta sama altana co latem, tylko pod śniegiem: masywny drewniany dach, blat grillowy przy ścianie i otwarte boki na ogród.' },
+        { name: 'Altana z grillami', desc: 'Ta sama altana co latem, tylko pod śniegiem: masywny drewniany dach, dwa duże grille elektryczne i otwarte boki na ogród.' },
       ],
       scenesSummer: [
         { name: 'Podjazd do willi', desc: 'Plac za bramą, na którym zaparkuje cała grupa, i dom na końcu podjazdu wśród wysokich drzew.' },
         { name: 'Ogród z basenem', desc: 'Przez trawnik na dom, zadaszony basen z rzędem leżaków i palenisko z gabionów pod skarpą.' },
         { name: 'Zadaszony basen', desc: 'Podgrzewany basen pod zadaszeniem z rzędem leżaków tuż przy domu, dookoła własny trawnik.' },
         { name: 'Drewniany taras', desc: 'Taras z dębowych desek nad ścianą z gabionów — stół dla całej ekipy i widok na altanę oraz góry.' },
-        { name: 'Altana z grillami', desc: 'Pod masywnym drewnianym dachem: długi stół, murowany blat grillowy i otwarte boki na ogród.' },
-        { name: 'Plac zabaw', desc: 'Most linowy, drabinki i mała ścianka wspinaczkowa w zasięgu wzroku od domu — dzieci mają swój kąt na terenie posesji.' },
+        { name: 'Altana z grillami', desc: 'Pod masywnym drewnianym dachem: długi stół, dwa duże grille elektryczne i otwarte boki na ogród.' },
+        { name: 'Plac zabaw', desc: 'Drabinki, zjeżdżalnia, huśtawki i elementy linowe w zasięgu wzroku od domu — dzieci mają swój kąt na terenie posesji.' },
         { name: 'Palenisko wieczorem', desc: 'Po zmroku gabiony i schody podświetlają się same — fotele przy palenisku, a w tle rozświetlony basen.' },
       ],
       groupsLabel: 'Grupy scen', groupAll: 'Wszystko',
@@ -1573,11 +1650,17 @@ const T = {
       free: 'Wolne', booked: 'Zajęte', chosen: 'Wasz pobyt', checkoutOnly: 'tylko wyjazd', demo: 'Przykładowa dostępność — podłączymy system rezerwacji',
       availFail: 'Nie udało się wczytać dostępności.',
       priceHeading: 'Cennik', pricePerNight: '/ noc', priceMin: 'min.',
-      priceWeekend: 'weekend (2 noce)', weekendRate: 'Cena weekendowa',
-      priceOffRange: 'kwiecień, listopad i 1–14 grudnia',
+      weekendRate: 'Cena weekendowa',
       priceSummerFull: 'Lato %Y% jest prawie w całości zarezerwowane — wolne są już tylko pojedyncze terminy.',
-      priceXmas: 'Boże Narodzenie i Sylwester', priceXmasVal: 'cena indywidualna, zapytaj',
-      priceMinStay: 'Minimalny pobyt %N% %NB%',
+      priceMinN: 'min. %N%', priceHolidayMin: 'w święta %N%',
+      priceLevels: {
+        mimo: { name: 'Poza sezonem', range: 'pozostałe terminy' },
+        zimni: { name: 'Zima i święta', range: 'od stycznia do połowy marca, Wielkanoc, majówka, przełom października i listopada' },
+        letni: { name: 'Lato', range: 'od końca czerwca do początku września' },
+        spicka: { name: 'Szczyt zimowy', range: 'wybrane tygodnie w lutym i na początku stycznia' },
+        vanoce: { name: 'Boże Narodzenie', range: 'tydzień z Wigilią' },
+        silvestr: { name: 'Sylwester', range: 'tydzień z Sylwestrem' },
+      },
       priceCityTax: 'Opłata miejscowa %A% za osobę dorosłą i noc (dzieci nie płacą)',
       pricePet: 'Pies / zwierzę %P% za pobyt',
       priceBond: 'Zwrotna kaucja %B% — sprzątanie jest z niej potrącane',
@@ -1604,16 +1687,18 @@ const T = {
       lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', pets: 'Zwierzęta', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', terms: 'Warunki pobytu i prywatność', guide: 'Planer wycieczek' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', formerly: 'Dawniej Rudolfův dvůr.', terms: 'Warunki pobytu i prywatność', guide: 'Planer wycieczek' },
     prebook: {
       title: 'Co warto wiedzieć przed rezerwacją', link: 'Wszystkie informacje praktyczne →',
       facts: [
         { k: 'Pojemność', v: '{minHostu}–{maxHostu} gości w {loznice} sypialniach' },
+        { k: 'Cena', v: 'Cały dom od {cenaOd} za noc' },
         { k: 'Prywatność', v: 'Cały dom i teren tylko dla Waszej grupy' },
         { k: 'Zameldowanie / wym.', v: 'Zameldowanie od 15:00 · wymeldowanie do 10:00' },
         { k: 'Zwierzęta', v: 'Psy mile widziane — {petFee} za pobyt i zwierzę' },
         { k: 'Parking', v: 'Za darmo na terenie, za bramą' },
-        { k: 'Narty', v: 'Stoki Czarna Góra 4 km · przystanek skibusu 200 m' },
+        { k: 'Narty', v: 'Stoki w samej Svobodzie · bezpłatny skibus 200 m od bramy' },
+        { k: 'Internet', v: 'Szybkie Wi-Fi w domu i na całym terenie' },
       ],
     },
   },
@@ -1903,7 +1988,7 @@ function renderRatings() {
   const host = $('#vr-ratings'); if (!host) return; host.innerHTML = '';
   host.appendChild(el('span', { class: 'vr-eyebrow vr-ratings-eyebrow', text: t.ratings.eyebrow }));
   const row = el('div', { class: 'vr-ratings-row' });
-  VR_REVIEWS.platforms.forEach((p) => {
+  VR_REVIEWS.platforms.filter((p) => !p.hidden).forEach((p) => {
     const dec = state.lang === 'en' ? '.' : ',';
     const num = p.rating.toFixed(1).replace('.', dec);
     const scoreTxt = p.outOf === 5 ? num : num + '/10';
@@ -3249,23 +3334,31 @@ const ADf = {
   pl: (n) => (n === 1 ? 'dorosły' : 'dorosłych'),
 };
 /* Lokalizované názvy sezón — pro řádky rozpisu (víc sezón v jednom pobytu). */
+/* Názvy úseků ceníku (name v VR_PRICING.periods) — generuje je tools/gen-cenik-web.mjs. */
 const SEASON_LABEL = {
-  cs: { letni: 'letní sezóna', zimni: 'zimní sezóna', mimo: 'mimo sezónu' },
-  en: { letni: 'summer', zimni: 'winter', mimo: 'off-season' },
-  de: { letni: 'Sommer', zimni: 'Winter', mimo: 'Nebensaison' },
-  pl: { letni: 'sezon letni', zimni: 'sezon zimowy', mimo: 'poza sezonem' },
+  cs: { letni: 'letní sezóna', zimni: 'zimní sezóna', mimo: 'mimo sezónu', svatky: 'svátky', spicka: 'zimní špička', vanoce: 'Vánoce', silvestr: 'Silvestr' },
+  en: { letni: 'summer', zimni: 'winter', mimo: 'off-season', svatky: 'holidays', spicka: 'winter peak', vanoce: 'Christmas', silvestr: 'New Year' },
+  de: { letni: 'Sommer', zimni: 'Winter', mimo: 'Nebensaison', svatky: 'Feiertage', spicka: 'Winter-Spitze', vanoce: 'Weihnachten', silvestr: 'Silvester' },
+  pl: { letni: 'sezon letni', zimni: 'sezon zimowy', mimo: 'poza sezonem', svatky: 'święta', spicka: 'szczyt zimowy', vanoce: 'Boże Narodzenie', silvestr: 'Sylwester' },
 };
 /* Úvod věty o minimální délce pobytu (vkládá se za %S% v book.minStay). */
 const SEASON_IN = {
-  cs: { letni: 'V létě', zimni: 'V zimě', mimo: 'Mimo hlavní sezónu' },
-  en: { letni: 'In summer', zimni: 'In winter', mimo: 'Outside peak season' },
-  de: { letni: 'Im Sommer', zimni: 'Im Winter', mimo: 'Außerhalb der Hauptsaison' },
-  pl: { letni: 'Latem', zimni: 'Zimą', mimo: 'Poza sezonem' },
+  cs: { letni: 'V létě', zimni: 'V zimě', mimo: 'Mimo hlavní sezónu', svatky: 'O svátcích', spicka: 'V zimní špičce', vanoce: 'O Vánocích', silvestr: 'Na Silvestra' },
+  en: { letni: 'In summer', zimni: 'In winter', mimo: 'Outside peak season', svatky: 'Over public holidays', spicka: 'In the winter peak weeks', vanoce: 'Over Christmas', silvestr: 'Over New Year' },
+  de: { letni: 'Im Sommer', zimni: 'Im Winter', mimo: 'Außerhalb der Hauptsaison', svatky: 'An Feiertagen', spicka: 'In den Winter-Spitzenwochen', vanoce: 'Über Weihnachten', silvestr: 'Über Silvester' },
+  pl: { letni: 'Latem', zimni: 'Zimą', mimo: 'Poza sezonem', svatky: 'W święta', spicka: 'W szczycie zimowym', vanoce: 'W Boże Narodzenie', silvestr: 'W Sylwestra' },
 };
 
 /* ---------- Ceník: výpočet nabídky (čisté funkce, bez DOM) ---------- */
-/* Do které sezóny spadá noc s daným day-key (YYYYMMDD)? */
+/* Úseky ceníku jako čísla YYYYMMDD, ať se dají přímo porovnat s day-key. */
+const VR_PERIODS = (VR_PRICING.periods || []).map((p) => Object.assign({}, p, {
+  a: +p.from.replace(/-/g, ''), b: +p.to.replace(/-/g, ''),
+}));
+/* Do kterého úseku ceníku spadá noc s daným day-key (YYYYMMDD)? Nejdřív úseky
+   vygenerované z cenik.json (konkrétní data, svátky, špičky, Vánoce), za jejich
+   koncem záloha podle měsíců (seasons). */
 function vrSeasonForKey(k) {
+  for (const p of VR_PERIODS) if (k >= p.a && k <= p.b) return p;
   const mm = Math.floor(k / 100) % 100, dd = k % 100;
   const md = (mm < 10 ? '0' + mm : '' + mm) + '-' + (dd < 10 ? '0' + dd : '' + dd);
   for (const s of VR_PRICING.seasons) {
@@ -3299,15 +3392,15 @@ function computeQuote(s0, s1, adults, children, pets) {
   // Ceny po nocích podle sezóny KAŽDÉ noci (pobyt přes rozhraní sezón se sečte správně).
   const order = [], map = {};
   vrEachNight(s0, s1, (k) => {
-    const s = vrSeasonForKey(k);
-    if (!map[s.name]) { map[s.name] = { name: s.name, rate: s.nightly, nights: 0, subtotal: 0 }; order.push(s.name); }
-    map[s.name].nights++; map[s.name].subtotal += s.nightly;
+    const s = vrSeasonForKey(k), id = s.name + '|' + s.nightly;
+    if (!map[id]) { map[id] = { name: s.name, rate: s.nightly, nights: 0, subtotal: 0 }; order.push(id); }
+    map[id].nights++; map[id].subtotal += s.nightly;
   });
   order.forEach((n) => q.groups.push(map[n]));
 
   /* Víkendová sazba za 2 noci (příjezd v pátek nebo v sobotu, obě noci v jedné
-     sezóně). V sezóně vyjde stejně jako 2× noc, mimo sezónu je zvýhodněná
-     (22 800 místo 23 800 Kč). Uplatní se jen když je pro hosta výhodnější. */
+     sezóně). Ceník od 9/2026 žádnou nemá (úseky nenesou weekend2), větev zůstává
+     pro případ, že by se do cenik.json vrátila. Uplatní se jen když je pro hosta výhodnější. */
   if (nights === 2 && q.groups.length === 1) {
     const dow = toD(s0).getDay(); // 5 = pátek, 6 = sobota
     const w = arrival.weekend2;
@@ -3427,57 +3520,51 @@ function clampGuests() {
     p.value = String(Math.max(0, Math.min(VR_PRICING.maxPets, pv)));
   }
 }
-/* Statický orientační ceník nad kalendářem. Hodnoty čerpá z VR_PRICING, aby se
-   nikdy nerozešly s výpočtem. U cizojazyčných verzí přidá přibližný přepočet €/zł. */
-/* „1. 5. – 31. 10." z MM-DD zápisu sezóny. */
-function fmtSeasonRange(s) {
-  if (!s.from || !s.to) return '';
-  const p = (md) => parseInt(md.slice(3), 10) + '. ' + parseInt(md.slice(0, 2), 10) + '.';
-  return p(s.from) + ' – ' + p(s.to);
-}
+/* Ceník nad kalendářem. Ceny a minima z VR_PRICING.levels (generuje
+   tools/gen-cenik-web.mjs z cenik.json), popisky období z t.book.priceLevels.
+   Svátky mají zimní cenu a delší minimum, proto se ukazují v řádku zimy.
+   U cizojazyčných verzí přidá přibližný přepočet €/zł. Česká verze téhož bloku
+   je staticky v index.html (#vr-priceblock) pro roboty bez JavaScriptu. */
+const PRICE_LEVEL_ORDER = ['mimo', 'zimni', 'letni', 'spicka', 'vanoce', 'silvestr'];
 function renderPriceBlock() {
   const host = $('#vr-priceblock'); if (!host) return;
   const t = tt(), lang = state.lang;
-  const SL = SEASON_LABEL[lang] || SEASON_LABEL.cs;
+  const L = VR_PRICING.levels || {}, PL = t.book.priceLevels || {};
+  const nb = (n) => n + ' ' + (NBf[lang] || NBf.cs)(n);
   host.innerHTML = '';
   host.appendChild(el('div', { class: 'vr-priceblock-h', text: t.book.priceHeading }));
   const rows = el('div', { class: 'vr-priceblock-rows' });
   const showNote = new Date() < new Date(VR_SEASON_NOTE.noteUntil);
-  VR_PRICING.seasons.forEach((s) => {
-    // U letní sezóny ukazujeme rok, který právě prodáváme (majitel: „letní sezóna 2027").
-    let name = SL[s.name] || s.name;
-    if (s.name === 'letni') name += ' ' + VR_SEASON_NOTE.summerYear;
-    const range = s.name === 'mimo' ? (t.book.priceOffRange || '') : fmtSeasonRange(s);
-    const fx = fxLine(s.nightly, lang);
-    let meta = '';
-    if (s.weekend2) meta += (t.book.priceWeekend || '') + ' ' + fmtM(s.weekend2);
-    if (fx) meta += (meta ? ' · ' : '') + fx + ' ' + t.book.pricePerNight;
+  PRICE_LEVEL_ORDER.forEach((key) => {
+    const lv = L[key], txt = PL[key];
+    if (!lv || !txt) return;
+    // U léta ukazujeme rok, který právě prodáváme (majitel: „letní sezóna 2027").
+    const name = key === 'letni' ? txt.name + ' ' + VR_SEASON_NOTE.summerYear : txt.name;
+    let meta = (t.book.priceMinN || '').replace('%N%', nb(lv.minNights));
+    if (key === 'zimni' && L.svatky && L.svatky.minNights !== lv.minNights) {
+      meta += ', ' + (t.book.priceHolidayMin || '').replace('%N%', nb(L.svatky.minNights));
+    }
+    const fx = fxLine(lv.nightly, lang);
+    if (fx) meta += ' · ' + fx + ' ' + t.book.pricePerNight;
     const seasonCell = el('span', { class: 'vr-priceblock-season' }, [
       el('b', { text: name }),
-      range ? el('span', { class: 'vr-priceblock-range', text: range }) : null,
+      txt.range ? el('span', { class: 'vr-priceblock-range', text: txt.range }) : null,
       // „Léto 2026 je téměř obsazené" — ověřeno proti reálné obsazenosti.
-      (s.name === 'letni' && showNote && t.book.priceSummerFull)
+      (key === 'letni' && showNote && t.book.priceSummerFull)
         ? el('span', { class: 'vr-priceblock-note', text: (t.book.priceSummerFull || '').replace('%Y%', VR_SEASON_NOTE.almostFullYear) })
         : null,
     ].filter(Boolean));
     rows.appendChild(el('div', { class: 'vr-priceblock-row' }, [
       seasonCell,
       el('span', { class: 'vr-priceblock-val' }, [
-        el('b', { text: fmtM(s.nightly) + ' ' + t.book.pricePerNight }),
-        meta ? el('span', { class: 'vr-priceblock-min', text: meta }) : null,
-      ].filter(Boolean)),
+        el('b', { text: fmtM(lv.nightly) + ' ' + t.book.pricePerNight }),
+        el('span', { class: 'vr-priceblock-min', text: meta }),
+      ]),
     ]));
   });
-  // Vánoce a Silvestr — individuální cena, poptejte se.
-  rows.appendChild(el('div', { class: 'vr-priceblock-row' }, [
-    el('span', { class: 'vr-priceblock-season' }, [el('b', { text: t.book.priceXmas })]),
-    el('span', { class: 'vr-priceblock-val' }, [el('span', { class: 'vr-priceblock-min', text: t.book.priceXmasVal })]),
-  ]));
   host.appendChild(rows);
   const foot = el('div', { class: 'vr-priceblock-foot' });
-  const nbWord = (NBf[lang] || NBf.cs)(VR_PRICING.seasons[0].minNights);
   const clFx = fxLine(VR_PRICING.cleaning, lang);
-  foot.appendChild(el('span', { text: (t.book.priceMinStay || '').replace('%N%', VR_PRICING.seasons[0].minNights).replace('%NB%', nbWord) }));
   foot.appendChild(el('span', { text: t.book.priceCleaning + ' ' + fmtM(VR_PRICING.cleaning) + (clFx ? ' (' + clFx + ')' : '') }));
   foot.appendChild(el('span', { text: (t.book.priceCityTax || '').replace('%A%', fmtM(VR_PRICING.cityTaxAdultNight)) }));
   foot.appendChild(el('span', { text: (t.book.pricePet || '').replace('%P%', fmtM(VR_PRICING.petPerStay)) }));
@@ -3544,6 +3631,30 @@ function renderBookingPanel() {
   const ok = q.valid && !q.guestOver && !q.noAdults;
   btn.disabled = !ok;
   btn.setAttribute('aria-disabled', ok ? 'false' : 'true');
+}
+
+/* ---------- Měření poptávek (Umami) ----------
+   Odkud návštěva přišla: utm_source (ChatGPT ho přidává k odkazům: chatgpt.com),
+   jinak doména referreru, jinak „primo". Bez cookies a bez osobních údajů; drží se
+   v sessionStorage po dobu návštěvy, ať se zdroj nepřepíše pohybem po webu.
+   Kvůli otázce, kolik poptávek přivedou AI asistenti (audit 8. 10. 2026). */
+function vrZdroj() {
+  try { const z = sessionStorage.getItem('vrZdroj'); if (z) return z; } catch (e) {}
+  let z = 'primo';
+  try {
+    const u = new URLSearchParams(location.search).get('utm_source');
+    const self = location.hostname.replace(/^www\./, '');
+    if (u) z = u.slice(0, 40);
+    else if (document.referrer) {
+      const h = new URL(document.referrer).hostname.replace(/^www\./, '');
+      if (h && h !== self) z = h;
+    }
+  } catch (e) {}
+  try { sessionStorage.setItem('vrZdroj', z); } catch (e) {}
+  return z;
+}
+function vrTrack(name, data) {
+  try { if (window.umami && typeof window.umami.track === 'function') window.umami.track(name, data || {}); } catch (e) {}
 }
 
 /* ---------- Odeslani ZADOSTI o pobyt -> Supabase RPC vr_request ----------
@@ -3617,7 +3728,11 @@ function submitBooking() {
     body: JSON.stringify(payload),
   }).then((r) => r.json().then((data) => ({ ok: r.ok, data: data }))).then((res) => {
     const d = res.data || {};
-    if (res.ok && d && d.ok === true && d.id) { showBookSuccess(q, s0, s1); return; }
+    if (res.ok && d && d.ok === true && d.id) {
+      vrTrack('poptavka-odeslana', { zdroj: vrZdroj(), jazyk: lang, noci: q.nights, hoste: q.adults + q.children });
+      showBookSuccess(q, s0, s1);
+      return;
+    }
     const code = d && d.error;
     let msg = t.book.errGeneric;
     if (code === 'email_invalid') msg = t.book.errEmail;
@@ -3869,6 +3984,10 @@ function renderFooterContact() {
   if (phone) {
     host.appendChild(el('br'));
     host.appendChild(el('a', { href: 'tel:' + phone.replace(/[^\d+]/g, ''), text: phone }));
+  }
+  if (VR_CONTACT.address) {
+    host.appendChild(el('br'));
+    host.appendChild(el('span', { text: VR_CONTACT.address }));
   }
   host.appendChild(el('br'));
   host.appendChild(el('span', { text: t.footer.region }));
@@ -4368,6 +4487,7 @@ function toggleMob(open) {
 /* ============================ Wire up ============================ */
 function init() {
   document.documentElement.classList.add('js');
+  vrZdroj(); // zdroj návštěvy si poznamenat hned na vstupní stránce
   // Jazyk + sezóna: ?param → localStorage → navigator.language → výchozí.
   const qsInit = new URLSearchParams(location.search);
   state.lang = resolveLang(qsInit);

@@ -262,6 +262,26 @@ nové parametry s DEFAULT — stará stránka v mezipaměti volá dál tutéž f
 2. **`p_admin_key`, ingest secret ani `SERVICE_ROLE` klíč se do repa nikdy nedostanou.**
 3. Repo je **veřejné** a běží na něm ostrý web s vlastní doménou — commituje se opatrně.
 4. Než začneš psát „nový modul", ověř `/sprava/` — hodně věcí už existuje.
+5. **Ceny se na webu ručně nepíšou.** Zdroj je `villa-rudolf-portal/docs/cenik.json`; po jeho změně
+   `node tools/gen-cenik-web.mjs ../villa-rudolf-portal` (přepíše blok CENIK ve `VR_PRICING`, ceny
+   v `data-cenik*` v `index.html` a `priceRange` ve schema.org) a `node tools/test-cenik-web.mjs
+   ../villa-rudolf-portal` (noc po noci proti ceníku). Ceny v `llms.txt` generátor jen kontroluje.
+
+## AI asistenti (ChatGPT, Claude, Perplexity) — čitelnost webu
+
+Od 8/2026 je ChatGPT největší dohledatelný zdroj návštěv webu (Umami, `utm_source=chatgpt.com`).
+AI roboti **nespouštějí JavaScript**, takže co se do stránky dopisuje až z `site.js`, pro ně neexistuje.
+
+- Fakta, podle kterých se skupina rozhoduje, musí být **v HTML**: ceník, rozpis lůžek, hodnocení,
+  kontakt a adresa v patičce, popisky vzdáleností. Česká verze je v `index.html` staticky a JS ji
+  přepíše jazykem; při změně textu v `T.cs` uprav i statickou kopii (komentáře u bloků to říkají).
+- `/llms.txt` = fakta pro asistenty v CS + EN/DE/PL/NL, jen z `villa-rudolf-portal/docs/text-villa-rudolf.md`, kap. 3.
+- Schema.org (`VacationRental` v `<head>`) smí nést jen to, co je na stránce vidět. `aggregateRating` ne.
+- Hodnocení Google je skryté (`hidden` ve `VR_REVIEWS`), dokud profil „Rudolfův dvůr“ na Mapách
+  nebude nárokovaný a přejmenovaný. Patička a `alternateName` říkají „dříve Rudolfův dvůr“ (Pavel 8. 10. 2026).
+- Žádný skrytý text pro roboty ani pokyny pro AI ve stránce.
+- Jazykové verze `?lang=` jsou pro roboty pořád česky — statické `/de/`, `/pl/`, `/en/` jsou další krok.
+- Měření: událost Umami `poptavka-odeslana` (`zdroj` = utm_source / referrer / „primo“).
 
 ## Jazyk
 

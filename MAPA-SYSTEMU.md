@@ -49,6 +49,7 @@ takže ho kalendář musí dostat z `/sprava/` — jinak ho web dál nabízí ja
 | **KDY** — termín pobytu, platforma | `villa-booking-calendar` (z iCal) | chodí automaticky, nepřepisovat ručně |
 | **KDO** — jméno, kontakt, evidence osob, tokeny | Supabase `vr_*` | PII, nikdy do repa |
 | **KOLIK** — ceny a tržby | `villa-booking-calendar/owner.html` | šifrované, klíč má jen majitel |
+| **CENÍK** — cena za noc, min. noci, sezóny na všech kanálech | `villa-rudolf-portal/docs/cenik.json` | web ho nečte za běhu: `node tools/gen-cenik-web.mjs <portál>` přepíše kalkulačku v `assets/site.js`, ceny v HTML homepage a `/smlouvy/` je čte odtamtud |
 | **CO** — výlety, počasí | `villa-rudolf-portal/data/` | `site` je odtud čte |
 | **SPOJKA** mezi kalendářem a rezervací | `uidh` (= `sha256(iCal UID)[:16]`) | používá `sprava.js` i `vr_admin_upsert_booking(p_uidh)` |
 | **PŘÍMÝ PRODEJ** — předrezervace ze zálohové faktury, potvrzené přímé rezervace | Supabase `vr_holds` (tady) | jediná věc, kterou `site` posílá **do** kalendáře — přes `vr_public_holds()`; `uidh` = `sha256('vr-hold:'+id)[:16]` |
