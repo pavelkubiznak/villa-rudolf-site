@@ -408,9 +408,13 @@ const hasConflicts = conflicts.overlaps.length > 0 || conflicts.vanished.length 
 // běh (CALENDAR_DRY_RUN): běhy zelené, nic se nezapsalo — úklid, /sprava/ i blokace
 // přímých prodejů na platformách stály 8 dní a nikdo to nevěděl. Práh je včerejšek, ne
 // dnešek: cron GitHubu se zpožďuje o hodiny, ranní e-mail ještě nemusí mít dnešní běh.
+// Bez jediného budoucího záznamu nemá běh co orazítkovat a lastSeen nic neříká — pak
+// se zamrznutí neposuzuje, jinak by to byl planý poplach každý den (Codex na #33).
+// Proti zamrzlému souboru to nevadí: ten budoucí záznamy má, jen je přestal obnovovat.
 const calLastSeen = calendar.reduce((m, c) => (c && c.lastSeen && c.lastSeen > m) ? c.lastSeen : m, '');
+const calRefreshable = calendar.some(c => c && c.end > today);
 const calFrozen = !calendar.length ? { why: 'nenačetl' }
-  : (calLastSeen < addDaysISO(today, -1) ? { why: 'stojí', since: calLastSeen } : null);
+  : (calRefreshable && calLastSeen < addDaysISO(today, -1) ? { why: 'stojí', since: calLastSeen } : null);
 
 /* ---------- předrezervace, které propadají / propadly ---------- */
 // Propadlou předrezervaci vr_public_holds() nevrátí → kalendář ji pustí → termín se
