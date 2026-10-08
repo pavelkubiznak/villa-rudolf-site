@@ -216,8 +216,9 @@
      přes VR_TRIP_COUNTS v site.js.
      POČTY JSOU SEZÓNNÍ (katalog nese u části cílů pole `seasons`), takže se
      smí objevit JEN přes {total}/{foot} — nikdy natvrdo v textu, titulku nebo
-     meta popisku, kde by je nešlo přepočítat. Fallback = letní stav 7/2026. */
-  var COUNTS = { total: 39, foot: 8, car: 27, day: 4 };
+     meta popisku, kde by je nešlo přepočítat. Fallback = letní stav 10/2026, shodně
+     s VR_TRIP_COUNTS v site.js a text-villa-rudolf.md kap. 3 (43 = 9 + 27 + 7). */
+  var COUNTS = { total: 43, foot: 9, car: 27, day: 7 };
   function fillCounts(s) {
     return s.replace(/\{(total|foot|car|day)\}/g, function (m, k) { return COUNTS[k]; });
   }
@@ -258,6 +259,9 @@
       var hi = raw.indexOf('#');
       var hash = hi >= 0 ? raw.slice(hi) : '';
       var path = hi >= 0 ? raw.slice(0, hi) : raw;
+      // Homepage má od 10/2026 vlastní adresu pro každý jazyk (/de/, /pl/, /en/) — rovnou tam,
+      // bez přesměrování přes „/?lang=". Čeština nese ?lang=cs, ať ji „/" nepřesměruje jinam.
+      if (path === '../' && state.lang !== 'cs') { a.setAttribute('href', '../' + state.lang + '/?season=' + state.season + hash); return; }
       var sep = path.indexOf('?') >= 0 ? '&' : '?';
       a.setAttribute('href', path + sep + 'lang=' + state.lang + '&season=' + state.season + hash);
     });
@@ -405,7 +409,7 @@
     var qs = new URLSearchParams(location.search);
     state.lang = resolveLang(qs);
     state.season = resolveSeason(qs);
-    try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
+    // vrLang se ukládá jen kliknutím na přepínač (setLang) — podle něj přesměrovává „/" (10/2026)
     if (window.VRSeason) window.VRSeason.remember(state.season);
 
     $all('.vr-lang').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });

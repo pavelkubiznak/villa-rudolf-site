@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 // Test kalkulačky ceníku na webu. Spusť: node tools/test-cenik-web.mjs [<cesta k villa-rudolf-portal>]
 //
-// Hlídá tři věci:
+// Hlídá čtyři věci:
 //  1. vzorové pobyty (špička, léto pod minimem, Vánoce, Silvestr, pobyt přes hranici sezón)
 //     spočítá computeQuote() ze site.js podle ceníku,
 //  2. /smlouvy/ přečte VR_PRICING stejným regexem jako v prohlížeči a dá stejnou cenu za noc,
 //  3. s cestou k portálu: KAŽDÁ noc vygenerovaného rozsahu sedí s `cenik.mjs kalendar`
-//     (přímý kanál) — tedy že blok CENIK v site.js není zastaralý vůči cenik.json.
+//     (přímý kanál) — tedy že blok CENIK v site.js není zastaralý vůči cenik.json,
+//  4. statické stránky (/, /de/, /pl/, /en/) jsou aktuální vůči site.js (gen-jazyky --check)
+//     a jejich ceník i priceRange uvádějí ceny z VR_PRICING.
 // Ceník se mění v cenik.json a přegeneruje příkazem node tools/gen-cenik-web.mjs <portál>.
 
 import { readFileSync, mkdtempSync, openSync, closeSync, rmSync } from 'node:fs';
@@ -87,6 +89,22 @@ if (portal) {
   ok(zle.length === 0, `všech ${kal.dny.length} nocí sedí s cenik.json verze ${kal.verze}` + (zle.length ? ` — nesedí např. ${zle.slice(0, 3).map((x) => x.d).join(', ')} (přegeneruj: node tools/gen-cenik-web.mjs ${process.argv[2]})` : ''));
 } else {
   console.log('· noc po noci proti cenik.json: přeskočeno (zadej cestu k villa-rudolf-portal)');
+}
+
+// ---------- 4. statické jazykové stránky ----------
+let aktualni = true;
+try { execFileSync(process.execPath, [join(root, 'tools/gen-jazyky.mjs'), '--check'], { cwd: root, stdio: 'pipe' }); }
+catch (e) { aktualni = false; console.log(String(e.stderr || e.stdout || e.message).trim()); }
+ok(aktualni, 'statické stránky odpovídají site.js (node tools/gen-jazyky.mjs --check)');
+const kc = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+const urovne = Object.values(W.VR_PRICING.levels).map((l) => l.nightly);
+for (const [jazyk, soubor] of [['cs', 'index.html'], ['de', 'de/index.html'], ['pl', 'pl/index.html'], ['en', 'en/index.html']]) {
+  const html = readFileSync(join(root, soubor), 'utf8');
+  const blok = (/id="vr-priceblock">([\s\S]*?)<div class="vr-book /.exec(html) || [])[1] || '';
+  const ceny = [...blok.matchAll(/<b>([\d\u00a0 ]+)[\u00a0 ]Kč /g)].map((m) => +m[1].replace(/[\u00a0 ]/g, ''));   // fmtM píše nezlomitelné mezery
+  const rozpeti = (/"priceRange": "([^"]*)"/.exec(html) || [])[1] || '';
+  ok(ceny.length === 6 && ceny.every((c) => urovne.includes(c)) && rozpeti.startsWith(kc(Math.min(...urovne)) + '–' + kc(Math.max(...urovne))),
+    `${soubor}: ceník ${ceny.map(kc).join(' / ')} Kč a priceRange „${rozpeti}" podle VR_PRICING`);
 }
 
 if (chyby) { console.log(`\n${chyby} chyb`); process.exit(1); }

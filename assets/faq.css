@@ -1,0 +1,17 @@
+/* Časté dotazy (/faq/, /de/faq/, /pl/faq/, /en/faq/) — staví na info/info.css (stejný vzhled
+   jako Praktické info), tady je jen to, co je jiné. Stránky generuje tools/gen-jazyky.mjs
+   z tools/jazyky-obsah.mjs; ručně se nepíšou. */
+.faq-list{display:grid;grid-template-columns:1fr;gap:12px}
+.faq-q .pi-name{margin-bottom:8px}
+.faq-a{margin:0;font-size:15px;line-height:1.62;color:var(--pi-muted);max-width:68ch}
+.pi-root .faq-a a{color:var(--pi-accent);text-decoration:underline;text-underline-offset:2px}
+.pi-root .faq-a a:hover{color:var(--pi-accent-2)}
+.faq-a a[href^="tel:"]{white-space:nowrap}
+/* Přepínač jazyka je i tady odkaz — každý jazyk má vlastní stránku. .pi-root a by mu vzal barvu. */
+.pi-root .faq-langs a.vr-lang{display:inline-block;line-height:normal;color:var(--vrn-fg-muted)}
+.pi-root .faq-langs a.vr-lang[data-active="true"]{color:var(--vrn-fg)}
+/* Výzva k rezervaci pod otázkami (info.css schovává .vr-navcta na mobilu, proto vlastní třída). */
+.faq-cta .faq-a{margin-bottom:18px}
+.pi-root .faq-book{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;letter-spacing:.02em;
+  color:var(--pi-on-accent);background:var(--pi-accent);border-radius:2px;padding:12px 20px}
+.pi-root .faq-book:hover{background:var(--pi-accent-2)}

@@ -7,11 +7,11 @@
 <meta name="description" content="Nejlepší výlety kousek od Villa Rudolf ve Svobodě nad Úpou: Sněžka, Adršpašské skály, Stezka korunami stromů, Safari Dvůr Králové, lyžování na Černé hoře i aquaparky. Kurátorované tipy a plánovač s celým katalogem ověřených cílů — na léto i zimu.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://villarudolf.com/vylety/">
-<link rel="alternate" hreflang="cs" href="https://villarudolf.com/vylety/?lang=cs">
-<link rel="alternate" hreflang="en" href="https://villarudolf.com/vylety/?lang=en">
-<link rel="alternate" hreflang="de" href="https://villarudolf.com/vylety/?lang=de">
-<link rel="alternate" hreflang="pl" href="https://villarudolf.com/vylety/?lang=pl">
-<link rel="alternate" hreflang="x-default" href="https://villarudolf.com/vylety/">
+<!-- Bez hreflang (10/2026): jazyk plánovače přepíná jen JavaScript (?lang=), robot pod každým
+     ?lang= dostane totéž české HTML. Odkazy hreflang na ?lang= tvrdily jazykové verze, které
+     neexistují, a jejich canonical mířil sem — to si odporovalo. Statické jazykové verze má
+     zatím jen homepage (/de/, /pl/, /en/) a Časté dotazy; vylety je můžou dostat stejně
+     (tools/gen-jazyky.mjs), až to bude potřeba. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Villa Rudolf">
 <meta property="og:title" content="Výlety v Krkonoších z Villa Rudolf — tipy a plánovač na léto i zimu">
@@ -316,7 +316,7 @@
         <div class="vyl-head vr-reveal">
           <span class="vr-eyebrow" data-t="summerHead.eyebrow">Léto</span>
           <h2 class="vr-h2" data-t="summerHead.title">Kam v létě</h2>
-          <p class="vyl-note" data-t="summerHead.note">Devět tipů, které hostům doporučujeme nejčastěji. Všech 39 cílů s filtry najdete v plánovači níž.</p>
+          <p class="vyl-note" data-t="summerHead.note">Devět tipů, které hostům doporučujeme nejčastěji. Všech 43 cílů s filtry najdete v plánovači níž.</p>
         </div>
         <div class="vyl-grid">
 
@@ -438,7 +438,7 @@
         <div class="vyl-head vr-reveal">
           <span class="vr-eyebrow" data-t="winterHead.eyebrow">Zima</span>
           <h2 class="vr-h2" data-t="winterHead.title">Kam v zimě</h2>
-          <p class="vyl-note" data-t="winterHead.note">Šest jistot pro zimní týden. Všech 39 cílů s filtry najdete v plánovači níž.</p>
+          <p class="vyl-note" data-t="winterHead.note">Šest jistot pro zimní týden. Všech 43 cílů s filtry najdete v plánovači níž.</p>
         </div>
         <div class="vyl-grid">
 
@@ -528,10 +528,10 @@
         <div class="vyl-plan-inner">
           <span class="vyl-plan-eyebrow" data-t="planner.eyebrow">Plánovač výletů</span>
           <h2 class="vyl-plan-h2" id="vyl-plan-title" data-t="planner.title">Řekněte nám, kolik máte času — výlet vybereme za vás.</h2>
-          <p class="vyl-plan-lead" data-t="planner.lead">Prošli jsme 39 cílů v okolí a u každého víme, jestli se dá zvládnout pěšky, jestli funguje za deště a od kolika let dává smysl. Vyberte tři věci a plánovač doporučí ten, který vám sedne — a dva náhradní, kdyby první nevyšel.</p>
+          <p class="vyl-plan-lead" data-t="planner.lead">Prošli jsme 43 cílů v okolí a u každého víme, jestli se dá zvládnout pěšky, jestli funguje za deště a od kolika let dává smysl. Vyberte tři věci a plánovač doporučí ten, který vám sedne — a dva náhradní, kdyby první nevyšel.</p>
           <ul class="vyl-plan-facts">
-            <li data-t="planner.f1">39 ověřených cílů</li>
-            <li data-t="planner.f2">8 pěšky od brány</li>
+            <li data-t="planner.f1">43 ověřených cílů</li>
+            <li data-t="planner.f2">9 pěšky od brány</li>
             <li data-t="planner.f3">20 minut na Sněžku</li>
           </ul>
           <hr class="vyl-plan-rule">
@@ -609,7 +609,7 @@
 
 </div>
 <script src="../assets/planner.js?v=48" defer></script>
-<script src="vylety.js?v=48" defer></script>
+<script src="vylety.js?v=50" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

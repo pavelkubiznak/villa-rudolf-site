@@ -143,6 +143,11 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-lang{position:relative;font-family:'Archivo',sans-serif;font-weight:600;font-size:12px;letter-spacing:.08em;
   color:var(--vr-nav-fg-muted);background:none;border:0;cursor:pointer;padding:6px 5px;transition:color .4s ease;opacity:.72}
 .vr-lang::after{content:'';position:absolute;left:5px;right:5px;bottom:1px;height:1.5px;background:var(--vr-accent);transform:scaleX(0);transition:transform .25s,background-color .6s ease}
+/* Přepínač jazyka je od 10/2026 ODKAZ na jazykovou verzi (<a href="de/">), ne tlačítko —
+   každý jazyk má vlastní adresu (tools/gen-jazyky.mjs). Odkaz nemá box tlačítka a
+   .vr-root a{color:inherit} by mu vzal barvu; aktivní stav níž vyhrává pořadím. */
+a.vr-lang{display:inline-block;line-height:normal;text-decoration:none}
+.vr-langs .vr-lang{color:var(--vr-nav-fg-muted)}
 .vr-lang[data-active="true"]{color:var(--vr-nav-fg);opacity:1}
 .vr-lang[data-active="true"]::after{transform:scaleX(1)}
 .vr-navcta{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;
@@ -190,6 +195,8 @@ body:has(.vr-root[data-season="zima"]){background:#eef2f6}
 .vr-mob-season .vr-segbtn[data-active="true"]{color:var(--vr-on-accent)}
 .vr-mob-langs{display:flex;gap:22px;margin-top:24px}
 .vr-mob-langs .vr-lang{font-size:15px;opacity:1;color:var(--vr-text-muted)}
+/* Od 10/2026 jsou to odkazy a chytalo by je .vr-mob a (Newsreader 400, jiné odsazení). */
+.vr-mob-langs a.vr-lang{font-family:'Archivo',sans-serif;font-weight:600;letter-spacing:.08em;padding:6px 5px}
 .vr-mob-langs .vr-lang[data-active="true"]{color:var(--vr-text)}
 
 /* ---------- Hero ---------- */
@@ -1490,3 +1497,20 @@ a.vr-revcard:hover .vr-revcard-plat{border-color:var(--vr-ember-2)}
   .vr-map-glow{animation:none;opacity:1}
   .vr-lokmap.vr-in .vr-map-wave{animation:none}
 }
+
+/* ===================== Lišta „Tahle stránka je i v …" (langSuggest v site.js) =====================
+   NABÍZÍ jazykovou verzi, nikdy nepřesměrovává. Plave dole uprostřed; na mobilu, kde je dole
+   lepicí CTA „Rezervovat termín", se posune nad něj. Pod mobilním menu (z-index 55). */
+.vr-langbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:54;
+  display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100% - 32px);box-sizing:border-box;
+  padding:8px 8px 8px 16px;border-radius:999px;background:rgba(14,19,17,.95);color:#F0EBE1;
+  border:1px solid rgba(240,235,225,.18);box-shadow:0 10px 30px rgba(0,0,0,.35);
+  font-family:'Archivo',sans-serif;font-size:13.5px;font-weight:500;line-height:1.35;animation:vrLangbarIn .35s ease}
+.vr-root .vr-langbar a{color:#10150f;background:var(--vr-ember);padding:7px 14px;border-radius:999px;font-weight:600;white-space:nowrap}
+.vr-langbar button{background:none;border:0;color:inherit;opacity:.7;font-size:20px;line-height:1;cursor:pointer;padding:2px 6px}
+.vr-langbar button:hover{opacity:1}
+@keyframes vrLangbarIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translateX(-50%)}}
+@media(max-width:960px){
+  .vr-stickycta[data-show="true"] ~ .vr-langbar{bottom:calc(68px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){.vr-langbar{animation:none}}

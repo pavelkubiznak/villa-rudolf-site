@@ -240,7 +240,6 @@
     document.querySelectorAll('.vr-lang').forEach(function (b) {
       b.setAttribute('data-active', String(b.getAttribute('data-lang') === lang));
     });
-    try { localStorage.setItem(LS_KEY, lang); } catch (e) {}
     syncSiteLinks();
   }
 
@@ -248,15 +247,21 @@
      Výlety míří na samostatnou stránku ../vylety/, ostatní na kotvy homepage. */
   function syncSiteLinks() {
     var q = '?lang=' + encodeURIComponent(lang) + '&season=' + encodeURIComponent(season);
+    // Homepage má od 10/2026 vlastní adresu pro každý jazyk (/de/, /pl/, /en/) — rovnou tam.
+    var home = lang === 'cs' ? '../' + q : '../' + lang + '/?season=' + encodeURIComponent(season);
     document.querySelectorAll('[data-site]').forEach(function (a) {
       var s = a.getAttribute('data-site');
-      a.setAttribute('href', s === 'vylety' ? '../vylety/' + q : '../' + q + '#' + s);
+      a.setAttribute('href', s === 'vylety' ? '../vylety/' + q : home + '#' + s);
     });
-    document.querySelectorAll('.vr-brand').forEach(function (b) { b.setAttribute('href', '../' + q); });
+    document.querySelectorAll('.vr-brand').forEach(function (b) { b.setAttribute('href', home); });
   }
 
+  // vrLang se ukládá jen kliknutím na přepínač — podle něj přesměrovává „/" (10/2026)
   document.querySelectorAll('.vr-lang').forEach(function (b) {
-    b.addEventListener('click', function () { applyLang(b.getAttribute('data-lang')); });
+    b.addEventListener('click', function () {
+      applyLang(b.getAttribute('data-lang'));
+      try { localStorage.setItem(LS_KEY, lang); } catch (e) {}
+    });
   });
 
   /* Mobilní menu (burger) */
