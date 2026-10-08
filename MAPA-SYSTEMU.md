@@ -10,7 +10,7 @@ Aktualizováno: 15. 9. 2026
 
 | Repo | Co dělá | Kde běží | Stav |
 |---|---|---|---|
-| **villa-rudolf-site** ← *jsi tady* | Web + celý provozní systém: `/sprava/` (majitel), `/registrace/` (evidence hostů), `/checkin/`, `/album/`, `/vylety/`, `/pruvodce/`. Supabase migrace v `supabase/migrations/`. | **villarudolf.com** | 🟢 **ŽIVÉ JÁDRO** |
+| **villa-rudolf-site** ← *jsi tady* | Web (česky `/`, jazykové verze `/de/` `/pl/` `/en/`, Časté dotazy `/faq/` — statické HTML z `tools/gen-jazyky.mjs`) + celý provozní systém: `/sprava/` (majitel), `/registrace/` (evidence hostů), `/checkin/`, `/album/`, `/vylety/`, `/pruvodce/`. Supabase migrace v `supabase/migrations/`. | **villarudolf.com** | 🟢 **ŽIVÉ JÁDRO** |
 | **villa-booking-calendar** | Kalendář rezervací: `index.html` pro úklid, `owner.html` pro majitele (tržby, token). Actionem každé 3 h stahuje iCal a publikuje `data/feed.ics` + `data/history.json`. | pavelkubiznak.github.io/villa-booking-calendar/ | 🟢 živé — **dodavatel dat** |
 | **villa-rudolf-portal** | Průvodce pro hosty (PWA, `?t=<token>`). Drží `data/trips.json` (katalog výletů) a `data/forecast.json` (počasí, cron na Hetzneru). | pavelkubiznak.github.io/villa-rudolf-portal/ | 🟡 živé — **jen zdroj dat**, role se překrývá se `site` |
 | villa-rudolf-vylety | Staré stránky výletů pro konkrétní hosty | GitHub Pages | 🔴 nahrazeno `site/vylety/` |
@@ -49,7 +49,7 @@ takže ho kalendář musí dostat z `/sprava/` — jinak ho web dál nabízí ja
 | **KDY** — termín pobytu, platforma | `villa-booking-calendar` (z iCal) | chodí automaticky, nepřepisovat ručně |
 | **KDO** — jméno, kontakt, evidence osob, tokeny | Supabase `vr_*` | PII, nikdy do repa |
 | **KOLIK** — ceny a tržby | `villa-booking-calendar/owner.html` | šifrované, klíč má jen majitel |
-| **CENÍK** — cena za noc, min. noci, sezóny na všech kanálech | `villa-rudolf-portal/docs/cenik.json` | web ho nečte za běhu: `node tools/gen-cenik-web.mjs <portál>` přepíše kalkulačku v `assets/site.js`, ceny v HTML homepage a `/smlouvy/` je čte odtamtud |
+| **CENÍK** — cena za noc, min. noci, sezóny na všech kanálech | `villa-rudolf-portal/docs/cenik.json` | web ho nečte za běhu: `node tools/gen-cenik-web.mjs <portál>` přepíše kalkulačku v `assets/site.js` a přes `tools/gen-jazyky.mjs` ceny v HTML homepage ve všech jazycích; `/smlouvy/` je čte ze `site.js` |
 | **CO** — výlety, počasí | `villa-rudolf-portal/data/` | `site` je odtud čte |
 | **SPOJKA** mezi kalendářem a rezervací | `uidh` (= `sha256(iCal UID)[:16]`) | používá `sprava.js` i `vr_admin_upsert_booking(p_uidh)` |
 | **PŘÍMÝ PRODEJ** — předrezervace ze zálohové faktury, potvrzené přímé rezervace | Supabase `vr_holds` (tady) | jediná věc, kterou `site` posílá **do** kalendáře — přes `vr_public_holds()`; `uidh` = `sha256('vr-hold:'+id)[:16]` |

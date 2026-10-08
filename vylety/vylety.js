@@ -258,6 +258,9 @@
       var hi = raw.indexOf('#');
       var hash = hi >= 0 ? raw.slice(hi) : '';
       var path = hi >= 0 ? raw.slice(0, hi) : raw;
+      // Homepage má od 10/2026 vlastní adresu pro každý jazyk (/de/, /pl/, /en/) — rovnou tam,
+      // bez přesměrování přes „/?lang=". Čeština nese ?lang=cs, ať ji „/" nepřesměruje jinam.
+      if (path === '../' && state.lang !== 'cs') { a.setAttribute('href', '../' + state.lang + '/?season=' + state.season + hash); return; }
       var sep = path.indexOf('?') >= 0 ? '&' : '?';
       a.setAttribute('href', path + sep + 'lang=' + state.lang + '&season=' + state.season + hash);
     });

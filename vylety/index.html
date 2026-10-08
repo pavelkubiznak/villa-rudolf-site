@@ -7,11 +7,11 @@
 <meta name="description" content="Nejlepší výlety kousek od Villa Rudolf ve Svobodě nad Úpou: Sněžka, Adršpašské skály, Stezka korunami stromů, Safari Dvůr Králové, lyžování na Černé hoře i aquaparky. Kurátorované tipy a plánovač s celým katalogem ověřených cílů — na léto i zimu.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://villarudolf.com/vylety/">
-<link rel="alternate" hreflang="cs" href="https://villarudolf.com/vylety/?lang=cs">
-<link rel="alternate" hreflang="en" href="https://villarudolf.com/vylety/?lang=en">
-<link rel="alternate" hreflang="de" href="https://villarudolf.com/vylety/?lang=de">
-<link rel="alternate" hreflang="pl" href="https://villarudolf.com/vylety/?lang=pl">
-<link rel="alternate" hreflang="x-default" href="https://villarudolf.com/vylety/">
+<!-- Bez hreflang (10/2026): jazyk plánovače přepíná jen JavaScript (?lang=), robot pod každým
+     ?lang= dostane totéž české HTML. Odkazy hreflang na ?lang= tvrdily jazykové verze, které
+     neexistují, a jejich canonical mířil sem — to si odporovalo. Statické jazykové verze má
+     zatím jen homepage (/de/, /pl/, /en/) a Časté dotazy; vylety je můžou dostat stejně
+     (tools/gen-jazyky.mjs), až to bude potřeba. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Villa Rudolf">
 <meta property="og:title" content="Výlety v Krkonoších z Villa Rudolf — tipy a plánovač na léto i zimu">
@@ -609,7 +609,7 @@
 
 </div>
 <script src="../assets/planner.js?v=48" defer></script>
-<script src="vylety.js?v=48" defer></script>
+<script src="vylety.js?v=49" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>

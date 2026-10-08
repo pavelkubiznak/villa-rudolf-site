@@ -200,7 +200,9 @@
   /* Odkaz na hlavní web se nese jazyk + sezónu, aby se dědičnost nerozbila. */
   function hp(hash) {
     var q = '?lang=' + encodeURIComponent(state.lang) + '&season=' + encodeURIComponent(state.season);
-    return '../' + q + (hash ? '#' + hash : '');
+    // Homepage má od 10/2026 vlastní adresu pro každý jazyk (/de/, /pl/, /en/) — rovnou tam.
+    var home = state.lang === 'cs' ? '../' + q : '../' + state.lang + '/?season=' + encodeURIComponent(state.season);
+    return home + (hash ? '#' + hash : '');
   }
   /* 6 hlavních sekcí webu — shodné s hlavičkou homepage. Výlety = samostatná stránka. */
   function siteLinks(L) {

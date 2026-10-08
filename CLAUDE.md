@@ -13,7 +13,9 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 
 | Cesta | Co to je | Publikum |
 |---|---|---|
-| `/` (`index.html`, 80 kB) | homepage, vícejazyčná | hosté, veřejnost |
+| `/` (`index.html`, 80 kB) | homepage česky; je zároveň šablonou jazykových verzí | hosté, veřejnost |
+| `/de/`, `/pl/`, `/en/` | **jazykové verze homepage** — statické HTML generované `tools/gen-jazyky.mjs` z `T` v `site.js`, ručně se neupravují | hosté, AI roboti |
+| `/faq/` (+ `/de/faq/`, `/pl/faq/`, `/en/faq/`) | **Časté dotazy** ze skutečných poptávek, `FAQPage` schema; generuje `tools/gen-jazyky.mjs` z `tools/jazyky-obsah.mjs` | hosté, AI roboti |
 | `/sprava/` | **admin majitele** — rezervace, předrezervace, platby, kontakty hostů, zprávy, konflikty. `sprava.js` (2 300+ ř.) | jen majitel |
 | `/smlouvy/` | **generátor ubytovacích smluv** přímých hostů — šablona cs/de/en, tisk do PDF, archiv v `vr_contracts`, „Vystavit“ zakládá i předrezervaci | jen majitel |
 | `/metrika/` | přesměrování na dashboard návštěvnosti (Umami na Hetzneru), bez odkazů z webu | jen majitel |
@@ -263,24 +265,47 @@ nové parametry s DEFAULT — stará stránka v mezipaměti volá dál tutéž f
 3. Repo je **veřejné** a běží na něm ostrý web s vlastní doménou — commituje se opatrně.
 4. Než začneš psát „nový modul", ověř `/sprava/` — hodně věcí už existuje.
 5. **Ceny se na webu ručně nepíšou.** Zdroj je `villa-rudolf-portal/docs/cenik.json`; po jeho změně
-   `node tools/gen-cenik-web.mjs ../villa-rudolf-portal` (přepíše blok CENIK ve `VR_PRICING`, ceny
-   v `data-cenik*` v `index.html` a `priceRange` ve schema.org) a `node tools/test-cenik-web.mjs
-   ../villa-rudolf-portal` (noc po noci proti ceníku). Ceny v `llms.txt` generátor jen kontroluje.
+   `node tools/gen-cenik-web.mjs ../villa-rudolf-portal` (přepíše blok CENIK ve `VR_PRICING` a spustí
+   `tools/gen-jazyky.mjs`, který přegeneruje ceník, „od … Kč" a `priceRange` na `/`, `/de/`, `/pl/`
+   a `/en/`) a `node tools/test-cenik-web.mjs ../villa-rudolf-portal` (noc po noci proti ceníku
+   a statické stránky proti `site.js`). Ceny v `llms.txt` a `de/llms.txt` generátor jen kontroluje.
 
 ## AI asistenti (ChatGPT, Claude, Perplexity) — čitelnost webu
 
-Od 8/2026 je ChatGPT největší dohledatelný zdroj návštěv webu (Umami, `utm_source=chatgpt.com`).
-AI roboti **nespouštějí JavaScript**, takže co se do stránky dopisuje až z `site.js`, pro ně neexistuje.
+Od 8/2026 je ChatGPT největší dohledatelný zdroj návštěv webu (Umami, `utm_source=chatgpt.com`),
+polovina z nich jsou Němci. AI roboti **nespouštějí JavaScript**, takže co se do stránky dopisuje
+až z `site.js`, pro ně neexistuje.
 
-- Fakta, podle kterých se skupina rozhoduje, musí být **v HTML**: ceník, rozpis lůžek, hodnocení,
-  kontakt a adresa v patičce, popisky vzdáleností. Česká verze je v `index.html` staticky a JS ji
-  přepíše jazykem; při změně textu v `T.cs` uprav i statickou kopii (komentáře u bloků to říkají).
-- `/llms.txt` = fakta pro asistenty v CS + EN/DE/PL/NL, jen z `villa-rudolf-portal/docs/text-villa-rudolf.md`, kap. 3.
-- Schema.org (`VacationRental` v `<head>`) smí nést jen to, co je na stránce vidět. `aggregateRating` ne.
+**Jazykové verze jsou skutečné stránky (od 10/2026):** `/` česky, `/de/`, `/pl/`, `/en/` a Časté
+dotazy `/faq/`, `/de/faq/`, `/pl/faq/`, `/en/faq/`. Vyrábí je `node tools/gen-jazyky.mjs` ze slovníku
+`T` v `assets/site.js` a z `tools/jazyky-obsah.mjs` (alt texty, `<noscript>`, JSON-LD, Časté dotazy).
+Šablonou je `index.html` — skript přegeneruje i jeho české texty, takže statická kopie neuteče od `T`.
+- **Po každé změně `T`, `VR_FACTS`, `VR_REVIEWS`, `VR_CONTACT`, `index.html` nebo `jazyky-obsah.mjs`
+  pusť `node tools/gen-jazyky.mjs`.** `node tools/test-jazyky.mjs` (i `test-cenik-web.mjs`) hlídá, že
+  jsou stránky aktuální; generátor sám odmítne zapsat stránku se zbylou češtinou nebo vadným hreflang.
+- Bloky, které kreslí JS (ceník, rozpis lůžek, hodnocení, patička, „Než dorazíte"), generátor kreslí
+  **stejnými funkcemi ze `site.js`** (načte ho do `vm` s mini-DOMem) — statické HTML je to, co vidí host.
+  Ceník staticky **bez řádku o záloze 30 %** (o záloze rozhodne Pavel).
+- **Jazyk = adresa.** JS bere jazyk z `<html lang>`, přepínač jazyka jsou odkazy (`vrLang` se uloží
+  jen kliknutím). Na `/` vyřizuje přesměrování v `<head>`: staré odkazy `?lang=`, volbu z přepínače
+  a prohlížeč v němčině nebo polštině. **Angličtina se podle prohlížeče nepřesměrovává** — Googlebot
+  má prohlížeč anglický a `/` musí vidět česky; anglicky mluvícím nabídne verzi lišta (`langSuggest`).
+- Jazykové stránky mají `<html data-root="../">` a **každou cestu k souboru skládá `site.js` přes
+  `vrUrl()`** — nová cesta bez něj se na `/de/` rozbije (vedla by do `/de/media/…`).
+- hreflang: cs/de/pl/en + `x-default` = `/en/` (Nizozemci a Belgičané, 15 % hostů, česky nečtou).
+  `/vylety/`, `/info/` a `/podminky/` jazykové verze nemají (jazyk jen v JS), proto hreflang nenesou.
+- `sitemap.xml` generuje `gen-jazyky.mjs` (jazykové páry přes `xhtml:link`, `lastmod` jen při změně).
+- `/llms.txt` (CS + odstavce EN/DE/PL/NL) a `/de/llms.txt` — fakta jen z
+  `villa-rudolf-portal/docs/text-villa-rudolf.md`, kap. 3. Časté dotazy taky: otázky ze skutečných
+  poptávek, odpovědi jen z kap. 3; co tam není, se nepíše.
+- Schema.org (`VacationRental` + `WebPage` s `inLanguage`, na Častých dotazech `FAQPage`) smí nést jen to,
+  co je na stránce vidět. `aggregateRating` ne.
 - Hodnocení Google je skryté (`hidden` ve `VR_REVIEWS`), dokud profil „Rudolfův dvůr“ na Mapách
   nebude nárokovaný a přejmenovaný. Patička a `alternateName` říkají „dříve Rudolfův dvůr“ (Pavel 8. 10. 2026).
 - Žádný skrytý text pro roboty ani pokyny pro AI ve stránce.
-- Jazykové verze `?lang=` jsou pro roboty pořád česky — statické `/de/`, `/pl/`, `/en/` jsou další krok.
+- **IndexNow:** po pushi do `main` ohlásí `.github/workflows/indexnow.yml` (`tools/indexnow.mjs`) změněné
+  veřejné stránky Bingu a Seznamu (Bing = zdroj vyhledávání ChatGPT). Klíč je soubor
+  `b8aed3a3195400dd83f225996cdf03cb.txt` v kořeni — nemazat. Nasazení (GitHub Pages z `main`) neshodí.
 - Měření: událost Umami `poptavka-odeslana` (`zdroj` = utm_source / referrer / „primo“).
 
 ## Jazyk

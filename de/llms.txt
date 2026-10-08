@@ -1,0 +1,32 @@
+# Villa Rudolf
+
+> Die Villa Rudolf ist eine Villa in Svoboda nad Úpou im tschechischen Riesengebirge (Krkonoše), die immer als Ganzes an eine einzige Gruppe von 6–22 Personen vermietet wird. 7 Schlafzimmer, 19 feste Betten und 3 vollwertige Zustellbetten, 5 Bäder, 257 m², eingezäuntes Grundstück mit 4.500 m², private finnische Sauna, beheizter überdachter Pool (Mai bis Ende September), Skiraum, Feuerstelle und Pavillon mit zwei Elektrogrills. Gastgeber: Pavel. Früher Rudolfův dvůr.
+
+Haus und Grundstück gehören nur einer Gruppe, nichts wird mit fremden Gästen geteilt. Die nächsten Pisten liegen direkt in Svoboda nad Úpou (1,9 km), Černá hora und Janské Lázně 4 km, Pec pod Sněžkou 13 km, alles mit einem Skipass des SkiResorts Černá hora – Pec. Der kostenlose Skibus hält 200 m vom Tor. Ins Ortszentrum sind es 150 m, zur Bushaltestelle 100 m, zum Bahnhof 500 m. Prag und Breslau (Wrocław) sind mit dem Auto etwa 2 Stunden entfernt, Dresden 3 Stunden.
+
+## Fakten
+- Kapazität: 6–22 Gäste, 19 feste Betten + 3 vollwertige Zustellbetten, keine Etagenbetten. Kinderbett kostenlos.
+- Aufteilung: im Erdgeschoss Zimmer 1, 2 und 3, jedes mit eigenem Bad (Dusche + WC), und die große Küche mit Esstisch. Im 1. Stock Zimmer 4 mit Bad und das Apartment Suite (Wohnraum mit Billardtisch, eigene Küche, Schlafzimmer für 4). Im Dachgeschoss zwei weitere Schlafzimmer des Apartment Suite, für 2 und für 4. Das Suite fasst 10 Gäste.
+- Betten: 7 Doppelbetten, 5 Einzelbetten, 3 ausziehbare Zustellbetten.
+- Zwei voll ausgestattete Küchen, beide mit Backofen, Spülmaschine und komplettem Geschirr.
+- Pool: beheizt und überdacht, in Betrieb von Mai bis Ende September, im Sommer um 27 °C; zu Saisonbeginn und -ende ist das Wasser kühler. Im Winter geschlossen.
+- Sauna: finnisch, privat, mit Vorraum und Dusche, im Preis enthalten, ohne Reservierung und Zeitfenster.
+- Draußen: Feuerstelle mit Gabionenwand, Pavillon für 20 Personen mit zwei großen Elektrogrills, Spielplatz, Trampolin, Tischtennis, ein Bach am Rand des Grundstücks.
+- Kostenlose Parkplätze auf dem Grundstück hinter dem Tor: 7 Autos bequem, 10–11 eng.
+- Schnelles WLAN im Haus und auf dem Grundstück, 2 große Smart-TVs (Küche im Erdgeschoss und Apartment Suite), Waschmaschine, Skiraum, in dem die Schuhe über Nacht trocknen.
+- Hunde willkommen. Nichtraucherhaus. Check-in ab 15:00, Check-out bis 10:00. Nebenkosten inklusive.
+- Wegen der Nachbarn keine Lautsprecher im Garten und abends keine Musik. Am Feuer sitzen und reden bis spät in die Nacht ist in Ordnung.
+- Ein Masseur praktiziert gleich nebenan, den Termin reservieren wir.
+- Preis für das ganze Haus pro Nacht bei Direktbuchung: 13 400 Kč in der Nebensaison; 14 900 Kč im Winter (Januar bis Mitte März), an Ostern, in den Tagen um den 1. Mai, um den Wechsel von Oktober zu November und im Sommer (Ende Juni bis Anfang September); 16 400 Kč in ausgewählten Wochen im Februar und Anfang Januar; 18 000 Kč an Weihnachten und 20 000 Kč an Silvester. Mindestens 2 Nächte, an Feiertagen 3, im Sommer 5, an Weihnachten und Silvester 6. Dazu kommen die Endreinigung 3 500 Kč pro Aufenthalt, die Kurtaxe von 25 Kč pro Erwachsenem und Nacht und 500 Kč pro Hund. Den genauen Preis für einen Termin rechnet der Kalender auf der Website aus.
+
+## Buchung und Kontakt
+Unverbindliche Anfrage über den Kalender auf https://villarudolf.com/de/#rezervace, E-Mail rezervace@villarudolf.com, Telefon und WhatsApp +420 775 220 785. Die Villa Rudolf ist auch auf Booking.com, Airbnb, FeWo-direkt (Vrbo) und e-chalupy.cz unter dem Namen „Villa Rudolf, Svoboda nad Úpou" zu finden.
+Adresse: Luční 519, 542 24 Svoboda nad Úpou, Tschechien. GPS 50.6254, 15.8136.
+
+## Seiten
+- [Haus, Ausstattung, Preisliste, Kalender und Anfrage](https://villarudolf.com/de/)
+- [Häufige Fragen](https://villarudolf.com/de/faq/)
+- [Ausflüge und Planer für Sommer und Winter](https://villarudolf.com/vylety/?lang=de)
+- [Praktische Infos zum Aufenthalt](https://villarudolf.com/info/?lang=de)
+- [Buchungsbedingungen und Storno](https://villarudolf.com/podminky/?lang=de)
+- Andere Sprachen: [Čeština](https://villarudolf.com/) ([llms.txt](https://villarudolf.com/llms.txt)) · [Polski](https://villarudolf.com/pl/) · [English](https://villarudolf.com/en/)

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Ceník na web: přepíše kalkulačku (VR_PRICING v assets/site.js) a ceny v HTML homepage podle
+/* Ceník na web: přepíše kalkulačku (VR_PRICING v assets/site.js) a ceny ve statickém HTML podle
    docs/cenik.json v repu villa-rudolf-portal. Tam je jediný zdroj pravdy pro ceny a minimální
    počet nocí na všech kanálech; web je přímý kanál (cena = čistý výnos, bez provize).
 
@@ -10,8 +10,8 @@
      1. spustí `node scripts/cenik.mjs kalendar --json` v portálu (den po dni: cena, min. noci),
      2. sloučí dny do úseků a pojmenuje je (mimo / zimni / svatky / spicka / letni / vanoce / silvestr),
      3. přepíše blok CENIK:START … CENIK:END ve VR_PRICING (assets/site.js),
-     4. přepíše ceny a minima v elementech data-cenik / data-cenik-min / data-cenik-noci v index.html
-        a "priceRange" ve schema.org,
+     4. spustí tools/gen-jazyky.mjs, který z nového VR_PRICING přegeneruje ceník, „od … Kč"
+        a "priceRange" ve schema.org na všech jazykových stránkách (/, /de/, /pl/, /en/),
      5. zkontroluje, že llms.txt uvádí stejné ceny (jen hlásí, nepřepisuje).
    Nic nenasazuje. Výsledek zkontroluj (`git diff`) a commitni. */
 import { execFileSync } from "node:child_process";
@@ -117,32 +117,21 @@ const reBlok = /\/\* CENIK:START[\s\S]*?\/\* CENIK:END \*\//;
 if (!reBlok.test(site)) throw new Error("assets/site.js: nenašel jsem blok CENIK:START … CENIK:END ve VR_PRICING");
 writeFileSync(sitePath, site.replace(reBlok, blok));
 
-// ---------- 2. index.html ----------
+// ---------- 2. statické HTML ve všech jazycích ----------
+// Ceník, „celý dům od …" a priceRange vykresluje tools/gen-jazyky.mjs přímo z VR_PRICING —
+// stejnými funkcemi, jakými je kreslí prohlížeč. Do 10/2026 tu byla vlastní kopie pro index.html.
 const kc = (n) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ")} Kč`;
-const noci = (n) => `${n} ${n === 1 ? "noc" : n < 5 ? "noci" : "nocí"}`;
-const vse = Object.values(levels).map((l) => l.nightly);
-const od_ = Math.min(...vse), do__ = Math.max(...vse);
-const htmlPath = join(root, "index.html");
-let html = readFileSync(htmlPath, "utf8");
-const chybi = new Set();
-html = html.replace(/(data-cenik="(\w+)"[^>]*>)[^<]*(<)/g, (m, a, n, b) => {
-  if (n === "od") return a + kc(od_) + b;
-  if (!levels[n]) { chybi.add(n); return m; }
-  return a + kc(levels[n].nightly) + b;
-});
-html = html.replace(/(data-cenik-(min|noci)="(\w+)"[^>]*>)[^<]*(<)/g, (m, a, typ, n, b) => {
-  if (!levels[n]) { chybi.add(n); return m; }
-  return a + (typ === "min" ? "min. " : "") + noci(levels[n].minNights) + b;
-});
-html = html.replace(/"priceRange": "[^"]*"/, `"priceRange": "${kc(od_).replace(" Kč", "")}–${kc(do__)} za noc za celý dům"`);
-writeFileSync(htmlPath, html);
+execFileSync(process.execPath, [join(root, "tools/gen-jazyky.mjs")], { cwd: root, stdio: "inherit" });
 
-// ---------- 3. kontrola llms.txt ----------
-const llms = readFileSync(join(root, "llms.txt"), "utf8");
-const nesedi = Object.entries(levels).filter(([, l]) => !llms.includes(kc(l.nightly).replace(" Kč", "")));
+// ---------- 3. kontrola llms.txt (kořen i jazykové) ----------
+const nesedi = [];
+for (const f of ["llms.txt", "de/llms.txt"]) {
+  let llms = "";
+  try { llms = readFileSync(join(root, f), "utf8"); } catch { continue; }
+  for (const [n, l] of Object.entries(levels)) if (!llms.includes(kc(l.nightly).replace(" Kč", ""))) nesedi.push([n, l, f]);
+}
 
 console.log(`Ceník ${cenik.verze} → web (${od} až ${do_}, přímý kanál „${kal.kanaly[primy].nazev}“): ${periods.length} úseků`);
 for (const p of periods) console.log(`  ${p.from} – ${p.to}  ${p.name.padEnd(8)} ${String(p.nightly).padStart(6)} Kč  min. ${p.minNights}`);
 console.log("Úrovně: " + Object.entries(levels).map(([n, l]) => `${n} ${l.nightly}/${l.minNights}`).join(", "));
-if (chybi.size) console.log(`! index.html odkazuje na úrovně, které ceník nemá: ${[...chybi].join(", ")}`);
-if (nesedi.length) console.log(`! llms.txt neuvádí ceny: ${nesedi.map(([n, l]) => `${n} ${l.nightly}`).join(", ")} — uprav ručně`);
+if (nesedi.length) console.log(`! llms.txt neuvádí ceny: ${nesedi.map(([n, l, f]) => `${f}: ${n} ${l.nightly}`).join(", ")} — uprav ručně`);

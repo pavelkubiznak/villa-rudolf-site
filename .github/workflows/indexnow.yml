@@ -1,0 +1,56 @@
+name: IndexNow (ohlášení změn vyhledávačům)
+
+# Po každém pushi do main (= sloučený PR) ohlásí změněné veřejné stránky přes IndexNow
+# (Bing → ChatGPT a Copilot, Seznam, Yandex…). Skript a seznam ohlašovaných stránek:
+# tools/indexnow.mjs, klíč je soubor <klíč>.txt v kořeni webu.
+#
+# NIKDY NESHODÍ NASAZENÍ: web nasazuje GitHub Pages přímo z větve main (legacy build), tenhle
+# workflow s ním nesouvisí — jen počká, až Pages commit nasadí, ať si Bing nestáhne starou
+# verzi. Job má continue-on-error a skript při chybě jen vypíše varování.
+# Vstupy z události (github.event.before) jdou do skriptu přes env, ne přes ${{ }} v run:.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: read
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50      # IndexNow porovnává s revizí před pushem
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Počkat, až GitHub Pages nasadí tenhle commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 30); do
+            st=$(gh api "repos/$GITHUB_REPOSITORY/pages/builds/latest" --jq '.status + " " + .commit' 2>/dev/null || true)
+            echo "Pages: ${st:-?}"
+            if [ "$st" = "built $GITHUB_SHA" ]; then exit 0; fi
+            sleep 10
+          done
+          echo "Nasazení se nepotvrdilo do 5 minut — ohlásím i tak."
+
+      - name: Ohlásit změněné stránky (IndexNow)
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          SINCE="HEAD~1"
+          if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then SINCE="$BEFORE"; fi
+          node tools/indexnow.mjs "$SINCE"

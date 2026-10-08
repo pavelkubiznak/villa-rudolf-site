@@ -1,25 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Only indexable, canonical pages are listed. /pruvodce/ (osobní plánovač
-     ubytovaného hosta, ?t=TOKEN) and /checkin/ are guest-only and noindex,
-     so they are intentionally excluded. The public planner lives on
-     /vylety/#planovac, which is listed below. -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<!-- Generuje node tools/gen-jazyky.mjs — ručně neupravovat (samostatné stránky: SAMOSTATNE v tom skriptu).
+     Jen indexovatelné stránky s vlastní canonical. /pruvodce/ (osobní plánovač ubytovaného hosta,
+     ?t=TOKEN) a /checkin/ jsou jen pro hosty a mají noindex, proto tu nejsou. Veřejný plánovač je
+     /vylety/. Jazykové verze homepage a Častých dotazů jsou spárované přes xhtml:link (hreflang). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://villarudolf.com/</loc>
     <lastmod>2026-10-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/faq/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/faq/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/faq/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/faq/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/faq/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/faq/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/faq/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/faq/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/faq/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/faq/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/faq/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/faq/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/faq/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/faq/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/faq/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/faq/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/faq/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/faq/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/faq/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/faq/"/>
   </url>
   <url>
     <loc>https://villarudolf.com/vylety/</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="cs" href="https://villarudolf.com/vylety/?lang=cs"/>
-    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="en" href="https://villarudolf.com/vylety/?lang=en"/>
-    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="de" href="https://villarudolf.com/vylety/?lang=de"/>
-    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="pl" href="https://villarudolf.com/vylety/?lang=pl"/>
-    <xhtml:link xmlns:xhtml="http://www.w3.org/1999/xhtml" rel="alternate" hreflang="x-default" href="https://villarudolf.com/vylety/"/>
   </url>
   <url>
     <loc>https://villarudolf.com/info/</loc>

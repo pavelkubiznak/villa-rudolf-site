@@ -248,11 +248,13 @@
      Výlety míří na samostatnou stránku ../vylety/, ostatní na kotvy homepage. */
   function syncSiteLinks() {
     var q = '?lang=' + encodeURIComponent(lang) + '&season=' + encodeURIComponent(season);
+    // Homepage má od 10/2026 vlastní adresu pro každý jazyk (/de/, /pl/, /en/) — rovnou tam.
+    var home = lang === 'cs' ? '../' + q : '../' + lang + '/?season=' + encodeURIComponent(season);
     document.querySelectorAll('[data-site]').forEach(function (a) {
       var s = a.getAttribute('data-site');
-      a.setAttribute('href', s === 'vylety' ? '../vylety/' + q : '../' + q + '#' + s);
+      a.setAttribute('href', s === 'vylety' ? '../vylety/' + q : home + '#' + s);
     });
-    document.querySelectorAll('.vr-brand').forEach(function (b) { b.setAttribute('href', '../' + q); });
+    document.querySelectorAll('.vr-brand').forEach(function (b) { b.setAttribute('href', home); });
   }
 
   document.querySelectorAll('.vr-lang').forEach(function (b) {

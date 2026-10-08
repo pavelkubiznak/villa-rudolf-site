@@ -4,6 +4,14 @@
    is replaced (v1 has no Stripe) and a localized placeholder label added. */
 'use strict';
 
+/* ============================ KOŘEN WEBU (jazykové verze) ============================
+   Homepage existuje ve čtyřech adresářích: / (česky), /de/, /pl/, /en/ — statické stránky
+   vyrábí tools/gen-jazyky.mjs. Na /de/ by relativní cesta 'media/…' vedla do /de/media/,
+   proto má jazyková stránka <html data-root="../"> a každá cesta k fotce, panoramatu nebo
+   knihovně, kterou skládá tenhle skript, jde přes vrUrl(). Na „/" je kořen prázdný. */
+const VR_ROOT = (document.documentElement && document.documentElement.getAttribute('data-root')) || '';
+function vrUrl(p) { return !p || /^(?:[a-z][a-z0-9+.-]*:|\/|#)/i.test(p) ? p : VR_ROOT + p; }
+
 /* ============================ CENÍK ============================ */
 /* Ceny za noc a minimální počet nocí NEJSOU tady, ale v ceníku
    villa-rudolf-portal/docs/cenik.json (potvrzen Pavlem 21. 9. 2026) — jediný zdroj
@@ -153,10 +161,12 @@ const VR_CONTACT = {
    (dnes jeden: RK masáže, zóna villa). Aby počty na homepage souhlasily
    s tím, co plánovač reálně ukáže, přičítáme je i tady. */
 const VR_LOCAL_EXTRA = { foot: 1, car: 0, day: 0 };
-/* Fallback = LETNÍ stav katalogu k 7/2026 (38 cílů + 1 lokální doplněk).
-   Používá se jen tehdy, když se katalog nepodaří stáhnout; jinak se počty
-   dopočítají pro aktuální sezónu z živých dat (viz loadTripCounts). */
-const VR_TRIP_COUNTS = { foot: 8, car: 27, day: 4, total: 39 };
+/* Fallback = LETNÍ stav katalogu k 10/2026 (42 cílů + 1 lokální doplněk), shodně
+   s text-villa-rudolf.md, kap. 3: 43 výletů — 9 pěšky, 27 do 30 minut autem, 7 na celý den.
+   Používá se, když se katalog nepodaří stáhnout, a ve statických jazykových
+   stránkách pro roboty (tools/gen-jazyky.mjs); jinak se počty dopočítají pro
+   aktuální sezónu z živých dat (viz loadTripCounts). */
+const VR_TRIP_COUNTS = { foot: 9, car: 27, day: 7, total: 43 };
 const TRIPS_URL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/trips.json';
 const TRIPS_CACHE_KEY = 'vr_trips_v3';   // v3 = keš slim katalogu, ne hotových počtů
 const TRIPS_TTL = 21600000; // 6 h
@@ -610,7 +620,9 @@ const T = {
       lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', pets: 'Domácí mazlíčci', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', formerly: 'Dříve Rudolfův dvůr.', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Plánovač výletů' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', formerly: 'Dříve Rudolfův dvůr.', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Plánovač výletů', faq: 'Časté dotazy' },
+    /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
+    langbar: { text: 'Tuhle stránku máme i v češtině.', go: 'Česky' },
     prebook: {
       title: 'Co potřebujete vědět před rezervací', link: 'Vše praktické →',
       facts: [
@@ -683,15 +695,15 @@ const T = {
     amenities: {
       eyebrow: 'Amenities', title: 'Comfort that keeps a group together', drop: 'Drop a photo here',
       items: {
-        pool:     { tag: 'Wellness', name: 'Covered heated pool', desc: 'An indoor pool with heated water — open right through the summer season in any weather, rain included. Straight from the water into the sauna.' },
+        pool:     { tag: 'Wellness', name: 'Covered heated pool', desc: 'A heated pool under a roof — open right through the summer season in any weather, rain included. Straight from the water into the sauna.' },
         skiroom:  { tag: 'Skiing', name: 'Ski room', desc: 'A separate room just for skis and boots: racks for skis and snowboards, boot holders and a washable floor. Wet gear stays downstairs and never goes into the bedrooms — in winter this is the question we get most often.' },
         sauna:    { tag: 'Wellness', name: 'Private Finnish sauna', desc: 'A Finnish sauna for your group alone, with an anteroom and a shower. No sharing, no time slots.' },
         kitchen:  { tag: 'Together', name: 'Kitchen and a table for everyone', desc: 'A fully equipped kitchen and a big wooden table that seats the whole group at once.' },
         firepit:  { tag: 'Outdoor life', name: 'Fire pit with a gabion wall', desc: 'A newly finished open fire pit that takes the whole group. After dark it lights itself — warmth under an open sky.' },
         altan:    { tag: 'Outdoor life', name: 'Large gazebo with two grills', desc: 'Covered seating with two large electric grills and a table big enough for everyone at once. The roof holds, whether it rains or snows.' },
         hriste:   { tag: 'For families', name: 'Playground', desc: 'Climbing frames, a slide, swings and rope elements, plus a trampoline and table tennis. The kids get their own corner within sight of the gazebo.' },
-        billiard: { tag: 'Indoors', name: 'Billiards', desc: 'A billiard table in the Suite apartment — for a lazy afternoon or a tournament after dinner.' },
-        lounge:   { tag: 'Indoors', name: 'Suite living area', desc: 'A long sofa under the beams and a big table — the Suite apartment has its own social space.' },
+        billiard: { tag: 'Indoors', name: 'Billiards', desc: 'A billiard table in the Apartment Suite — for a lazy afternoon or a tournament after dinner.' },
+        lounge:   { tag: 'Indoors', name: 'Suite living area', desc: 'A long sofa under the beams and a big table — the Apartment Suite has its own social space.' },
       },
     },
     bedrooms: {
@@ -882,7 +894,7 @@ const T = {
         { name: 'Room 4 (2 beds)', desc: 'A double bed in a vaulted alcove between timber posts, a bay window with a wooden sill. Its own bathroom.' },
         { name: 'Room 4 — the view from the bed', desc: 'The same Room 4 from the head of the bed: the vaulted alcove with its marbled wallpaper and the backlit slatted headboard up close, then the length of the room to the curtained window, the mountain print, the little window in the timbered wall and the open door to the en-suite bathroom.' },
         { name: 'Room 4 — bathroom', desc: 'Room 4’s bathroom — shower enclosure, basin, toilet and a washing machine.' },
-        { name: 'Suite — living area', desc: 'The Suite apartment’s own lounge: a long sofa under the beams, a big table, a TV and the stairs up to the attic bedrooms.' },
+        { name: 'Suite — living area', desc: 'The Apartment Suite’s own lounge: a long sofa under the beams, a big table, a TV and the stairs up to the attic bedrooms.' },
         { name: 'Suite — kitchen', desc: 'The Suite’s own full kitchen with an oven, a dishwasher and complete tableware — the apartment is self-contained and doesn’t share the main kitchen.' },
         { name: 'Suite — bedroom A', desc: 'The first of the Suite’s three bedrooms, on the first floor: a double bed and geometric wallpaper behind the backlit headboard.' },
         { name: 'Suite — bathroom', desc: 'The Suite’s own first-floor bathroom — a glass shower enclosure, a vanity with a mirror cabinet and a window onto the snowy garden. The wood-look tiling matches the rest of the apartment.' },
@@ -969,7 +981,9 @@ const T = {
       lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', pets: 'Pets', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', formerly: 'Formerly Rudolfův dvůr.', terms: 'Booking terms & privacy', guide: 'Trip planner' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', formerly: 'Formerly Rudolfův dvůr.', terms: 'Booking terms & privacy', guide: 'Trip planner', faq: 'FAQ' },
+    /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
+    langbar: { text: 'This page is also available in English.', go: 'English' },
     prebook: {
       title: 'What to know before you book', link: 'All the practical info →',
       facts: [
@@ -1042,7 +1056,7 @@ const T = {
     amenities: {
       eyebrow: 'Ausstattung', title: 'Komfort, der die Gruppe zusammenhält', drop: 'Foto hierher ziehen',
       items: {
-        pool:     { tag: 'Wellness', name: 'Überdachter beheizter Pool', desc: 'Ein Innenpool mit beheiztem Wasser — in der Sommersaison bei jedem Wetter nutzbar, auch wenn es draußen regnet. Aus dem Wasser direkt in die Sauna.' },
+        pool:     { tag: 'Wellness', name: 'Überdachter beheizter Pool', desc: 'Ein beheizter Pool unter dem Dach — in der Sommersaison bei jedem Wetter nutzbar, auch wenn es draußen regnet. Aus dem Wasser direkt in die Sauna.' },
         skiroom:  { tag: 'Skifahren', name: 'Skiraum', desc: 'Ein eigener Raum nur für Ski und Schuhe: Ständer für Ski und Snowboards, Schuhhalter und ein abwaschbarer Boden. Nasse Ausrüstung bleibt unten und muss nicht in die Zimmer — im Winter ist das die häufigste Frage, die wir bekommen.' },
         sauna:    { tag: 'Wellness', name: 'Private finnische Sauna', desc: 'Eine finnische Sauna nur für eure Gruppe, mit Vorraum und Dusche. Kein Teilen, keine Zeitfenster.' },
         kitchen:  { tag: 'Gemeinsam', name: 'Küche und ein Tisch für alle', desc: 'Eine voll ausgestattete Küche und ein großer Holztisch, an dem die ganze Gruppe auf einmal sitzt.' },
@@ -1059,7 +1073,7 @@ const T = {
       note: '{loznice} Schlafzimmer, {koupelny} Bäder, große Küche, Sauna und Wellness — das ganze Haus in Fotos.',
       noBunk: 'Keine Etagenbetten — ruhigerer Schlaf, auch ideal für Eltern mit kleinen Kindern.',
       rooms: [
-        { name: 'Apartment-Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küche und Billardtisch · Bad' },
+        { name: 'Apartment Suite', cap: 'bis zu 10 Gäste', beds: '3 Schlafzimmer mit Doppelbetten, 2 Einzelbetten und 1 Bett mit ausziehbarem Zweitbett · eigene Küche und Billardtisch · Bad' },
         { name: 'Zimmer 1', cap: '2 Gäste', beds: 'Doppelbett · Bad' },
         { name: 'Zimmer 2', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett) · Bad' },
         { name: 'Zimmer 3', cap: 'bis zu 4 Gäste', beds: 'Doppelbett und 2 Einzelbetten (eines ein vollwertiges Zustellbett) · Bad' },
@@ -1072,12 +1086,12 @@ const T = {
       showOnPlan: 'Im Grundriss zeigen',
       rosterTitle: 'Wo ihr schlaft',
       rosterNote: '{luzka} Betten — {luzkaDetail} Zustellbetten. Die Aufteilung, nach der ihr die Gruppe verteilt.',
-      items: { kitchen: 'Küche & Essbereich', suite: 'Apartment-Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Dusche an der Sauna', bath2: 'Bad – Zimmer 2', bath3: 'Bad – Zimmer 3', bath4: 'Bad – Zimmer 4' },
+      items: { kitchen: 'Küche & Essbereich', suite: 'Apartment Suite', room1: 'Zimmer 1', room2: 'Zimmer 2', room3: 'Zimmer 3', room4: 'Zimmer 4', sauna: 'Finnische Sauna', wellness: 'Wellness & Dusche', bath: 'Dusche an der Sauna', bath2: 'Bad – Zimmer 2', bath3: 'Bad – Zimmer 3', bath4: 'Bad – Zimmer 4' },
     },
     plan: {
       eyebrow: 'Grundriss',
       title: 'Wo im Haus was liegt',
-      note: 'Tippen Sie auf einen Raum — wir zeigen die Fotos. Etage oben wechseln.',
+      note: 'Tippt auf einen Raum — wir zeigen euch die Fotos. Oben wechselt ihr die Etage.',
       hint: 'Auf einen beschrifteten Raum tippen für Fotos · Etage oben wechseln',
       levelsLabel: 'Etagen',
       floors: { basement: 'Untergeschoss', ground: 'Erdgeschoss', floor1: '1. Etage', attic: 'Dachgeschoss' },
@@ -1316,8 +1330,8 @@ const T = {
       errRate: 'Wir haben zu viele Anfragen erhalten. Bitte versucht es später erneut oder schreibt uns eine E-Mail.',
       errGeneric: 'Senden fehlgeschlagen. Bitte versucht es erneut oder schreibt an rezervace@villarudolf.com.',
     },
-    video: { eyebrow: 'Video', title: 'Sehen Sie die Villa im Video', note: 'Das Video läuft von selbst und ohne Ton. Die Untertitel sind fest im Bild; den Ton schalten Sie per Taste ein, springen können Sie über die Zeitleiste.', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', start: 'Video abspielen', soundOn: 'Ton einschalten', soundOff: 'Ton aus', onYoutube: 'Auf YouTube ansehen' },
-    share: { eyebrow: 'Leben in der Villa', title: 'So sieht es bei uns aus', body: 'Werfen Sie auf unserem Instagram einen Blick in den Alltag der Villa — der Wechsel der Jahreszeiten, Abende am Feuer und Momente unserer Gäste. Und wenn Sie bei uns waren, markieren Sie @villarudolfretreat und #villarudolf, damit auch andere Ihre Fotos sehen.', ig: 'Auf Instagram folgen' },
+    video: { eyebrow: 'Video', title: 'Seht euch die Villa im Video an', note: 'Das Video läuft von selbst und ohne Ton. Die Untertitel sind fest im Bild; den Ton schaltet ihr per Taste ein, springen könnt ihr über die Zeitleiste.', summer: 'Haus, Garten, Pool & Anreise', winter: 'Hausführung, Sauna & Skibus', start: 'Video abspielen', soundOn: 'Ton einschalten', soundOff: 'Ton aus', onYoutube: 'Auf YouTube ansehen' },
+    share: { eyebrow: 'Leben in der Villa', title: 'So sieht es bei uns aus', body: 'Werft auf unserem Instagram einen Blick in den Alltag der Villa — der Wechsel der Jahreszeiten, Abende am Feuer und Momente unserer Gäste. Und wenn ihr bei uns wart, markiert @villarudolfretreat und #villarudolf, damit auch andere eure Fotos sehen.', ig: 'Auf Instagram folgen' },
     cta: {
       eyebrow: 'Buchung', title: 'Bucht das ganze Haus für eure Gruppe',
       body: 'Wählt An- und Abreise im Kalender, seht die Preisaufstellung und sendet uns eine unverbindliche Aufenthaltsanfrage. Wir bestätigen euren Termin persönlich.',
@@ -1328,13 +1342,15 @@ const T = {
       lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', pets: 'Haustiere', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', formerly: 'Früher Rudolfův dvůr.', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsplaner' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', formerly: 'Früher Rudolfův dvůr.', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsplaner', faq: 'Häufige Fragen' },
+    /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
+    langbar: { text: 'Diese Seite gibt es auch auf Deutsch.', go: 'Deutsch' },
     prebook: {
-      title: 'Was Sie vor der Buchung wissen sollten', link: 'Alle Praxis-Infos →',
+      title: 'Was ihr vor der Buchung wissen solltet', link: 'Alle Praxis-Infos →',
       facts: [
         { k: 'Kapazität', v: '{minHostu}–{maxHostu} Gäste in {loznice} Schlafzimmern' },
         { k: 'Preis', v: 'Das ganze Haus ab {cenaOd} pro Nacht' },
-        { k: 'Privatsphäre', v: 'Ganzes Haus und Grundstück, nur Ihre Gruppe' },
+        { k: 'Privatsphäre', v: 'Ganzes Haus und Grundstück, nur für eure Gruppe' },
         { k: 'Check-in / -out', v: 'Check-in ab 15:00 · Check-out bis 10:00' },
         { k: 'Haustiere', v: 'Hunde willkommen — {petFee} pro Aufenthalt und Tier' },
         { k: 'Parken', v: 'Kostenlos direkt auf dem Grundstück hinter dem Tor' },
@@ -1687,7 +1703,9 @@ const T = {
       lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', pets: 'Zwierzęta', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', formerly: 'Dawniej Rudolfův dvůr.', terms: 'Warunki pobytu i prywatność', guide: 'Planer wycieczek' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', formerly: 'Dawniej Rudolfův dvůr.', terms: 'Warunki pobytu i prywatność', guide: 'Planer wycieczek', faq: 'Częste pytania' },
+    /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
+    langbar: { text: 'Ta strona jest też po polsku.', go: 'Polski' },
     prebook: {
       title: 'Co warto wiedzieć przed rezerwacją', link: 'Wszystkie informacje praktyczne →',
       facts: [
@@ -2493,7 +2511,7 @@ function buildInteriorCard(it, idx) {
   const name = (t.interior && t.interior.items && t.interior.items[it.k]) || '';
   const planKey = planActForRoom(it.k);
   return el('button', { type: 'button', class: 'vr-car-card', 'data-idx': String(idx), 'aria-label': name }, [
-    el('img', { src: it.img, alt: name + ' — Villa Rudolf', loading: 'lazy', decoding: 'async', width: '900', height: '1200' }),
+    el('img', { src: vrUrl(it.img), alt: name + ' — Villa Rudolf', loading: 'lazy', decoding: 'async', width: '900', height: '1200' }),
     // anglický štítek místnosti přímo na fotce (aria-hidden: čtečka už má aria-label karty)
     el('span', { class: 'vr-car-tag', 'aria-hidden': 'true', text: roomTag(it.img, it.k) }),
     // špendlík „ukázat na plánu" — pointer-only zkratka; klávesnice/čtečka jde
@@ -2824,7 +2842,7 @@ function planFigureHTML(key, floor, t) {
   const orient = (floor.orient && t.plan && t.plan.orient)
     ? '<span class="vr-plan-orient">' + planEsc(t.plan.orient) + '</span>' : '';
   return '<figure class="vr-plan-fig" style="aspect-ratio:' + floor.w + '/' + floor.h + '">'
-    + '<img class="vr-plan-img" src="' + floor.img + PLAN_V + '" alt="' + planEsc(alt) + '" loading="lazy" decoding="async" width="' + floor.w + '" height="' + floor.h + '">'
+    + '<img class="vr-plan-img" src="' + vrUrl(floor.img) + PLAN_V + '" alt="' + planEsc(alt) + '" loading="lazy" decoding="async" width="' + floor.w + '" height="' + floor.h + '">'
     + spots + orient + '</figure>';
 }
 
@@ -2871,7 +2889,7 @@ function planThumbsHTML(p) {
     const on = k === planFloor;
     h += '<button class="vr-plan-thumb" type="button" role="tab" id="vr-plan-tab-' + k + '" data-floor="' + k + '"'
       + ' aria-selected="' + (on ? 'true' : 'false') + '" aria-controls="vr-plan-panel-' + k + '" tabindex="' + (on ? '0' : '-1') + '">'
-      + '<span class="vr-plan-thumb-fig"><img class="vr-plan-thumb-img" src="' + PLAN_DATA[k].img + PLAN_V + '" alt="" loading="lazy" decoding="async" width="' + PLAN_DATA[k].w + '" height="' + PLAN_DATA[k].h + '"></span>'
+      + '<span class="vr-plan-thumb-fig"><img class="vr-plan-thumb-img" src="' + vrUrl(PLAN_DATA[k].img) + PLAN_V + '" alt="" loading="lazy" decoding="async" width="' + PLAN_DATA[k].w + '" height="' + PLAN_DATA[k].h + '"></span>'
       + '<span class="vr-plan-thumb-lab">' + planEsc((p.floors && p.floors[k]) || k) + '</span></button>';
   });
   return h + '</div>';
@@ -3081,7 +3099,7 @@ function renderThumbs() {
       class: 'vrp-thumb', type: 'button', 'data-idx': String(i),
       'data-active': i === state.scene ? 'true' : 'false',
       onclick: () => goScene(i),
-    }, [el('img', { src: 'media/pano/' + files[i] + '_t.jpg', alt: s.name, loading: 'lazy', decoding: 'async', width: '512', height: '256' }), el('span', { text: s.name })]);
+    }, [el('img', { src: vrUrl('media/pano/' + files[i] + '_t.jpg'), alt: s.name, loading: 'lazy', decoding: 'async', width: '512', height: '256' }), el('span', { text: s.name })]);
     host.appendChild(b);
   });
   syncStripArrows();
@@ -3175,7 +3193,7 @@ function renderTrips() {
   t.vylety.items.forEach((it, i) => {
     const art = el('article');
     const src = TRIP_IMAGES[i];
-    if (src) art.appendChild(el('img', { src: src, alt: it.name, loading: 'lazy', width: '1200', height: '800' }));
+    if (src) art.appendChild(el('img', { src: vrUrl(src), alt: it.name, loading: 'lazy', width: '1200', height: '800' }));
     art.appendChild(el('span', { class: 'vr-tag', text: it.tag }));
     art.appendChild(el('h3', { text: it.name }));
     art.appendChild(el('p', { text: it.desc }));
@@ -3188,7 +3206,7 @@ function renderTrips() {
    přál. Mřížka je rychlá i při stovce položek: dlaždice je čtvercový 512px
    náhled s loading="lazy" a pevným width/height (žádný CLS), plná fotka se
    stahuje teprve v lightboxu. */
-function galSquare(f) { return 'media/gallery/sq/' + f.slice(f.lastIndexOf('/') + 1); }
+function galSquare(f) { return vrUrl('media/gallery/sq/' + f.slice(f.lastIndexOf('/') + 1)); }
 function renderGallery() {
   const host = $('#vr-gal'); if (!host) return;
   host.innerHTML = '';
@@ -3758,8 +3776,8 @@ function applySeasonButtons() {
     const on = s === state.season;
     b.setAttribute('data-active', on ? 'true' : 'false');
     if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
-    // href drží i aktuální jazyk, ať je odkaz sdílitelný a bez JS dá totéž
-    if (b.tagName === 'A') b.setAttribute('href', '?season=' + s + '&lang=' + state.lang);
+    // Jazyk je od 10/2026 v adrese (/de/, /pl/, /en/), odkaz nese jen sezónu.
+    if (b.tagName === 'A') b.setAttribute('href', '?season=' + s);
   });
 }
 
@@ -4004,18 +4022,16 @@ function applyThemeColor() {
   if (m) m.setAttribute('content', state.season === 'zima' ? '#eef2f6' : '#0E1311');
 }
 
-/* Jazyk: ?lang= → localStorage vrLang → navigator.language (cs/en/de/pl) → cs.
-   Kontrola přes hasOwnProperty, ne přes `T[x]`: „?lang=constructor" by jinak
-   prošel (zděděná vlastnost Object), uložil se do localStorage a shodil
-   vykreslení stránky při každé další návštěvě. */
+/* JAZYK = ADRESA STRÁNKY (od 10/2026). Každý jazyk má vlastní statickou stránku — / česky,
+   /de/, /pl/, /en/ (vyrábí je tools/gen-jazyky.mjs) — a JS jen čte <html lang>. Dřív se jazyk
+   bral z ?lang= → localStorage → prohlížeče a přepínal se na místě; roboti bez JavaScriptu
+   ale pod každým ?lang= dostali české HTML. Staré odkazy ?lang= a volbu z přepínače (vrLang)
+   teď na „/" vyřizuje přesměrování v <head> (generuje ho tools/gen-jazyky.mjs).
+   Kontrola přes hasOwnProperty, ne přes `T[x]`: zděděné „constructor" by jinak prošlo. */
 function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
-function resolveLang(qs) {
-  const q = (qs.get('lang') || '').toLowerCase();
-  if (isLang(q)) return q;
-  try { const s = localStorage.getItem('vrLang'); if (isLang(s)) return s; } catch (e) {}
-  const nav = (navigator.language || navigator.userLanguage || '').slice(0, 2).toLowerCase();
-  if (isLang(nav)) return nav;
-  return 'cs';
+function resolveLang() {
+  const L = String(document.documentElement.getAttribute('lang') || 'cs').slice(0, 2).toLowerCase();
+  return isLang(L) ? L : 'cs';
 }
 /* Sezóna: ?season= → DATUM → uložená volba (jen v rámci návštěvy).
    Celá logika i hranice sezón žijí v assets/season.js — jediné místo pro celý
@@ -4056,30 +4072,76 @@ function applyLangLinks() {
     }
   });
 }
-/* Promítni jazyk + sezónu do URL (?lang & ?season), ať jsou odkazy sdílitelné. */
+/* Promítni sezónu do URL (?season), ať jsou odkazy sdílitelné. Jazyk je v cestě (/de/…),
+   starý ?lang= se z adresy uklidí. */
 function syncUrl() {
   try {
     const u = new URL(location.href);
-    u.searchParams.set('lang', state.lang);
+    u.searchParams.delete('lang');
     u.searchParams.set('season', state.season);
     history.replaceState(null, '', u.pathname + u.search + u.hash);
   } catch (e) {}
 }
 
-function setLang(lang) {
-  if (!isLang(lang) || state.lang === lang) return;
-  state.lang = lang;
-  try { localStorage.setItem('vrLang', lang); } catch (e) {}
-  applyLangButtons(); applySeasonButtons(); setTexts();
-  renderRatings(); renderBedrooms(); renderPlan(); renderPanoGroups(); renderThumbs(); renderScene();
-  renderTourReturn();  // překlad návratového chipu, pokud zrovna svítí
-  applyStripAria();
-  renderTrips(); renderGallery();
-  renderPriceBlock(); renderCalendar(); renderBookingPanel();
-  renderDirectBook(); renderTrustBand(); renderFooterContact();
-  applyMeta(); applyLangLinks(); syncUrl();
-  // po přepnutí jazyka aktualizuj i případný success/label/msg stav žádosti
-  if ($('#vr-pay-label')) $('#vr-pay-label').textContent = bookSending ? tt().book.sending : tt().book.pay;
+/* PŘEPÍNAČ JAZYKA = ODKAZ na jazykovou verzi (<a class="vr-lang" href="../de/">). Kliknutí
+   si zapamatuje volbu (vrLang — na „/" podle ní přesměruje <head>) a přenese sezónu a kotvu,
+   ať host zůstane, kde byl. Na češtinu jde s ?lang=cs: bez něj by prohlížeč v němčině
+   „/" hned vrátil na /de/, kdyby localStorage nešel zapsat. Ctrl/Cmd/prostřední tlačítko
+   necháváme prohlížeči (nová záložka s čistým odkazem). */
+function wireLangLinks() {
+  $all('a.vr-lang[data-lang]').forEach((a) => a.addEventListener('click', (e) => {
+    const lang = a.getAttribute('data-lang');
+    if (!isLang(lang) || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button > 0) return;
+    try { localStorage.setItem('vrLang', lang); } catch (err) {}
+    e.preventDefault();
+    if (lang === state.lang) return;   // aktivní jazyk: jen potvrdí volbu, stránka zůstane
+    try {
+      const u = new URL(a.getAttribute('href'), location.href);
+      if (lang === 'cs') u.searchParams.set('lang', 'cs');
+      u.searchParams.set('season', state.season);
+      u.hash = location.hash;
+      location.href = u.href;
+    } catch (err) { location.href = a.href; }
+  }));
+}
+/* LIŠTA „TAHLE STRÁNKA JE I V …" — jazykovou verzi NABÍDNE, nikdy nepřesměruje.
+   Kdy: stránka je v jiném jazyce, než si host dřív vybral přepínačem (vrLang), nebo — když
+   nevybíral — než jakým mluví jeho prohlížeč, a ten jazyk web má (Čech na /de/ z odkazu
+   v ChatGPT). Na české stránce nabídne angličtinu i těm, jejichž jazyk web nemá (Nizozemci,
+   Belgičané — x-default v hreflang je taky /en/), jen slovenštinu nechá na češtině. Němce a Poláky na „/" přesměrovává už <head> (gen-jazyky.mjs);
+   angličtinu ne, protože Googlebot má prohlížeč anglický a „/" musí vidět česky.
+   Ukáže se až po prvním posunu, dotyku nebo klávese — robot, který JS spouští, ji do stránky
+   nevykreslí. Zavření platí do konce návštěvy. */
+function langSuggest() {
+  let stored = null;
+  try { stored = localStorage.getItem('vrLang'); } catch (e) {}
+  try { if (sessionStorage.getItem('vrLangBar')) return; } catch (e) {}
+  const navs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''])
+    .map((x) => String(x).slice(0, 2).toLowerCase()).filter(Boolean);
+  // dřív zvolený jazyk (přepínačem) má přednost před jazykem prohlížeče
+  let want = isLang(stored) ? stored : (navs.find(isLang) || null);
+  if (!want && state.lang === 'cs' && navs.length && navs[0] !== 'sk') want = 'en';
+  if (!want || want === state.lang) return;
+  const link = $('a.vr-lang[data-lang="' + want + '"]');
+  const L = T[want].langbar;
+  if (!link || !L) return;
+  const show = () => {
+    if ($('.vr-langbar')) return;
+    const go = el('a', { href: link.getAttribute('href'), hreflang: want, text: L.go });
+    // stejná cesta jako přepínač: uloží volbu a přenese sezónu i kotvu
+    go.addEventListener('click', (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); link.click(); });
+    const bar = el('div', { class: 'vr-langbar', lang: want, role: 'region', 'aria-label': L.text }, [
+      el('span', { text: L.text }), go,
+      el('button', { type: 'button', 'aria-label': (T[want].aria && T[want].aria.close) || '×', text: '×', onclick: () => {
+        bar.remove();
+        try { sessionStorage.setItem('vrLangBar', '1'); } catch (e) {}
+      } }),
+    ]);
+    $('.vr-root').appendChild(bar);
+  };
+  const evs = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+  const once = () => { evs.forEach((ev) => window.removeEventListener(ev, once)); show(); };
+  evs.forEach((ev) => window.addEventListener(ev, once, { passive: true }));
 }
 function eagerLoadSeason(season) {
   // Hero + section photos for a season may be lazy; force them to load so the
@@ -4142,7 +4204,7 @@ function lbSet(i) {
   state.lb = i;
   const it = list[i] || {};
   const im = $('#vr-lb-img');
-  im.src = it.src || '';
+  im.src = vrUrl(it.src || '');
   im.alt = (it.name ? it.name + ' — ' : '') + 'Villa Rudolf';
   if (tag) { tag.textContent = it.tag || ''; tag.style.display = it.tag ? 'block' : 'none'; }
   $('#vr-lb-count').textContent = (i + 1) + ' / ' + list.length;
@@ -4195,7 +4257,7 @@ function ensureThree(cb) {
   if (!threeInjected) {
     threeInjected = true;
     const s = document.createElement('script');
-    s.src = 'vendor/three.min.js'; s.async = true;
+    s.src = vrUrl('vendor/three.min.js'); s.async = true;
     s.onload = cb;
     /* Když se knihovna nestáhne (offline, blokovaný skript), prohlídku
        schováme rovnou — jinak by zůstal prázdný rám a initPano by čekal
@@ -4298,7 +4360,7 @@ function initPano() {
     const yf = PANO_YAWF[f] != null ? PANO_YAWF[f] : 0.5;
     const iy = Math.PI * (1.5 - 2 * yf);
     userYaw = iy; swayBase = iy; yaw = iy; pitch = 0; idle = 0;
-    loader.load('media/pano/' + f + '.jpg', (tex) => {
+    loader.load(vrUrl('media/pano/' + f + '.jpg'), (tex) => {
       if ('colorSpace' in tex) tex.colorSpace = THREE.SRGBColorSpace;
       /* Vyšší svislý záběr ukazuje víc stropu a podlahy, kde je equirect u pólů
          silně stlačený → bez mipmap by to jiskřilo. Textury jsou 4096×2048
@@ -4488,15 +4550,17 @@ function toggleMob(open) {
 function init() {
   document.documentElement.classList.add('js');
   vrZdroj(); // zdroj návštěvy si poznamenat hned na vstupní stránce
-  // Jazyk + sezóna: ?param → localStorage → navigator.language → výchozí.
+  // Jazyk = stránka (<html lang>), sezóna: ?season → datum → uložená volba.
+  // vrLang se ukládá jen kliknutím na přepínač, ne při každém načtení — jinak by
+  // náhodná návštěva /de/ (třeba z odkazu v ChatGPT) přesměrovávala „/" napořád.
   const qsInit = new URLSearchParams(location.search);
-  state.lang = resolveLang(qsInit);
+  state.lang = resolveLang();
   state.season = resolveSeason(qsInit);
-  try { localStorage.setItem('vrLang', state.lang); } catch (e) {}
   persistSeason();
 
-  // language buttons
-  $all('.vr-lang').forEach((b) => b.addEventListener('click', () => setLang(b.getAttribute('data-lang'))));
+  // přepínač jazyka — odkazy na /de/, /pl/, /en/, / — a nabídka jazyka podle prohlížeče
+  wireLangLinks();
+  langSuggest();
   // Přepínač sezóny — odkazy (nav, mobilní menu). Kliknutí přepne bez reloadu;
   // Ctrl/Cmd/prostřední tlačítko necháme projít, ať jde otevřít v novém panelu.
   $all('.vr-segbtn').forEach((b) => b.addEventListener('click', (e) => {
