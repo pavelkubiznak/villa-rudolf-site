@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 23. 9. 2026
+Aktualizováno: 11. 10. 2026
 
 ---
 
@@ -23,7 +23,8 @@ Aktualizováno: 23. 9. 2026
 | Výstupní feedy `data/out/*.ics` — platformy zrcadlí náš kalendář | ✅ **kód 17. 9., importy zapojené 17. 9.** (Airbnb, Booking, FeWo, e-chalupy); v hub módu jde ven jen přímý prodej |
 | Přímý prodej má přednost před ozvěnou vlastního bloku | ✅ **17. 9.** — do `history.json` jde přímý prodej, ozvěna z platformy se zahodí (dřív obráceně) |
 | Megaubytko.cz jako pátý kanál | 🟡 **kód 17. 9., čeká na secret `ICAL_URL_MEGAUBYTKO` + import `megaubytko.ics` u Megaubytka** |
-| **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | ✅ **zamčeno 15. 9. 2026** — `execute` jen `service_role` |
+| **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | ✅ **zamčeno 15. 9. 2026** — `execute` jen `service_role`. ⚠️ Tím ale retence 26 dní **neběžela** (Hetzner ji dál volal anon klíčem, denně 401) |
+| **Retence běží** — pg_cron job `vr-purge-expired` uvnitř DB | ✅ **od 11. 10. 2026** (`20261011_vr_purge_cron.sql`, varianta „anonymizovat, nemazat"); na Hetzneru purge cron, skript i hlídač `vr-purge` zrušeny 11. 10. 2026 (zálohy v `/root/*.bak-2026-10-11`) |
 
 **✅ Šrafování — hotovo a nasazeno 13. 8.** Šrafuje se **jen skutečná dvojitá rezervace**
 (oba pobyty živé ve feedu). Data dala majiteli za pravdu dvakrát: z 15 šrafovaných buněk
@@ -93,24 +94,75 @@ i mimo repo, do databáze šel **jen jeho sha256**) a předán majiteli do sprá
 
 Ověřeno dotazem 16. 9.: `proacl` funkce = `postgres` + `service_role` a nic jiného; staré heslo
 z git historie vrací `unauthorized` (SQLSTATE 28000), stejně jako krátké heslo a `null`; data
-netknutá (31 bookingů, 0 anonymizovaných). `pg_cron` ani `pg_net` v projektu nejsou — funkci
-dnes nic nevolá, spouští se jen ručně service_role klíčem.
+netknutá (31 bookingů, 0 anonymizovaných).
 
-⚠️ **Než ji poprvé spustíš, přečti si „Retence pobytů" níž.** V DB je **0 záznamů ve `vr_persons`**,
-takže pravidlo „smazat bookingy 30+ dní po odjezdu bez evidovaných osob" se dnes týká úplně
-každého proběhlého pobytu — **každý pobyt se stane smazatelným 30. den po odjezdu** a od
-21. 9. 2026 jich pár už za hranicí je (k 22. 9. jeden, dál přibývá zhruba po týdnu:
-27. 9., 6. 10., 13. 10., 26. 10., 3. 11. …). Pustit purge bez rozmyslu znamená přijít
-o historii přímých prodejů.
+**🔴 Co se tím ale rozbilo — zjistil až audit portálu 11. 10. 2026.** Věta „funkci dnes nic
+nevolá", která tu stála od 16. 9., **nebyla pravda**: na Hetzneru běžel cron
+`40 4 * * * /opt/vr-portal/purge-expired.sh` a volal `vr_purge_expired` **anon klíčem**
+(krok (d) z hlavičky `20260908_vr_purge_lockdown.sql` — přepnout volajícího na `service_role` —
+nikdo neudělal). Od 15. 9. tedy každý den HTTP 401 `permission denied for function
+vr_purge_expired`, skript končil chybou, hlídač běhů `hlidac-pip vr-purge` se neodpíchl a od
+2. 10. chodil denně e-mail „3 nedoběhlo" — bez reakce. Výsledek: **26 dní bez retence**; 11. 10.
+v DB 5 rezervací s prošlým `expires_at`, 3 s odjezdem před víc než 30 dny, 0 anonymizovaných,
+všech 30 řádků s telefonem nebo e-mailem. Paradoxně to byla jediná ochrana dat: funkční cron by
+podle tehdejší logiky (krok 2 purge) smazal každý proběhlý pobyt bez evidovaných osob.
 
-Konkrétní číslo si **nepiš z tohohle souboru, ale z databáze** — datum vydání jakéhokoli
-snapshotu ho vzápětí přebije:
+**✅ Od 11. 10. 2026 retence běží — pg_cron uvnitř databáze** (migrace
+`20261011_vr_purge_cron.sql`, nasazena konektorem Supabase 11. 10. 2026; soubor je ve větvi
+`claude/portal-audit`, do `main` jde PR z auditu). Job `vr-purge-expired` běží denně 04:40 UTC
+jako vlastník DB a volá `vr_purge_expired_cron()` bez parametru — **žádný secret mimo DB,
+žádný klíč na serveru, nic k rotaci, nic k hlídání na Hetzneru**; na wrapper nemá EXECUTE
+`anon`, `authenticated` ani `service_role`. Co dělá:
+
+- **30+ dní po odjezdu — anonymizovat, ne mazat:** pryč `phone`, `email`, `door_code`, `notes`,
+  `cleaning_note`, `token_enc`; `token_hash` nahrazen náhodným (starý odkaz hosta přestane
+  platit), `anonymized_at = now()`. Jméno, termín, platforma a počty osob **zůstávají** (historie
+  pobytů, ceník, účetnictví); evidence osob (`vr_persons`) zůstává 6 let ze zákona.
+- **6+ let po odjezdu:** smazat celý pobyt (cascade `vr_persons` — evidenční povinnost skončila).
+- **Pobyty bez evidovaných osob se už 30 dní po odjezdu NEMAŽOU** — jen anonymizují. Tím má bod
+  „Retence pobytů" z Doporučeného pořadí rozhodnutí: **udělal ho audit 11. 10. 2026** (varianta
+  „anonymizovat, nemazat"; odpovídá tomu, co tenhle soubor od 16. 9. chtěl; `vr_admin_list_bookings`
+  anonymizované řádky dál vrací, jen bez tokenu — `/sprava/` je ukáže jako pobyt bez kontaktu,
+  zvláštní označení v UI zatím nemá). **Pavel ho může změnit** — pak se přepíše `vr_purge_expired_cron()`
+  novou migrací, job zůstane. Stará `vr_purge_expired(p_secret)` v DB zůstala (jen `service_role`);
+  volá ji už jen rozbitý cron na Hetzneru (anon klíč → 401, ruší se, viz níž), takže její mazání
+  pobytů bez osob (krok 2) neběží. Ověřeno v živé DB 11. 10. 2026 večer: `pg_cron` nainstalován,
+  job `vr-purge-expired` aktivní, zatím 0 běhů (první 12. 10. 04:40 UTC), 3 pobyty čekají na
+  anonymizaci.
+
+Kontrola běhů (SQL editor nebo konektor):
 
 ```sql
-select count(*) from public.vr_bookings b
-where b.departure < (now() - interval '30 days')
-  and not exists (select 1 from public.vr_persons p where p.booking_id = b.id);
+select jobid, schedule, command, active from cron.job where jobname = 'vr-purge-expired';
+select status, return_message, start_time from cron.job_run_details
+ where jobid = (select jobid from cron.job where jobname = 'vr-purge-expired')
+ order by start_time desc limit 5;
+select count(*) filter (where anonymized_at is not null) as anonymizovano,
+       count(*) filter (where departure < current_date - 30 and anonymized_at is null) as ceka
+  from public.vr_bookings;
 ```
+
+**Hotovo na velínu 11. 10. 2026:** řádek `40 4 * * * /opt/vr-portal/purge-expired.sh` z crontabu root
+odstraněn (záloha `/root/crontab.bak-2026-10-11`), soubor přesunut do `/root/vr-portal-purge-expired.sh.bak-2026-10-11`
+(600), úloha `vr-purge` v `/etc/hlidac/ulohy.conf` zakomentována, pip smazán; `hlidac-kontrola --dry-run` hlásí
+vše v pořádku. Navíc `/etc/logrotate.d/vr-portal` pro `/var/log/vr-weather.log` a `vr-backup.log`.
+Po provedení sem doplnit datum.
+
+**✅ Ve stejný den nasazeno i zpevnění DB `20261011_vr_portal_hardening.sql`** (stejná větev,
+vratné, nic nemaže):
+1. `vr_create_booking(…)` — mrtvá cesta (n8n webhook „VR – nový host" nikdy neběžel), ale anon
+   ji směl volat a ingest secret byl literál v těle funkce s hodnotou v historii veřejného repa →
+   `revoke execute` pro `public`, `anon`, `authenticated`; volat smí jen vlastník DB.
+2. Tabulkové granty `anon`/`authenticated` pryč z `vr_bookings`, `vr_requests`, `vr_album_photos`
+   (RLS bez policy je blokovalo, ale jedna omylem přidaná policy `using (true)` by zveřejnila
+   30 rezervací s telefony; SECURITY DEFINER RPC běží dál).
+3. `vr_verify_token` **už nevrací `notes`** (interní poznámka majitele šla hostovi do
+   localStorage, nikdo ji nezobrazoval) — jen jméno, jazyk, termín a party.
+4. Tříparametrová `vr_update_party(text, integer, integer[])` smazána (zůstává čtyřparametrová).
+5. **SINTERA views** `crm_open_actions`, `urgence_pipeline`, `hook_training_data` běžely
+   s právy vlastníka a anon je směl číst → veřejný anon klíč z portálu četl CRM kontakty SINTERA.
+   Teď `security_invoker = on` + `revoke` pro `anon`/`authenticated` (sdílený projekt = sdílený
+   dosah každého úniku; oddělení projektu je otevřený bod v `MAPA-SYSTEMU.md`).
 
 **🟡 Další dvě migrace z auditu 8. 9. (čekají na spuštění — Actions „DB migrace" nebo SQL editor):**
 `20260908100100_vr_album_bucket.sql` — limit 15 MB a whitelist MIME typů přímo na bucketu
@@ -118,11 +170,10 @@ where b.departure < (now() - interval '30 days')
 `20260908100200_vr_msglog_idx_cleanup.sql` — drop nadbytečného indexu `vr_msglog_booking_idx`
 (unique constraint nad stejným prefixem už index má). Obě jsou idempotentní.
 
-*Souvislost s evidencí pobytů:* stejná funkce maže bookingy 30+ dní po odjezdu, které
-**nemají zapsané osoby** (řádek 57). Pro majitelovo interní účetnictví („kdo tam byl, jak
-dlouho, kolik hostů") to znamená, že proběhlé pobyty bez evidence osob se tiše ztrácejí.
-Než se z `vr_bookings` začne dělat dlouhodobá evidence, je potřeba tohle vyřešit — a v repu
-kalendáře taky 18měsíční prune `history.json`.
+*Souvislost s evidencí pobytů:* stará `vr_purge_expired(p_secret)` mazala bookingy 30+ dní po
+odjezdu, které **nemají zapsané osoby** — proběhlé pobyty bez evidence osob by se tiše ztrácely.
+Od 11. 10. 2026 to pg_cron job nedělá (viz výš: jen anonymizace). Co zbývá: v repu kalendáře
+18měsíční prune `history.json`.
 
 ---
 
@@ -285,15 +336,25 @@ ji neposlal. Teď je smlouva záznam v DB s vykresleným HTML, svázaný s pobyt
 
 | | Stav |
 |---|---|
-| Katalog 49 výletů + 6 restaurací (`portal/data/trips.json`) | ✅ |
-| Překlady výletů cs / de / en (pole `name`, `tagline`, `desc`, `openNote`, `price`) | ✅ kompletní, 0 mezer |
+| Katalog **53 výletů + 7 restaurací** (`villa-rudolf-portal/data/trips.json`, spočítáno 11. 10. 2026) | ✅ |
+| Překlady výletů **cs / de / en / pl** (pole `name`, `tagline`, `desc`, `openNote`, `price`, i `links[].label` a `warn`) | ✅ kompletní, 0 mezer |
 | Stránka `villarudolf.com/vylety/` (index + css + js, ~100 kB) | ✅ běží |
 | Počasí (`forecast.json`, cron na Hetzneru) | ✅ běží |
-| **Polština u výletů** | 🔴 **CHYBÍ** |
+| Polština u výletů | ✅ **hotovo dávno** — `trips.json` má `pl` u všech textů od 17. 7. 2026 (commit `98ae4e9` portálu), rozhraní portálu od 13. 8. 2026 (`d9f583f`); řádek „🔴 CHYBÍ" tu stál omylem až do 11. 10. 2026 |
+| Portál `pavelkubiznak.github.io/villa-rudolf-portal/` pro hosty | ✅ **od 11. 10. 2026 jen demo** — hosta s `?t=` přesměruje na `villarudolf.com/pruvodce/?t=`; `index.html` rozdělen na `index.html` + `app.js` |
+| Sezóna výletů v jádru portálu | ✅ **od 11. 10. 2026:** zima 1. 12.–31. 3., léto 1. 4.–14. 10., 15. 10.–30. 11. jen celoroční výlety (do té doby lyže od 15. 10. — marketingová hranice webu v `assets/season.js` zůstává 15. 10., to je jiná věc). ⚠️ `/pruvodce/` (`assets/planner.js`) a `tv/tv.js` na `main` filtrují výlety ještě podle marketingové sezóny 15. 10.; stejná hranice 1. 12. pro ně je ve větvi `claude/portal-audit-planner`, dokud se nesloučí, host na webu vidí lyže od 15. 10. |
 
-**🔴 Polština.** Web (`site/index.html`) i zprávy hostovi v `/sprava/` umí **4 jazyky
-(cs/de/en/pl)**, ale `trips.json` má jen **3 (cs/de/en)**. Polský host tedy dostane web
-a zprávu polsky, ale průvodce výlety ne. Doplnit `pl` do pěti vícejazyčných polí u 49 výletů.
+**Počty výletů se do dokumentace nepíšou natvrdo** — kdo je potřebuje, spočítá je:
+`node -e 'const j=require("./data/trips.json");console.log(j.trips.length,j.food.length)'`
+v klonu portálu (nebo `loadTripCounts()` v `assets/site.js`). Hodnoty výš platily 11. 10. 2026.
+
+**Odkaz na průvodce hosta platí 14 dní po odjezdu** — `expires_at = departure + 14 dní`
+(`20260915_vr_token_enc.sql`, ř. 138), ne 30. Kdo kde píše „30 dní", píše špatně (portál to
+hostovi tvrdil do 11. 10. 2026; `README.md` a `schema.sql` portálu opravuje audit). V živé DB
+má k 11. 10. 2026 ještě 10 starších řádků (založených před 15. 9.) `expires_at = departure + 30`,
+20 už +14 — přepočítá se při každé úpravě pobytu ve `/sprava/`. Po vypršení
+`vr_verify_token` vrátí prázdno a `/pruvodce/` běží ve veřejném režimu. Od 11. 10. 2026 funkce
+hostovi **nevrací `notes`** (viz zpevnění DB v sekci Kalendář).
 
 ---
 
@@ -369,7 +430,9 @@ lidi přivádí, i když prohlížeč referrer nepošle.
 
 Všechno v repu je napsané a zmergované; **co zbývá, jsou ruční kroky mimo repo** (n8n, extranety,
 router, Nastavení). **Živá DB je od 15. 9. 2026 srovnaná s migracemi v repu** (holds, payments,
-contracts, purge lockdown, wifi config). Další migrace jdou nasadit z GitHubu: fronta
+contracts, purge lockdown, wifi config); **11. 10. 2026 přibyly `20261011_vr_portal_hardening.sql`
+a `20261011_vr_purge_cron.sql`** (nasazeny konektorem, soubory ve větvi `claude/portal-audit` —
+než se sloučí, je živá DB o tyhle dvě napřed před `main`). Další migrace jdou nasadit z GitHubu: fronta
 `supabase/DEPLOY.txt` (workflow „DB nasazení z fronty" běží po merge do `main`) nebo ruční
 Actions „DB migrace (Supabase)"; obě potřebují repo secret `SUPABASE_DB_URL` (dosud chybí,
 postup v hlavičce `.github/workflows/db-migrate.yml`). Třetí cesta je konektor Supabase
@@ -379,7 +442,8 @@ v Claude Code, kterým proběhlo nasazení 15. 9.
    srpnové přímé prodeje (7.–14., 14.–21., 21.–28. 8.) jsou ve všech čtyřech výstupních feedech
    kalendáře (`data/out/*.ics`, ověřeno 23. 9. večer) a platformy je importují od 17. 9.
    U 21.–28. 8. zbývá **ověřit platbu**, než předrezervace 25. 9. propadne (viz Předrezervace, bod 4).
-2. ~~`vr_purge_expired`~~ — **zamčeno 15. 9.** (viz sekce Kalendář)
+2. ~~`vr_purge_expired`~~ — **zamčeno 15. 9.**, ale pak 26 dní neběžela; **od 11. 10. retence
+   běží přes pg_cron** (viz sekce Kalendář). Cron, skript i hlídač `vr-purge` na velínu zrušeny 11. 10. 2026
 3. **Heslo Wi-Fi** — ~~migrace `20260915_vr_admin_config_wifi.sql`~~ nasazena 15. 9.; zbývá vyplnit
    v `/sprava/` → Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
    uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá
@@ -391,11 +455,15 @@ v Claude Code, kterým proběhlo nasazení 15. 9.
 5. **Ověřit `supabase functions deploy album`** — oprava uploadu bez tokenu je v repu od 8. 9.,
    ale že nasazení proběhlo, není nikde zapsáno
 6. **Secrety pro feedy jednotlivých kanálů** (Airbnb, Booking, FeWo, Megaubytko) — kód čeká nasazený, stačí URL z extranetů + zkušební běh
-7. **Retence pobytů** — 30denní mazání bookingů bez osob a 18měsíční prune `history.json`
-   ukusují podklady pro evidenci dřív, než z nich evidence vznikne
+7. **Retence pobytů** — ~~30denní mazání bookingů bez osob~~ **rozhodnuto auditem 11. 10. 2026:
+   anonymizovat, nemazat** (pg_cron `vr-purge-expired`, viz sekce Kalendář; Pavel může změnit).
+   Zbývá 18měsíční prune `history.json` v repu kalendáře
 8. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
-9. **Polština u výletů** — podle toho, jestli chodí polští hosté
+9. ~~**Polština u výletů**~~ — **hotovo už 17. 7. 2026** (`trips.json`, všech 53 výletů cs/de/en/pl; rozhraní portálu 13. 8.) — bod tu byl omylem
 10. **Zprávy** — až bude jasné zadání
+11. **Rozhodnutí Pavla z auditu portálu 11. 10. 2026** — seznam v `MAPA-SYSTEMU.md` → Otevřené
+    (oddělení Supabase od SINTERA, zálohy Supabase na free plánu, přepis git historie portálu,
+    šifrování záloh z Hetzneru na Drive, Google Fonts)
 
 ~~Šrafování v kalendáři~~ — hotovo 13. 8. · ~~Nepotvrzené záznamy v kalendáři~~ — hotovo 9. 9. ·
 ~~Import `VrConflictWatch` do n8n~~ — nahráno 12. 9. · ~~Úklid PR~~ — 15. 9.
@@ -498,7 +566,8 @@ připomene chybějící krok. Migrace `20260915_vr_admin_config_wifi.sql` **nasa
   `vr_verify_token`, `vr_checkin`, `vr_album_*`, tabulka `vr_album_photos` a bucket `vr-album`
   (policies, `file_size_limit`). Vytáhnout z živé DB jednou baseline migrací. Pět souborů má
   stejný prefix `20260724` — abecední pořadí neodpovídá pořadí nasazení. *15. 9.:* `vr_verify_token`
-  už v migracích je (`20260915_vr_interests.sql`), zbytek dál chybí.
+  už v migracích je (`20260915_vr_interests.sql`), zbytek dál chybí. *11. 10.:* `vr_verify_token`
+  znovu definuje `20261011_vr_portal_hardening.sql` (bez `notes`).
 - `_vr_admin_auth`: rate-limit nepočítá neúspěšné pokusy (insert stopy se s výjimkou
   odrolluje) — online brute-force není throttlovaný. Řešení: stopu zapisovat mimo transakci
   nebo vracet boolean místo výjimky.
@@ -521,7 +590,7 @@ připomene chybějící krok. Migrace `20260915_vr_admin_config_wifi.sql` **nasa
 |---|---|---|
 | kalendář (šrafování, 4 feedy, předrezervace) | `villa-booking-calendar` | `~/villa-booking-calendar` |
 | výlety — data a překlady | `villa-rudolf-portal` | `~/villa-rudolf-portal` |
-| výlety — zobrazení, zprávy, `/sprava/` | `villa-rudolf-site` | *(klon zatím není)* |
+| výlety — zobrazení, zprávy, `/sprava/` | `villa-rudolf-site` | `~/villa-rudolf-site` |
 
 **Jedna práce = jedna session.** Session začíná přečtením `MAPA-SYSTEMU.md` a tohohle souboru,
 ne prohledáváním repozitářů.
