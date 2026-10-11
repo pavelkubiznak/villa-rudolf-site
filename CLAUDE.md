@@ -22,7 +22,7 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 | `/registrace/` | registrace hostů (evidence + poplatek z pobytu) | hosté |
 | `/checkin/` | check-in formulář | hosté |
 | `/album/` | fotoalbum pobytu | hosté |
-| `/vylety/`, `/pruvodce/` | tipy na výlety (data z repa `villa-rudolf-portal`) | hosté |
+| `/vylety/`, `/pruvodce/` | tipy na výlety (data z repa `villa-rudolf-portal`); `/pruvodce/?t=` je jediný odkaz, který hosté dostávají — portál na GitHub Pages je od 11. 10. 2026 jen demo a hosty s tokenem přesměrovává sem | hosté |
 | `/tv/` | **průvodce pro hosty na TV ve vile** – obsah aplikace Villa Rudolf na Google TV (APK v repu `jablotron - topení/tv-app`), ovládání šipkami, 4 jazyky; texty v `tv/texty.js`, bez Wi-Fi hesla (veřejné) | hosté na TV |
 | `/info/`, `/podminky/` | informace, podmínky | hosté |
 | `/n8n/` | exporty n8n workflow (importovatelné) | provoz |
@@ -39,6 +39,12 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
   (veřejné, anonymizované). Spojka na Supabase je **`uidh`** = `sha256(iCal UID)[:16]`,
   viz `vr_admin_upsert_booking(p_uidh, …)`.
 - **Autorizace adminu:** `p_admin_key` (ne ingest secret). Klíč nikdy do repa.
+- **Token hosta a retence** (stav 11. 10. 2026): odkaz `?t=` platí **14 dní po odjezdu**
+  (`expires_at`, `20260915_vr_token_enc.sql`), `vr_verify_token` vrací jen jméno, jazyk, termín
+  a party — **bez `notes`** (`20261011_vr_portal_hardening.sql`). Retenci dělá **pg_cron job
+  `vr-purge-expired`** uvnitř DB (04:40 UTC, `20261011_vr_purge_cron.sql`): 30 dní po odjezdu
+  anonymizace kontaktu, poznámek a tokenu (pobyt zůstává), výmaz po 6 letech. Žádný cron ani
+  secret mimo DB; `vr_purge_expired(p_secret)` nic nevolá.
 - **Anonymní počty z průvodce na TV** (`vr_tv_events`, migrace `20261011_vr_tv_events.sql`):
   `tv/tv.js` posílá přes `vr_tv_event(typ, sekce, jazyk)` jen to, která sekce se otevřela
   (host na ní zůstal ≥ 2 s), že se otevřel detail výletu a že byl na obrazovce QR; `assets/tv-qr.js`
@@ -69,8 +75,9 @@ PŘEDREZERVACE ── uhrazeno do splatnosti ──▶ REZERVACE
 | Admin | `vr_admin_list_holds` / `vr_admin_upsert_hold` / `vr_admin_set_hold_status` / `vr_admin_delete_hold` |
 | UI | sekce **Předrezervace** v `/sprava/` + tlačítko „+ Předrezervace" v hlavičce Pobytů |
 
-**Proč vlastní tabulka a ne sloupec ve `vr_bookings`:** `vr_purge_expired` maže bookingy
-30+ dní po odjezdu bez zapsaných osob — přímý prodej i s doklady o faktuře by tiše zmizel.
+**Proč vlastní tabulka a ne sloupec ve `vr_bookings`:** tehdejší `vr_purge_expired` mazala
+bookingy 30+ dní po odjezdu bez zapsaných osob — přímý prodej i s doklady o fakturě by tiše
+zmizel (od 11. 10. 2026 retence pobyty nemaže, jen anonymizuje, ale důvod trvá).
 Hold je navíc obchodní záznam (termín, faktura, platba), ne evidence hosta; host se doplní
 až po zaplacení, vazbou `booking_id`. A nemuselo se sáhnout na `vr_admin_upsert_booking`,
 takže se dá nasadit v libovolném pořadí, aniž by se cokoli rozbilo.
