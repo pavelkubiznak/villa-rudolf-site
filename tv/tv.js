@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var VERZE = '2026-10-11c';
+  var VERZE = '2026-10-11d';
   var PORTAL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/';
   var WEB = 'https://villarudolf.com/';
   /* QR v detailu výletu nevede rovnou na cizí mapu / web, ale přes villarudolf.com/k/ (k/index.html):
@@ -326,7 +326,7 @@
     var qrs = (web ? qrBtn(web, false, true) : '') + (mapa ? qrBtn(mapa, true, !web) : '');
     var foto = t.photo && /^https:\/\//.test(t.photo.url || '') ? '<figure class="foto"><img src="' + esc(t.photo.url) + '" alt="">' +
       (t.photo.credit ? '<figcaption>' + esc(L.foto + ': ' + t.photo.credit) + '</figcaption>' : '') + '</figure>' : '';
-    var kdy = t.openNote ? '<div class="kdy">' + ico('clock') + '<div><span>' + esc(L.otevreno) + '</span><b>' + esc(loc(t.openNote)) + '</b></div></div>' : '';
+    var kdy = t.openNote ? '<div class="kdy' + (loc(t.openNote).length > 150 ? ' dlouhe' : '') + '">' + ico('clock') + '<div><span>' + esc(L.otevreno) + '</span><b>' + esc(loc(t.openNote)) + '</b></div></div>' : '';
     var pozor = t.warn && loc(t.warn) ? '<div class="pozor">' + ico('warn') + '<p>' + esc(loc(t.warn)) + '</p></div>' : '';
     var dl = '<dt>' + esc(L.cestaT) + '</dt><dd>' + esc(cesta(t, true)) + '</dd>' +
       (t.price ? '<dt>' + esc(L.cena) + '</dt><dd>' + esc(loc(t.price)) + '</dd>' : '');
@@ -339,6 +339,13 @@
     var img = $('detail').querySelector('.foto img');
     if (img) img.onerror = function () { var f = img.parentNode; if (f && f.parentNode) f.parentNode.removeChild(f); };   // bez internetu / smazaná fotka → detail bez ní
     $('detail').hidden = false;
+    /* Dlouhé texty: nejdřív menší písmo, pak ustoupí fotka, nakonec se zkrátí popis –
+       otevírací doba, upozornění a cena zůstávají vždy celé. */
+    var lev = $('detail').querySelector('.levy'), pan = $('detail').querySelector('.panel'), fo = lev.querySelector('.foto');
+    var pretika = function () { return lev.scrollHeight > lev.clientHeight + 1; };
+    if (pretika()) pan.classList.add('husty');
+    if (pretika() && fo) lev.removeChild(fo);
+    if (pretika()) pan.classList.add('orez');
     S.predDetailem = document.activeElement;
     $('detailFokus').focus();
     pocitej('vylet', S.sec);               // odkud byl detail otevřen (home / vylety / pocasi), ne který výlet
