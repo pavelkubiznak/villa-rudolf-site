@@ -120,9 +120,11 @@
     if (S.lang === 'de') return den + (kratce ? ' ' : ', ') + d.getDate() + '.' + (kratce ? '' : ' ' + t.mesice[d.getMonth()]);
     return den + ' ' + d.getDate() + '.' + (kratce ? '' : ' ' + t.mesice[d.getMonth()]);
   }
-  /* Hranice sezón jako na webu (assets/season.js): zima 15. 10. – 31. 3. */
-  function zima(d) { var m = d.getMonth() + 1, x = d.getDate(); return m >= 11 || m <= 3 || (m === 10 && x >= 15); }
-  function sezonaOk(t) { var s = t.seasons; return !s || !s.length || s.indexOf(zima(dnes()) ? 'winter' : 'summer') >= 0; }
+  /* PROVOZNÍ sezóna výletů — stejné hranice jako seasonOf() v assets/planner.js, ne marketingová
+     hranice webu 15. 10. (assets/season.js): zima 1. 12. – 31. 3., léto 1. 4. – 14. 10.,
+     15. 10. – 30. 11. jen celoroční výlety (lyže ještě nejedou, koupaliště už zavřela). */
+  function sezona(d) { var m = d.getMonth() + 1, x = d.getDate(); if (m === 12 || m <= 3) return 'winter'; if (m >= 4 && (m < 10 || (m === 10 && x < 15))) return 'summer'; return 'shoulder'; }
+  function sezonaOk(t) { var s = t.seasons; return !s || !s.length || s.indexOf(sezona(dnes())) >= 0; }
   function bazenSezona(d) { var m = d.getMonth() + 1; return m >= 5 && m <= 9; }
   function wxDen(d) { var v = S.fc && S.fc.byLocation && S.fc.byLocation.villa; return v && v.daily ? v.daily[iso(d)] : null; }
   function wxIco(c) { return { clear: 'sun', fair: 'pocasi', partly: 'pocasi', cloudy: 'cloud', fog: 'cloud', showers: 'rain', rain: 'rain', snow: 'snow', sleet: 'snow', thunder: 'storm' }[c] || 'cloud'; }

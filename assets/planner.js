@@ -7,8 +7,8 @@
  * Režim rozhoduje přítomnost platného ?t= — žádná druhá kopie kódu.
  *
  * Data: villa-rudolf-portal (trips.json + forecast.json), jediný zdroj pravdy, fetch
- * za běhu. Doporučovací jádro (partyFlags / eligible / scoreTrip / whyBadges /
- * buildPlan / CAT) je převzato ze sémantiky ostrého guest portálu.
+ * za běhu. Doporučovací jádro (partyFlags / seasonOf / eligible / scoreTrip / whyBadges /
+ * buildPlan / CAT) žije od 11. 10. 2026 JEN TADY — portál je demo a hosty posílá sem.
  *
  * OSOBNÍ DATA (jméno, termín pobytu, věky dětí) se renderují VÝHRADNĚ v režimu
  * 'guest' — na indexované /vylety/ se nikdy neobjeví (viz renderHeroHTML,
@@ -73,7 +73,7 @@
       footLabel: 'pěšky od vily', carLabel: 'min autem', detail: 'Detail',
       warnReservation: 'Pro skupinu rezervujte předem', warnDocs: 'Do Polska doklad i pro každé dítě',
       warnAge: function (n) { return 'Vhodné od ' + n + ' let'; }, warnCapacity: 'Před cestou ověřte obsazenost online',
-      why: { rain: 'ideální za deště', clear: 'krásný den ven', heat: 'osvěžení v horku', teen: 'pro teenagery', kids: 'pro děti', foot: 'bez auta', cold: 'do chladna', adrenalin: 'adrenalin', indoor: 'pod střechu' },
+      why: { rain: 'ideální za deště', clear: 'krásný den ven', heat: 'osvěžení v horku', teen: 'pro teenagery', kids: 'pro děti', foot: 'bez auta', cold: 'do chladna', adrenalin: 'adrenalin', indoor: 'pod střechu', moto: 'pro motorkáře' },
       cats: { walk: 'túra', viewpoint: 'výhledy', animals: 'zvířátka', kids: 'pro děti', water: 'koupání', rain: 'za deště', adrenalin: 'adrenalin', culture: 'kultura' },
       tags: { foot: 'pěšky od vily', rain: 'i za deště', outdoor: 'venku', easy: 'nenáročné', hard: 'náročné', heat: 'do horka', clear: 'za jasna', stairs: 'schody', reservation: 'rezervace', border: 'Polsko · doklady' }
     },
@@ -113,7 +113,7 @@
       footLabel: 'zu Fuß ab Villa', carLabel: 'Min. mit dem Auto', detail: 'Details',
       warnReservation: 'Für die Gruppe vorab reservieren', warnDocs: 'Nach Polen Ausweis auch für jedes Kind',
       warnAge: function (n) { return 'Ab ' + n + ' Jahren'; }, warnCapacity: 'Vor der Fahrt Auslastung online prüfen',
-      why: { rain: 'ideal bei Regen', clear: 'schöner Tag draußen', heat: 'Abkühlung bei Hitze', teen: 'für Teenager', kids: 'für Kinder', foot: 'ohne Auto', cold: 'für kühle Tage', adrenalin: 'Adrenalin', indoor: 'überdacht' },
+      why: { rain: 'ideal bei Regen', clear: 'schöner Tag draußen', heat: 'Abkühlung bei Hitze', teen: 'für Teenager', kids: 'für Kinder', foot: 'ohne Auto', cold: 'für kühle Tage', adrenalin: 'Adrenalin', indoor: 'überdacht', moto: 'für Motorradfahrer' },
       cats: { walk: 'Wanderung', viewpoint: 'Aussichten', animals: 'Tiere', kids: 'für Kinder', water: 'Baden', rain: 'bei Regen', adrenalin: 'Adrenalin', culture: 'Kultur' },
       tags: { foot: 'zu Fuß', rain: 'auch bei Regen', outdoor: 'draußen', easy: 'leicht', hard: 'anspruchsvoll', heat: 'für heiße Tage', clear: 'bei klarem Wetter', stairs: 'Treppen', reservation: 'Reservierung', border: 'Polen · Ausweis' }
     },
@@ -153,7 +153,7 @@
       footLabel: 'on foot from the villa', carLabel: 'min by car', detail: 'Details',
       warnReservation: 'Book ahead for a group', warnDocs: 'For Poland, ID for every child too',
       warnAge: function (n) { return 'Suitable from age ' + n; }, warnCapacity: 'Check live occupancy before you go',
-      why: { rain: 'ideal in rain', clear: 'great day outside', heat: 'cool off in the heat', teen: 'for teens', kids: 'for kids', foot: 'no car needed', cold: 'for cool days', adrenalin: 'adrenaline', indoor: 'indoors' },
+      why: { rain: 'ideal in rain', clear: 'great day outside', heat: 'cool off in the heat', teen: 'for teens', kids: 'for kids', foot: 'no car needed', cold: 'for cool days', adrenalin: 'adrenaline', indoor: 'indoors', moto: 'for riders' },
       cats: { walk: 'hike', viewpoint: 'views', animals: 'animals', kids: 'for kids', water: 'swimming', rain: 'rainy-day', adrenalin: 'adrenaline', culture: 'culture' },
       tags: { foot: 'walkable', rain: 'rainy-day ok', outdoor: 'outdoors', easy: 'easy', hard: 'strenuous', heat: 'for hot days', clear: 'clear weather', stairs: 'stairs', reservation: 'booking', border: 'Poland · ID' }
     },
@@ -193,7 +193,7 @@
       footLabel: 'pieszo od willi', carLabel: 'min samochodem', detail: 'Szczegóły',
       warnReservation: 'Dla grupy rezerwujcie wcześniej', warnDocs: 'Do Polski dokument także dla dziecka',
       warnAge: function (n) { return 'Od ' + n + ' lat'; }, warnCapacity: 'Przed wyjazdem sprawdźcie obłożenie online',
-      why: { rain: 'idealne na deszcz', clear: 'piękny dzień na zewnątrz', heat: 'ochłoda w upale', teen: 'dla nastolatków', kids: 'dla dzieci', foot: 'bez auta', cold: 'na chłód', adrenalin: 'adrenalina', indoor: 'pod dachem' },
+      why: { rain: 'idealne na deszcz', clear: 'piękny dzień na zewnątrz', heat: 'ochłoda w upale', teen: 'dla nastolatków', kids: 'dla dzieci', foot: 'bez auta', cold: 'na chłód', adrenalin: 'adrenalina', indoor: 'pod dachem', moto: 'dla motocyklistów' },
       cats: { walk: 'wędrówka', viewpoint: 'widoki', animals: 'zwierzęta', kids: 'dla dzieci', water: 'kąpiel', rain: 'na deszcz', adrenalin: 'adrenalina', culture: 'kultura' },
       tags: { foot: 'pieszo od willi', rain: 'także na deszcz', outdoor: 'na zewnątrz', easy: 'łatwe', hard: 'wymagające', heat: 'na upały', clear: 'przy pogodzie', stairs: 'schody', reservation: 'rezerwacja', border: 'Polska · dokumenty' }
     }
@@ -286,49 +286,87 @@
   function wxIcon(c) { return (CAT[c] && CAT[c].ic) || 'i-cloud'; }
   function wxText(c, lang) { var m = CAT[c] || CAT.cloudy; return m[lang] || m.cs; }
 
-  /* ===================== Doporučovací jádro (shodné s ostrým portálem) ===================== */
+  /* ===================== Doporučovací jádro =====================
+   * Od 11. 10. 2026 je TOHLE jediné živé jádro: hosté chodí na /pruvodce/?t=, portál
+   * (pavelkubiznak.github.io/villa-rudolf-portal) je jen demo a hosty s tokenem přesměrovává sem.
+   * Přeneseno z portálu i s opravami, které tu chyběly (vítr/bouřka v místě výletu, batole,
+   * zájmy, parta bez dětí, sníh, sezóna per den, alternativy bez opakování). */
   function partyFlags(p) {
     var kids = (p && p.children) || [];
     var adults = (p && p.adults) || 0;
+    var zajmy = (p && p.interests) || [];   // z vr_verify_token: party.interests (whitelist drží DB)
+    var teen = kids.some(function (a) { return a >= 12; });
     return {
       size: adults + kids.length,
       minKidAge: kids.length ? Math.min.apply(null, kids) : null,
       hasToddler: kids.some(function (a) { return a <= 4; }),
       hasYoungKid: kids.some(function (a) { return a >= 5 && a <= 9; }),
-      hasKid: kids.some(function (a) { return a <= 11; }),
-      hasTeen: kids.some(function (a) { return a >= 12; }) || (kids.length === 0),
-      isGroup: (adults + kids.length) >= 8
+      hasKid: kids.some(function (a) { return a <= 11; }),   // dítě do 11 let – hřiště a dětské parky dávají smysl
+      hasTeen: teen,                                           // jen skutečný teenager (odznak „adrenalin")
+      activeParty: teen || kids.length === 0,                  // bez dětí = dospělá parta: výhledy a adrenalin nahoru
+      hasKids: kids.length > 0,
+      isGroup: (adults + kids.length) >= 8,
+      interests: zajmy,
+      isMoto: zajmy.indexOf('moto') >= 0
     };
   }
+  function hasInterest(trip, fl) {
+    var ti = trip.interests || [], fi = (fl && fl.interests) || [];
+    for (var i = 0; i < ti.length; i++) if (fi.indexOf(ti[i]) >= 0) return true;
+    return false;
+  }
+  // Vítr: model met.no (~9 km) vrchol Sněžky nerozliší – za 134 běhů cronu (VII–IX 2026) byl max 30 km/h
+  // u vily a 27 km/h v bodě lanovky, dřívější hranice 45 tedy nikdy nesepnula. Hranice provozu lanovky
+  // (~60 km/h v nárazech) odpovídá modelovému průměru zhruba 30–35. 35 je odhad – kalibrovat proti odstávkám.
+  var WIND_LIMIT_KMH = 35;
   // tvrdé filtry pro daný den
   function eligible(trip, day, fl) {
-    if (trip.needsClearLowWind) { if (day && (isWet(day.cat) || day.cat === 'fog' || (day.windKmh && day.windKmh >= 45))) return false; }
-    if (fl.hasToddler && trip.effort === 'hard') return false;
+    if (!seasonOk(trip, day && day.date)) return false; // lyže v červenci a koupaliště v lednu ven z plánu (v katalogu zůstávají)
+    if (trip.needsClearLowWind && day) {
+      // počasí v místě výletu (Sněžka, Černá hora), ne u vily v údolí; když chybí, vezmi vilu
+      var w = (day.date && wxFor(DATA.forecast, trip.id, day.date)) || day;
+      if (isWet(w.cat) || w.thunder || day.thunder || w.cat === 'fog' || (w.windKmh && w.windKmh >= WIND_LIMIT_KMH)) return false;
+    }
+    // hard = ne pro batolata, pokud výlet není přímo pro ně napsaný (trasa pro sportovní kočárek)
+    if (fl.hasToddler && trip.effort === 'hard' && (trip.bestFor || []).indexOf('toddler') < 0) return false;
+    // do plánu nedoporučuj výlety s věkovým limitem nad nejmladší dítě (v katalogu zůstávají)
     if (trip.minAge && fl.minKidAge != null && fl.minKidAge < trip.minAge) return false;
+    // interests = pro koho je výlet navíc zajímavý (jen bonus ve skóre).
+    // interestOnly = bez toho zájmu nedává smysl vůbec (vyjížďka po serpentinách
+    // rodině s kočárkem), takže ven z plánu – v katalogu zůstává.
+    if (trip.interestOnly && !hasInterest(trip, fl)) return false;
     return true;
   }
   var KIDS_POOL = ['janske-hallenbad', 'baumwipfelpfad', 'aqua-vrchlabi', 'aquapark-karpacz', 'hricky-buky'];
   var TEEN_POOL = ['bobsled-pec', 'ebikes', 'snezka-cablecar'];
   function scoreTrip(trip, day, fl) {
     var s = 0, c = day ? day.cat : null, hot = day && day.max >= 28, cold = day && day.max <= 12;
+    var zimni = (trip.seasons || []).indexOf('winter') >= 0; // lyže: mráz a sníh nejsou handicap, ale důvod
     if (c) {
-      if (['rain', 'heavyrain', 'thunder'].indexOf(c) >= 0) { s += (trip.indoorOrCovered || trip.rainOk) ? 3 : -3.5; }
+      if (c === 'snow') { s += zimni ? 2 : ((trip.indoorOrCovered || trip.rainOk) ? 3 : -3.5); }
+      else if (['rain', 'heavyrain', 'thunder'].indexOf(c) >= 0) { s += (trip.indoorOrCovered || (trip.rainOk && c !== 'thunder')) ? 3 : -3.5; } // za bouřky jen pod střechu
       else if (c === 'showers') { s += (trip.indoorOrCovered || trip.rainOk) ? 1 : -1; }
       else if (isNice(c)) { s += trip.outdoor ? 2 : (trip.lovesHeat ? 0 : -1); }
     }
     if (hot) { if (trip.lovesHeat) s += 3; else if (trip.outdoor && trip.effort !== 'easy') s -= 1.5; }
-    if (cold) { s += trip.indoorOrCovered ? 1 : -1; }
-    if (fl.hasTeen) { if (['adrenalin', 'active', 'viewpoint'].indexOf(trip.category) >= 0 || TEEN_POOL.indexOf(trip.id) >= 0) s += 1.5; }
+    if (cold && !zimni) { s += trip.indoorOrCovered ? 1 : -1; }
+    if (fl.activeParty) { if (['adrenalin', 'viewpoint'].indexOf(trip.category) >= 0 || TEEN_POOL.indexOf(trip.id) >= 0) s += 1.5; }
     if (fl.hasToddler || fl.hasYoungKid) { if (KIDS_POOL.indexOf(trip.id) >= 0) s += 1.5; if (trip.stairs) s -= 1; }
     if (trip.byFoot) s += 0.6;
+    // parta bez dětí: dětské atrakce dolů. Bez toho dostali čtyři motorkáři
+    // do doporučení dětský zábavní park.
+    if (!fl.hasKid && trip.category === 'kids') s -= 2.5; // hasKid = dítě do 11 let; teenagery hřiště nezajímá
+    // zájmový bonus – motorkáři dostanou nahoru to, co je baví (muzeum, serpentiny, vyjížďka)
+    if (hasInterest(trip, fl)) s += 2.5;
     return s;
   }
   function whyBadges(trip, day, fl, L) {
     var w = L.why, out = [], c = day ? day.cat : null, hot = day && day.max >= 28, cold = day && day.max <= 12;
-    if (c && ['rain', 'heavyrain', 'thunder', 'showers'].indexOf(c) >= 0 && (trip.indoorOrCovered || trip.rainOk)) out.push(w.rain);
+    if (c && ['rain', 'heavyrain', 'thunder', 'showers', 'snow'].indexOf(c) >= 0 && (trip.indoorOrCovered || (trip.rainOk && c !== 'thunder'))) out.push(w.rain);
     else if (hot && trip.lovesHeat) out.push(w.heat);
     else if (c && isNice(c) && trip.outdoor) out.push(w.clear);
     else if (cold && trip.indoorOrCovered) out.push(w.cold);
+    if (fl.isMoto && (trip.interests || []).indexOf('moto') >= 0) out.push(w.moto);
     if (fl.hasTeen && TEEN_POOL.indexOf(trip.id) >= 0) out.push(w.adrenalin);
     if ((fl.hasToddler || fl.hasYoungKid) && ['janske-hallenbad', 'baumwipfelpfad', 'hricky-buky'].indexOf(trip.id) >= 0) out.push(w.kids);
     if (trip.byFoot) out.push(w.foot);
@@ -336,18 +374,28 @@
   }
   // plán na celý pobyt: anti-opakování + přeskočení navštívených
   function buildPlan(trips, days, fl, visited) {
-    var used = {}, plan = [];
-    for (var i = 0; i < days.length; i++) {
+    var used = {}, plan = [], i, r;
+    visited = visited || {};
+    for (i = 0; i < days.length; i++) {
       var day = days[i];
       var pool = trips.filter(function (t) { return eligible(t, day, fl) && !visited[t.id]; });
       if (!pool.length) pool = trips.filter(function (t) { return eligible(t, day, fl); }); // pojistka, když je vše odškrtnuté
       var ranked = pool.map(function (t) { return { t: t, sc: scoreTrip(t, day, fl) }; }).sort(function (a, b) { return b.sc - a.sc; });
       var pick = null;
-      for (var r = 0; r < ranked.length; r++) { if (!used[ranked[r].t.id]) { pick = ranked[r]; break; } }
-      if (!pick) pick = ranked[0];
+      for (r = 0; r < ranked.length; r++) { if (!used[ranked[r].t.id]) { pick = ranked[r]; break; } }
+      if (!pick) pick = ranked[0] || null;
       if (pick) used[pick.t.id] = 1;
-      var alts = ranked.filter(function (r2) { return pick && r2.t.id !== pick.t.id && r2.sc > 0; }).slice(0, 2).map(function (r2) { return r2.t; });
-      plan.push({ day: day, pick: pick ? pick.t : null, alts: alts });
+      plan.push({ day: day, pick: pick ? pick.t : null, ranked: ranked });
+    }
+    // alternativy až po výběru všech dnů: nenabízej hlavní tip jiného dne a každou alternativu
+    // ukaž jen jednou – jinak se „Stezka korunami stromů" opakovala 13× za čtrnáctidenní pobyt
+    var shown = {};
+    for (var k in used) if (Object.prototype.hasOwnProperty.call(used, k)) shown[k] = 1;
+    for (i = 0; i < plan.length; i++) {
+      var p = plan[i];
+      p.alts = p.ranked.filter(function (x) { return !shown[x.t.id] && x.sc > 0; }).slice(0, 2).map(function (x) { return x.t; });
+      p.alts.forEach(function (t) { shown[t.id] = 1; });
+      delete p.ranked;
     }
     return plan;
   }
@@ -403,10 +451,37 @@
   /* ===================== Sezónní filtr =====================
    * trips.json může (ale nemusí) nést pole `seasons`: ["summer"] / ["winter"] /
    * obojí. Cíl BEZ toho pole se považuje za celoroční — díky tomu funguje
-   * plánovač i před tím, než majitel pole do katalogu doplní. */
-  function seasonOk(t) {
+   * plánovač i před tím, než majitel pole do katalogu doplní.
+   *
+   * PROVOZNÍ sezóna výletů podle data dne — NE marketingová hranice webu (assets/season.js,
+   * zima od 15. 10. kvůli poptávce). Lanovky a sjezdovky jedou od prosince, koupaliště do půlky října:
+   *   winter   1. 12. – 31. 3.
+   *   summer   1. 4. – 14. 10.
+   *   shoulder 15. 10. – 30. 11.  → jen celoroční výlety (lyže ještě nejedou, koupaliště už zavřela) */
+  function seasonOf(iso) {
+    var m = +iso.slice(5, 7), d = +iso.slice(8, 10);
+    if (m === 12 || m <= 3) return 'winter';
+    if (m >= 4 && (m < 10 || (m === 10 && d < 15))) return 'summer';
+    return 'shoulder';
+  }
+  /* Výlet pro konkrétní den pobytu. Bez data (veřejný wizard na /vylety/ bez pobytu) rozhoduje dnešek. */
+  function seasonOk(t, iso) {
     var s = t && t.seasons;
     if (!s || !s.length) return true;
+    return s.indexOf(seasonOf(iso || todayISO())) >= 0;
+  }
+  /* Katalog: host vidí výlety sezón všech dnů SVÉHO pobytu (pobyt přes 1. 12. má lyže i celoroční,
+   * pobyt v listopadu jen celoroční) — ne podle toho, co ukazuje web dnes. Veřejný /vylety/ se dál
+   * řídí přepínačem Léto/Zima webu (S.season): návštěvník si jím prohlíží nabídku na termín, který
+   * teprve plánuje. */
+  function catalogSeasonOk(t) {
+    var s = t && t.seasons;
+    if (!s || !s.length) return true;
+    if (S.mode === 'guest' && DATA.guest && DATA.guest.arrival && DATA.guest.departure) {
+      var set = {};
+      daysBetween(DATA.guest.arrival, DATA.guest.departure).forEach(function (d) { set[seasonOf(d)] = 1; });
+      return s.some(function (x) { return !!set[x]; });
+    }
     return s.indexOf(S.season === 'zima' ? 'winter' : 'summer') >= 0;
   }
 
@@ -504,7 +579,8 @@
   function wizFlags() {
     var base = DATA.guest && DATA.guest.party ? DATA.guest.party : { adults: 2, children: [] };
     var kids = S.wiz.grp === 'kocarek' ? [3] : S.wiz.grp === 'deti' ? [8] : [];
-    return partyFlags({ adults: base.adults || 2, children: kids });
+    // zájmy (moto) zůstávají z rezervace i ve wizardu — osa „Kdo jede" mění jen děti
+    return partyFlags({ adults: base.adults || 2, children: kids, interests: base.interests || [] });
   }
   /* Dny s reálnou předpovědí — jen host. Veřejná osa počasí je syntetická (viz synthDay). */
   function wizDays() {
@@ -541,7 +617,6 @@
     var fl = wizFlags();
     var pool = DATA.trips.filter(function (t) {
       if (S.visited[t.id]) return false;
-      if (!seasonOk(t)) return false;
       if (S.wiz.car === 'nocar' && !t.byFoot) return false;
       if (!durMatch(tripDur(t), S.wiz.dur)) return false;
       return eligible(t, day, fl);
@@ -648,7 +723,7 @@
       return '<button class="vg-chip" data-filter="' + f + '" data-on="' + (filter === f) + '">' + esc(L.filters[f]) + '</button>';
     }).join('');
 
-    var inSeason = DATA.trips.filter(seasonOk);
+    var inSeason = DATA.trips.filter(catalogSeasonOk);
     var visible = inSeason.filter(function (t) { return matchFilter(t, filter); });
     var counter = '<div class="vg-count"><span>' + esc(fill(L.counter, { n: visible.length, m: inSeason.length })) + '</span>'
       + (filter !== 'vse' ? '<button class="vg-clear" data-filter="vse">' + esc(L.clearFilter) + '</button>' : '') + '</div>';
@@ -725,8 +800,9 @@
     if (S.mode !== 'guest' || !DATA.guest) return [];
     var fl = partyFlags(DATA.guest.party || { adults: 2, children: [] });
     var stay = daysBetween(DATA.guest.arrival, DATA.guest.departure);
+    // den nese předpověď u vily; výlety s needsClearLowWind si v eligible() sáhnou na předpověď ve svém místě
     var days = stay.map(function (d) { return Object.assign({ date: d }, wxFor(DATA.forecast, CFG.VILLA, d) || {}); });
-    return buildPlan(DATA.trips.filter(seasonOk), days, fl, S.visited);
+    return buildPlan(DATA.trips, days, fl, S.visited);
   }
 
   function renderApp(preserveScroll) {
@@ -1021,7 +1097,7 @@
        v pásu na /vylety/ se jimi po načtení přepíšou, ať nikdy nelžou. */
     counts: function () {
       var z = { villa: 0, near: 0, far: 0 };
-      DATA.trips.filter(seasonOk).forEach(function (t) { if (z[t.zone] != null) z[t.zone]++; });
+      DATA.trips.filter(catalogSeasonOk).forEach(function (t) { if (z[t.zone] != null) z[t.zone]++; });
       return { total: z.villa + z.near + z.far, foot: z.villa, car: z.near, day: z.far };
     },
     openDetail: function (id) { if (booted) openDetail(id); else boot().then(function () { openDetail(id); }); },
