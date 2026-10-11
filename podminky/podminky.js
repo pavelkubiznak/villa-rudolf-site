@@ -25,14 +25,17 @@
       gdprTitle: 'Ochrana osobních údajů',
       gdprRows: [
         ['Správce údajů', 'Sintera Czech s.r.o., IČO 29130336, Orlická 163/18, 500 03 Hradec Králové'],
-        ['Účel', 'Vaše údaje zpracováváme výhradně kvůli vyřízení žádosti o rezervaci a komunikaci s vámi ohledně pobytu.'],
-        ['Rozsah údajů', 'Jméno, e-mail, telefon, termín pobytu a text vaší zprávy.'],
-        ['Uložení', 'Údaje jsou bezpečně uloženy u zpracovatele Supabase (datová centra v EU) a uchováváme je jen po nezbytně nutnou dobu.'],
-        ['Vaše práva', 'Máte právo na přístup k údajům, jejich opravu i výmaz, na omezení zpracování a na vznesení námitky. Stačí nás kontaktovat.'],
-        ['Zákonná evidence', 'Evidenci ubytovaných osob (domovní kniha a kniha k poplatku z pobytu) jsme ze zákona povinni uchovávat po dobu 6 let a nelze ji na žádost vymazat dříve.'],
+        ['Poptávka a rezervace', 'Jméno, e-mail, telefon, termín pobytu, počet osob a text vaší zprávy — abychom vyřídili poptávku, uzavřeli ubytovací smlouvu a domluvili s vámi průběh pobytu. Právní základ: plnění smlouvy.'],
+        ['Zákonná evidence ubytovaných', 'Jméno, datum narození a adresa, u cizinců také státní občanství a číslo dokladu — pro domovní knihu, poplatek z pobytu a hlášení cizinecké policii (UbyPort). Právní základ: zákonná povinnost; evidenci uchováváme 6 let a nelze ji na žádost vymazat dříve.'],
+        ['Osobní průvodce výlety', 'Odkaz s tokenem jen pro vás. Průvodce zná vaše jméno, termín a složení skupiny (počet dospělých a dětí, případně zájmy), aby doporučil výlety na míru. Odkaz platí 14 dní po odjezdu.'],
+        ['Provoz vily', 'Kód ke dveřím a lednici a poznámky k pobytu (např. postýlka, dřívější příjezd) — jen po dobu pobytu, aby vše fungovalo bez čekání.'],
+        ['Kde údaje jsou', 'U zpracovatele Supabase (servery AWS v Londýně, Spojené království — země s rozhodnutím EU o odpovídající ochraně) a v e-mailu a kalendáři majitele. Rezervační portály (Booking.com, Airbnb, FeWo-direkt, e-chalupy) jsou samostatní správci a řídí se vlastními podmínkami.'],
+        ['Doba uchování', 'Kontaktní údaje, poznámky a kód ke dveřím se 30 dní po odjezdu automaticky anonymizují. Evidenci ubytovaných uchováváme 6 let, účetní doklady po dobu stanovenou zákonem.'],
+        ['Měření návštěvnosti a externí zdroje', 'Návštěvnost webu i průvodce měříme nástrojem Umami — bez cookies a bez ukládání IP adres. Data o výletech a počasí načítáme z vlastních zdrojů; písma z Google Fonts (Google LLC, USA).'],
+        ['Vaše práva', 'Přístup k údajům, oprava, výmaz, omezení zpracování, námitka a přenositelnost. Stížnost můžete podat u Úřadu pro ochranu osobních údajů (uoou.gov.cz). Žádosti vyřídíme do 30 dnů.'],
         ['Kontakt', '<a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a>'],
       ],
-      cookies: 'Web nepoužívá žádné sledovací cookies. Návštěvnost měříme anonymně nástrojem Umami, který funguje zcela bez cookies.',
+      cookies: 'Web ani průvodce nepoužívají žádné sledovací cookies. Návštěvnost měříme anonymně nástrojem Umami, který funguje bez cookies a neukládá IP adresy.',
       operatorTitle: 'Provozovatel',
       operatorRows: [
         ['Provozovatel', 'Sintera Czech s.r.o.'],
@@ -65,14 +68,17 @@
       gdprTitle: 'Privacy (personal data)',
       gdprRows: [
         ['Data controller', 'Sintera Czech s.r.o., Company ID 29130336, Orlická 163/18, 500 03 Hradec Králové, Czech Republic'],
-        ['Purpose', 'We process your data solely to handle your booking request and to communicate with you about your stay.'],
-        ['Data collected', 'Name, email, phone, dates of stay and the text of your message.'],
-        ['Storage', 'Data is stored securely with our processor Supabase (data centres in the EU) and kept only for as long as necessary.'],
-        ['Your rights', 'You have the right to access, correct or erase your data, to restrict processing and to object. Just get in touch.'],
-        ['Statutory record', 'The record of accommodated guests (guest book and the tourist-tax register) must by law be kept for 6 years and cannot be erased on request any sooner.'],
+        ['Enquiry and booking', 'Name, email, phone, dates of stay, number of guests and the text of your message — to handle your enquiry, conclude the accommodation contract and communicate with you about the stay. Legal basis: performance of a contract.'],
+        ['Statutory guest register', 'Name, date of birth and address; for foreign nationals also citizenship and ID document number — for the guest book, the tourist tax and the report to the Czech Foreign Police (UbyPort). Legal basis: legal obligation; kept for 6 years and cannot be erased on request any sooner.'],
+        ['Personal trip guide', 'A link with a token just for you. The guide knows your name, dates and party (number of adults and children, optionally interests) so it can recommend trips that fit. The link works for 14 days after departure.'],
+        ['Running the villa', 'Door and fridge code and notes about your stay (e.g. a cot, early arrival) — only for the duration of the stay, so everything works without waiting.'],
+        ['Where the data is', 'With our processor Supabase (AWS servers in London, United Kingdom — a country with an EU adequacy decision) and in the owner’s email and calendar. Booking platforms (Booking.com, Airbnb, FeWo-direkt, e-chalupy) are independent controllers under their own terms.'],
+        ['Retention', 'Contact details, notes and the door code are anonymised automatically 30 days after departure. The guest register is kept for 6 years, accounting records for the period set by law.'],
+        ['Analytics and external sources', 'Traffic on the site and in the guide is measured with Umami — no cookies, no IP addresses stored. Trip and weather data come from our own sources; fonts are loaded from Google Fonts (Google LLC, USA).'],
+        ['Your rights', 'Access, rectification, erasure, restriction of processing, objection and data portability. You may also lodge a complaint with the Czech Data Protection Office (uoou.gov.cz). We respond to requests within 30 days.'],
         ['Contact', '<a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a>'],
       ],
-      cookies: 'The site uses no tracking cookies. We measure traffic anonymously with Umami, which works entirely without cookies.',
+      cookies: 'Neither the site nor the guide uses tracking cookies. We measure traffic anonymously with Umami, which works without cookies and does not store IP addresses.',
       operatorTitle: 'Operator',
       operatorRows: [
         ['Operator', 'Sintera Czech s.r.o.'],
@@ -105,14 +111,17 @@
       gdprTitle: 'Datenschutz',
       gdprRows: [
         ['Verantwortlicher', 'Sintera Czech s.r.o., IČO 29130336, Orlická 163/18, 500 03 Hradec Králové, Tschechien'],
-        ['Zweck', 'Wir verarbeiten eure Daten ausschließlich zur Bearbeitung der Buchungsanfrage und zur Kommunikation über euren Aufenthalt.'],
-        ['Umfang', 'Name, E-Mail, Telefon, Aufenthaltstermin und der Text eurer Nachricht.'],
-        ['Speicherung', 'Die Daten werden sicher beim Auftragsverarbeiter Supabase (Rechenzentren in der EU) gespeichert und nur so lange wie nötig aufbewahrt.'],
-        ['Eure Rechte', 'Ihr habt das Recht auf Auskunft, Berichtigung und Löschung, auf Einschränkung der Verarbeitung und auf Widerspruch. Kontaktiert uns einfach.'],
-        ['Gesetzliche Aufbewahrung', 'Das Verzeichnis der beherbergten Personen (Hausbuch und Register zur Aufenthaltsabgabe) müssen wir gesetzlich 6 Jahre aufbewahren; es kann auf Wunsch nicht früher gelöscht werden.'],
+        ['Anfrage und Buchung', 'Name, E-Mail, Telefon, Aufenthaltstermin, Personenzahl und der Text eurer Nachricht — um eure Anfrage zu bearbeiten, den Beherbergungsvertrag zu schließen und mit euch über den Aufenthalt zu kommunizieren. Rechtsgrundlage: Vertragserfüllung.'],
+        ['Gesetzliches Gästeverzeichnis', 'Name, Geburtsdatum und Anschrift, bei ausländischen Gästen auch Staatsangehörigkeit und Ausweisnummer — für das Hausbuch, die Aufenthaltsabgabe und die Meldung an die tschechische Ausländerpolizei (UbyPort). Rechtsgrundlage: gesetzliche Pflicht; wir bewahren das Verzeichnis 6 Jahre auf, eine frühere Löschung auf Wunsch ist nicht möglich.'],
+        ['Persönlicher Ausflugsführer', 'Ein Link mit Token nur für euch. Der Führer kennt euren Namen, den Termin und die Zusammensetzung der Gruppe (Erwachsene, Kinder, optional Interessen), um passende Ausflüge vorzuschlagen. Der Link gilt 14 Tage nach der Abreise.'],
+        ['Betrieb der Villa', 'Code für Tür und Kühlschrank sowie Notizen zum Aufenthalt (z. B. Kinderbett, frühere Anreise) — nur während des Aufenthalts, damit alles ohne Warten funktioniert.'],
+        ['Wo die Daten liegen', 'Beim Auftragsverarbeiter Supabase (AWS-Server in London, Vereinigtes Königreich — ein Land mit Angemessenheitsbeschluss der EU) sowie in E-Mail und Kalender des Eigentümers. Buchungsportale (Booking.com, Airbnb, FeWo-direkt, e-chalupy) sind eigenständige Verantwortliche mit eigenen Bedingungen.'],
+        ['Speicherdauer', 'Kontaktdaten, Notizen und der Türcode werden 30 Tage nach der Abreise automatisch anonymisiert. Das Gästeverzeichnis bewahren wir 6 Jahre auf, Buchungsbelege so lange, wie es das Gesetz verlangt.'],
+        ['Messung und externe Quellen', 'Die Besucherzahl der Website und des Führers messen wir mit Umami — ohne Cookies und ohne Speicherung von IP-Adressen. Ausflugs- und Wetterdaten laden wir aus eigenen Quellen; Schriften von Google Fonts (Google LLC, USA).'],
+        ['Eure Rechte', 'Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Widerspruch und Datenübertragbarkeit. Eine Beschwerde könnt ihr bei der tschechischen Datenschutzbehörde ÚOOÚ (uoou.gov.cz) einreichen. Anfragen beantworten wir innerhalb von 30 Tagen.'],
         ['Kontakt', '<a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a>'],
       ],
-      cookies: 'Die Website verwendet keine Tracking-Cookies. Die Besucherzahl messen wir anonym mit Umami, das ganz ohne Cookies funktioniert.',
+      cookies: 'Weder die Website noch der Führer verwenden Tracking-Cookies. Die Besucherzahl messen wir anonym mit Umami, das ohne Cookies arbeitet und keine IP-Adressen speichert.',
       operatorTitle: 'Betreiber',
       operatorRows: [
         ['Betreiber', 'Sintera Czech s.r.o.'],
@@ -145,14 +154,17 @@
       gdprTitle: 'Ochrona danych osobowych',
       gdprRows: [
         ['Administrator danych', 'Sintera Czech s.r.o., IČO 29130336, Orlická 163/18, 500 03 Hradec Králové, Czechy'],
-        ['Cel', 'Wasze dane przetwarzamy wyłącznie w celu obsługi prośby o rezerwację i komunikacji w sprawie pobytu.'],
-        ['Zakres', 'Imię, e-mail, telefon, termin pobytu i treść wiadomości.'],
-        ['Przechowywanie', 'Dane są bezpiecznie przechowywane u podmiotu przetwarzającego Supabase (centra danych w UE) i przechowujemy je tylko przez niezbędny czas.'],
-        ['Wasze prawa', 'Macie prawo dostępu do danych, ich sprostowania i usunięcia, ograniczenia przetwarzania oraz wniesienia sprzeciwu. Wystarczy się skontaktować.'],
-        ['Ewidencja ustawowa', 'Ewidencję osób zakwaterowanych (księgę meldunkową i rejestr opłaty miejscowej) mamy ustawowy obowiązek przechowywać przez 6 lat i nie można jej usunąć wcześniej na żądanie.'],
+        ['Zapytanie i rezerwacja', 'Imię i nazwisko, e-mail, telefon, termin pobytu, liczba osób i treść wiadomości — aby obsłużyć Wasze zapytanie, zawrzeć umowę o zakwaterowanie i uzgodnić z Wami przebieg pobytu. Podstawa prawna: wykonanie umowy.'],
+        ['Ustawowa ewidencja gości', 'Imię i nazwisko, data urodzenia i adres, u cudzoziemców także obywatelstwo i numer dokumentu — do księgi meldunkowej, opłaty miejscowej i zgłoszenia czeskiej policji ds. cudzoziemców (UbyPort). Podstawa prawna: obowiązek ustawowy; ewidencję przechowujemy 6 lat i nie można jej usunąć wcześniej na żądanie.'],
+        ['Osobisty przewodnik po wycieczkach', 'Link z tokenem tylko dla Was. Przewodnik zna Wasze nazwisko, termin i skład grupy (liczba dorosłych i dzieci, ewentualnie zainteresowania), aby polecić wycieczki na miarę. Link działa 14 dni po wyjeździe.'],
+        ['Obsługa willi', 'Kod do drzwi i lodówki oraz uwagi do pobytu (np. łóżeczko, wcześniejszy przyjazd) — tylko na czas pobytu, aby wszystko działało bez czekania.'],
+        ['Gdzie są dane', 'U podmiotu przetwarzającego Supabase (serwery AWS w Londynie, Wielka Brytania — kraj z decyzją UE o odpowiednim stopniu ochrony) oraz w e-mailu i kalendarzu właściciela. Portale rezerwacyjne (Booking.com, Airbnb, FeWo-direkt, e-chalupy) są odrębnymi administratorami i działają według własnych regulaminów.'],
+        ['Okres przechowywania', 'Dane kontaktowe, uwagi i kod do drzwi są automatycznie anonimizowane 30 dni po wyjeździe. Ewidencję gości przechowujemy 6 lat, dokumenty księgowe przez okres określony ustawą.'],
+        ['Pomiar ruchu i źródła zewnętrzne', 'Ruch na stronie i w przewodniku mierzymy narzędziem Umami — bez cookies i bez zapisywania adresów IP. Dane o wycieczkach i pogodzie ładujemy z własnych źródeł; czcionki z Google Fonts (Google LLC, USA).'],
+        ['Wasze prawa', 'Dostęp do danych, sprostowanie, usunięcie, ograniczenie przetwarzania, sprzeciw i przenoszenie danych. Skargę można wnieść do czeskiego Urzędu Ochrony Danych Osobowych (uoou.gov.cz). Wnioski rozpatrujemy w ciągu 30 dni.'],
         ['Kontakt', '<a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a>'],
       ],
-      cookies: 'Strona nie używa żadnych plików cookie śledzących. Ruch mierzymy anonimowo narzędziem Umami, które działa całkowicie bez cookies.',
+      cookies: 'Ani strona, ani przewodnik nie używają plików cookie śledzących. Ruch mierzymy anonimowo narzędziem Umami, które działa bez cookies i nie zapisuje adresów IP.',
       operatorTitle: 'Operator',
       operatorRows: [
         ['Operator', 'Sintera Czech s.r.o.'],
@@ -257,7 +269,7 @@
       + '<main class="pd-main">'
       + '<section class="pd-sec"><h2 class="pd-h2">' + esc(L.stornoTitle) + '</h2><p class="pd-lead">' + esc(L.stornoLead) + '</p>'
       + '<div class="pd-tablewrap"><table class="pd-table"><thead><tr><th>' + esc(L.colWhen) + '</th><th style="text-align:right">' + esc(L.colFee) + '</th></tr></thead><tbody>' + stornoBody + '</tbody></table></div></section>'
-      + '<section class="pd-sec"><h2 class="pd-h2">' + esc(L.gdprTitle) + '</h2><div class="pd-rows">' + gdprBody + '</div>'
+      + '<section class="pd-sec" id="udaje"><h2 class="pd-h2">' + esc(L.gdprTitle) + '</h2><div class="pd-rows">' + gdprBody + '</div>'
       + '<div class="pd-note">' + lockIcon + '<p>' + esc(L.cookies) + '</p></div></section>'
       + '<section class="pd-sec"><h2 class="pd-h2">' + esc(L.operatorTitle) + '</h2><div class="pd-rows">' + opBody + '</div></section>'
       + '</main>'
