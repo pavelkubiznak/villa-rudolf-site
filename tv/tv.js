@@ -2,11 +2,12 @@
    Běží ve WebView aplikace cz.villarudolf.tv (ta načte villarudolf.com/tv/, bez internetu
    svou zabalenou kopii) a stejně tak v běžném prohlížeči (šipky + Enter + Esc).
    Výlety a počasí: villa-rudolf-portal (jediný zdroj pravdy), záložně data/ vedle stránky.
-   Žádná data hostů — jazyk přijde jen jako ?lang=cs|de|en|pl. */
+   Žádná data hostů — jazyk přijde jen jako ?lang=cs|de|en|pl.
+   Počítá se jen anonymně, kolikrát se která sekce otevřela (viz „anonymní počítání“ níže). */
 (function () {
   'use strict';
 
-  var VERZE = '2026-09-28c';
+  var VERZE = '2026-10-11a';
   var PORTAL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/';
   var WEB = 'https://villarudolf.com/';
   /* Odkaz na aplikaci pro hosty z jiného repa — dokud je null, dlaždice se neukáže. */
@@ -30,6 +31,39 @@
   }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function loc(v) { return v == null ? '' : (typeof v === 'string' ? v : (v[S.lang] || v.en || v.cs || '')); }
+
+  /* ---------------- anonymní počítání ----------------
+     Majitel chce vědět, jestli hosté průvodce používají. Do Supabase proto jde jen „co se
+     otevřelo“: typ (sekce / vylet / qr_zobrazen), sekce a jazyk — nic víc. Žádné ID zařízení,
+     žádná cookie, žádný název výletu; tabulka nemá sloupec na IP ani na prohlížeč
+     (supabase/migrations/20261011_vr_tv_events.sql). Kterou TV to bylo, si Home Assistant
+     na vile odvodí sám z času — stránka to neví a neposílá.
+     Počítá se jen v aplikaci na TV (most VRApp); stránka otevřená v prohlížeči nic neposílá.
+     Odeslání na nic nečeká a chyby polyká — bez internetu běží průvodce beze změny. */
+  var STAT = {
+    URL: 'https://fpknbrzbqpalguajskut.supabase.co/rest/v1/rpc/vr_tv_event',
+    /* veřejný anon klíč (chráněný RLS), stejný jako v assets/site.js */
+    KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA'
+  };
+  var POCITAT_PO_MS = 2000;   // sekce se počítá, až na ní host 2 s zůstane (projíždění menu šipkou ne)
+  var sekceTimer = null;
+  function pocitej(typ, sekce) {
+    try {
+      if (!window.VRApp || !window.fetch) return;
+      fetch(STAT.URL, {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json', apikey: STAT.KEY, Authorization: 'Bearer ' + STAT.KEY },
+        body: JSON.stringify({ p_typ: typ, p_sekce: sekce, p_jazyk: S.lang })
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  function pocitejSekci(sec) {
+    sekceTimer = setTimeout(function () {
+      if (S.sec !== sec) return;
+      pocitej('sekce', sec);
+      if (sec === 'mobil') pocitej('qr_zobrazen', 'mobil');   // sekce „Do mobilu“ = dva QR kódy na web
+    }, POCITAT_PO_MS);
+  }
 
   /* ---------------- ikony (čárové, 24×24) ---------------- */
   var P = {
@@ -207,7 +241,9 @@
         '<h2>' + esc(t.sluzby) + '</h2>' + mista(OK.sluzby) + '<p class="pozn">' + esc(t.overit) + '</p>';
     },
     mobil: function (t) {
-      var q = [[WEB + 'vylety/?lang=' + S.lang, t.qrPlanovac, t.qrPlanovacSub], [WEB + 'info/?lang=' + S.lang, t.qrInfo, t.qrInfoSub]];
+      /* „&tv“ = načteno z QR na televizi (assets/tv-qr.js to anonymně započítá). Záměrně bez hodnoty:
+         adresa se vejde do 42 znaků a QR zůstane 29×29 bodů jako dřív (s „&z=tv“ by /vylety/ bylo 33×33). */
+      var q = [[WEB + 'vylety/?lang=' + S.lang + '&tv', t.qrPlanovac, t.qrPlanovacSub], [WEB + 'info/?lang=' + S.lang + '&tv', t.qrInfo, t.qrInfoSub]];
       if (APP_URL) q.unshift([APP_URL, t.qrApp, t.qrAppSub]);
       return '<h1>' + esc(t.mobilTitul) + '</h1><p class="sub">' + esc(t.mobilSub) + '</p><div class="qrs">' + q.map(function (x) {
         return '<button class="f qr">' + qrSvg(x[0]) + '<b>' + esc(x[1]) + '</b><span>' + esc(x[2]) + '</span></button>';
@@ -234,7 +270,9 @@
     $('cas').textContent = d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
     $('datum').textContent = datumText(d, false);
   }
-  function ukaz(sec, fokusDoObsahu) {
+  /* samo = návrat na úvod po nečinnosti (ne volba hosta) → nepočítá se. */
+  function ukaz(sec, fokusDoObsahu, samo) {
+    if (sec !== S.sec) { clearTimeout(sekceTimer); if (!samo) pocitejSekci(sec); }
     S.sec = sec;
     Array.prototype.forEach.call(document.querySelectorAll('#menu button'), function (b) { b.classList.toggle('on', b.getAttribute('data-sec') === sec); });
     renderMain();
@@ -279,6 +317,8 @@
     $('detail').hidden = false;
     S.predDetailem = document.activeElement;
     $('detailFokus').focus();
+    pocitej('vylet', S.sec);               // odkud byl detail otevřen (home / vylety / pocasi), ne který výlet
+    if (qr) pocitej('qr_zobrazen', 'vylet');
   }
   function zavriDetail() {
     $('detail').hidden = true; $('detail').innerHTML = '';
@@ -391,7 +431,7 @@
   setInterval(function () {
     if (Date.now() - posledni > NECINNOST_MS && (S.sec !== 'home' || !$('detail').hidden)) {
       if (!$('detail').hidden) { $('detail').hidden = true; $('detail').innerHTML = ''; }
-      S.filtr = 'vse'; ukaz('home', false); fokusMenu();
+      S.filtr = 'vse'; ukaz('home', false, true); fokusMenu();
     }
   }, 60000);
   document.documentElement.setAttribute('data-verze', VERZE);
