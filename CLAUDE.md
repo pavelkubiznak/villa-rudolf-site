@@ -42,8 +42,10 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 - **Anonymní počty z průvodce na TV** (`vr_tv_events`, migrace `20261011_vr_tv_events.sql`):
   `tv/tv.js` posílá přes `vr_tv_event(typ, sekce, jazyk)` jen to, která sekce se otevřela
   (host na ní zůstal ≥ 2 s), že se otevřel detail výletu a že byl na obrazovce QR; `assets/tv-qr.js`
-  na `/vylety/` a `/info/` zapíše „QR načten“, když adresa nese `?tv`. **Žádné ID zařízení, IP,
-  cookie ani název výletu** — a tak to má zůstat. Posílá se jen z aplikace na TV (`window.VRApp`).
+  na `/vylety/` a `/info/` zapíše „QR načten“, když adresa nese `?tv`. QR v detailu výletu vede
+  přes `/k/?v=<id>&l=<jazyk>` (`k/index.html`): zapíše „QR načten“ (bez id výletu) a přesměruje na
+  mapu / web výletu z `trips.json`. **Žádné ID zařízení, IP, cookie ani název výletu** — a tak
+  to má zůstat (proto na `/k/` není Umami). Posílá se jen z aplikace na TV (`window.VRApp`).
   Čte to Home Assistant ve vile přes `vr_ha_tv_stats()` (klíč HA v hlavičce `X-Vr-Ha-Key`, repo
   `jablotron - topení`, balíček `tv_vyuziti.yaml`); kterou TV to bylo, si odvodí sám z času.
 
