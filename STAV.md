@@ -24,7 +24,7 @@ Aktualizováno: 11. 10. 2026
 | Přímý prodej má přednost před ozvěnou vlastního bloku | ✅ **17. 9.** — do `history.json` jde přímý prodej, ozvěna z platformy se zahodí (dřív obráceně) |
 | Megaubytko.cz jako pátý kanál | 🟡 **kód 17. 9., čeká na secret `ICAL_URL_MEGAUBYTKO` + import `megaubytko.ics` u Megaubytka** |
 | **Bezpečnost: `vr_purge_expired` jde spustit zvenku** | ✅ **zamčeno 15. 9. 2026** — `execute` jen `service_role`. ⚠️ Tím ale retence 26 dní **neběžela** (Hetzner ji dál volal anon klíčem, denně 401) |
-| **Retence běží** — pg_cron job `vr-purge-expired` uvnitř DB | ✅ **od 11. 10. 2026** (`20261011_vr_purge_cron.sql`, varianta „anonymizovat, nemazat"); na Hetzneru se purge cron a hlídač `vr-purge` ruší |
+| **Retence běží** — pg_cron job `vr-purge-expired` uvnitř DB | ✅ **od 11. 10. 2026** (`20261011_vr_purge_cron.sql`, varianta „anonymizovat, nemazat"); na Hetzneru purge cron, skript i hlídač `vr-purge` zrušeny 11. 10. 2026 (zálohy v `/root/*.bak-2026-10-11`) |
 
 **✅ Šrafování — hotovo a nasazeno 13. 8.** Šrafuje se **jen skutečná dvojitá rezervace**
 (oba pobyty živé ve feedu). Data dala majiteli za pravdu dvakrát: z 15 šrafovaných buněk
@@ -142,9 +142,10 @@ select count(*) filter (where anonymized_at is not null) as anonymizovano,
   from public.vr_bookings;
 ```
 
-**Zbývá ručně na velínu (Hetzner), ruší se:** řádek `40 4 * * * /opt/vr-portal/purge-expired.sh`
-z crontabu root, soubor `/opt/vr-portal/purge-expired.sh` (anon klíč + starý secret v plaintextu)
-a úloha `vr-purge` v `/etc/hlidac/ulohy.conf` — jinak hlídač bude dál hlásit „nedoběhlo".
+**Hotovo na velínu 11. 10. 2026:** řádek `40 4 * * * /opt/vr-portal/purge-expired.sh` z crontabu root
+odstraněn (záloha `/root/crontab.bak-2026-10-11`), soubor přesunut do `/root/vr-portal-purge-expired.sh.bak-2026-10-11`
+(600), úloha `vr-purge` v `/etc/hlidac/ulohy.conf` zakomentována, pip smazán; `hlidac-kontrola --dry-run` hlásí
+vše v pořádku. Navíc `/etc/logrotate.d/vr-portal` pro `/var/log/vr-weather.log` a `vr-backup.log`.
 Po provedení sem doplnit datum.
 
 **✅ Ve stejný den nasazeno i zpevnění DB `20261011_vr_portal_hardening.sql`** (stejná větev,
@@ -442,7 +443,7 @@ v Claude Code, kterým proběhlo nasazení 15. 9.
    kalendáře (`data/out/*.ics`, ověřeno 23. 9. večer) a platformy je importují od 17. 9.
    U 21.–28. 8. zbývá **ověřit platbu**, než předrezervace 25. 9. propadne (viz Předrezervace, bod 4).
 2. ~~`vr_purge_expired`~~ — **zamčeno 15. 9.**, ale pak 26 dní neběžela; **od 11. 10. retence
-   běží přes pg_cron** (viz sekce Kalendář). Zbývá ručně: smazat cron, skript a hlídač `vr-purge` na velínu
+   běží přes pg_cron** (viz sekce Kalendář). Cron, skript i hlídač `vr-purge` na velínu zrušeny 11. 10. 2026
 3. **Heslo Wi-Fi** — ~~migrace `20260915_vr_admin_config_wifi.sql`~~ nasazena 15. 9.; zbývá vyplnit
    v `/sprava/` → Nastavení, **změnit heslo na routeru** (staré je v git historii veřejného repa) a přidat
    uzel „Načíst konfiguraci" do n8n `VrDailyTasks` — na serveru to udělá

@@ -277,7 +277,7 @@ nové parametry s DEFAULT — stará stránka v mezipaměti volá dál tutéž f
 
 ## Na co si dát pozor
 
-1. **Žádné PII do repa.** Jména, kontakty a doklady hostů patří výhradně do Supabase (EU).
+1. **Žádné PII do repa.** Jména, kontakty a doklady hostů patří výhradně do Supabase (AWS Londýn, Spojené království – rozhodnutí EU o odpovídající ochraně).
 2. **`p_admin_key`, ingest secret ani `SERVICE_ROLE` klíč se do repa nikdy nedostanou.**
 3. Repo je **veřejné** a běží na něm ostrý web s vlastní doménou — commituje se opatrně.
 4. Než začneš psát „nový modul", ověř `/sprava/` — hodně věcí už existuje.
