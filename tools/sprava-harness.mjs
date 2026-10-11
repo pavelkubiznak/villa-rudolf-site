@@ -52,7 +52,8 @@ function mockScript() {
     for (var i = 0; i < 32; i++) b[i] = parseInt(HASH.substr(i * 2, 2), 16);
     return Promise.resolve(b.buffer);
   };
-  try { sessionStorage.setItem('vr_sprava_key', 'harness'); } catch (e) {}
+  // čistý start: žádné tokeny hostů z minulého klikání (sprava.js je drží v sessionStorage)
+  try { sessionStorage.setItem('vr_sprava_key', 'harness'); sessionStorage.removeItem('vr_sprava_gt'); } catch (e) {}
 
   var DB = {
     bookings: ${JSON.stringify(BOOKINGS)},
