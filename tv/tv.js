@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var VERZE = '2026-10-11b';
+  var VERZE = '2026-10-11c';
   var PORTAL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/';
   var WEB = 'https://villarudolf.com/';
   /* QR v detailu výletu nevede rovnou na cizí mapu / web, ale přes villarudolf.com/k/ (k/index.html):
@@ -140,7 +140,11 @@
     adrenalin: function (t) { return t.category === 'adrenalin'; }
   };
   function vylety() { return (S.trips || []).filter(sezonaOk).sort(function (a, b) { return (a.byFoot ? 0 : a.travelMin || 60) - (b.byFoot ? 0 : b.travelMin || 60); }); }
-  function cesta(t) { return t.byFoot ? T().pesky : (t.travelMin + ' ' + T().autem); }
+  /* „59 min pěšky“ / „pěšky“ / „25 min autem“; v detailu (dlouze) u pěších i čas autem */
+  function cesta(t, dlouze) {
+    if (!t.byFoot) return t.travelMin + ' ' + T().autem;
+    return (t.walkMin ? t.walkMin + ' ' + T().minPesky : T().pesky) + (dlouze && t.driveMin ? ' · ' + t.driveMin + ' ' + T().autem : '');
+  }
   function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
   /* Tipy na dnešek podle předpovědi; mění se každý den, ne při každém otevření. */
   function tipyDnes() {
@@ -310,20 +314,35 @@
     if (!t) return;
     var L = T(), links = t.links || [], mapa = null, web = null;
     links.forEach(function (l) { if (!mapa && l.icon === 'pin') mapa = l; if (!web && l.icon !== 'pin') web = l; });
-    var qr = mapa || web;
-    var qrUrl = qr && (!QR_PRIMO && /^[a-z0-9-]{1,40}$/.test(t.id) ? WEB + 'k/?v=' + t.id + '&l=' + S.lang : qr.url);
-    var dl = (t.openNote ? '<dt>' + esc(L.otevreno) + '</dt><dd>' + esc(loc(t.openNote)) + '</dd>' : '') +
+    /* Dva QR: web výletu v jazyce hosta (aktuální otevírací doba, výjimky) a trasa od vily.
+       Oba přes villarudolf.com/k/ (krátká adresa = řidší QR, načtení se dá anonymně spočítat). */
+    var kratce = !QR_PRIMO && /^[a-z0-9-]{1,40}$/.test(t.id);
+    function qrBtn(l, jeMapa, prvni) {
+      var url = kratce ? WEB + 'k/?v=' + t.id + '&l=' + S.lang + (jeMapa ? '' : '&c=w')
+        : (jeMapa ? l.url : ((l.urlByLang && l.urlByLang[S.lang]) || l.url));
+      return '<button class="qr f"' + (prvni ? ' id="detailFokus"' : '') + '>' + qrSvg(url) + '<b>' + esc(jeMapa ? L.qrTrasa : L.qrWebInfo) +
+        '</b><span>' + esc(jeMapa ? L.qrMapaSub : loc(l.label)) + '</span></button>';
+    }
+    var qrs = (web ? qrBtn(web, false, true) : '') + (mapa ? qrBtn(mapa, true, !web) : '');
+    var foto = t.photo && /^https:\/\//.test(t.photo.url || '') ? '<figure class="foto"><img src="' + esc(t.photo.url) + '" alt="">' +
+      (t.photo.credit ? '<figcaption>' + esc(L.foto + ': ' + t.photo.credit) + '</figcaption>' : '') + '</figure>' : '';
+    var kdy = t.openNote ? '<div class="kdy">' + ico('clock') + '<div><span>' + esc(L.otevreno) + '</span><b>' + esc(loc(t.openNote)) + '</b></div></div>' : '';
+    var pozor = t.warn && loc(t.warn) ? '<div class="pozor">' + ico('warn') + '<p>' + esc(loc(t.warn)) + '</p></div>' : '';
+    var dl = '<dt>' + esc(L.cestaT) + '</dt><dd>' + esc(cesta(t, true)) + '</dd>' +
       (t.price ? '<dt>' + esc(L.cena) + '</dt><dd>' + esc(loc(t.price)) + '</dd>' : '');
+    var ov = /^\d{4}-\d{2}-\d{2}$/.test(t.checked || '') ? '<div class="overeno">' + esc(L.overeno + ' ' + (+t.checked.slice(8)) + '. ' + (+t.checked.slice(5, 7)) + '. ' + t.checked.slice(0, 4)) + '</div>' : '';
     $('detail').innerHTML = '<div class="panel" style="--acc:' + esc(t.accent || '#E9B949') + '"><h1>' + esc(loc(t.name)) + '</h1>' +
       '<div class="tag">' + esc(loc(t.tagline)) + '</div>' +
-      '<div><div class="txt">' + esc(loc(t.desc)) + '</div>' + (dl ? '<dl>' + dl + '</dl>' : '') + '</div>' +
-      (qr ? '<button class="qr f" id="detailFokus">' + qrSvg(qrUrl) + '<b>' + esc(qr === mapa ? L.qrMapa : L.qrWeb) + '</b><span>' + esc(qr === mapa ? L.qrMapaSub : loc(qr.label)) + '</span></button>' : '<button class="f" id="detailFokus"></button>') +
+      '<div class="levy">' + foto + kdy + pozor + '<div class="txt">' + esc(loc(t.desc)) + '</div><dl>' + dl + '</dl>' + ov + '</div>' +
+      (qrs ? '<div class="qrsl">' + qrs + '</div>' : '<button class="f" id="detailFokus"></button>') +
       '<div class="zpet"><b>OK</b> / <b>⟵</b></div></div>';
+    var img = $('detail').querySelector('.foto img');
+    if (img) img.onerror = function () { var f = img.parentNode; if (f && f.parentNode) f.parentNode.removeChild(f); };   // bez internetu / smazaná fotka → detail bez ní
     $('detail').hidden = false;
     S.predDetailem = document.activeElement;
     $('detailFokus').focus();
     pocitej('vylet', S.sec);               // odkud byl detail otevřen (home / vylety / pocasi), ne který výlet
-    if (qr) pocitej('qr_zobrazen', 'vylet');
+    if (qrs) pocitej('qr_zobrazen', 'vylet');
   }
   function zavriDetail() {
     $('detail').hidden = true; $('detail').innerHTML = '';

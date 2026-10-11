@@ -103,12 +103,29 @@ h2 { font-size: .9rem; letter-spacing: .16em; text-transform: uppercase; color: 
 /* detail výletu */
 .detail { position: fixed; inset: 0; background: rgba(8, 14, 12, .72); display: flex; justify-content: flex-end; }
 .detail[hidden] { display: none; }
-.panel { width: 62%; height: 100%; background: var(--bg-2); padding: 2.6rem 3.4rem 2rem; display: grid;
-  grid-template-columns: 1fr 17rem; grid-template-rows: auto auto 1fr auto; align-content: start; gap: 1rem 2.4rem; border-left: .4rem solid var(--acc, var(--zluta)); }
+.panel { width: 64%; height: 100%; background: var(--bg-2); padding: 2.6rem 3.4rem 2rem; display: grid;
+  grid-template-columns: 1fr 14rem; grid-template-rows: auto auto 1fr auto; align-content: start; gap: 1rem 2.4rem; border-left: .4rem solid var(--acc, var(--zluta)); }
 .panel h1 { font-size: 3rem; grid-column: 1 / -1; }
 .panel .tag { grid-column: 1 / -1; color: var(--zluta); font-weight: 600; font-size: 1.15rem; margin-top: -.4rem; }
-.panel .txt { font-size: 1.25rem; line-height: 1.5; color: var(--text); }
-.panel dl { margin: 1.2rem 0 0; display: grid; grid-template-columns: auto 1fr; gap: .5rem 1.2rem; font-size: 1.05rem; }
+/* levý sloupec: fotka (ustoupí, když je textu moc) · otevírací doba · upozornění · popis · cesta a cena */
+.panel .levy { display: flex; flex-direction: column; gap: .9rem; min-height: 0; overflow: hidden; }
+.panel .levy > * { flex: none; }
+.panel .foto { position: relative; margin: 0; flex: 1 1 11rem; min-height: 6rem; max-height: 14rem; border-radius: 1rem; overflow: hidden; background: var(--karta); }
+.panel .foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.panel .foto figcaption { position: absolute; right: .5rem; bottom: .4rem; font-size: .7rem; color: #fff; background: rgba(0, 0, 0, .55); padding: .1rem .5rem; border-radius: .4rem; }
+.kdy { display: flex; align-items: center; gap: 1rem; padding: .75rem 1.1rem; border-radius: 1rem; background: var(--karta-f); border: 1px solid rgba(233, 185, 73, .45); }
+.kdy svg { width: 2rem; height: 2rem; flex: none; color: var(--zluta); }
+.kdy span { display: block; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--zluta); }
+.kdy b { display: block; font-size: 1.3rem; line-height: 1.3; }
+.pozor { display: flex; align-items: flex-start; gap: .9rem; padding: .7rem 1.1rem; border-radius: 1rem; background: rgba(214, 138, 76, .16); border: 1px solid rgba(214, 138, 76, .5); }
+.pozor svg { width: 1.6rem; height: 1.6rem; flex: none; color: #E7A36B; margin-top: .1rem; }
+.pozor p { margin: 0; font-size: 1.05rem; line-height: 1.4; }
+.overeno { color: var(--text-3); font-size: .85rem; }
+.qrsl { display: flex; flex-direction: column; gap: 1rem; align-self: start; }
+.qrsl .qr { padding: .7rem; }
+.qrsl .qr b { font-size: .95rem; }
+.panel .txt { font-size: 1.2rem; line-height: 1.5; color: var(--text); }
+.panel dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .5rem 1.2rem; font-size: 1.05rem; }
 .panel dt { color: var(--text-3); font-weight: 700; text-transform: uppercase; font-size: .85rem; letter-spacing: .1em; padding-top: .15rem; }
 .panel dd { margin: 0; color: var(--text-2); line-height: 1.4; }
 .qr { background: #FFFDF6; border-radius: 1rem; padding: .9rem; color: #1b1a12; text-align: center; align-self: start; }
