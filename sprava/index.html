@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="sprava.css?v=12">
+<link rel="stylesheet" href="sprava.css?v=13">
 </head>
 <body>
 
@@ -71,7 +71,7 @@
     <div class="requests" id="requests"></div>
   </section>
 
-  <!-- PROBLÉMY (konfigurační díry: chybí telefon / kód / nespárováno) -->
+  <!-- PROBLÉMY (to, co hoří: předrezervace, platby, lhůty) -->
   <section class="panel panel-problems" id="problems-panel" hidden>
     <div class="panel-head"><h2 class="panel-title">Problémy</h2></div>
     <div class="problems" id="problems"></div>
@@ -85,6 +85,16 @@
     </div>
     <div class="today-list" id="today-list"></div>
     <p class="today-empty" id="today-empty" hidden>Pro dnešek nic nečeká — vše je odesláno. 🙂</p>
+  </section>
+
+  <!-- CO DOPLNIT (jedna tabulka: řádek = pobyt, čipy = co u něj chybí) -->
+  <!-- Kompletní pobyt se neukáže, jen se započte do souhrnu v hlavičce. -->
+  <section class="panel panel-todo" id="todo-panel" hidden>
+    <div class="panel-head">
+      <h2 class="panel-title">Co doplnit</h2>
+      <span class="panel-date" id="todo-sum"></span>
+    </div>
+    <div id="todo"></div>
   </section>
 
   <!-- PŘEDREZERVACE (vystavená zálohová faktura drží termín) -->
@@ -133,6 +143,6 @@
   </div>
 </div>
 
-<script src="sprava.js?v=17" defer></script>
+<script src="sprava.js?v=18" defer></script>
 </body>
 </html>

@@ -145,6 +145,34 @@ k předrezervaci páruje stejně jako `bookingOfHold()` v `sprava.js` (migrace
 `20260928_vr_cleaning_note_list.sql`). Propadlou předrezervaci kalendář nenese, takže ani
 poznámka k ní nedojde.
 
+## Zprávy hostům (`/sprava/` + denní e-mail)
+
+`/sprava/` hostům nic neposílá — připraví text a odkaz `wa.me`, odesílá majitel ručně z WhatsAppu.
+Sekvence má od 11. 10. 2026 **5 kroků**: `first` (první ozvěna, na řadě hned po rezervaci, 14 dní
+před příjezdem už ne) → `welcome` (T−7: adresa, **kód ke dveřím**, průvodce, **odkaz na registraci**,
+poplatek, Wi-Fi) → `day2` → `predeparture` → `review`.
+
+- **Texty jsou na dvou místech**: `TPL`, `NEWS` a `SEQUENCE` v `sprava/sprava.js` a do písmene
+  stejné v `n8n/VrDailyTasks/VrDailyTasks.code.js` (n8n nemá jak sdílet modul). Kdo mění jedno,
+  mění obojí a pustí `node tools/test-zpravy.mjs`. Ostrá verze v n8n se nasazuje zvlášť
+  (`tools/n8n-patch-vrdailytasks.py`).
+- **Němčina tyká v množném čísle** („ihr/euch"), čeština a polština vykají. Zdroj pravdy pro hlas je
+  `villa-rudolf-portal/docs/text-villa-rudolf.md`, kap. 1.
+- **Novinka v první ozvěně je jedna konstanta `NEWS`** (text + příjezdy od–do). O stornu se
+  v textech nemluví a první ozvěna nenese odkaz na registraci.
+- **Kód dveří se neukládá** — `doorCodeFor()` = `door_code`, jinak posledních 5 číslic telefonu;
+  stejně ho bere DB (`_vr_booking_door_code`), Home Assistant i registrace z lednice. „Chybí kód"
+  se hlásí, jen když nejde odvodit.
+- **Počet dospělých 2 a žádné dítě = nevyplněno** (`adultsKnown()`): `vr_admin_upsert_booking` si
+  prázdnou hodnotu doplní dvojkou. Že to majitel opravdu zapsal, říká značka `guests_ok`. Bez známého
+  počtu zpráva vypíše jen sazbu poplatku; u platformy „Přímá" se poplatek strhává z kauce, ne Revolutem.
+- **Všechen stav je ve `vr_msglog`** (RPC bere libovolný `msg_key`, migrace netřeba): kroky,
+  `skip_<krok>` (vyřízeno bez odeslání), `reply_ok` / `reply_risk` / `reply_nudge` (odpověď hosta),
+  `guests_ok`. Staré `confirm` se počítá jako `first`; `registration` a `doorcode` jen leží.
+- **Co u pobytu chybí, je v jedné tabulce „Co doplnit"** (`missingFor()`), ne v Problémech.
+  E-mail hosta se nevyžaduje — platformy ho nedávají.
+- Zkoušení bez klíče a bez DB: `node tools/sprava-harness.mjs` (vymyšlená data, žádné PII).
+
 ## Ubytovací smlouvy (`/smlouvy/`, `vr_contracts`)
 
 Přímý host dostává **zálohovou fakturu z iDokladu + ubytovací smlouvu**; smlouva se nepodepisuje,

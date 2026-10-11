@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 23. 9. 2026
+Aktualizováno: 11. 10. 2026
 
 ---
 
@@ -301,15 +301,67 @@ a zprávu polsky, ale průvodce výlety ne. Doplnit `pl` do pěti vícejazyčný
 
 | | Stav |
 |---|---|
-| Šablony zpráv ve 4 jazycích (cs/de/en/pl) | ✅ v `sprava.js` |
-| Log odeslaných zpráv (`vr_admin_msg_log`, `msg_key`) | ✅ |
-| Kód od dveří z telefonu | ✅ |
-| **Co přesně zbývá dotáhnout** | ❓ **UPŘESNIT** |
+| Šablony zpráv ve 4 jazycích (cs/de/en/pl), němčina tyká „ihr/euch" | ✅ v `sprava.js` + kopie v `n8n/VrDailyTasks` (hlídá `tools/test-zpravy.mjs`) |
+| Sekvence 5 kroků: první ozvěna → uvítací (T−7) → den 2 → před odjezdem → recenze | ✅ 11. 10. 2026 |
+| Log ve `vr_msglog` (`vr_admin_msg_log`, libovolný `msg_key`) | ✅ — nese i odpověď hosta a „přeskočeno" |
+| Kód od dveří z telefonu, rovnou v uvítací zprávě | ✅ |
+| Přehled „Co doplnit" (jedna tabulka, čipy) | ✅ 11. 10. 2026 |
+| Odpověď hosta: jede / váhá / mlčí | ✅ ruční v1 — WhatsApp ani e-mail se nečtou |
+| **Nasadit `VrDailyTasks` do n8n** (`tools/n8n-patch-vrdailytasks.py`) | ⏳ ručně po merge |
+| **Vyplnit heslo Wi-Fi v Nastavení** (bez něj uvítací zpráva nejde odeslat) | ⏳ Pavel |
+| **Kliknout „Vytvořit trvalé odkazy všem"** (23 pobytů bez `token_enc`) | ⏳ Pavel |
+| **Přečíst texty**: první ozvěna a připomenutí (4 jazyky), němčina po převodu na tykání | ⏳ Pavel |
 
-V `sprava.js` je kompletní aparát (66× `msg`, `msgLang`, `msglog`) a žádné `TODO`.
-Majitel 13. 8. říká, že „zprávu potřebuje dotáhnout" — **není jasné co**. Kandidáti:
-odesílání přes WhatsApp (dnes se odkaz vkládá ručně, Booking blokuje boty), nebo jiná zpráva
-(denní souhrn / report). **Doplnit, až se upřesní.**
+**✅ Systém, který práci ubírá — 11. 10. 2026.** Pavlova výtka: „vytvořil jsem si systém, který
+mě buzeruje, místo aby mi pomáhal" — musel chodit host po hostovi a doplňovat tabulky, a sekvence
+zpráv neodpovídala tomu, co doopravdy posílá. Co se změnilo:
+
+- **První ozvěna místo „Potvrzení rezervace" v T−30.** Na řadě je hned, jak má pobyt hosta
+  s telefonem, i když je příjezd za rok — smysl je zahájit konverzaci a včas poznat, kdo váhá
+  (tři měsíce předem je obrovský rozdíl proti týdnu). Bez odkazu na registraci (složení skupiny se
+  ještě změní), o stornu se nemluví. 14 dní před příjezdem už nemá smysl a nenabízí se.
+  Odstavec o novince (schodiště) dostanou jen příjezdy 19. 12. 2026 – 31. 12. 2027 — je to **jedna
+  konstanta `NEWS`** (text ve 4 jazycích + data od–do) v `sprava.js` a ve `VrDailyTasks.code.js`.
+  ⚠️ Text říká „teď dům dáváme dohromady": **po 18. 12. 2026 ho přepiš do minulého času**, za rok vyměň.
+- **Uvítací zpráva nese všechno**, co Pavel hostům posílal ručně v jedné zprávě: adresu, kód ke
+  dveřím (platí 15:00 v den příjezdu – 10:00 v den odjezdu), průvodce, odkaz na registraci, poplatek,
+  Wi-Fi. Samostatné kroky „Odkaz na registraci" (T−5) a „Kód ke dveřím" (den příjezdu) zanikly.
+  Neodešle se, dokud chybí trvalý odkaz, kód (= telefon) nebo heslo Wi-Fi — a řekne proč.
+- **Poplatek už nehádá.** Databáze prázdný počet dospělých sama doplní dvojkou
+  (`coalesce(p_adults, 2)`), takže zpráva 10. 10. tvrdila „pro vás dva … 350 Kč" skupině 7 + 6.
+  „2 dospělí, žádné dítě" bez značky `guests_ok` se teď bere jako **nevyplněno**: zpráva řekne jen
+  sazbu. U platformy „Přímá" místo Revolutu věta, že se poplatek vyúčtuje z kauce (smlouva § 6).
+- **„Co doplnit"** — jedna tabulka pod „Dnes na řadě": řádek = pobyt, čipy = co chybí (host,
+  telefon, počet dospělých, věky dětí, trvalý odkaz), nahoře heslo Wi-Fi. Klik na čip otevře rovnou
+  to pole a po uložení vrátí zpět na přehled. Kompletní pobyt se neukáže, jen se započte do souhrnu.
+  **Nehlásí se** e-mail (platformy ho nedávají) ani kód dveří, který jde odvodit z telefonu — zámek
+  (Home Assistant) i registrace z lednice si ho berou samy. Sekce Problémy tím zůstala jen pro věci
+  s termínem (předrezervace, platby, UbyPort, odvod poplatku, příjezd do 7 dnů bez telefonu i kódu).
+- **Odpověď hosta** — v detailu tři tlačítka (jede / váhá / neodpověděl), v přehledu barevná značka.
+  Kdo 10 dní po první ozvěně mlčí, objeví se v „Dnes na řadě" s připraveným připomenutím; kdo váhá,
+  svítí tam nahoře, dokud se stav nezmění. Totéž v denním e-mailu.
+- **Méně šumu.** V řádku úkolu jde rovnou odkliknout „✓ Odesláno" (dřív jen v detailu, takže se
+  neodklikávalo a visely týdny staré dluhy). Úkoly, které už nedávají smysl (první ozvěna těsně před
+  příjezdem, kroky před příjezdem u pobytu, který začal), se nezobrazují jako dluh — dole je jedno
+  tlačítko „Označit starší jako vyřízené" (značka `skip_<krok>`, ne „odesláno": log zůstává pravdivý).
+
+**Značky ve `vr_msglog`** (bez migrace, RPC bere libovolný klíč): `first`, `welcome`, `day2`,
+`predeparture`, `review`, `deposit_charge`, `deposit_return`, `balance_invoice` = kroky;
+`skip_<krok>` = vyřízeno bez odeslání; `reply_ok` / `reply_risk` = host jede / váhá; `reply_nudge` =
+kdy jsem se připomněl; `guests_ok` = počty osob zapsal majitel; `deposit_enabled`, `yale_set` = starší.
+Staré klíče `confirm` (počítá se jako `first`), `registration` a `doorcode` v logu zůstávají a nic nerozbijí.
+
+**Lokální zkoušení bez klíče a bez databáze:** `node tools/sprava-harness.mjs` →
+`http://localhost:4173/sprava/` s vymyšlenými pobyty (`tools/sprava-harness-data.mjs`), „dnešek"
+zamrazený na 11. 10. 2026. `node tools/test-zpravy.mjs` hlídá shodu šablon mezi `/sprava/` a n8n,
+zástupky, tykání v němčině a obsah denního e-mailu nad týmiž daty.
+
+**Zbývá (mimo tenhle krok):**
+- Odpovědi hostů se zapisují ručně. Napojení WhatsAppu / e-mailu je další etapa.
+- Úkol „Vystavit doplatkovou fakturu" (T−72) se nabízí každé přímé rezervaci, i té zaplacené
+  najednou — vědět by se to dalo z `vr_contracts` (`single` / `split`).
+- Počty osob: „nevím" se pozná jen podle výchozího 2 + 0 bez značky. Čistší by byl `adults`
+  jako `null` — chce to migraci `vr_admin_upsert_booking` (dnes `coalesce(p_adults, 2)`).
 
 **✅ Odkaz na průvodce se hostovi konečně posílá — 15. 9. 2026.** Potvrzení (T−30) slibovalo
 „osobní stránku s doporučeními", ale žádný krok sekvence ji neposílal; odkaz `/pruvodce/?t=`
@@ -395,7 +447,7 @@ v Claude Code, kterým proběhlo nasazení 15. 9.
    ukusují podklady pro evidenci dřív, než z nich evidence vznikne
 8. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
 9. **Polština u výletů** — podle toho, jestli chodí polští hosté
-10. **Zprávy** — až bude jasné zadání
+10. ~~**Zprávy** — až bude jasné zadání~~ — hotovo 11. 10. 2026 (první ozvěna, „Co doplnit", odpověď hosta); zbývá nasazení do n8n
 
 ~~Šrafování v kalendáři~~ — hotovo 13. 8. · ~~Nepotvrzené záznamy v kalendáři~~ — hotovo 9. 9. ·
 ~~Import `VrConflictWatch` do n8n~~ — nahráno 12. 9. · ~~Úklid PR~~ — 15. 9.
