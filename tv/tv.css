@@ -121,6 +121,16 @@ h2 { font-size: .9rem; letter-spacing: .16em; text-transform: uppercase; color: 
 .pozor svg { width: 1.6rem; height: 1.6rem; flex: none; color: #E7A36B; margin-top: .1rem; }
 .pozor p { margin: 0; font-size: 1.05rem; line-height: 1.4; }
 .overeno { color: var(--text-3); font-size: .85rem; }
+/* dlouhé texty (řídí tv.js): delší otevírací doba menším písmem; „husty“ = vše o stupeň menší; „orez“ = popis se zkrátí */
+.kdy.dlouhe b { font-size: 1.08rem; font-weight: 600; }
+.panel.husty .levy { gap: .65rem; }
+.panel.husty .txt { font-size: 1.05rem; line-height: 1.42; }
+.panel.husty .kdy { padding: .6rem 1rem; }
+.panel.husty .kdy.dlouhe b { font-size: 1rem; }
+.panel.husty .pozor { padding: .55rem 1rem; }
+.panel.husty .pozor p, .panel.husty dl { font-size: .95rem; }
+.panel.orez .txt { flex: 0 1 auto; min-height: 0; overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 1.6em), transparent); mask-image: linear-gradient(#000 calc(100% - 1.6em), transparent); }
 .qrsl { display: flex; flex-direction: column; gap: 1rem; align-self: start; }
 .qrsl .qr { padding: .7rem; }
 .qrsl .qr b { font-size: .95rem; }
