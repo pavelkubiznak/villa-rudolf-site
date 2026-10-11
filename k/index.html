@@ -9,9 +9,10 @@
 
 <!-- ===================================================================
      Krátká adresa pro QR kód v detailu výletu na televizi ve vile:
-       villarudolf.com/k/?v=<id výletu>&l=<jazyk>
+       villarudolf.com/k/?v=<id výletu>&l=<jazyk>[&c=w]
      Stránka najde výlet v katalogu (villa-rudolf-portal/data/trips.json), vybere tentýž
-     odkaz jako průvodce na TV (trasa na mapě, jinak web výletu) a hned na něj přesměruje.
+     odkaz jako průvodce na TV (trasa na mapě, jinak web výletu; s c=w web výletu v jazyce hosta)
+     a hned na něj přesměruje.
 
      Proč přes nás a ne rovnou: (1) dá se anonymně spočítat, že QR někdo načetl –
      do Supabase jde jen {qr_nacten, vylet, jazyk}, ŽÁDNÉ id výletu, žádné ID zařízení,
@@ -49,6 +50,7 @@
   };
   var q = new URLSearchParams(location.search);
   var id = q.get('v') || '', lang = (q.get('l') || '').toLowerCase();
+  var chceWeb = q.get('c') === 'w';   // druhý QR v detailu: web výletu místo trasy
   if (!TX.hasOwnProperty(lang)) lang = 'cs';
   var zaloha = '../vylety/?lang=' + lang, hotovo = false;
   var text = document.getElementById('text'), odkaz = document.getElementById('odkaz');
@@ -80,10 +82,12 @@
     /* stejný výběr jako tv/tv.js (otevriVylet): trasa na mapě, jinak web výletu */
     var mapa = null, web = null;
     ((t && t.links) || []).forEach(function (l) { if (!mapa && l.icon === 'pin') mapa = l; if (!web && l.icon !== 'pin') web = l; });
-    var cil = mapa || web;
-    if (!cil || !/^https?:\/\//i.test(cil.url || '')) { jdi(zaloha); return; }
+    var cil = chceWeb ? (web || mapa) : (mapa || web);
+    /* web výletu v jazyce hosta, pokud ho výlet má (links[].urlByLang) */
+    var url = cil && ((cil === web && cil.urlByLang && cil.urlByLang[lang]) || cil.url);
+    if (!/^https?:\/\//i.test(url || '')) { jdi(zaloha); return; }
     pocitej();
-    jdi(cil.url);
+    jdi(url);
   }).catch(function () { clearTimeout(tm); jdi(zaloha); });
 })();
 </script>
