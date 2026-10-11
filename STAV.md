@@ -121,10 +121,14 @@ jako vlastník DB a volá `vr_purge_expired_cron()` bez parametru — **žádný
 - **6+ let po odjezdu:** smazat celý pobyt (cascade `vr_persons` — evidenční povinnost skončila).
 - **Pobyty bez evidovaných osob se už 30 dní po odjezdu NEMAŽOU** — jen anonymizují. Tím má bod
   „Retence pobytů" z Doporučeného pořadí rozhodnutí: **udělal ho audit 11. 10. 2026** (varianta
-  „anonymizovat, nemazat"; odpovídá tomu, co tenhle soubor od 16. 9. chtěl, a `/sprava/`
-  anonymizované řádky umí). **Pavel ho může změnit** — pak se přepíše `vr_purge_expired_cron()`
-  novou migrací, job zůstane. Stará `vr_purge_expired(p_secret)` v DB zůstala (jen `service_role`),
-  nic ji nevolá; její mazání pobytů bez osob (krok 2) tedy neběží.
+  „anonymizovat, nemazat"; odpovídá tomu, co tenhle soubor od 16. 9. chtěl; `vr_admin_list_bookings`
+  anonymizované řádky dál vrací, jen bez tokenu — `/sprava/` je ukáže jako pobyt bez kontaktu,
+  zvláštní označení v UI zatím nemá). **Pavel ho může změnit** — pak se přepíše `vr_purge_expired_cron()`
+  novou migrací, job zůstane. Stará `vr_purge_expired(p_secret)` v DB zůstala (jen `service_role`);
+  volá ji už jen rozbitý cron na Hetzneru (anon klíč → 401, ruší se, viz níž), takže její mazání
+  pobytů bez osob (krok 2) neběží. Ověřeno v živé DB 11. 10. 2026 večer: `pg_cron` nainstalován,
+  job `vr-purge-expired` aktivní, zatím 0 běhů (první 12. 10. 04:40 UTC), 3 pobyty čekají na
+  anonymizaci.
 
 Kontrola běhů (SQL editor nebo konektor):
 
@@ -335,9 +339,9 @@ ji neposlal. Teď je smlouva záznam v DB s vykresleným HTML, svázaný s pobyt
 | Překlady výletů **cs / de / en / pl** (pole `name`, `tagline`, `desc`, `openNote`, `price`, i `links[].label` a `warn`) | ✅ kompletní, 0 mezer |
 | Stránka `villarudolf.com/vylety/` (index + css + js, ~100 kB) | ✅ běží |
 | Počasí (`forecast.json`, cron na Hetzneru) | ✅ běží |
-| Polština u výletů | ✅ **hotovo 15. 9. 2026** (portál i `trips.json` ve 4 jazycích) |
+| Polština u výletů | ✅ **hotovo dávno** — `trips.json` má `pl` u všech textů od 17. 7. 2026 (commit `98ae4e9` portálu), rozhraní portálu od 13. 8. 2026 (`d9f583f`); řádek „🔴 CHYBÍ" tu stál omylem až do 11. 10. 2026 |
 | Portál `pavelkubiznak.github.io/villa-rudolf-portal/` pro hosty | ✅ **od 11. 10. 2026 jen demo** — hosta s `?t=` přesměruje na `villarudolf.com/pruvodce/?t=`; `index.html` rozdělen na `index.html` + `app.js` |
-| Sezóna výletů v jádru portálu | ✅ **od 11. 10. 2026:** zima 1. 12.–31. 3., léto 1. 4.–14. 10., 15. 10.–30. 11. jen celoroční výlety (do té doby lyže od 15. 10. — marketingová hranice webu v `assets/season.js` zůstává 15. 10., to je jiná věc) |
+| Sezóna výletů v jádru portálu | ✅ **od 11. 10. 2026:** zima 1. 12.–31. 3., léto 1. 4.–14. 10., 15. 10.–30. 11. jen celoroční výlety (do té doby lyže od 15. 10. — marketingová hranice webu v `assets/season.js` zůstává 15. 10., to je jiná věc). ⚠️ `/pruvodce/` (`assets/planner.js`) a `tv/tv.js` na `main` filtrují výlety ještě podle marketingové sezóny 15. 10.; stejná hranice 1. 12. pro ně je ve větvi `claude/portal-audit-planner`, dokud se nesloučí, host na webu vidí lyže od 15. 10. |
 
 **Počty výletů se do dokumentace nepíšou natvrdo** — kdo je potřebuje, spočítá je:
 `node -e 'const j=require("./data/trips.json");console.log(j.trips.length,j.food.length)'`
@@ -345,7 +349,9 @@ v klonu portálu (nebo `loadTripCounts()` v `assets/site.js`). Hodnoty výš pla
 
 **Odkaz na průvodce hosta platí 14 dní po odjezdu** — `expires_at = departure + 14 dní`
 (`20260915_vr_token_enc.sql`, ř. 138), ne 30. Kdo kde píše „30 dní", píše špatně (portál to
-hostovi tvrdil do 11. 10. 2026; `README.md` a `schema.sql` portálu opravuje audit). Po vypršení
+hostovi tvrdil do 11. 10. 2026; `README.md` a `schema.sql` portálu opravuje audit). V živé DB
+má k 11. 10. 2026 ještě 10 starších řádků (založených před 15. 9.) `expires_at = departure + 30`,
+20 už +14 — přepočítá se při každé úpravě pobytu ve `/sprava/`. Po vypršení
 `vr_verify_token` vrátí prázdno a `/pruvodce/` běží ve veřejném režimu. Od 11. 10. 2026 funkce
 hostovi **nevrací `notes`** (viz zpevnění DB v sekci Kalendář).
 
@@ -452,7 +458,7 @@ v Claude Code, kterým proběhlo nasazení 15. 9.
    anonymizovat, nemazat** (pg_cron `vr-purge-expired`, viz sekce Kalendář; Pavel může změnit).
    Zbývá 18měsíční prune `history.json` v repu kalendáře
 8. **Etapa 2 předrezervací** — párování plateb z iDokladu a Fia (viz sekce výš)
-9. ~~**Polština u výletů**~~ — **hotovo 15. 9. 2026** (všech 53 výletů cs/de/en/pl)
+9. ~~**Polština u výletů**~~ — **hotovo už 17. 7. 2026** (`trips.json`, všech 53 výletů cs/de/en/pl; rozhraní portálu 13. 8.) — bod tu byl omylem
 10. **Zprávy** — až bude jasné zadání
 11. **Rozhodnutí Pavla z auditu portálu 11. 10. 2026** — seznam v `MAPA-SYSTEMU.md` → Otevřené
     (oddělení Supabase od SINTERA, zálohy Supabase na free plánu, přepis git historie portálu,

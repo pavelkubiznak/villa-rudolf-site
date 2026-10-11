@@ -44,7 +44,8 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
   a party — **bez `notes`** (`20261011_vr_portal_hardening.sql`). Retenci dělá **pg_cron job
   `vr-purge-expired`** uvnitř DB (04:40 UTC, `20261011_vr_purge_cron.sql`): 30 dní po odjezdu
   anonymizace kontaktu, poznámek a tokenu (pobyt zůstává), výmaz po 6 letech. Žádný cron ani
-  secret mimo DB; `vr_purge_expired(p_secret)` nic nevolá.
+  secret mimo DB; starou `vr_purge_expired(p_secret)` nic funkčního nevolá (rozbitý cron na
+  Hetzneru se ruší, viz `STAV.md`).
 - **Anonymní počty z průvodce na TV** (`vr_tv_events`, migrace `20261011_vr_tv_events.sql`):
   `tv/tv.js` posílá přes `vr_tv_event(typ, sekce, jazyk)` jen to, která sekce se otevřela
   (host na ní zůstal ≥ 2 s), že se otevřel detail výletu a že byl na obrazovce QR; `assets/tv-qr.js`
