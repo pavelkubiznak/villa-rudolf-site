@@ -4,7 +4,7 @@
 navrhovat — ať jsi člověk nebo AI session — přečti si tuhle tabulku. Systém je rozdělený do
 několika repozitářů a bez mapy se v nich nedá poznat, které je živé.
 
-Aktualizováno: 15. 9. 2026
+Aktualizováno: 11. 10. 2026
 
 ## Součásti
 
@@ -12,7 +12,7 @@ Aktualizováno: 15. 9. 2026
 |---|---|---|---|
 | **villa-rudolf-site** ← *jsi tady* | Web (česky `/`, jazykové verze `/de/` `/pl/` `/en/`, Časté dotazy `/faq/` — statické HTML z `tools/gen-jazyky.mjs`) + celý provozní systém: `/sprava/` (majitel), `/registrace/` (evidence hostů), `/checkin/`, `/album/`, `/vylety/`, `/pruvodce/`. Supabase migrace v `supabase/migrations/`. | **villarudolf.com** | 🟢 **ŽIVÉ JÁDRO** |
 | **villa-booking-calendar** | Kalendář rezervací: `index.html` pro úklid, `owner.html` pro majitele (tržby, token). Actionem každé 3 h stahuje iCal a publikuje `data/feed.ics` + `data/history.json`. | pavelkubiznak.github.io/villa-booking-calendar/ | 🟢 živé — **dodavatel dat** |
-| **villa-rudolf-portal** | Průvodce pro hosty (PWA, `?t=<token>`). Drží `data/trips.json` (katalog výletů) a `data/forecast.json` (počasí, cron na Hetzneru). | pavelkubiznak.github.io/villa-rudolf-portal/ | 🟡 živé — **jen zdroj dat**, role se překrývá se `site` |
+| **villa-rudolf-portal** | **Datový zdroj:** `data/trips.json` (katalog výletů, 4 jazyky) a `data/forecast.json` (počasí, cron na Hetzneru). **Zdroj pravdy pro ceník** (`docs/cenik.json` + `scripts/cenik.mjs`) **a pro texty** (`docs/text-villa-rudolf.md`). `index.html` = jen demo průvodce + přesměrování: host s `?t=` jde od 11. 10. 2026 na `villarudolf.com/pruvodce/?t=`. | pavelkubiznak.github.io/villa-rudolf-portal/ | 🟢 živé — **datový zdroj + zdroj pravdy ceníku a textů** (role potvrzena 11. 10. 2026) |
 | villa-rudolf-vylety | Staré stránky výletů pro konkrétní hosty | GitHub Pages | 🔴 nahrazeno `site/vylety/` |
 | villa-rudolf-web *(privátní)* | Opuštěný pokus o vícejazyčný web a rezervační platformu (Next.js + drizzle) | neběží | 🔴 opuštěno 28. 6. 2026 |
 | villa-rudolf-cedule-22 | Podklady pro ceduli „22:00" (výroba) | GitHub Pages | ⚪ hotový výrobek, needituje se |
@@ -61,7 +61,11 @@ takže ho kalendář musí dostat z `/sprava/` — jinak ho web dál nabízí ja
   Edge Function `album` (`supabase/functions/album/`) je jediná brána ke Storage bucketu
   `vr-album`; nasazuje se `supabase functions deploy album`.
   Schéma pravdy = `villa-rudolf-site/supabase/migrations/` (ne kopie v jiných repech).
-- **Hetzner** (`178.104.207.97`, tailnet `sintera-radar`) — cron na počasí, n8n (`127.0.0.1:5678`,
+  **Retence běží uvnitř DB:** pg_cron job `vr-purge-expired` (04:40 UTC, migrace
+  `20261011_vr_purge_cron.sql`) 30 dní po odjezdu anonymizuje kontakt, poznámky a token,
+  pobyt nemaže; výmaz po 6 letech. Odkaz hosta `?t=` platí **14 dní po odjezdu**.
+- **Hetzner** (`178.104.207.97`, tailnet `sintera-radar`) — cron na počasí (purge cron se od
+  11. 10. 2026 ruší — byl rozbitý, viz `STAV.md`), n8n (`127.0.0.1:5678`,
   **zvenku nedostupné**), Umami — **analytika návštěvnosti webu** (dashboard
   `https://178-104-207-97.sslip.io`; vchody: `villarudolf.com/metrika` a odkaz
   „📈 Návštěvnost" v liště `/sprava/`), doklady.
@@ -103,8 +107,9 @@ vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatř�
 ## Otevřené
 
 - **Aplikace na tvorbu smluv** — existuje, ale není v žádném repozitáři. Doplnit sem, až se najde.
-- Rozhodnout osud `villa-rudolf-portal`: buď data o výletech přesunout do `site`, nebo natrvalo
-  potvrdit roli „jen datový zdroj".
+- ~~Rozhodnout osud `villa-rudolf-portal`~~ — **potvrzeno 11. 10. 2026:** datový zdroj (výlety,
+  počasí) + zdroj pravdy pro ceník a texty; `index.html` jen demo + přesměrování hostů na
+  `/pruvodce/`. Data se do `site` nestěhují.
 - Archivovat `villa-rudolf-vylety`, `villa-rudolf-web`, `villa-rudolf-cedule-22`
   (archivace na GitHubu je jen zámek — URL fungují dál).
 - Kalendář: **čtení 4 feedů zvlášť je nasazené** (13. 8.), ale běží zatím v hub módu — chybí
@@ -112,7 +117,28 @@ vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatř�
   odmítá import rezervace přes existující překryv, takže platné rezervace z feedu mizí
   a `/sprava/` je pak nevidí. Podrobnosti v `STAV.md`.
 - ~~**Bezpečnost:** `vr_purge_expired` jde spustit zvenku~~ — **zamčeno 15. 9. 2026** (jen
-  `service_role`, secret jen jako hash v configu). Viz `STAV.md`.
+  `service_role`, secret jen jako hash v configu). Zámek ale retenci na 26 dní zastavil (Hetzner
+  volal dál anon klíčem) — **od 11. 10. 2026 běží pg_cron job `vr-purge-expired`** uvnitř DB,
+  bez secretu. Zbývá ručně zrušit cron, skript a hlídač `vr-purge` na velínu. Viz `STAV.md`.
+- **Rozhodnutí Pavla z auditu portálu 11. 10. 2026** (nálezy v `villa-rudolf-portal`, větev
+  `claude/audit-2026-10`; čísla jsou id nálezů):
+  - **Oddělit Supabase projekt od SINTERA** (infra-14, db-04). Portál i web používají veřejný
+    anon klíč téhož projektu, ve kterém leží CRM SINTERA — sdílený klíč = sdílený dosah každé
+    chyby (11. 10. tři SINTERA views čitelné z anon klíče; zamčeno, ale příčina trvá).
+  - **Zálohy Supabase** (infra-02). Projekt je na **free plánu** (ověřeno 11. 10.: org „Open brain",
+    plan `free`) — žádné denní zálohy ani PITR, a nikdo ho nedumpuje; `vr_bookings`, `vr_persons`,
+    `vr_contracts`, `vr_holds` existují jen tam. Buď Pro plán, nebo noční šifrovaný `pg_dump`
+    z velínu (návrh skriptu v nálezu).
+  - **Přepsat git historii portálu** (gdpr-01, gdpr-02). Křestní i celá jména hostů byla v
+    `docs/audit-cen/` a `docs/cenova-logika-2027-2028.md` veřejného repa; z pracovního stromu
+    jsou pryč (commit `051c9c0`), v historii zůstávají — `git filter-repo` + force-push (s koordinací
+    cronu na velínu), nebo riziko přijmout.
+  - **Šifrovat zálohy z Hetzneru na Google Drive** (infra-08, sec-02, gdpr-11). Denní
+    `backup-critical.sh` odnáší v plaintextu deploy key se zápisem do `main`, rclone token, anon
+    klíč, `.env` všech stacků a data Umami/n8n s PII.
+  - **Google Fonts na webu i v portálu** (app-07, gdpr-09). `/pruvodce/` i portál stahují písma
+    z `fonts.googleapis.com` — IP každého hosta do USA bez informace. Buď písma k nám do repa,
+    nebo to zapsat do `/podminky/`.
 - **Heslo Wi-Fi** bylo natvrdo ve veřejném repu (a v git historii zůstává). Kód od 15. 9. čte
   `vr_admin_config.wifi_password` (migrace nasazena 15. 9.); zbývá vyplnění v Nastavení `/sprava/`,
   změna hesla na routeru a uzel v n8n `VrDailyTasks`. Viz `STAV.md`.
