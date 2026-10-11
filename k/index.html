@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Villa Rudolf</title>
+
+<!-- ===================================================================
+     Krátká adresa pro QR kód v detailu výletu na televizi ve vile:
+       villarudolf.com/k/?v=<id výletu>&l=<jazyk>
+     Stránka najde výlet v katalogu (villa-rudolf-portal/data/trips.json), vybere tentýž
+     odkaz jako průvodce na TV (trasa na mapě, jinak web výletu) a hned na něj přesměruje.
+
+     Proč přes nás a ne rovnou: (1) dá se anonymně spočítat, že QR někdo načetl –
+     do Supabase jde jen {qr_nacten, vylet, jazyk}, ŽÁDNÉ id výletu, žádné ID zařízení,
+     žádná cookie (migrace 20261011_vr_tv_events.sql; čte to Home Assistant ve vile);
+     (2) adresa je krátká, takže QR na TV je řidší a z gauče se načte snáz.
+
+     Neznámý výlet nebo nedostupný katalog → plánovač výletů /vylety/. Nic se pak nepočítá.
+     Umami tu záměrně není – id výletu by se dostalo do statistik návštěvnosti.
+     GitHub Pages neumí 301 → JS (stejný vzor jako /metrika/ a /pruvodce/).
+     =================================================================== -->
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
+<style>
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+       background:#0E1311;color:#F0EBE1;font:17px/1.7 system-ui,sans-serif;text-align:center;padding:24px}
+  a{color:#E7B588}
+  small{display:block;margin-top:1.2em;opacity:.75}
+</style>
+</head>
+<body>
+<p><span id="text">Otevírám výlet…</span>
+<small><a id="odkaz" href="../vylety/">Villa Rudolf – výlety</a></small></p>
+<noscript><p><a href="../vylety/">Villa Rudolf – výlety</a></p></noscript>
+<script>
+(function () {
+  'use strict';
+  var TRIPS = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/trips.json';
+  var STAT = 'https://fpknbrzbqpalguajskut.supabase.co/rest/v1/rpc/vr_tv_event';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwa25icnpicXBhbGd1YWpza3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDEyMTAsImV4cCI6MjA5Mjg3NzIxMH0.goat1c7Y1YnpTq7_XyMD3LROElkVI6E27f0B3EG8btA';   // veřejný anon klíč, stejný jako v assets/site.js
+  var TX = {
+    cs: ['Otevírám výlet…', 'Pokud se nic neděje, klepněte sem'],
+    de: ['Ausflug wird geöffnet…', 'Falls nichts passiert, hier tippen'],
+    en: ['Opening the trip…', 'If nothing happens, tap here'],
+    pl: ['Otwieram wycieczkę…', 'Jeśli nic się nie dzieje, dotknijcie tutaj']
+  };
+  var q = new URLSearchParams(location.search);
+  var id = q.get('v') || '', lang = (q.get('l') || '').toLowerCase();
+  if (!TX.hasOwnProperty(lang)) lang = 'cs';
+  var zaloha = '../vylety/?lang=' + lang, hotovo = false;
+  var text = document.getElementById('text'), odkaz = document.getElementById('odkaz');
+  document.documentElement.lang = lang;
+  text.textContent = TX[lang][0];
+
+  function jdi(url) {
+    if (hotovo) return;
+    hotovo = true;
+    odkaz.href = url; odkaz.textContent = TX[lang][1];
+    location.replace(url);
+  }
+  function pocitej() {
+    try {
+      fetch(STAT, {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + KEY },
+        body: JSON.stringify({ p_typ: 'qr_nacten', p_sekce: 'vylet', p_jazyk: lang })
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  if (!/^[a-z0-9-]{1,40}$/.test(id)) { jdi(zaloha); return; }
+  var tm = setTimeout(function () { jdi(zaloha); }, 6000);
+  fetch(TRIPS).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (d) {
+    clearTimeout(tm);
+    if (hotovo) return;
+    var t = null; (d.trips || []).forEach(function (x) { if (x.id === id) t = x; });
+    /* stejný výběr jako tv/tv.js (otevriVylet): trasa na mapě, jinak web výletu */
+    var mapa = null, web = null;
+    ((t && t.links) || []).forEach(function (l) { if (!mapa && l.icon === 'pin') mapa = l; if (!web && l.icon !== 'pin') web = l; });
+    var cil = mapa || web;
+    if (!cil || !/^https?:\/\//i.test(cil.url || '')) { jdi(zaloha); return; }
+    pocitej();
+    jdi(cil.url);
+  }).catch(function () { clearTimeout(tm); jdi(zaloha); });
+})();
+</script>
+</body>
+</html>

@@ -7,9 +7,13 @@
 (function () {
   'use strict';
 
-  var VERZE = '2026-10-11a';
+  var VERZE = '2026-10-11b';
   var PORTAL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/';
   var WEB = 'https://villarudolf.com/';
+  /* QR v detailu výletu nevede rovnou na cizí mapu / web, ale přes villarudolf.com/k/ (k/index.html):
+     ta stránka anonymně započítá „QR načten“ a hned přesměruje na tentýž odkaz. Adresa je krátká,
+     takže QR má nejvýš 33×33 bodů místo 45 a víc. true = zpátky přímé odkazy. */
+  var QR_PRIMO = false;
   /* Odkaz na aplikaci pro hosty z jiného repa — dokud je null, dlaždice se neukáže. */
   var APP_URL = null;
   var LANGS = ['cs', 'de', 'en', 'pl'];
@@ -307,12 +311,13 @@
     var L = T(), links = t.links || [], mapa = null, web = null;
     links.forEach(function (l) { if (!mapa && l.icon === 'pin') mapa = l; if (!web && l.icon !== 'pin') web = l; });
     var qr = mapa || web;
+    var qrUrl = qr && (!QR_PRIMO && /^[a-z0-9-]{1,40}$/.test(t.id) ? WEB + 'k/?v=' + t.id + '&l=' + S.lang : qr.url);
     var dl = (t.openNote ? '<dt>' + esc(L.otevreno) + '</dt><dd>' + esc(loc(t.openNote)) + '</dd>' : '') +
       (t.price ? '<dt>' + esc(L.cena) + '</dt><dd>' + esc(loc(t.price)) + '</dd>' : '');
     $('detail').innerHTML = '<div class="panel" style="--acc:' + esc(t.accent || '#E9B949') + '"><h1>' + esc(loc(t.name)) + '</h1>' +
       '<div class="tag">' + esc(loc(t.tagline)) + '</div>' +
       '<div><div class="txt">' + esc(loc(t.desc)) + '</div>' + (dl ? '<dl>' + dl + '</dl>' : '') + '</div>' +
-      (qr ? '<button class="qr f" id="detailFokus">' + qrSvg(qr.url) + '<b>' + esc(qr === mapa ? L.qrMapa : L.qrWeb) + '</b><span>' + esc(qr === mapa ? L.qrMapaSub : loc(qr.label)) + '</span></button>' : '<button class="f" id="detailFokus"></button>') +
+      (qr ? '<button class="qr f" id="detailFokus">' + qrSvg(qrUrl) + '<b>' + esc(qr === mapa ? L.qrMapa : L.qrWeb) + '</b><span>' + esc(qr === mapa ? L.qrMapaSub : loc(qr.label)) + '</span></button>' : '<button class="f" id="detailFokus"></button>') +
       '<div class="zpet"><b>OK</b> / <b>⟵</b></div></div>';
     $('detail').hidden = false;
     S.predDetailem = document.activeElement;
