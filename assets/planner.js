@@ -8,7 +8,8 @@
  *
  * Data: villa-rudolf-portal (trips.json + forecast.json), jediný zdroj pravdy, fetch
  * za běhu. Doporučovací jádro (partyFlags / seasonOf / eligible / scoreTrip / whyBadges /
- * buildPlan / CAT) žije od 11. 10. 2026 JEN TADY — portál je demo a hosty posílá sem.
+ * buildPlan / CAT) žije JEN TADY — portál (pavelkubiznak.github.io/villa-rudolf-portal) je po
+ * nasazení jeho větve claude/audit-2026-10 jen demo a hosty s tokenem přesměrovává sem.
  *
  * OSOBNÍ DATA (jméno, termín pobytu, věky dětí) se renderují VÝHRADNĚ v režimu
  * 'guest' — na indexované /vylety/ se nikdy neobjeví (viz renderHeroHTML,
@@ -288,7 +289,8 @@
 
   /* ===================== Doporučovací jádro =====================
    * Od 11. 10. 2026 je TOHLE jediné živé jádro: hosté chodí na /pruvodce/?t=, portál
-   * (pavelkubiznak.github.io/villa-rudolf-portal) je jen demo a hosty s tokenem přesměrovává sem.
+   * (pavelkubiznak.github.io/villa-rudolf-portal) je po nasazení větve claude/audit-2026-10 jen demo
+   * a hosty s tokenem přesměrovává sem.
    * Přeneseno z portálu i s opravami, které tu chyběly (vítr/bouřka v místě výletu, batole,
    * zájmy, parta bez dětí, sníh, sezóna per den, alternativy bez opakování). */
   function partyFlags(p) {
@@ -315,7 +317,7 @@
     for (var i = 0; i < ti.length; i++) if (fi.indexOf(ti[i]) >= 0) return true;
     return false;
   }
-  // Vítr: model met.no (~9 km) vrchol Sněžky nerozliší – za 134 běhů cronu (VII–IX 2026) byl max 30 km/h
+  // Vítr: model met.no (~9 km) vrchol Sněžky nerozliší – za 134 běhů cronu (VII–IX 2026, měření z portálu 15. 9. 2026) byl max 30 km/h
   // u vily a 27 km/h v bodě lanovky, dřívější hranice 45 tedy nikdy nesepnula. Hranice provozu lanovky
   // (~60 km/h v nárazech) odpovídá modelovému průměru zhruba 30–35. 35 je odhad – kalibrovat proti odstávkám.
   var WIND_LIMIT_KMH = 35;
@@ -468,7 +470,9 @@
   function seasonOk(t, iso) {
     var s = t && t.seasons;
     if (!s || !s.length) return true;
-    return s.indexOf(seasonOf(iso || todayISO())) >= 0;
+    // Host: sezóna dne pobytu. Veřejný /vylety/ (bez data): přepínač Léto/Zima webu, ne dnešek –
+    // jinak by wizard doporučoval z jiné sezóny, než ukazuje katalog pod ním.
+    return s.indexOf(iso ? seasonOf(iso) : (S.season === 'zima' ? 'winter' : 'summer')) >= 0;
   }
   /* Katalog: host vidí výlety sezón všech dnů SVÉHO pobytu (pobyt přes 1. 12. má lyže i celoroční,
    * pobyt v listopadu jen celoroční) — ne podle toho, co ukazuje web dnes. Veřejný /vylety/ se dál
