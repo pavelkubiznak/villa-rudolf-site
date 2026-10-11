@@ -41,6 +41,7 @@
     cs: {
       brand: 'Plánovač výletů', navVylety: 'Výlety', navInfo: 'Praktické info',
       footNote: 'Ceny a otevírací doby ověřte před cestou · počasí: yr.no',
+      privacy: 'Ochrana osobních údajů',
       badge: 'Váš plánovač', greet: 'Vítejte', family: 'rodino', heroTitle: 'Váš plán na tenhle týden',
       stayPrefix: 'pobyt', todayTip: 'Dnešní tip', moreArrow: 'detail →',
       planTitle: 'Plán na každý den', planSrc: 'počasí: yr.no · živě',
@@ -81,6 +82,7 @@
     de: {
       brand: 'Ausflugsplaner', navVylety: 'Ausflüge', navInfo: 'Gäste-Infos',
       footNote: 'Preise und Öffnungszeiten vor der Fahrt prüfen · Wetter: yr.no',
+      privacy: 'Datenschutz',
       badge: 'Ihr Planer', greet: 'Willkommen', family: 'Familie', heroTitle: 'Ihr Plan für diese Woche',
       stayPrefix: 'Aufenthalt', todayTip: 'Tipp für heute', moreArrow: 'Detail →',
       planTitle: 'Plan für jeden Tag', planSrc: 'Wetter: yr.no · live',
@@ -121,6 +123,7 @@
     en: {
       brand: 'Trip planner', navVylety: 'Trips', navInfo: 'Guest info',
       footNote: 'Check prices and opening hours before you go · weather: yr.no',
+      privacy: 'Privacy',
       badge: 'Your planner', greet: 'Welcome', family: 'family', heroTitle: 'Your plan for this week',
       stayPrefix: 'stay', todayTip: 'Today’s tip', moreArrow: 'detail →',
       planTitle: 'A plan for every day', planSrc: 'weather: yr.no · live',
@@ -161,6 +164,7 @@
     pl: {
       brand: 'Planer wycieczek', navVylety: 'Wycieczki', navInfo: 'Informacje praktyczne',
       footNote: 'Ceny i godziny otwarcia sprawdźcie przed wyjazdem · pogoda: yr.no',
+      privacy: 'Ochrona danych',
       badge: 'Wasz planer', greet: 'Witajcie', family: 'rodzino', heroTitle: 'Wasz plan na ten tydzień',
       stayPrefix: 'pobyt', todayTip: 'Tip na dziś', moreArrow: 'szczegóły →',
       planTitle: 'Plan na każdy dzień', planSrc: 'pogoda: yr.no · na żywo',
