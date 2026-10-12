@@ -37,6 +37,9 @@
 
 .inv{border-top:1px dashed var(--line-2);padding-top:12px;margin-top:12px}
 .inv-t{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.inv-t .opt{font-weight:400}
+.chk{display:flex;gap:8px;align-items:center;cursor:pointer;min-height:42px}
+.chk input{width:auto;flex:0 0 auto;margin:0}
 
 /* náhled */
 .edit-preview{position:sticky;top:12px}
