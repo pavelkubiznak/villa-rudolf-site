@@ -508,7 +508,8 @@
     '.box{border:1.2pt solid var(--navy);background:var(--cream);padding:8pt 11pt;margin-bottom:13pt}' +
     '.box h2{font-size:8.4pt;letter-spacing:.07em;color:var(--navy);margin:0 0 6pt}.box p{margin:0 0 5pt}.box p:last-child{margin-bottom:0}' +
     'section{border-top:.6pt solid var(--line);padding-top:5pt;margin-top:5pt;page-break-inside:avoid}section:first-of-type{border-top:none}' +
-    'h2.par{font-size:10.2pt;color:var(--navy);margin:0 0 4pt}p{margin:0 0 4pt}ul{margin:0 0 5pt;padding-left:14pt}li{margin-bottom:1.5pt}' +
+    'section.flow{page-break-inside:auto}table.storno,table.storno tr{page-break-inside:avoid}' +
+    'h2.par{font-size:10.2pt;color:var(--navy);margin:0 0 4pt;page-break-after:avoid}p{margin:0 0 4pt}ul{margin:0 0 5pt;padding-left:14pt}li{margin-bottom:1.5pt}' +
     '.lead{font-weight:700}.fine{color:var(--muted);font-size:8.8pt}.fx{color:var(--muted);font-weight:400}' +
     'table.storno{margin:4pt 0;font-size:8.5pt}' +
     'table.storno th{background:#f1f2f5;color:var(--navy);text-align:left;font-size:8pt;letter-spacing:.04em;padding:4pt 7pt;border:.6pt solid var(--line)}' +
@@ -520,7 +521,8 @@
     '.close .sign{font-weight:700;color:var(--navy);margin-bottom:4pt}.close .foot{color:var(--muted);font-size:7.8pt}';
 
   function ul(items) { return '<ul>' + items.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
-  function par(n, title, inner) { return '<section><h2 class="par">§ ' + n + ' &nbsp;' + title + '</h2>' + inner + '</section>'; }
+  /* cls 'flow' = paragraf se smí zalomit přes stránku (dlouhý § 7 jinak nechá půl strany prázdné) */
+  function par(n, title, inner, cls) { return '<section' + (cls ? ' class="' + cls + '"' : '') + '><h2 class="par">§ ' + n + ' &nbsp;' + title + '</h2>' + inner + '</section>'; }
 
   /* QR platba (SPD 1.0 — standard ČBA). Vrací SVG, nebo '' když knihovna chybí. */
   function qrSvg(d) {
@@ -613,7 +615,7 @@
       }).join('') + '</table>';
     var s7 = par(7, t.p7, '<p>' + t.p7a + '</p>' + storno +
       (paid && paid.freeUntil ? '<p>' + t.p7free(d) + '</p>' : '') +
-      '<p>' + t.p7b + '</p>' + (pre.any ? '<p>' + t.p7pre + '</p>' : '') + '<p>' + t.p7c + '</p><p>' + t.p7d + '</p>');
+      '<p>' + t.p7b + '</p>' + (pre.any ? '<p>' + t.p7pre + '</p>' : '') + '<p>' + t.p7c + '</p><p>' + t.p7d + '</p>', 'flow');
     var s8 = par(8, t.p8, ul(t.p8list));
     var s9 = par(9, t.p9, '<p>' + t.p9a + '</p><p>' + t.p9b + '</p>');
     var s10 = par(10, t.p10, '<p>' + t.p10a + '</p>');
