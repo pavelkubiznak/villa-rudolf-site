@@ -177,6 +177,17 @@ blíž než ~3 týdny před T−65, editor dvě splátky nenabídne.
 Znění CS je doslova to, co se posílalo od srpna 2026 (bez počtu osob, bez koupelen, bez
 náhradníka — viz rozhodnutí z 29. 8. 2026). Kdo mění text smlouvy, mění **jen** šablonu.
 
+**Dvě odchylky (od 12. 10. 2026), obě jen data pro šablonu:**
+
+- **Položky předem ve faktuře** (`d.prepaid = {cleaning, pets}`, jen u `single`) — nabídka s jednou
+  částkou za všechno (pronájem + úklid + mazlíčci). § 4 je vypíše jako hrazené předem, z kauce se
+  strhává jen poplatek obci. **Storno se dál počítá jen z ceny za pronájem**, položky předem se
+  při zrušení vrací celé.
+- **Host už zaplatil** (`d.paid = {on, amount, freeUntil}`) — smlouva se posílá až po úhradě jako
+  potvrzení uzavřené dohody. Storno podmínky pak neplatí úhradou, ale **až je host potvrdí
+  e-mailem**; `freeUntil` mu dává lhůtu na zrušení bez storna. Vzniklo kvůli nabídce odeslané
+  8. 10. 2026 jen se zálohovou fakturou — správně jde smlouva vždy **spolu s fakturou**.
+
 ## Párování plateb (`vr_payments`) — etapa 2
 
 Předrezervaci potvrzuje majitel kliknutím na „Uhrazeno". Druhá cesta: bankovní pohyby ze
