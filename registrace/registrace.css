@@ -211,3 +211,28 @@ body{margin:0;background:#0E1311}
 /* tvrdá chyba u data narození (budoucnost, přes 110 let) – stejný rámeček, červeně */
 .vp-docwarn-hard{border-color:rgba(229,135,122,.3);background:rgba(229,135,122,.08)}
 .vp-docwarn-hard p{color:var(--vp-err)}
+
+/* ---------- čtečka dokladu (volitelná) ---------- */
+.vp-scanrow{display:flex;flex-direction:column;gap:8px}
+.vp-scanbtn{display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Archivo',sans-serif;
+  font-size:14.5px;font-weight:600;color:var(--vp-text);background:transparent;border:1px solid var(--vp-ember);
+  border-radius:3px;padding:13px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .2s}
+.vp-scanbtn:hover{background:rgba(214,138,76,.1)}
+.vp-scanbtn svg{width:20px;height:20px;color:var(--vp-ember);flex:none}
+html.vp-scan-open{overflow:hidden}
+/* absolutně v dokumentu (top = aktuální posun stránky nastaví ctecka.js), stránka se pod ní nehýbe */
+.vp-scan{position:absolute;left:0;right:0;top:0;height:100vh;height:100dvh;z-index:50;background:#0A0E0C;color:var(--vp-text);font-family:'Archivo',sans-serif;
+  display:flex;flex-direction:column;align-items:center;gap:12px;overflow:hidden auto;
+  padding:max(16px,env(safe-area-inset-top)) 16px max(18px,env(safe-area-inset-bottom))}
+.vp-scan-t{margin:0;font-family:'Newsreader',serif;font-size:1.25rem;text-align:center}
+.vp-scan>*{min-width:0;box-sizing:border-box}
+.vp-scan-stage{position:relative;width:100%;max-width:560px;height:40vh;overflow:hidden;border-radius:6px;background:#000;flex:none}
+.vp-scan-video{display:block;width:100%;height:100%;object-fit:cover}
+/* rámeček = kam patří řádky se znaky <<<; okolí ztmavené */
+.vp-scan-guide{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid var(--vp-ember);
+  border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,.45);pointer-events:none}
+.vp-scan-status{margin:0;font-size:14px;line-height:1.5;text-align:center;color:var(--vp-muted);max-width:44ch;min-height:3em}
+.vp-scan-status.vp-scan-fail{color:var(--vp-warn)}
+.vp-scan-close{font-family:'Archivo',sans-serif;font-size:14.5px;font-weight:700;color:#10150f;background:var(--vp-ember);
+  border:0;border-radius:3px;padding:14px 20px;cursor:pointer;width:100%;max-width:340px}
+.vp-scan-priv{margin:0;font-size:11.5px;line-height:1.5;text-align:center;color:var(--vp-dim);max-width:44ch}
