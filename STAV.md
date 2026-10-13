@@ -403,7 +403,7 @@ narození s rokem 2026 (kolečko v telefonu začíná dneškem).
 | Číslo dokladu podle státu a druhu (pas / průkaz), tabulka v `registrace/doklady.js` | ✅ 13. 10. 2026 – DE, CZ, PL, NL, BE, AT, SK; jen pas u UK a IT |
 | Kontrolní číslice: polský dowód a pas (tvrdě), belgická eID (jen varuje), německé doklady (jen když host opíše 10 znaků ze strojové zóny) | ✅ 13. 10. 2026 |
 | Stát bez pravidla nebo „Jiný doklad“: obecná kontrola + zaškrtnutí „opsal(a) jsem přesně“ | ✅ 13. 10. 2026 |
-| Čtečka dokladu foťákem (strojově čitelná zóna, celé v prohlížeči) | 🟡 **prototyp ve vlastním PR za přepínačem `?ctecka=1`** – na vzorových dokladech čte, na skutečném telefonu neověřeno (viz níž) |
+| Čtečka dokladu foťákem (strojově čitelná zóna, celé v prohlížeči) | 🔴 **v tomhle PR není** – prototyp je na větvi `claude/registrace-ctecka-dokladu`; čte, ale v simulaci jednou z 96 pokusů přijal špatně přečtené číslo dokladu, na skutečném telefonu neměřeno |
 
 **Kde co je.** `registrace/doklady.js` = čisté funkce bez DOM (meze data narození, tabulka `RULES`
 se zdrojem u každého státu, kontrolní číslice). `registrace/registrace.js` = formulář a texty
