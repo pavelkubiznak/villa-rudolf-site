@@ -137,7 +137,7 @@ a{color:var(--ember-2)}
 .task-when.warn{background:color-mix(in oklab,var(--warn),transparent 78%);color:var(--warn)}
 .task-when.ok{background:color-mix(in oklab,var(--ok),transparent 78%);color:var(--ok)}
 .task.lock-ok{border-color:color-mix(in oklab,var(--ok),transparent 60%)}
-.task-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;flex:0 0 auto;max-width:270px}
+.task-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;flex:0 0 auto;max-width:350px}
 .task-actions .btn{flex:1 1 auto}
 /* host váhá — nahoře a výrazně; starší zprávy naopak tlumeně */
 .task.risk{border-color:color-mix(in oklab,var(--err),transparent 45%);background:color-mix(in oklab,var(--err),transparent 90%)}
@@ -481,6 +481,11 @@ a{color:var(--ember-2)}
   .todo td{padding:0;border:0}
   td.todo-miss{display:block;grid-column:1 / -1;margin-top:6px}
 }
+
+/* ===== Podmínky pobytu v editoru + průvodní zpráva ===== */
+.check{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--muted);cursor:pointer;margin:2px 0 14px}
+.check input{width:19px;height:19px;flex:0 0 auto;margin-top:1px;accent-color:var(--ember)}
+.msg-cover{margin:-8px 0 16px}
 
 /* ===== Odpověď hosta (detail pobytu) ===== */
 .reply-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}

@@ -4,7 +4,7 @@
 navrhovat — ať jsi člověk nebo AI session — přečti si tuhle tabulku. Systém je rozdělený do
 několika repozitářů a bez mapy se v nich nedá poznat, které je živé.
 
-Aktualizováno: 11. 10. 2026
+Aktualizováno: 13. 10. 2026
 
 ## Součásti
 
@@ -53,7 +53,7 @@ takže ho kalendář musí dostat z `/sprava/` — jinak ho web dál nabízí ja
 | **CO** — výlety, počasí | `villa-rudolf-portal/data/` | `site` je odtud čte |
 | **SPOJKA** mezi kalendářem a rezervací | `uidh` (= `sha256(iCal UID)[:16]`) | používá `sprava.js` i `vr_admin_upsert_booking(p_uidh)` |
 | **PŘÍMÝ PRODEJ** — předrezervace ze zálohové faktury, potvrzené přímé rezervace | Supabase `vr_holds` (tady) | jediná věc, kterou `site` posílá **do** kalendáře — přes `vr_public_holds()`; `uidh` = `sha256('vr-hold:'+id)[:16]` |
-| **ZPRÁVY HOSTŮM** — texty, sekvence, co už odešlo, jak host odpověděl | texty: `sprava/sprava.js` (`TPL`, `NEWS`, `SEQUENCE`) + **kopie** v `n8n/VrDailyTasks/VrDailyTasks.code.js`; stav: Supabase `vr_msglog` | kopie hlídá `node tools/test-zpravy.mjs`; hlas a tykání v němčině určuje `villa-rudolf-portal/docs/text-villa-rudolf.md` |
+| **ZPRÁVY HOSTŮM** — texty, sekvence, co už odešlo, jak host odpověděl | texty: `sprava/sprava.js` (`TPL`, `NEWS`, `SEQUENCE`) + **kopie** v `n8n/VrDailyTasks/VrDailyTasks.code.js`; stav: Supabase `vr_msglog` | kopie hlídá `node tools/test-zpravy.mjs`; **zprávy vykají ve všech jazycích** (i německy — na rozdíl od webu a inzerátů); ve `vr_msglog` jsou i podmínky pobytu (čas příjezdu, placení poplatku) |
 | **NÁVŠTĚVNOST** webu — kolik lidí, odkud, kam, jak dlouho | Umami na Hetzneru | cookieless, bez PII; skript na všech stránkách kromě `/sprava/`, tokeny `?t=` se nezapisují |
 
 ## Infrastruktura
@@ -86,7 +86,7 @@ příjemce, řeší to štítkem v Gmailu, ne novou adresou.
 | Směr | Kudy to jde dnes | Pozn. |
 |---|---|---|
 | Host → vila | `rezervace@villarudolf.com` | přeposílá se do majitelovy Gmail schránky, **ověřeno 26. 8. 2026** |
-| Vila → host (zprávy k pobytu) | **WhatsApp**: `/sprava/` (a denní e-mail z n8n) připraví text a odkaz `wa.me`, odesílá majitel ručně ze svého telefonu | nic se neposílá samo; odpovědi hostů systém nečte — majitel je zapisuje tlačítky „jede / váhá" |
+| Vila → host (zprávy k pobytu) | hosté z platforem: **celý text přes platformu** (tlačítko „Zkopírovat pro platformu" ve `/sprava/`) + krátká průvodní zpráva na WhatsApp; přímý prodej: **WhatsApp** (`wa.me`). Odesílá majitel ručně | nic se neposílá samo; záznam na platformě je pojistka při škodě; odpovědi hostů systém nečte — majitel je zapisuje tlačítky „jede / váhá" |
 | Vila → host (ručně) | odchází z majitelova Gmailu | ⚠️ **nesedí s adresou na webu** — host vidí v odpovědi jiného odesílatele |
 | Vila → host (zálohová faktura) | z fakturační schránky Sintery | ⚠️ host pak odpovídá do účetní schránky cizí firmy |
 | Systém → majitel | n8n přes Gmail SMTP (`VrSmtpGmail0001`) | v pořádku, majitel sám sobě — hosta to nevidí |
@@ -146,7 +146,7 @@ vlastní doménou, u faktur `Reply-To` na `rezervace@`). Do repa z toho nepatř�
   `vr_admin_config.wifi_password` (migrace nasazena 15. 9.); zbývá vyplnění v Nastavení `/sprava/`,
   změna hesla na routeru a uzel v n8n `VrDailyTasks`. Od 11. 10. bez něj uvítací zpráva nejde
   odeslat a „Co doplnit" to hlásí nahoře. Viz `STAV.md`.
-- **Zprávy hostům (11. 10. 2026):** kód je v repu, ale **`VrDailyTasks` v n8n běží ještě se starou
+- **Zprávy hostům (13. 10. 2026):** kód je v repu, ale **`VrDailyTasks` v n8n běží ještě se starou
   sekvencí**, dokud se nenasadí (`tools/n8n-patch-vrdailytasks.py`). Do té doby denní e-mail a `/sprava/`
   neříkají totéž. Viz `STAV.md`, „Zprávy hostovi".
 - **Schéma není úplné:** `vr_request` / `vr_requests` (formulář homepage) v migracích chybí —

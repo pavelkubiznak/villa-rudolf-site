@@ -172,24 +172,34 @@
   /* ============ ŠABLONY ZPRÁV — 4 jazyky cs/en/de/pl ============ */
   // Přístup TPL[lang][key]. STEJNÝ blok má n8n/VrDailyTasks/VrDailyTasks.code.js —
   // kdo mění text tady, mění ho i tam (hlídá tools/test-zpravy.mjs).
-  // Od 11. 10. 2026: sekvence má 5 kroků místo 7. „first" = první ozvěna hned po
-  // rezervaci (dřív „confirm" v T−30); uvítací zpráva nese i kód ke dveřím a odkaz na
-  // registraci, takže samostatné „registration" a „doorcode" zanikly. Němčina tyká
-  // v množném čísle („ihr/euch") jako německý web — zdroj pravdy pro hlas je
-  // villa-rudolf-portal/docs/text-villa-rudolf.md, kap. 1.
-  // fee* = stavebnice odstavce o poplatku ({POPLATEK}), viz buildCtx().
+  // Znění schválil Pavel 13. 10. 2026 (čeština je předloha, de/en/pl jsou z ní přeložené):
+  //  first       první ozvěna hned po rezervaci — bez registrace, bez otázek na počty,
+  //              odkazy vedou na web v jazyce hosta (ne na keypano). Čeští hosté mají
+  //              kratší odstavec o dokladech bez cizinecké policie.
+  //  cover       krátká průvodní zpráva na WhatsApp, když celý text šel přes platformu
+  //  welcomeCore uvítací zpráva (T−10): adresa, kód, video, průvodce, Wi-Fi, kniha hostů
+  //              a poplatek. BEZ odkazu na registraci — zapisuje se až na místě přes QR
+  //              na lednici (kdo se zapíše předem a nepřijede, za toho se pak platí).
+  //  video*      co je ve videu (léto / zima), pay* věta o placení poplatku ({JAK_SE_PLATI})
+  //  update      krátká zpráva T−2 s kódem; inDays* = „pozítří / zítra / dnes" ({KDY})
+  // Všechny jazyky VYKAJÍ, i němčina („Sie", „Guten Tag") — Pavel: „v němčině nebudeme
+  // nikomu tykat". Web a inzeráty německy tykají (text-villa-rudolf.md), zprávy ne.
+  // Letní a zimní modul (druhá část uvítací zprávy) zanikl — je to ve videu.
   var TPL = {
     "cs": {
-      "first": "Dobrý den, {JMENO},\n\ntady Pavel z Villy Rudolf. Do vašeho pobytu ({TERMIN}) je ještě čas, ale už se na vás těšíme a chtěl jsem se ozvat.\n\n{NOVINKA}Dvě věci, ať máte klid:\n\n🛂 Při příjezdu zapisujeme všechny hosty včetně dětí. Mrkněte prosím včas, že má každý platný doklad, i děti – vyřízení trvá pár týdnů.\n\n👨‍👩‍👧 Víte už zhruba, v kolika lidech pojedete a kolik bude dětí? Rád vám podle toho připravím postýlky a tipy na výlety.\n\nVšechno praktické (adresa, kód ke dveřím, Wi-Fi) pošlu týden před příjezdem. Kdyby se u vás cokoliv měnilo, klidně napište hned, vždycky se nějak domluvíme.\n\nPavel",
-      "nudge": "Dobrý den, {JMENO}, jen se připomínám – dorazila vám moje zpráva k pobytu ({TERMIN})? Stačí krátká odpověď, ať vím, že je u vás všechno při starém. Díky!\nPavel",
-      "welcomeCore": "Dobrý den, {JMENO},\n\nmoc se na vás těšíme — {TERMIN} bude Villa Rudolf jen vaše! Posílám všechno důležité v jedné zprávě, ať ji máte po ruce.\n\n📍 *Kam jedete*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. Parkujete přímo na pozemku u domu.\n\n🕒 *Dům je váš od 15:00*\nDopoledne ho po předchozí partě chystáme do plné parády — proto prosím nejezděte dřív, ať vás nevítáme s vysavačem v ruce. 🙂\n\n🔑 *Vstup bez klíčů*\nKód ke dveřím: *{KOD_DVERI}*. Platí od 15:00 v den příjezdu do 10:00 v den odjezdu. Nechte si ho prosím jen ve své skupině a při odchodu vždy mrkněte, že jsou dveře zavřené — dům je po celý pobyt jen váš.\n\n🏠 *Prohlédněte si dům už teď*\nVirtuální prohlídka: https://www.keypano.com/v/569g7v8_96ci86-1770715560.html\nVideo k domu: https://youtu.be/tWCuuovnh2U\n\n🥾 *Váš osobní průvodce výlety*\nPřipravili jsme vám stránku s tipy na výlety seřazenými podle počasí, věku dětí a velikosti vaší skupiny: {PRUVODCE_LINK}\nKlidně ji otevřete už teď — před příjezdem se hodí na plánování.\n\n📝 *Registrace hostů*\nVyřídíte ji za pár minut už teď z domova: {REGISTRACNI_LINK}\nZapište prosím všechny, i děti. Kdo to nestihne předem, najde QR kód na lednici. Není to náš výmysl, město vede evidenci k místnímu poplatku — a máte to z krku.\n\n💳 *Místní poplatek (jde městu, ne nám)*\n{POPLATEK}\n\n🌙 *Večery*\nJsme v horském údolí, které nese zvuk dál, než byste čekali — a sousedé kolem tu žijí celý rok, ne jen na víkend. Hudba proto u nás hraje jen uvnitř domu: reproduktory na pozemek prosíme vůbec, ani přes den. Večer u ohně to bohatě vynahradí praskání dřeva a ticho, jaké ve městě neuslyšíte. Po desáté večer buďte prosím venku úplně potichu — lidé okolo ráno vstávají do práce a v létě spí při otevřených oknech, a hluk je bohužel rychle přiměje volat policii. Večer u ohně je krásný i potichu, uvidíte. Uvnitř si poseďte, jak dlouho chcete.\n\n📶 *Wi-Fi všude*\nSíť „Rudolf Wi-Fi\", heslo: {WIFI_HESLO}. Chytá v celém domě i po celém pozemku — od ohniště přes pergolu až po dětské hřiště.\n\n📞 *Kdyby cokoliv*\nPavel: +420 775 220 785 — pište, volejte, jsem tu pro vás.\nNemocnice Trutnov: +420 499 866 111 (Maxima Gorkého 77, Trutnov)\nTíseň: 112 · záchranka 155 · policie 158 · hasiči 150 · městská policie 156\nHorská služba: +420 602 448 338\n\nTěšíme se na vás!\nPavel",
-      "feeRate": "25 Kč / 1 € za dospělého a noc.",
-      "feeAmount": " U vás: {DOSPELI} dospělých × {NOCI} nocí = {CASTKA} Kč.",
-      "feeUnknown": " Děti do 18 let neplatí; přesnou částku spočítáme podle registrace.",
-      "feePay": " Nejjednodušší kartou přes https://revolut.me/pavelhuqh, klidně ale i hotově na místě.",
-      "feeDeposit": " Nic neplatíte zvlášť — poplatek vyúčtujeme z kauce podle smlouvy.",
-      "summer": "☀️ *Léto u Rudolfa — pár věcí navíc*\n\n🏊 *Bazén* (v provozu zhruba květen–září, vyhřívaný na ~27 °C — trochu podle počasí)\nPředáváme ho vždy zamčený — klíče jsou v kuchyni v levé horní skříňce (při pohledu na linku úplně nahoře vlevo). Zamčený je kvůli bezpečí dětí: k vodě prosím vždy jen pod dohledem dospělého, nikdy samy — stačí okamžik nepozornosti. Po koupání bazén zase zavřete a zamkněte, krásně tak drží teplotu i čistotu. A skleničky nechte prosím na terase — kdyby se sklo v bazénu rozbilo, museli bychom ho celý vypustit, vyčistit a znovu napouštět a ohřívat, a to je pro vás den i víc bez koupání.\n\n🔥 *Ohniště, gril, dřevo*\nVelké ohniště, pergola-altán i elektrické grily čekají na vás. Dřevo je pod dvěma smrky u parkoviště — v přístřešku najdete sekeru, pilu i opékací jehly, zámek otevřete kódem *0519*. Jedno upozornění s péčí: když se oheň protáhne do noci, uhlíky bývají ráno pořád horké — ohlídejte prosím malé zvědavce, ohniště je ráno láká.\n\n🧖 *Sauna*\nPřipravená pro vás — návod je v letním videu i přímo u sauny. Dovnitř s ručníkem, prosím.\n\n🎬 *Všechno pohromadě v letním videu* (přivítání, bazén, sauna, dřevo, registrace):\nhttps://www.youtube.com/watch?v=ksVpDr-P8ic\n\nAť vám léto u Rudolfa chutná!\nPavel",
-      "winter": "❄️ *Zima u Rudolfa — ať jste na svahu dřív než fronty*\n\n🚌 *Skibus kousek od domu*\nJak na zastávku, ukazuje krátké video: https://youtu.be/ZX8HJqZ1YBQ\nJízdní řády: https://drive.google.com/drive/folders/1HPJI7XydWwljBq_V19QwJGuBQWn73dZe\nPřed cestou si prosím ověřte aktuální jízdní řád — v sezóně se občas mění.\n\n🎿 *Lyžárna přímo v domě*\nLyže i boty tam přes noc krásně oschnou a ráno vyrážíte v suchém a teplém.\n\n🧖 *Sauna*\nPo dni na svahu to nejlepší zakončení. Návod najdete ve videu k domu i přímo u sauny — jen ručník s sebou.\n\nKdyby cokoliv, jsem na telefonu. Užijte si hory!\nPavel",
+      "first": "Dobrý den, {JMENO},\n\ntady Pavel z Villy Rudolf. Váš pobyt {TERMIN} je potvrzený a už se na vás těšíme.\n\n{NOVINKA}🏠 *Podívejte se, kde budete bydlet*\nDům si můžete projít už teď a v klidu si rozdělit pokoje:\n360° prohlídka: https://villarudolf.com/#interier\nPokoje a lůžka: https://villarudolf.com/#loznice\nVideo: {VIDEO}\n\n🛂 *Doklady*\nStejně jako v každém hotelu se u nás všichni hosté po příjezdu zapisují do knihy hostů, město ji vyžaduje kvůli místnímu poplatku. Vezměte si proto prosím doklady.\n\nVšechno praktické (adresa, kód ke dveřím, Wi-Fi) vám pošlu asi deset dní před příjezdem. Kdybyste se chtěli na cokoliv zeptat už teď nebo se u vás něco měnilo, napište nebo zavolejte, rád poradím.\n\nPavel",
+      "cover": "Dobrý den, {JMENO}, tady Pavel z Villy Rudolf. Informace k pobytu jsem vám poslal přes {PLATFORMA}. Kdyby cokoliv, jsem i tady.",
+      "welcomeCore": "Dobrý den, {JMENO},\n\nuž se na vás těšíme, {TERMIN} bude Villa Rudolf jen vaše. Posílám všechno důležité v jedné zprávě.\n\n📍 *Adresa a příjezd*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. Parkujete přímo na pozemku u domu. Dům je váš od {CAS} v den příjezdu.\n\n🔑 *Kód ke dveřím*\n*{KOD_DVERI}*, platí od {CAS} v den příjezdu do 10:00 v den odjezdu. Nechte si ho prosím jen ve své skupině.\n\n🎬 *Všechno je ve videu*\n{VIDEO}\n{VIDEO_OBSAH} Pusťte si ho prosím ještě před cestou.\n\n🥾 *Výlety podle počasí*\n{PRUVODCE_LINK}\n\n📶 *Wi-Fi*\nSíť „Rudolf Wi-Fi\", heslo {WIFI_HESLO}.\n\n📝 *Kniha hostů a místní poplatek*\nPo příjezdu se prosím všichni zapište do knihy hostů. QR kód je na lednici a zabere to pár minut. Zapisují se i děti, každý pod svým vlastním dokladem. Městu se platí místní poplatek 25 Kč / 1 € za dospělého od 18 let a noc, děti neplatí.{JAK_SE_PLATI}\n\n🌙 *Večer a noční klid*\nJsme v horském údolí, které nese zvuk daleko, a sousedé tu žijí celý rok. Hudbu proto prosím jen uvnitř domu a po desáté večer venku potichu. Uvnitř si poseďte, jak dlouho chcete.\n\n📞 *Kdyby cokoliv*\nPavel: +420 775 220 785\nNemocnice Trutnov: +420 499 866 111, Maxima Gorkého 77\nTíseň 112 · záchranka 155 · policie 158 · horská služba +420 602 448 338\n\nŠťastnou cestu!\nPavel",
+      "videoSummer": "Kde zaparkovat, jak se dostat do domu, sauna, bazén, dřevo a nářadí a krátká prohlídka domu.",
+      "videoWinter": "Krátká prohlídka domu, zápis do knihy hostů přes QR kód, sauna a cesta na skibus.",
+      "payOnsite": " Zaplatíte ho na místě kartou nebo hotově, částku spočítáme podle zapsaných hostů.",
+      "payIncluded": " Máte ho zaplacený v ceně rezervace, nic dalšího se neplatí.",
+      "payDeposit": " Podle smlouvy ho vyúčtujeme z kauce.",
+      "payEnergy": " Stejně tak elektřinu a plyn podle odečtu při příjezdu a odjezdu.",
+      "update": "Dobrý den, {JMENO}, {KDY} se uvidíme. Dům bude připravený a všechno z minulé zprávy platí. Kód ke dveřím je {KOD_DVERI}, od {CAS}. Šťastnou cestu!\nPavel",
+      "inDays2": "pozítří",
+      "inDays1": "zítra",
+      "inDays0": "dnes",
       "deposit": "Dobrý den, {JMENO}, ještě jedna praktická věc k pobytu {TERMIN}. Vybíráme vratnou kauci {KAUCE} Kč — je to jen jistota pro případ škody, po odjezdu a rychlé kontrole domu vám ji obratem vracíme zpět v plné výši. Pošlete ji prosím pohodlně kartou přes Revolut: https://revolut.me/pavelhuqh ({KAUCE} Kč). Díky moc a těšíme se na vás!\nPavel",
       "day2": "Dobrý den, {JMENO}, jen se hlásím po první noci — máte všechno, jak má být? 🙂 Kdyby cokoliv drhlo nebo jste něco nemohli najít, napište mi nebo rovnou zavolejte (+420 775 220 785) — vyřeším to hned. Užívejte hory!\nPavel",
       "predeparture": "Dobrý den, {JMENO}, zítra se budeme loučit — snad vám bylo u Rudolfa dobře! Než vyrazíte, poprosím o pár drobností (dohromady tak 10 minut) — o všechno ostatní se postará úklidová služba:\n\n🍽 nádobí do myčky a zapnout ji\n🗑 odpadky do označených nádob — díky za základní roztřídění\n🛏 povlečení svléknout a spolu s ručníky nechat na určeném místě\n🧺 půjčené vybavení vrátit tam, kde jste ho našli\n🔍 mrknout na zavřená okna a dveře, vypnuté spotřebiče (v létě i zamčený bazén)\n\nDům prosím předejte do 10:00 — v deset nastupuje úklid, aby v 15:00 přebírala další parta dům stejně nachystaný, jako jste ho přebírali vy.\n\nDíky moc, že to s námi dotáhnete do konce. Šťastnou cestu!\nPavel",
@@ -199,16 +209,19 @@
       "reviewGoogle": "\nPokud cítíte, že si zasloužíme plné hodnocení, budeme moc vděční za recenzi na Googlu — pomáhá nám to víc, než se zdá. A kdyby cokoliv, byť maličkost, nebylo stoprocentní, napište to prosím rovnou mně sem na WhatsApp — já to totiž můžu napravit, recenze už ne. 🙂\n\nŠťastnou cestu domů — a kdykoli se budete chtít do Krkonoš vrátit, Rudolf i my tu budeme!\nPavel"
     },
     "en": {
-      "first": "Hello {JMENO},\n\nthis is Pavel from Villa Rudolf. There's still some time until your stay ({TERMIN}), but we're already looking forward to having you and I wanted to get in touch.\n\n{NOVINKA}Two things, so you can relax:\n\n🛂 On arrival we register all guests, children included. Please check in good time that everyone has a valid ID or passport, the children too – getting one issued can take a few weeks.\n\n👨‍👩‍👧 Do you already know roughly how many adults and children will be coming? Then I can get the cots ready and pick trip tips that fit your group.\n\nI'll send everything practical (address, door code, Wi-Fi) a week before you arrive. If anything changes on your side, just message me straight away – we'll always find a way.\n\nBest wishes from the Krkonoše mountains\nPavel",
-      "nudge": "Hello {JMENO}, just a quick follow-up – did my message about your stay ({TERMIN}) reach you? A short reply is enough, so I know everything is still on track. Thank you!\nPavel",
-      "welcomeCore": "Hello {JMENO},\n\nWe're really looking forward to having you — for {TERMIN}, Villa Rudolf will be all yours! Here's everything important in one message, so you have it handy.\n\n📍 *Where you're headed*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. You park right on the property, next to the house.\n\n🕒 *The house is yours from 15:00*\nIn the morning we're getting it back into perfect shape after the previous group — so please don't arrive early, or we'll be welcoming you with a vacuum cleaner in hand. 🙂\n\n🔑 *Keyless entry*\nYour door code: *{KOD_DVERI}*. It works from 15:00 on your arrival day until 10:00 on the day you leave. Please keep it within your group only, and whenever you head out, just check the door is closed — the house is yours alone for the whole stay.\n\n🏠 *Have a look around the house right now*\nVirtual tour: https://www.keypano.com/v/569g7v8_96ci86-1770715560.html\nHouse video: https://youtu.be/tWCuuovnh2U\n\n🥾 *Your personal trip guide*\nWe've put together a page with trip tips sorted by the weather, your children's ages and the size of your group: {PRUVODCE_LINK}\nFeel free to open it now — it's handy for planning before you arrive.\n\n📝 *Guest registration*\nIt takes a few minutes and you can do it right now from home: {REGISTRACNI_LINK}\nPlease enter everyone, children included. If you don't get to it beforehand, you'll find a QR code on the fridge. It's not something we invented — the town keeps a register for the local fee, and then it's off your plate.\n\n💳 *Local fee (goes to the town, not to us)*\n{POPLATEK}\n\n🌙 *Evenings*\nWe're in a mountain valley that carries sound further than you'd expect — and the neighbours around us live here all year round, not just at weekends. That's why music at our place plays only inside the house: please no speakers out on the grounds at all, not even during the day. An evening by the fire more than makes up for it — crackling wood and a kind of quiet you won't hear in the city. After ten in the evening, please keep completely quiet outdoors — people around here get up early for work and sleep with their windows open in summer, and noise sadly gets them calling the police quickly. An evening by the fire is beautiful even when it's quiet — you'll see. And inside, sit up as long as you like.\n\n📶 *Wi-Fi everywhere*\nNetwork \"Rudolf Wi-Fi\", password: {WIFI_HESLO}. You'll get signal throughout the house and across the whole property — from the fire pit to the pergola to the children's playground.\n\n📞 *If you need anything at all*\nPavel: +420 775 220 785 — message me, call me, I'm here for you.\nTrutnov Hospital: +420 499 866 111 (Maxima Gorkého 77, Trutnov)\nEmergency: 112 · ambulance 155 · police 158 · fire brigade 150 · municipal police 156\nMountain Rescue: +420 602 448 338\n\nWe can't wait to see you!\nPavel",
-      "feeRate": "25 Kč / 1 € per adult per night.",
-      "feeAmount": " For your group: {DOSPELI} adults × {NOCI} nights = {CASTKA} Kč.",
-      "feeUnknown": " Children under 18 don't pay; we'll work out the exact amount from the registration.",
-      "feePay": " Easiest by card via https://revolut.me/pavelhuqh, though cash on the spot is absolutely fine too.",
-      "feeDeposit": " There's nothing to pay separately — we settle the fee from your deposit, as set out in the contract.",
-      "summer": "☀️ *Summer at Rudolf's — a few extra things*\n\n🏊 *Pool* (open roughly May–September, heated to ~27 °C — depending a little on the weather)\nWe always hand it over locked — the keys are in the kitchen, in the upper left cupboard (facing the kitchen counter, top row, far left). It's locked for the children's safety: please make sure kids only ever go near the water under adult supervision, never on their own — a single moment of inattention is all it takes. After swimming, close and lock the pool again — that way it keeps its temperature and stays lovely and clean. And please keep glasses on the terrace — if glass ever broke in the pool, we'd have to drain it completely, clean it, then refill and reheat it, and that means a day or more without swimming for you.\n\n🔥 *Fire pit, grill, firewood*\nThe big fire pit, the pergola gazebo and the electric grills are all waiting for you. Firewood is under the two spruces by the car park — in the shelter you'll find an axe, a saw and roasting skewers; the lock opens with the code *0519*. One note, said with care: when the fire runs late into the night, the embers are often still hot in the morning — please keep an eye on your little explorers, the fire pit tempts them first thing in the morning.\n\n🧖 *Sauna*\nReady and waiting for you — instructions are in the summer video and right by the sauna. Please take a towel in with you.\n\n🎬 *Everything in one place in the summer video* (welcome, pool, sauna, firewood, registration):\nhttps://www.youtube.com/watch?v=ksVpDr-P8ic\n\nEnjoy every bit of summer at Rudolf's!\nPavel",
-      "winter": "❄️ *Winter at Rudolf's — so you're on the slopes before the queues*\n\n🚌 *Ski bus a short walk from the house*\nThis short video shows the way to the stop: https://youtu.be/ZX8HJqZ1YBQ\nTimetables: https://drive.google.com/drive/folders/1HPJI7XydWwljBq_V19QwJGuBQWn73dZe\nPlease check the current timetable before you set out — it changes now and then during the season.\n\n🎿 *Ski room right in the house*\nSkis and boots dry out beautifully there overnight, so in the morning you head out with everything dry and warm.\n\n🧖 *Sauna*\nThe best way to end a day on the slopes. You'll find instructions in the house video and right by the sauna — just bring a towel.\n\nIf you need anything at all, I'm just a call away. Enjoy the mountains!\nPavel",
+      "first": "Hello {JMENO},\n\nthis is Pavel from Villa Rudolf. Your stay for {TERMIN} is confirmed and we're already looking forward to having you.\n\n{NOVINKA}🏠 *See where you'll be staying*\nYou can walk through the house right now and sort out the rooms at your leisure:\n360° tour: https://villarudolf.com/en/#interier\nRooms and beds: https://villarudolf.com/en/#loznice\nVideo: {VIDEO}\n\n🛂 *Travel documents – for the children too*\nOne practical thing, so nothing catches you out on arrival. As in any hotel, all our guests sign the guest book when they arrive. For guests from abroad we are then required by law to pass the details on to the foreign police. Every accommodation provider in Czechia does this, from a guesthouse to a five-star hotel – there it is usually just handled by reception with your passport in hand. That is why everyone travelling with you needs their own travel document, children included. Children entered in a parent's passport are no longer accepted. If anyone is missing a document, there is still plenty of time to sort it out.\n\nI'll send you everything practical (address, door code, Wi-Fi) about ten days before you arrive. If you'd like to ask anything now, or if something changes on your side, just message or call me – happy to help.\n\nPavel",
+      "cover": "Hello {JMENO}, this is Pavel from Villa Rudolf. I've sent you the information about your stay via {PLATFORMA}. If you need anything, you can reach me here too.",
+      "welcomeCore": "Hello {JMENO},\n\nwe're looking forward to having you – for {TERMIN}, Villa Rudolf will be all yours. Here's everything important in one message.\n\n📍 *Address and arrival*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. You park right on the property, next to the house. The house is yours from {CAS} on your arrival day.\n\n🔑 *Door code*\n*{KOD_DVERI}*, valid from {CAS} on your arrival day until 10:00 on the day you leave. Please keep it within your group only.\n\n🎬 *It's all in the video*\n{VIDEO}\n{VIDEO_OBSAH} Please watch it before you set off.\n\n🥾 *Trips to suit the weather*\n{PRUVODCE_LINK}\n\n📶 *Wi-Fi*\nNetwork \"Rudolf Wi-Fi\", password {WIFI_HESLO}.\n\n📝 *Guest book and local fee*\nAfter you arrive, please all sign the guest book. The QR code is on the fridge and it takes a few minutes. Children are entered too, each with their own document. The town charges a local fee of 25 Kč / 1 € per adult aged 18 or over per night; children don't pay.{JAK_SE_PLATI}\n\n🌙 *Evenings and quiet hours*\nWe're in a mountain valley that carries sound a long way, and the neighbours live here all year round. So please keep music inside the house only, and be quiet outdoors after ten in the evening. Inside, sit up as long as you like.\n\n📞 *If you need anything*\nPavel: +420 775 220 785\nTrutnov Hospital: +420 499 866 111, Maxima Gorkého 77\nEmergency 112 · ambulance 155 · police 158 · mountain rescue +420 602 448 338\n\nSafe travels!\nPavel",
+      "videoSummer": "Where to park, how to get into the house, the sauna, the pool, firewood and tools, and a short tour of the house.",
+      "videoWinter": "A short tour of the house, signing the guest book via the QR code, the sauna and the way to the ski bus.",
+      "payOnsite": " You pay it on the spot by card or in cash; we work out the amount from the guests entered.",
+      "payIncluded": " It's already included in the price of your booking, so there's nothing more to pay.",
+      "payDeposit": " As set out in the contract, we settle it from your deposit.",
+      "payEnergy": " The same goes for electricity and gas, by the meter readings on arrival and departure.",
+      "update": "Hello {JMENO}, see you {KDY}. The house will be ready and everything in my last message still applies. Your door code is {KOD_DVERI}, valid from {CAS}. Safe travels!\nPavel",
+      "inDays2": "the day after tomorrow",
+      "inDays1": "tomorrow",
+      "inDays0": "today",
       "deposit": "Hello {JMENO}, one more practical thing about your stay {TERMIN}. We collect a refundable security deposit of {KAUCE} CZK — it is simply a safeguard in case of damage; after your departure and a quick check of the house, we return it to you in full right away. The easiest way to send it is by card via Revolut: https://revolut.me/pavelhuqh ({KAUCE} CZK). Thank you so much — we're looking forward to having you!\nPavel",
       "day2": "Hello {JMENO}, just checking in after your first night — is everything just as it should be? 🙂 If anything's not quite right or you can't find something, message me or simply call (+420 775 220 785) — I'll sort it out straight away. Enjoy the mountains!\nPavel",
       "predeparture": "Hello {JMENO}, tomorrow it's time to say goodbye — we hope you've felt at home at Rudolf's! Before you set off, could I ask for a few small things (about 10 minutes all together)? The cleaning team will take care of everything else:\n\n🍽 dishes into the dishwasher and switch it on\n🗑 rubbish into the marked bins — thanks for a bit of basic sorting\n🛏 strip the bed linen and leave it, together with the towels, in the designated spot\n🧺 return any borrowed equipment to where you found it\n🔍 a quick check that windows and doors are closed and appliances switched off (and in summer, the pool locked)\n\nPlease hand the house over by 10:00 — the cleaners start at ten, so that at 15:00 the next group can take over the house just as ready as you found it.\n\nThank you so much for seeing it through with us. Safe travels!\nPavel",
@@ -218,35 +231,41 @@
       "reviewGoogle": "\nIf you feel we've earned the full rating, we'd be so grateful for a review on Google — it helps us more than you might think. And if anything at all, even the smallest thing, wasn't quite one hundred percent, please write it straight to me here on WhatsApp — because that I can put right; a review, I can't. 🙂\n\nSafe travels home — and whenever you feel like coming back to the Krkonoše, Rudolf will be here, and so will we!\nPavel"
     },
     "de": {
-      "first": "Hallo {JMENO},\n\nhier ist Pavel von der Villa Rudolf. Bis zu eurem Aufenthalt ({TERMIN}) ist noch etwas Zeit, aber wir freuen uns schon auf euch und ich wollte mich kurz melden.\n\n{NOVINKA}Zwei Dinge vorab:\n\n🛂 Bei der Anreise tragen wir alle Gäste ins Gästebuch ein, auch die Kinder. Schaut bitte rechtzeitig, dass jeder einen gültigen Ausweis hat, auch die Kinder – die Ausstellung dauert oft ein paar Wochen.\n\n👨‍👩‍👧 Wisst ihr schon ungefähr, mit wie vielen Erwachsenen und Kindern ihr kommt? Dann bereite ich Kinderbetten und passende Ausflugstipps vor.\n\nAlles Praktische (Adresse, Türcode, WLAN) schicke ich euch eine Woche vor der Anreise. Falls sich bei euch etwas ändert, schreibt mir einfach gleich, wir finden immer eine Lösung.\n\nLiebe Grüße aus dem Riesengebirge\nPavel",
-      "nudge": "Hallo {JMENO}, ich wollte nur kurz nachhaken – ist meine Nachricht zu eurem Aufenthalt ({TERMIN}) bei euch angekommen? Eine kurze Antwort genügt, dann weiß ich, dass bei euch alles beim Alten ist. Danke!\nPavel",
-      "welcomeCore": "Hallo {JMENO},\n\nwir freuen uns sehr auf euch — {TERMIN} gehört die Villa Rudolf nur euch! Hier kommt alles Wichtige in einer Nachricht, damit ihr alles griffbereit habt.\n\n📍 *Wohin ihr fahrt*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. Geparkt wird direkt auf dem Grundstück am Haus.\n\n🕒 *Das Haus gehört euch ab 15:00 Uhr*\nAm Vormittag bringen wir es nach der vorherigen Gruppe auf Hochglanz — reist daher bitte nicht früher an, damit wir euch nicht mit dem Staubsauger in der Hand begrüßen. 🙂\n\n🔑 *Zutritt ohne Schlüssel*\nEuer Türcode: *{KOD_DVERI}*. Er gilt ab 15:00 Uhr am Anreisetag bis 10:00 Uhr am Abreisetag. Behaltet ihn bitte nur innerhalb eurer Gruppe, und werft beim Verlassen des Hauses immer kurz einen Blick darauf, dass die Tür geschlossen ist — das Haus gehört während des gesamten Aufenthalts nur euch.\n\n🏠 *Seht euch das Haus schon jetzt an*\nVirtueller Rundgang: https://www.keypano.com/v/569g7v8_96ci86-1770715560.html\nVideo zum Haus: https://youtu.be/tWCuuovnh2U\n\n🥾 *Euer persönlicher Ausflugsführer*\nWir haben für euch eine Seite mit Ausflugstipps zusammengestellt — sortiert nach Wetter, Alter der Kinder und Größe eurer Gruppe: {PRUVODCE_LINK}\nÖffnet sie gerne schon jetzt — zum Planen vor der Anreise ist sie praktisch.\n\n📝 *Registrierung der Gäste*\nDas dauert nur ein paar Minuten und geht schon jetzt von zu Hause: {REGISTRACNI_LINK}\nTragt bitte alle ein, auch die Kinder. Wer es vorher nicht schafft, findet den QR-Code am Kühlschrank. Das ist keine Idee von uns: Die Stadt führt die Meldeliste zur Kurtaxe — und ihr habt es hinter euch.\n\n💳 *Kurtaxe (geht an die Stadt, nicht an uns)*\n{POPLATEK}\n\n🌙 *Die Abende*\nWir liegen in einem Bergtal, das den Schall weiter trägt, als man erwarten würde — und die Nachbarn ringsum wohnen hier das ganze Jahr, nicht nur am Wochenende. Musik läuft bei uns deshalb nur im Haus: Lautsprecher nehmt bitte gar nicht erst mit aufs Grundstück, auch tagsüber nicht. Am Abend am Feuer entschädigen dafür das Knistern des Holzes und eine Stille, wie man sie in der Stadt nicht hört, mehr als genug. Nach zehn Uhr abends seid draußen bitte ganz leise — die Menschen in der Nachbarschaft stehen morgens zur Arbeit auf und schlafen im Sommer bei offenen Fenstern, und Lärm bringt sie leider schnell dazu, die Polizei zu rufen. Ein Abend am Feuer ist auch leise wunderschön, ihr werdet sehen. Drinnen könnt ihr gerne zusammensitzen, so lange ihr möchtet.\n\n📶 *WLAN überall*\nNetz „Rudolf Wi-Fi\", Passwort: {WIFI_HESLO}. Der Empfang reicht durchs ganze Haus und über das gesamte Grundstück — von der Feuerstelle über die Pergola bis zum Kinderspielplatz.\n\n📞 *Falls irgendetwas ist*\nPavel: +420 775 220 785 — schreibt, ruft an, ich bin für euch da.\nKrankenhaus Trutnov: +420 499 866 111 (Maxima Gorkého 77, Trutnov)\nNotruf: 112 · Rettungsdienst 155 · Polizei 158 · Feuerwehr 150 · Stadtpolizei 156\nBergwacht: +420 602 448 338\n\nWir freuen uns auf euch!\nPavel",
-      "feeRate": "25 Kč / 1 € pro Erwachsenen und Nacht.",
-      "feeAmount": " Bei euch: {DOSPELI} Erwachsene × {NOCI} Nächte = {CASTKA} Kč.",
-      "feeUnknown": " Kinder unter 18 Jahren zahlen nichts; den genauen Betrag berechnen wir nach der Registrierung.",
-      "feePay": " Am einfachsten per Karte über https://revolut.me/pavelhuqh, gerne aber auch bar vor Ort.",
-      "feeDeposit": " Ihr müsst nichts extra bezahlen — die Kurtaxe verrechnen wir laut Vertrag mit der Kaution.",
-      "summer": "☀️ *Sommer bei Rudolf — ein paar Dinge zusätzlich*\n\n🏊 *Pool* (in Betrieb etwa Mai–September, beheizt auf ~27 °C — ein wenig wetterabhängig)\nWir übergeben ihn immer abgeschlossen — die Schlüssel liegen in der Küche im linken oberen Schrank (mit Blick auf die Küchenzeile ganz oben links). Abgeschlossen ist er zur Sicherheit der Kinder: ans Wasser bitte immer nur unter Aufsicht eines Erwachsenen, nie allein — ein Moment der Unachtsamkeit genügt. Nach dem Baden macht den Pool bitte wieder zu und schließt ihn ab — so hält er Temperatur und Sauberkeit wunderbar. Und die Gläser lasst bitte auf der Terrasse: Sollte im Pool Glas zerbrechen, müssten wir ihn komplett ablassen, reinigen, neu befüllen und wieder aufheizen — und das bedeutet für euch einen Tag oder mehr ohne Baden.\n\n🔥 *Feuerstelle, Grill, Holz*\nDie große Feuerstelle, der Pergola-Pavillon und die Elektrogrills warten auf euch. Das Holz liegt unter den zwei Fichten am Parkplatz — im Unterstand findet ihr Axt, Säge und Grillspieße, das Schloss öffnet ihr mit dem Code *0519*. Ein Hinweis aus Fürsorge: Wenn das Feuer bis in die Nacht brennt, ist die Glut am Morgen oft noch heiß — behaltet bitte die kleinen Entdecker im Auge, die Feuerstelle lockt sie morgens besonders.\n\n🧖 *Sauna*\nFür euch vorbereitet — die Anleitung findet ihr im Sommervideo und direkt an der Sauna. Hinein bitte nur mit Handtuch.\n\n🎬 *Alles auf einen Blick im Sommervideo* (Begrüßung, Pool, Sauna, Holz, Registrierung):\nhttps://www.youtube.com/watch?v=ksVpDr-P8ic\n\nGenießt den Sommer bei Rudolf!\nPavel",
-      "winter": "❄️ *Winter bei Rudolf — damit ihr eher auf der Piste seid als die Warteschlangen*\n\n🚌 *Skibus ein kurzes Stück vom Haus entfernt*\nWie ihr zur Haltestelle kommt, zeigt ein kurzes Video: https://youtu.be/ZX8HJqZ1YBQ\nFahrpläne: https://drive.google.com/drive/folders/1HPJI7XydWwljBq_V19QwJGuBQWn73dZe\nPrüft vor der Fahrt bitte den aktuellen Fahrplan — in der Saison ändert er sich gelegentlich.\n\n🎿 *Skiraum direkt im Haus*\nSki und Schuhe trocknen dort über Nacht wunderbar, und am Morgen startet ihr in trockener, warmer Ausrüstung.\n\n🧖 *Sauna*\nNach einem Tag auf der Piste der schönste Abschluss. Die Anleitung findet ihr im Video zum Haus und direkt an der Sauna — nur ein Handtuch mitnehmen.\n\nFalls irgendetwas ist, bin ich telefonisch für euch da. Genießt die Berge!\nPavel",
-      "deposit": "Hallo {JMENO}, noch eine praktische Sache zu eurem Aufenthalt {TERMIN}. Wir erheben eine rückzahlbare Kaution von {KAUCE} CZK — sie ist lediglich eine Sicherheit für den Fall eines Schadens; nach eurer Abreise und einer kurzen Kontrolle des Hauses erhaltet ihr sie umgehend in voller Höhe zurück. Am einfachsten sendet ihr sie per Karte über Revolut: https://revolut.me/pavelhuqh ({KAUCE} CZK). Vielen Dank — wir freuen uns auf euch!\nPavel",
-      "day2": "Hallo {JMENO}, ich melde mich kurz nach der ersten Nacht — ist alles so, wie es sein soll? 🙂 Falls irgendetwas hakt oder ihr etwas nicht finden konntet, schreibt mir oder ruft einfach direkt an (+420 775 220 785) — ich kümmere mich sofort darum. Genießt die Berge!\nPavel",
-      "predeparture": "Hallo {JMENO}, morgen heißt es Abschied nehmen — hoffentlich habt ihr euch bei Rudolf wohlgefühlt! Bevor ihr aufbrecht, bitte ich euch noch um ein paar Kleinigkeiten (insgesamt etwa 10 Minuten) — um alles andere kümmert sich der Reinigungsservice:\n\n🍽 Geschirr in die Spülmaschine räumen und sie einschalten\n🗑 Müll in die gekennzeichneten Behälter bringen — danke fürs grobe Vorsortieren\n🛏 Bettwäsche abziehen und zusammen mit den Handtüchern am vorgesehenen Platz ablegen\n🧺 ausgeliehene Ausstattung dorthin zurücklegen, wo ihr sie gefunden habt\n🔍 kurz prüfen: Fenster und Türen geschlossen, Geräte ausgeschaltet (im Sommer auch der Pool abgeschlossen)\n\nÜbergebt das Haus bitte bis 10:00 Uhr — um zehn beginnt die Reinigung, damit die nächste Gruppe das Haus um 15:00 Uhr genauso vorbereitet übernimmt, wie ihr es übernommen habt.\n\nVielen Dank, dass ihr das mit uns gemeinsam zu Ende bringt. Gute Reise!\nPavel",
-      "reviewBody": "Hallo {JMENO}, heute heißt es Abschied nehmen — und wir hatten euch sehr gerne bei Rudolf zu Gast. Hoffentlich nehmt ihr aus den Bergen genau das mit, wofür ihr gekommen seid.\n\nNur eine kleine Erinnerung: Übergebt das Haus bitte bis 10:00 Uhr. Wir wollen euch nicht hinausdrängen, versprochen 🙂 — nur beginnt um zehn der Reinigungsservice, damit um 15:00 Uhr schon die nächsten Gäste begrüßt werden können.\n\nUnd dann noch eine Bitte, die uns wirklich viel bedeutet. Wir sind eine kleine Familienvermietung, und die Bewertungen sind das Wichtigste, wodurch andere Gruppen und Familien Rudolf finden.\n",
-      "reviewAirbnb": "\nWenn ihr das Gefühl habt, dass wir die vollen 5 Sterne verdienen, wären wir sehr dankbar, wenn ihr sie uns auf Airbnb gebt — das hilft uns mehr, als man denkt. Und sollte irgendetwas, und sei es nur eine Kleinigkeit, nicht hundertprozentig gewesen sein, schreibt es bitte direkt mir hier auf WhatsApp — denn ich kann es noch in Ordnung bringen, eine Bewertung nicht mehr. 🙂\n\nGute Heimreise — und wann immer ihr ins Riesengebirge zurückkehren möchtet: Rudolf und wir sind für euch da!\nPavel",
-      "reviewBooking": "\nWenn ihr das Gefühl habt, dass wir die vollen 10 von 10 verdienen, wären wir sehr dankbar, wenn ihr sie uns auf Booking gebt — das hilft uns mehr, als man denkt. Und sollte irgendetwas, und sei es nur eine Kleinigkeit, nicht hundertprozentig gewesen sein, schreibt es bitte direkt mir hier auf WhatsApp — denn ich kann es noch in Ordnung bringen, eine Bewertung nicht mehr. 🙂\n\nGute Heimreise — und wann immer ihr ins Riesengebirge zurückkehren möchtet: Rudolf und wir sind für euch da!\nPavel",
-      "reviewGoogle": "\nWenn ihr das Gefühl habt, dass wir die volle Bewertung verdienen, wären wir für eine Rezension auf Google sehr dankbar — das hilft uns mehr, als man denkt. Und sollte irgendetwas, und sei es nur eine Kleinigkeit, nicht hundertprozentig gewesen sein, schreibt es bitte direkt mir hier auf WhatsApp — denn ich kann es noch in Ordnung bringen, eine Bewertung nicht mehr. 🙂\n\nGute Heimreise — und wann immer ihr ins Riesengebirge zurückkehren möchtet: Rudolf und wir sind für euch da!\nPavel"
+      "first": "Guten Tag, {JMENO},\n\nhier ist Pavel von der Villa Rudolf. Ihr Aufenthalt {TERMIN} ist bestätigt und wir freuen uns schon auf Sie.\n\n{NOVINKA}🏠 *Schauen Sie sich an, wo Sie wohnen werden*\nSie können das Haus schon jetzt erkunden und in Ruhe die Zimmer aufteilen:\n360°-Rundgang: https://villarudolf.com/de/#interier\nZimmer und Betten: https://villarudolf.com/de/#loznice\nVideo: {VIDEO}\n\n🛂 *Ausweise – auch für die Kinder*\nEine praktische Sache, damit Sie bei der Anreise nichts überrascht. Wie in jedem Hotel tragen sich bei uns alle Gäste nach der Ankunft ins Gästebuch ein. Die Angaben der Gäste aus dem Ausland leiten wir dann, wie gesetzlich vorgeschrieben, an die Fremdenpolizei weiter. Das macht jeder Gastgeber in Tschechien, von der Pension bis zum Fünf-Sterne-Hotel, nur erledigt es dort meist die Rezeption mit Ihrem Pass in der Hand. Deshalb braucht jeder, der mit Ihnen anreist, ein eigenes Reisedokument, auch die Kinder. Ein Eintrag der Kinder im Pass der Eltern gilt heute nicht mehr. Sollte jemandem ein Ausweis fehlen, ist jetzt noch genug Zeit, ihn in Ruhe zu beantragen.\n\nAlles Praktische (Adresse, Türcode, WLAN) schicke ich Ihnen etwa zehn Tage vor der Anreise. Wenn Sie schon jetzt etwas fragen möchten oder sich bei Ihnen etwas ändert, schreiben Sie mir oder rufen Sie an, ich helfe gern.\n\nPavel",
+      "cover": "Guten Tag, {JMENO}, hier ist Pavel von der Villa Rudolf. Die Informationen zu Ihrem Aufenthalt habe ich Ihnen über {PLATFORMA} geschickt. Falls irgendetwas ist, bin ich auch hier erreichbar.",
+      "welcomeCore": "Guten Tag, {JMENO},\n\nwir freuen uns schon auf Sie, {TERMIN} gehört die Villa Rudolf nur Ihnen. Hier kommt alles Wichtige in einer Nachricht.\n\n📍 *Adresse und Anreise*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. Geparkt wird direkt auf dem Grundstück am Haus. Das Haus gehört Ihnen ab {CAS} Uhr am Anreisetag.\n\n🔑 *Türcode*\n*{KOD_DVERI}*, gültig ab {CAS} Uhr am Anreisetag bis 10:00 Uhr am Abreisetag. Bitte behalten Sie ihn nur innerhalb Ihrer Gruppe.\n\n🎬 *Alles im Video*\n{VIDEO}\n{VIDEO_OBSAH} Schauen Sie es sich bitte noch vor der Anreise an.\n\n🥾 *Ausflüge je nach Wetter*\n{PRUVODCE_LINK}\n\n📶 *WLAN*\nNetz „Rudolf Wi-Fi\", Passwort {WIFI_HESLO}.\n\n📝 *Gästebuch und Kurtaxe*\nBitte tragen Sie sich nach der Ankunft alle ins Gästebuch ein. Der QR-Code hängt am Kühlschrank, es dauert nur ein paar Minuten. Auch die Kinder werden eingetragen, jeder mit seinem eigenen Ausweis. An die Stadt geht eine Kurtaxe von 25 Kč / 1 € pro Erwachsenen ab 18 Jahren und Nacht, Kinder zahlen nichts.{JAK_SE_PLATI}\n\n🌙 *Abend und Nachtruhe*\nWir liegen in einem Bergtal, das den Schall weit trägt, und die Nachbarn wohnen hier das ganze Jahr. Musik deshalb bitte nur im Haus, und nach zehn Uhr abends draußen bitte leise. Drinnen können Sie zusammensitzen, so lange Sie möchten.\n\n📞 *Falls irgendetwas ist*\nPavel: +420 775 220 785\nKrankenhaus Trutnov: +420 499 866 111, Maxima Gorkého 77\nNotruf 112 · Rettungsdienst 155 · Polizei 158 · Bergwacht +420 602 448 338\n\nGute Reise!\nPavel",
+      "videoSummer": "Wo Sie parken, wie Sie ins Haus kommen, Sauna, Pool, Holz und Werkzeug und ein kurzer Rundgang durchs Haus.",
+      "videoWinter": "Ein kurzer Rundgang durchs Haus, der Eintrag ins Gästebuch per QR-Code, die Sauna und der Weg zum Skibus.",
+      "payOnsite": " Sie zahlen sie vor Ort per Karte oder bar, den Betrag berechnen wir nach den eingetragenen Gästen.",
+      "payIncluded": " Sie ist bereits im Buchungspreis enthalten, es ist nichts weiter zu zahlen.",
+      "payDeposit": " Laut Vertrag verrechnen wir sie mit der Kaution.",
+      "payEnergy": " Ebenso Strom und Gas nach dem Zählerstand bei An- und Abreise.",
+      "update": "Guten Tag, {JMENO}, {KDY} sehen wir uns. Das Haus wird bereit sein und alles aus meiner letzten Nachricht gilt weiterhin. Der Türcode ist {KOD_DVERI}, gültig ab {CAS} Uhr. Gute Reise!\nPavel",
+      "inDays2": "übermorgen",
+      "inDays1": "morgen",
+      "inDays0": "heute",
+      "deposit": "Guten Tag, {JMENO}, noch eine praktische Sache zu Ihrem Aufenthalt {TERMIN}. Wir erheben eine rückzahlbare Kaution von {KAUCE} CZK — sie ist lediglich eine Sicherheit für den Fall eines Schadens; nach Ihrer Abreise und einer kurzen Kontrolle des Hauses erhalten Sie sie umgehend in voller Höhe zurück. Am einfachsten senden Sie sie per Karte über Revolut: https://revolut.me/pavelhuqh ({KAUCE} CZK). Vielen Dank — wir freuen uns auf Sie!\nPavel",
+      "day2": "Guten Tag, {JMENO}, ich melde mich kurz nach der ersten Nacht — ist alles so, wie es sein soll? 🙂 Falls irgendetwas hakt oder Sie etwas nicht finden konnten, schreiben Sie mir oder rufen Sie einfach direkt an (+420 775 220 785) — ich kümmere mich sofort darum. Genießen Sie die Berge!\nPavel",
+      "predeparture": "Guten Tag, {JMENO}, morgen heißt es Abschied nehmen — hoffentlich haben Sie sich bei Rudolf wohlgefühlt! Bevor Sie aufbrechen, bitte ich Sie noch um ein paar Kleinigkeiten (insgesamt etwa 10 Minuten) — um alles andere kümmert sich der Reinigungsservice:\n\n🍽 Geschirr in die Spülmaschine räumen und sie einschalten\n🗑 Müll in die gekennzeichneten Behälter bringen — danke fürs grobe Vorsortieren\n🛏 Bettwäsche abziehen und zusammen mit den Handtüchern am vorgesehenen Platz ablegen\n🧺 ausgeliehene Ausstattung dorthin zurücklegen, wo Sie sie gefunden haben\n🔍 kurz prüfen: Fenster und Türen geschlossen, Geräte ausgeschaltet (im Sommer auch der Pool abgeschlossen)\n\nÜbergeben Sie das Haus bitte bis 10:00 Uhr — um zehn beginnt die Reinigung, damit die nächste Gruppe das Haus um 15:00 Uhr genauso vorbereitet übernimmt, wie Sie es übernommen haben.\n\nVielen Dank, dass Sie das mit uns gemeinsam zu Ende bringen. Gute Reise!\nPavel",
+      "reviewBody": "Guten Tag, {JMENO}, heute heißt es Abschied nehmen — und wir hatten Sie sehr gerne bei Rudolf zu Gast. Hoffentlich nehmen Sie aus den Bergen genau das mit, wofür Sie gekommen sind.\n\nNur eine kleine Erinnerung: Übergeben Sie das Haus bitte bis 10:00 Uhr. Wir wollen Sie nicht hinausdrängen, versprochen 🙂 — nur beginnt um zehn der Reinigungsservice, damit um 15:00 Uhr schon die nächsten Gäste begrüßt werden können.\n\nUnd dann noch eine Bitte, die uns wirklich viel bedeutet. Wir sind eine kleine Familienvermietung, und die Bewertungen sind das Wichtigste, wodurch andere Gruppen und Familien Rudolf finden.\n",
+      "reviewAirbnb": "\nWenn Sie das Gefühl haben, dass wir die vollen 5 Sterne verdienen, wären wir sehr dankbar, wenn Sie sie uns auf Airbnb geben — das hilft uns mehr, als man denkt. Und sollte irgendetwas, und sei es nur eine Kleinigkeit, nicht hundertprozentig gewesen sein, schreiben Sie es bitte direkt mir hier auf WhatsApp — denn ich kann es noch in Ordnung bringen, eine Bewertung nicht mehr. 🙂\n\nGute Heimreise — und wann immer Sie ins Riesengebirge zurückkehren möchten: Rudolf und wir sind für Sie da!\nPavel",
+      "reviewBooking": "\nWenn Sie das Gefühl haben, dass wir die vollen 10 von 10 verdienen, wären wir sehr dankbar, wenn Sie sie uns auf Booking geben — das hilft uns mehr, als man denkt. Und sollte irgendetwas, und sei es nur eine Kleinigkeit, nicht hundertprozentig gewesen sein, schreiben Sie es bitte direkt mir hier auf WhatsApp — denn ich kann es noch in Ordnung bringen, eine Bewertung nicht mehr. 🙂\n\nGute Heimreise — und wann immer Sie ins Riesengebirge zurückkehren möchten: Rudolf und wir sind für Sie da!\nPavel",
+      "reviewGoogle": "\nWenn Sie das Gefühl haben, dass wir die volle Bewertung verdienen, wären wir für eine Rezension auf Google sehr dankbar — das hilft uns mehr, als man denkt. Und sollte irgendetwas, und sei es nur eine Kleinigkeit, nicht hundertprozentig gewesen sein, schreiben Sie es bitte direkt mir hier auf WhatsApp — denn ich kann es noch in Ordnung bringen, eine Bewertung nicht mehr. 🙂\n\nGute Heimreise — und wann immer Sie ins Riesengebirge zurückkehren möchten: Rudolf und wir sind für Sie da!\nPavel"
     },
     "pl": {
-      "first": "Dzień dobry, {JMENO},\n\ntu Pavel z Villa Rudolf. Do Państwa pobytu ({TERMIN}) jest jeszcze trochę czasu, ale już na Państwa czekamy i chciałem się odezwać.\n\n{NOVINKA}Dwie sprawy, żeby mieli Państwo spokój:\n\n🛂 Przy przyjeździe wpisujemy do księgi gości wszystkie osoby, także dzieci. Prosimy z wyprzedzeniem sprawdzić, czy każdy ma ważny dokument, również dzieci – wyrobienie trwa zwykle kilka tygodni.\n\n👨‍👩‍👧 Czy wiedzą już Państwo mniej więcej, ile osób dorosłych i ile dzieci przyjedzie? Przygotuję wtedy łóżeczka i dopasuję propozycje wycieczek.\n\nWszystko, co praktyczne (adres, kod do drzwi, Wi-Fi), wyślę tydzień przed przyjazdem. Gdyby coś się u Państwa zmieniało, proszę od razu napisać – zawsze się jakoś dogadamy.\n\nPozdrawiam z Karkonoszy\nPavel",
-      "nudge": "Dzień dobry, {JMENO}, tylko się przypominam – czy dotarła do Państwa moja wiadomość w sprawie pobytu ({TERMIN})? Wystarczy krótka odpowiedź, żebym wiedział, że wszystko jest bez zmian. Dziękuję!\nPavel",
-      "welcomeCore": "Dzień dobry, {JMENO},\n\nnie możemy się już doczekać Państwa przyjazdu — w terminie {TERMIN} Villa Rudolf będzie tylko dla Państwa! Przesyłam wszystko, co ważne, w jednej wiadomości, żeby mieli ją Państwo zawsze pod ręką.\n\n📍 *Dokąd Państwo jadą*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. Parkują Państwo bezpośrednio na posesji przy domu.\n\n🕒 *Dom jest Państwa od 15:00*\nPrzed południem, po poprzedniej grupie, doprowadzamy go do pełnego blasku — dlatego prosimy nie przyjeżdżać wcześniej, żebyśmy nie musieli witać Państwa z odkurzaczem w ręku. 🙂\n\n🔑 *Wejście bez kluczy*\nKod do drzwi: *{KOD_DVERI}*. Działa od 15:00 w dniu przyjazdu do 10:00 w dniu wyjazdu. Prosimy zachować go wyłącznie w swojej grupie, a wychodząc zawsze sprawdzić, czy drzwi są zamknięte — dom przez cały pobyt jest tylko Państwa.\n\n🏠 *Dom można obejrzeć już teraz*\nWirtualny spacer: https://www.keypano.com/v/569g7v8_96ci86-1770715560.html\nFilm o domu: https://youtu.be/tWCuuovnh2U\n\n🥾 *Państwa osobisty przewodnik po wycieczkach*\nPrzygotowaliśmy dla Państwa stronę z propozycjami wycieczek uszeregowanymi według pogody, wieku dzieci i wielkości grupy: {PRUVODCE_LINK}\nMożna ją otworzyć już teraz — przyda się do planowania przed przyjazdem.\n\n📝 *Rejestracja gości*\nZajmie kilka minut i można ją załatwić już teraz, z domu: {REGISTRACNI_LINK}\nProsimy wpisać wszystkich, także dzieci. Kto nie zdąży wcześniej, znajdzie kod QR na lodówce. To nie nasz wymysł — miasto prowadzi ewidencję związaną z opłatą miejscową, a Państwo będą to mieli z głowy.\n\n💳 *Opłata miejscowa (trafia do miasta, nie do nas)*\n{POPLATEK}\n\n🌙 *Wieczory*\nJesteśmy w górskiej dolinie, która niesie dźwięk dalej, niż można by się spodziewać — a sąsiedzi wokół mieszkają tu cały rok, nie tylko w weekendy. Muzyka gra więc u nas tylko wewnątrz domu: głośników na posesji prosimy nie używać wcale, nawet w ciągu dnia. Wieczorem przy ognisku z nawiązką wynagrodzi to trzask drewna i cisza, jakiej w mieście się nie usłyszy. Po dziesiątej wieczorem prosimy zachować na zewnątrz zupełną ciszę — okoliczni mieszkańcy rano wstają do pracy, a latem śpią przy otwartych oknach i hałas niestety szybko skłania ich do telefonu na policję. Wieczór przy ognisku jest piękny także po cichu, sami Państwo zobaczą. W środku mogą Państwo posiedzieć, jak długo tylko zechcą.\n\n📶 *Wi-Fi wszędzie*\nSieć „Rudolf Wi-Fi\", hasło: {WIFI_HESLO}. Zasięg jest w całym domu i na całej posesji — od ogniska przez pergolę aż po plac zabaw.\n\n📞 *Gdyby cokolwiek*\nPavel: +420 775 220 785 — proszę śmiało pisać lub dzwonić, jestem do Państwa dyspozycji.\nSzpital Trutnov: +420 499 866 111 (Maxima Gorkého 77, Trutnov)\nNumer alarmowy: 112 · pogotowie ratunkowe 155 · policja 158 · straż pożarna 150 · straż miejska 156\nPogotowie górskie (Horská služba): +420 602 448 338\n\nCzekamy na Państwa!\nPavel",
-      "feeRate": "25 Kč / 1 € od osoby dorosłej za noc.",
-      "feeAmount": " U Państwa: {DOSPELI} dorosłych × {NOCI} nocy = {CASTKA} Kč.",
-      "feeUnknown": " Dzieci do 18 lat nie płacą; dokładną kwotę wyliczymy na podstawie rejestracji.",
-      "feePay": " Najprościej kartą przez https://revolut.me/pavelhuqh, ale można też gotówką na miejscu.",
-      "feeDeposit": " Nie trzeba nic płacić osobno — opłatę rozliczymy z kaucji zgodnie z umową.",
-      "summer": "☀️ *Lato u Rudolfa — kilka rzeczy dodatkowo*\n\n🏊 *Basen* (czynny mniej więcej od maja do września, podgrzewany do ~27 °C — trochę w zależności od pogody)\nPrzekazujemy go zawsze zamknięty na klucz — klucze są w kuchni, w lewej górnej szafce (patrząc na zabudowę kuchenną — całkiem u góry po lewej). Zamknięty jest ze względu na bezpieczeństwo dzieci: do wody prosimy zawsze wyłącznie pod okiem dorosłego, nigdy same — wystarczy chwila nieuwagi. Po kąpieli prosimy basen znowu zamknąć i przekręcić klucz — pięknie trzyma wtedy temperaturę i czystość. A kieliszki prosimy zostawiać na tarasie — gdyby w basenie stłukło się szkło, musielibyśmy spuścić całą wodę, wyczyścić basen, ponownie go napełnić i podgrzać, a to oznacza dla Państwa dzień lub dłużej bez kąpieli.\n\n🔥 *Ognisko, grill, drewno*\nDuże ognisko, pergola-altana i grille elektryczne czekają na Państwa. Drewno jest pod dwoma świerkami przy parkingu — w wiacie znajdą Państwo siekierę, piłę i szpikulce do opiekania, kłódkę otworzą Państwo kodem *0519*. Jedna uwaga podyktowana troską: kiedy ognisko przeciągnie się do nocy, węgielki rano potrafią być wciąż gorące — prosimy mieć oko na małych ciekawskich, ognisko rano ich przyciąga.\n\n🧖 *Sauna*\nPrzygotowana dla Państwa — instrukcja jest w letnim filmie i bezpośrednio przy saunie. Do środka prosimy wchodzić z ręcznikiem.\n\n🎬 *Wszystko w jednym miejscu w letnim filmie* (powitanie, basen, sauna, drewno, rejestracja):\nhttps://www.youtube.com/watch?v=ksVpDr-P8ic\n\nNiech lato u Rudolfa smakuje Państwu jak najlepiej!\nPavel",
-      "winter": "❄️ *Zima u Rudolfa — żeby byli Państwo na stoku wcześniej niż kolejki*\n\n🚌 *Skibus niedaleko domu*\nJak dojść na przystanek, pokazuje krótki film: https://youtu.be/ZX8HJqZ1YBQ\nRozkłady jazdy: https://drive.google.com/drive/folders/1HPJI7XydWwljBq_V19QwJGuBQWn73dZe\nPrzed wyjazdem prosimy sprawdzić aktualny rozkład — w sezonie czasem się zmienia.\n\n🎿 *Narciarnia bezpośrednio w domu*\nNarty i buty pięknie tam przez noc wyschną, a rano ruszają Państwo w suchym i ciepłym sprzęcie.\n\n🧖 *Sauna*\nPo dniu na stoku najlepsze możliwe zwieńczenie. Instrukcję znajdą Państwo w filmie o domu i bezpośrednio przy saunie — wystarczy zabrać ręcznik.\n\nGdyby cokolwiek — jestem pod telefonem. Udanego pobytu w górach!\nPavel",
+      "first": "Dzień dobry, {JMENO},\n\ntu Pavel z Villa Rudolf. Państwa pobyt w terminie {TERMIN} jest potwierdzony i już na Państwa czekamy.\n\n{NOVINKA}🏠 *Proszę zobaczyć, gdzie będą Państwo mieszkać*\nDom można obejrzeć już teraz i spokojnie podzielić pokoje:\nSpacer 360°: https://villarudolf.com/pl/#interier\nPokoje i łóżka: https://villarudolf.com/pl/#loznice\nFilm: {VIDEO}\n\n🛂 *Dokumenty – także dla dzieci*\nJedna praktyczna sprawa, żeby przy przyjeździe nic Państwa nie zaskoczyło. Tak jak w każdym hotelu, wszyscy goście po przyjeździe wpisują się u nas do księgi gości. Dane gości z zagranicy przekazujemy następnie, zgodnie z prawem, policji ds. cudzoziemców. Robi to każdy obiekt noclegowy w Czechach, od pensjonatu po pięciogwiazdkowy hotel, tylko tam zwykle załatwia to recepcja z Państwa paszportem w ręku. Dlatego każdy, kto z Państwem przyjedzie, potrzebuje własnego dokumentu podróży, także dzieci. Wpis dziecka w paszporcie rodzica nie jest już ważny. Gdyby komuś brakowało dokumentu, jest teraz dość czasu, żeby go spokojnie wyrobić.\n\nWszystko, co praktyczne (adres, kod do drzwi, Wi-Fi), wyślę około dziesięciu dni przed przyjazdem. Gdyby chcieli Państwo o coś zapytać już teraz albo gdyby coś się u Państwa zmieniało, proszę napisać lub zadzwonić, chętnie pomogę.\n\nPavel",
+      "cover": "Dzień dobry, {JMENO}, tu Pavel z Villa Rudolf. Informacje dotyczące pobytu wysłałem Państwu przez {PLATFORMA}. Gdyby cokolwiek, jestem także tutaj.",
+      "welcomeCore": "Dzień dobry, {JMENO},\n\njuż na Państwa czekamy, w terminie {TERMIN} Villa Rudolf będzie tylko dla Państwa. Przesyłam wszystko, co ważne, w jednej wiadomości.\n\n📍 *Adres i przyjazd*\nVilla Rudolf, Luční 519, Svoboda nad Úpou. Parkują Państwo bezpośrednio na posesji przy domu. Dom jest Państwa od {CAS} w dniu przyjazdu.\n\n🔑 *Kod do drzwi*\n*{KOD_DVERI}*, działa od {CAS} w dniu przyjazdu do 10:00 w dniu wyjazdu. Prosimy zachować go wyłącznie w swojej grupie.\n\n🎬 *Wszystko jest na filmie*\n{VIDEO}\n{VIDEO_OBSAH} Prosimy obejrzeć go jeszcze przed podróżą.\n\n🥾 *Wycieczki według pogody*\n{PRUVODCE_LINK}\n\n📶 *Wi-Fi*\nSieć „Rudolf Wi-Fi\", hasło {WIFI_HESLO}.\n\n📝 *Księga gości i opłata miejscowa*\nPo przyjeździe prosimy, aby wszyscy wpisali się do księgi gości. Kod QR jest na lodówce, zajmie to kilka minut. Wpisuje się także dzieci, każde na podstawie własnego dokumentu. Miastu płaci się opłatę miejscową 25 Kč / 1 € od osoby dorosłej od 18 lat za noc, dzieci nie płacą.{JAK_SE_PLATI}\n\n🌙 *Wieczór i cisza nocna*\nJesteśmy w górskiej dolinie, która niesie dźwięk daleko, a sąsiedzi mieszkają tu cały rok. Dlatego prosimy o muzykę tylko wewnątrz domu, a po dziesiątej wieczorem o ciszę na zewnątrz. W środku mogą Państwo posiedzieć, jak długo zechcą.\n\n📞 *Gdyby cokolwiek*\nPavel: +420 775 220 785\nSzpital Trutnov: +420 499 866 111, Maxima Gorkého 77\nNumer alarmowy 112 · pogotowie 155 · policja 158 · pogotowie górskie +420 602 448 338\n\nSzczęśliwej podróży!\nPavel",
+      "videoSummer": "Gdzie zaparkować, jak wejść do domu, sauna, basen, drewno i narzędzia oraz krótki spacer po domu.",
+      "videoWinter": "Krótki spacer po domu, wpis do księgi gości przez kod QR, sauna i droga na skibus.",
+      "payOnsite": " Zapłacą ją Państwo na miejscu kartą lub gotówką, kwotę wyliczymy według wpisanych gości.",
+      "payIncluded": " Jest już opłacona w cenie rezerwacji, nic więcej się nie płaci.",
+      "payDeposit": " Zgodnie z umową rozliczymy ją z kaucji.",
+      "payEnergy": " Tak samo prąd i gaz według odczytu liczników przy przyjeździe i wyjeździe.",
+      "update": "Dzień dobry, {JMENO}, {KDY} się widzimy. Dom będzie gotowy i wszystko z poprzedniej wiadomości jest aktualne. Kod do drzwi to {KOD_DVERI}, działa od {CAS}. Szczęśliwej podróży!\nPavel",
+      "inDays2": "pojutrze",
+      "inDays1": "jutro",
+      "inDays0": "dziś",
       "deposit": "Dzień dobry, {JMENO}, jeszcze jedna praktyczna sprawa dotycząca pobytu {TERMIN}. Pobieramy zwrotną kaucję {KAUCE} CZK — to wyłącznie zabezpieczenie na wypadek szkody; po wyjeździe i szybkim sprawdzeniu domu od razu zwracamy ją Państwu w całości. Najwygodniej przesłać ją kartą przez Revolut: https://revolut.me/pavelhuqh ({KAUCE} CZK). Bardzo dziękujemy — czekamy na Państwa!\nPavel",
       "day2": "Dzień dobry, {JMENO}, melduję się po pierwszej nocy — czy wszystko jest tak, jak powinno być? 🙂 Gdyby coś nie działało albo nie mogli Państwo czegoś znaleźć, proszę do mnie napisać lub od razu zadzwonić (+420 775 220 785) — załatwię to od ręki. Miłych chwil w górach!\nPavel",
       "predeparture": "Dzień dobry, {JMENO}, jutro będziemy się żegnać — mamy nadzieję, że było Państwu u Rudolfa dobrze! Zanim Państwo wyruszą, poproszę o kilka drobiazgów (razem jakieś 10 minut) — o całą resztę zadba serwis sprzątający:\n\n🍽 naczynia włożyć do zmywarki i ją włączyć\n🗑 śmieci do oznaczonych pojemników — dziękujemy za podstawową segregację\n🛏 pościel zdjąć i razem z ręcznikami zostawić w wyznaczonym miejscu\n🧺 wypożyczony sprzęt odłożyć tam, gdzie go Państwo znaleźli\n🔍 rzucić okiem, czy okna i drzwi są zamknięte, a urządzenia wyłączone (latem także czy basen jest zamknięty na klucz)\n\nDom prosimy przekazać do 10:00 — o dziesiątej wchodzi ekipa sprzątająca, żeby o 15:00 kolejna grupa mogła przejąć dom tak samo przygotowany, jak przejmowali go Państwo.\n\nBardzo dziękujemy, że doprowadzą to Państwo z nami do końca. Szczęśliwej podróży!\nPavel",
@@ -284,24 +303,29 @@
     return (b.arrival >= NEWS.from && b.arrival <= NEWS.to) ? (NEWS.text[lang] || NEWS.text.en) : '';
   }
 
+  // Video k domu podle sezóny příjezdu (isWinter). Letní = průvodce domem, zahradou,
+  // bazénem a saunou; zimní = prohlídka domu, zápis přes QR, sauna a skibus.
+  var VIDEO = { summer: 'https://www.youtube.com/watch?v=ksVpDr-P8ic', winter: 'https://youtu.be/tWCuuovnh2U' };
+
   function fill(tpl, ctx) {
     return tpl
-      // {POPLATEK} a {NOVINKA} první — poplatek v sobě nese {DOSPELI}, {NOCI}, {CASTKA}
-      .replace(/\{POPLATEK\}/g, ctx.poplatek || '')
       .replace(/\{NOVINKA\}/g, ctx.novinka ? ctx.novinka + '\n\n' : '')
+      .replace(/\{JAK_SE_PLATI\}/g, ctx.jakSePlati || '')
+      .replace(/\{VIDEO_OBSAH\}/g, ctx.videoObsah)
+      .replace(/\{VIDEO\}/g, ctx.video)
       .replace(/\{JMENO\}/g, ctx.jmeno)
       .replace(/\{TERMIN\}/g, ctx.termin)
-      .replace(/\{DOSPELI\}/g, ctx.dospeli)
-      .replace(/\{DETI\}/g, ctx.deti)
-      .replace(/\{NOCI\}/g, ctx.noci)
-      .replace(/\{CASTKA\}/g, ctx.castka)
+      .replace(/\{CAS\}/g, ctx.cas)
+      .replace(/\{KDY\}/g, ctx.kdy)
+      .replace(/\{PLATFORMA\}/g, ctx.platforma)
       .replace(/\{KOD_DVERI\}/g, ctx.kod)
       // callback, ne řetězec: heslo obsahující $& nebo $$ by replace jinak rozepsal
       .replace(/\{WIFI_HESLO\}/g, function () { return wifiPassword() || '{WIFI_HESLO}'; })
       .replace(/\{KAUCE\}/g, DEPOSIT_CZK.toLocaleString('cs-CZ'))
-      .replace(/\{REGISTRACNI_LINK\}/g, ctx.regLink || '{REGISTRACNI_LINK}')
       .replace(/\{PRUVODCE_LINK\}/g, ctx.guideLink || '{PRUVODCE_LINK}');
   }
+  // Text pro platformu (Airbnb, Booking…): stejný obsah bez WhatsApp hvězdiček (*tučně*).
+  function plainText(t) { return String(t || '').replace(/\*([^*\n]+)\*/g, '$1'); }
 
   /* ============ Sekvence (timeline) ============ */
   // offsetFrom: 'arrival' | 'departure' ; offset ve dnech.
@@ -313,7 +337,8 @@
   var FIRST_MIN_DAYS = 14;
   var SEQUENCE = [
     { key: 'first', title: 'První ozvěna', asap: true, when: 'hned', legacy: 'confirm' },
-    { key: 'welcome', title: 'Uvítací zpráva (kód, registrace, Wi-Fi)', from: 'arrival', off: -7, when: 'T−7' },
+    { key: 'welcome', title: 'Uvítací zpráva (adresa, kód, video, Wi-Fi)', from: 'arrival', off: -10, when: 'T−10' },
+    { key: 'update', title: 'Update před příjezdem', from: 'arrival', off: -2, when: 'T−2' },
     { key: 'day2', title: 'Kontrola po první noci', from: 'arrival', off: 1, when: 'den 2' },
     { key: 'predeparture', title: 'Prosby před odjezdem', from: 'departure', off: -1, when: 'odjezd −24 h' },
     { key: 'review', title: 'Poděkování + recenze', from: 'departure', off: 0, when: 'ráno odjezdu' }
@@ -382,21 +407,18 @@
     if (!(msg.ownerTask && msg.from === 'departure') && today > lastUsefulDay(msg, b)) return 'stale';
     return d < today ? 'overdue' : 'due';
   }
-  // Vrátí části zprávy (většinou 1; welcome má 2: jádro + sezónní modul)
+  // Vrátí části zprávy. Od 13. 10. 2026 má každý krok jednu část (sezónní modul
+  // uvítací zprávy zanikl); pole zůstává, ať se volající nemusí měnit.
   function buildParts(msg, ctx, booking) {
     var L = msgLang(booking);
-    var lt = L.toUpperCase();
     if (msg.key === 'welcome') {
-      return [
-        // Jádro nese odkazy /pruvodce/?t= a /registrace/?t=, kód ke dveřím a heslo
-        // Wi-Fi — dokud něco z toho chybí, neodesílá se (v textu by zůstala {ZÁSTUPKA}).
-        { label: 'Uvítací zpráva (jádro) · ' + lt, text: fill(tplFor(L, 'welcomeCore'), ctx),
-          needsToken: !ctx.guideLink || !ctx.regLink, needsCode: !doorCodeFor(booking), needsWifi: !wifiPassword() },
-        { label: (ctx.winter ? 'Zimní modul' : 'Letní modul') + ' · ' + lt, text: fill(tplFor(L, ctx.winter ? 'winter' : 'summer'), ctx) }
-      ];
+      // Nese odkaz /pruvodce/?t=, kód ke dveřím a heslo Wi-Fi — dokud něco z toho
+      // chybí, neodesílá se (v textu by zůstala {ZÁSTUPKA}).
+      return [{ text: fill(tplFor(L, 'welcomeCore'), ctx),
+        needsToken: !ctx.guideLink, needsCode: !doorCodeFor(booking), needsWifi: !wifiPassword() }];
     }
+    if (msg.key === 'update') return [{ text: fill(tplFor(L, 'update'), ctx), needsCode: !doorCodeFor(booking) }];
     if (msg.key === 'first') return [{ text: fill(tplFor(L, 'first'), ctx) }];
-    if (msg.key === 'nudge') return [{ text: fill(tplFor(L, 'nudge'), ctx) }];
     if (msg.key === 'day2') return [{ text: fill(tplFor(L, 'day2'), ctx) }];
     if (msg.key === 'deposit_charge') return [{ text: fill(tplFor(L, 'deposit'), ctx) }];
     if (msg.key === 'deposit_return') return [{ text: '', ownerTask: true }];
@@ -408,6 +430,12 @@
     }
     return [{ text: '' }];
   }
+  // Hosté z platforem dostávají celý text přes platformu (záznam je tam pojistka při
+  // škodě) a na WhatsApp jen krátkou průvodní zprávu. Průvodní má smysl u prvních dvou
+  // zpráv; pozdější krátké zprávy jdou WhatsAppem celé. „Přímá" má jen WhatsApp.
+  function isPlatform(b) { var p = (b.platform || '').trim(); return !!p && p !== 'Přímá'; }
+  function hasCover(msg, b) { return isPlatform(b) && (msg.key === 'first' || msg.key === 'welcome'); }
+  function coverText(ctx, b) { return fill(tplFor(msgLang(b), 'cover'), ctx); }
 
   /* ============ Kontext pobytu ============ */
   function guestName(b) {
@@ -434,15 +462,61 @@
     return k.some(function (a) { return a !== 10; });
   }
   function isDirect(b) { return (b.platform || '') === 'Přímá'; }
+
+  /* ============ Podmínky pobytu: čas příjezdu, placení poplatku, energie ============ */
+  // Tři údaje, které se vkládají do uvítací zprávy. Žijí ve vr_msglog jako značky
+  // (stejně jako deposit_enabled) — bez migrace, fungují hned:
+  //   arrive_HHMM   dohodnutý čas příjezdu, např. arrive_1630 (bez značky 15:00)
+  //   fee_onsite | fee_included | fee_deposit   jak host platí poplatek obci
+  //   fee_energy    z kauce se účtují i energie (jen u fee_deposit)
+  // POZOR: zámek zatím pouští vždy od 15:00 (vr_ha_stay → Home Assistant v jiném repu).
+  // Dřívější dohodnutý příjezd se do zámku sám nepropíše — /sprava/ na to upozorní.
+  var ARRIVAL_DEFAULT = '15:00';
+  var FEE_MODES = { onsite: 'platí na místě', included: 'v ceně rezervace', deposit: 'z kauce podle smlouvy' };
+  function arrivalTime(b) {
+    var t = null;
+    (b.msglog || []).forEach(function (m) { var x = /^arrive_(\d\d)(\d\d)$/.exec(m.msg_key); if (x) t = x[1] + ':' + x[2]; });
+    return t || ARRIVAL_DEFAULT;
+  }
+  function feeModeSet(b) {
+    for (var k in FEE_MODES) if (hasLog(b, 'fee_' + k)) return k;
+    return null;
+  }
+  // Přímý prodej bez výslovné volby = z kauce: tak to stojí ve smlouvě (§ 6).
+  function feeMode(b) { return feeModeSet(b) || (isDirect(b) ? 'deposit' : null); }
+  function feeEnergy(b) { return feeMode(b) === 'deposit' && hasLog(b, 'fee_energy'); }
+  function termsLabel(b) {
+    var out = ['příjezd od ' + arrivalTime(b)], fm = feeMode(b);
+    out.push('poplatek: ' + (fm ? FEE_MODES[fm] + (feeEnergy(b) ? ' + energie' : '') : 'nevyplněno'));
+    return out.join(' · ');
+  }
+  // Zapíše podmínky jednoho pobytu; volá jen RPC, která něco mění (limit 120 za hodinu).
+  // t = { time: 'HH:MM' | '', fee: klíč z FEE_MODES | '', energy: bool }
+  function saveTerms(id, existing, t) {
+    var have = {}, want = {}, ops = [];
+    ((existing && existing.msglog) || []).forEach(function (m) { if (/^(arrive_\d{4}|fee_[a-z]+)$/.test(m.msg_key)) have[m.msg_key] = true; });
+    if (t.time && t.time !== ARRIVAL_DEFAULT) want['arrive_' + t.time.replace(':', '')] = true;
+    if (t.fee) want['fee_' + t.fee] = true;
+    if (t.fee === 'deposit' && t.energy) want.fee_energy = true;
+    Object.keys(have).forEach(function (k) { if (!want[k]) ops.push([k, false]); });
+    Object.keys(want).forEach(function (k) { if (!have[k]) ops.push([k, true]); });
+    return ops.reduce(function (p, op) {
+      return p.then(function () { return rpc('vr_admin_msg_log', { p_booking_id: id, p_msg_key: op[0], p_sent: op[1] }); });
+    }, Promise.resolve());
+  }
+
   function buildCtx(booking) {
     var noci = nights(booking.arrival, booking.departure);
     var p = booking.persons || {};
     var reg = (p.registered || 0) > 0;
-    // null = nevíme. S dvojkou se NEPOČÍTÁ: zpráva pak vypíše jen sazbu bez částky.
+    // null = nevíme (jen pro odhad poplatku v detailu; do zpráv se částka nepočítá)
     var dospeli = reg ? (p.adults || 0) : (adultsKnown(booking) ? booking.adults : null);
     var deti = reg ? (p.children || 0) : ((booking.children || []).length);
     var token = tokenFor(booking.id);
     var L = msgLang(booking), T = TPL[L];
+    var winter = isWinter(booking.arrival);
+    var fm = feeMode(booking);
+    var toGo = daysBetween(isoToday(), booking.arrival);
     return {
       jmeno: guestName(booking),
       termin: fmtTermin(booking.arrival, booking.departure, L),
@@ -450,17 +524,23 @@
       // Po registraci skutečný poplatek z DB (po dnech, děti a ZTP/P zdarma);
       // do té doby odhad z rezervace. Sazba 25 Kč = OZV Svoboda nad Úpou č. 2/2023.
       castka: (reg && p.fee_czk != null) ? p.fee_czk : (dospeli == null ? null : dospeli * noci * 25),
-      // Odstavec o poplatku: sazba + (částka | „spočítáme podle registrace") +
-      // (Revolut | u přímého prodeje „vyúčtujeme z kauce" — smlouva § 6).
-      poplatek: T.feeRate + (dospeli ? T.feeAmount : T.feeUnknown) + (isDirect(booking) ? T.feeDeposit : T.feePay),
+      // Věta o placení poplatku; bez vyplněného způsobu se nepíše nic (a „Co doplnit" to hlásí).
+      jakSePlati: !fm ? '' : (fm === 'onsite' ? T.payOnsite : fm === 'included' ? T.payIncluded
+        : T.payDeposit + (feeEnergy(booking) ? T.payEnergy : '')),
       novinka: newsFor(booking, L),
+      video: winter ? VIDEO.winter : VIDEO.summer,
+      videoObsah: winter ? T.videoWinter : T.videoSummer,
+      cas: arrivalTime(booking),
+      // „pozítří se uvidíme" platí jen v T−2; den nato má zpráva říkat „zítra"
+      kdy: toGo <= 0 ? T.inDays0 : (toGo === 1 ? T.inDays1 : T.inDays2),
+      platforma: (booking.platform || '').trim(),
       // Kód je známý i bez uloženého door_code: posledních 5 číslic telefonu, stejně
       // ho bere zámek (Home Assistant) i registrace z lednice.
       kod: doorCodeFor(booking) || '{KOD_DVERI}',
       token: token,
       regLink: token ? (location.origin + '/registrace/?t=' + token + '&lang=' + (booking.lang || 'en')) : null,
       guideLink: token ? (location.origin + '/pruvodce/?t=' + token) : null,
-      winter: isWinter(booking.arrival),
+      winter: winter,
       _reg: reg
     };
   }
@@ -1675,8 +1755,8 @@
   // Všechno, co si /sprava/ o zprávách pamatuje, je řádek ve vr_msglog (booking_id,
   // msg_key, sent_at) — RPC bere libovolný klíč, takže nové stavy nepotřebují migraci:
   //   <krok>          zpráva odeslaná            skip_<krok>   krok už nemá smysl, vyřízeno
-  //   reply_ok/risk   host odpověděl: jede/váhá  reply_nudge   kdy jsem se naposledy připomněl
-  //   guests_ok       počty osob zapsal majitel  deposit_enabled, yale_set  (starší značky)
+  //   reply_ok/risk   host odpověděl: jede/váhá  guests_ok     počty osob zapsal majitel
+  //   arrive_HHMM, fee_*  podmínky pobytu        deposit_enabled, yale_set  (starší značky)
   function setLog(b, key, on) {
     on = !!on;
     if (on === hasLog(b, key) && !on) return Promise.resolve();
@@ -1697,9 +1777,9 @@
   /* ============ Odpověď hosta (ruční v1) ============ */
   // První ozvěna má jediný smysl: zahájit konverzaci a včas poznat, kdo váhá. Zjistit
   // to tři měsíce předem je obrovský rozdíl proti týdnu. Odpovědi chodí WhatsAppem
-  // a systém je nečte — majitel jedním klikem zapíše, jak to dopadlo. Kdo NUDGE_DAYS
-  // dní mlčí, objeví se v „Dnes na řadě" s připomenutím; kdo váhá, svítí tam pořád.
-  var NUDGE_DAYS = 10;
+  // nebo přes platformu a systém je nečte — majitel jedním klikem zapíše, jak to
+  // dopadlo. Kdo váhá, svítí v „Dnes na řadě". Mlčícím se systém NEPŘIPOMÍNÁ (Pavel
+  // 13. 10. 2026: nic dalšího písemně) — jen je to vidět na značce u pobytu.
   function replyState(b) { return hasLog(b, 'reply_ok') ? 'ok' : (hasLog(b, 'reply_risk') ? 'risk' : 'none'); }
   function setReply(b, state) {
     return setLog(b, 'reply_ok', state === 'ok').then(function () { return setLog(b, 'reply_risk', state === 'risk'); });
@@ -1709,12 +1789,11 @@
     if (isNaN(d)) return null;
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
-  // Kolik dní host mlčí od první ozvěny (nebo od posledního připomenutí). null = ozvěna neodešla.
+  // Kolik dní host mlčí od první ozvěny. null = ozvěna neodešla.
   function silentDays(b, today) {
-    var sent = sentMap(b);
-    if (!sent.first) return null;
-    var from = [sent.first, sent.reply_nudge].map(function (ts) { return typeof ts === 'string' ? isoDateOf(ts) : null; })
-      .filter(Boolean).sort().pop();
+    var first = sentMap(b).first;
+    if (!first) return null;
+    var from = typeof first === 'string' ? isoDateOf(first) : null;
     return from ? daysBetween(from, today) : null;
   }
   function replyPill(b, today) {
@@ -1751,14 +1830,8 @@
         if (st === 'stale') { if (!sent['skip_' + msg.key]) stale.push({ stay: s, booking: b, msg: msg }); return; }
         tasks.push({ stay: s, booking: b, msg: msg, date: schedDate(msg, b), overdue: st === 'overdue' });
       });
-      // 💬 odpověď hosta: „váhá" svítí pořád, mlčícímu se po NUDGE_DAYS dnech připomenout.
-      // Týden před příjezdem už jde uvítací zpráva — připomínat první ozvěnu pak nemá cenu.
-      var rs = replyState(b);
-      if (rs === 'risk' && b.arrival > today) tasks.push({ stay: s, booking: b, risk: true, date: '' });
-      else if (rs === 'none' && phoneUsable(b) && daysBetween(today, b.arrival) > 7) {
-        var quiet = silentDays(b, today);
-        if (quiet != null && quiet >= NUDGE_DAYS) tasks.push({ stay: s, booking: b, nudge: true, days: quiet, date: today });
-      }
+      // ⚠️ host váhá — svítí nahoře, dokud se stav nezmění nebo pobyt nezačne.
+      if (replyState(b) === 'risk' && b.arrival > today) tasks.push({ stay: s, booking: b, risk: true, date: '' });
     });
     // řazení: váhající nahoře, pak podle data úkolu; při shodě dřívější příjezd napřed
     tasks.sort(function (a, b) {
@@ -1856,23 +1929,6 @@
         return;
       }
       var ctx = buildCtx(b);
-      if (t.nudge) {
-        // 💬 host na první ozvěnu neodpověděl — připomenout se, nebo zapsat, že odpověděl.
-        row.className = 'task';
-        row.innerHTML =
-          '<div class="task-main"><div class="task-name">' + esc(guestName(b)) + '</div>' +
-          '<div class="task-what">💬 ' + t.days + ' dní bez odpovědi — připomenout se · ' + esc(msgLang(b).toUpperCase()) + ' · ' + esc(arrivesIn(b, today)) + '</div>' +
-          '<span class="task-when today">bez odpovědi</span></div>' +
-          '<div class="task-actions"></div>';
-        var an = row.querySelector('.task-actions');
-        an.appendChild(waBtn(b, buildParts({ key: 'nudge' }, ctx, b)[0].text));
-        an.appendChild(taskBtn('btn-outline', '✓ Připomenuto', function (btn) {
-          logAndRefresh(btn, setLog(b, 'reply_nudge', true), 'Zapsáno — ozvu se znovu za ' + NUDGE_DAYS + ' dní.');
-        }));
-        an.appendChild(taskBtn('btn-outline', 'Odpověděl…', function () { openDetail(t.stay); }));
-        wrap.appendChild(row);
-        return;
-      }
       var parts = buildParts(t.msg, ctx, b);
       var ownerTask = !!t.msg.ownerTask;
       var p0 = parts[0], blocked = '';
@@ -1901,11 +1957,16 @@
       } else if (blocked && p0.needsWifi && !p0.needsCode) {
         act.appendChild(taskBtn('btn-primary', '📶 Doplnit Wi-Fi', function () { openSettings('set-wifi_password'); }));
       } else if (!blocked) {
-        // Uvítací zpráva má dvě části (jádro + sezónní modul) → dvě tlačítka.
-        var texts = parts.filter(function (p) { return p.text; });
-        texts.forEach(function (p, i) {
-          act.appendChild(waBtn(b, p.text, texts.length > 1 ? 'WhatsApp ' + (i + 1) + '/' + texts.length : 'WhatsApp'));
-        });
+        if (isPlatform(b)) {
+          // Celý text patří na platformu (pojistka při škodě), WhatsApp je osobní kanál:
+          // u prvních dvou zpráv jen krátká průvodní, pozdější krátké zprávy celé.
+          act.appendChild(taskBtn('btn-primary', '📋 Pro ' + ctx.platforma, function () {
+            copyText(plainText(p0.text)); toast('Zkopírováno — vlož do zprávy na ' + ctx.platforma + '.');
+          }));
+          act.appendChild(waBtn(b, hasCover(t.msg, b) ? coverText(ctx, b) : p0.text, hasCover(t.msg, b) ? 'WhatsApp (průvodní)' : 'WhatsApp'));
+        } else {
+          act.appendChild(waBtn(b, p0.text));
+        }
         // Odesláno jde odkliknout rovnou tady — dřív to šlo jen v detailu, a tak se
         // neodklikávalo a v seznamu visely týdny staré „dluhy".
         act.appendChild(taskBtn('btn-outline', '✓ Odesláno', function (btn) {
@@ -1943,8 +2004,9 @@
   // se započte do souhrnu. Vzniklo 11. 10. 2026 z výtky „systém mě buzeruje": mezery
   // byly rozházené po kartách pobytů a v Problémech a muselo se chodit host po hostovi.
   //
-  // Co se NEHLÁSÍ: e-mail (platformy ho nedávají) a kód dveří, který jde odvodit
-  // z telefonu (zámek i registrace z lednice si ho berou samy).
+  // Co se NEHLÁSÍ: e-mail (platformy ho nedávají), kód dveří, který jde odvodit
+  // z telefonu (zámek i registrace z lednice si ho berou samy), a čas příjezdu
+  // (má výchozí 15:00).
   var lastTodo = [];
   // null = pobyt se do přehledu nepočítá (servisní blok, nezaplacená předrezervace).
   function missingFor(s, today) {
@@ -1959,9 +2021,12 @@
     if (!phoneUsable(b)) out.push(phoneDigits(b.phone)
       ? { k: 'phone', label: 'telefon nejde použít', title: 'Z čísla nejde složit mezinárodní tvar — WhatsApp odkaz z něj nevznikne.' }
       : { k: 'phone', label: 'telefon', title: 'Bez telefonu nejde poslat zprávu ani odvodit kód dveří.' });
-    if (!adultsKnown(b)) out.push({ k: 'adults', label: 'počet dospělých', title: 'Bez něj uvítací zpráva neřekne částku poplatku.' });
+    if (!adultsKnown(b)) out.push({ k: 'adults', label: 'počet dospělých', title: 'Podle něj se hlídá, jestli se zapsali všichni, a odhaduje poplatek.' });
     if (!kidsAgesKnown(b)) out.push({ k: 'kids', label: 'věky dětí', title: 'Podle věku se řadí tipy na výlety a chystají postýlky.' });
-    if (needsToken(s, today)) out.push({ k: 'token', label: 'trvalý odkaz', title: 'Bez něj nejde sestavit uvítací zpráva (průvodce a registrace).' });
+    if (needsToken(s, today)) out.push({ k: 'token', label: 'trvalý odkaz', title: 'Bez něj nejde sestavit uvítací zpráva (odkaz na výlety podle počasí).' });
+    // Jak host platí poplatek obci — věta v uvítací zprávě. Dokud zpráva neodešla.
+    if (!feeMode(b) && s.start > today && !sentMap(b).welcome)
+      out.push({ k: 'fee', label: 'jak se platí poplatek', title: 'Na místě, v ceně rezervace, nebo z kauce? Bez toho uvítací zpráva o placení mlčí.' });
     return out;
   }
   // Trvalý odkaz chybí pobytům založeným před 15. 9. 2026 (token_enc). Nabízí se jen
@@ -2042,7 +2107,7 @@
           btn.disabled = true;
           makeToken(b).then(function () { toast('Trvalý odkaz vytvořen.'); refreshBoards(); })
             .catch(function () { btn.disabled = false; toast('Odkaz se nepodařilo vytvořit.'); });
-        } else openEditor({ stay: s, booking: b, back: 'board', focus: k === 'phone' ? 'ed-phone' : (k === 'adults' ? 'ed-adults' : 'ed-kids') });
+        } else openEditor({ stay: s, booking: b, back: 'board', focus: { phone: 'ed-phone', adults: 'ed-adults', kids: 'ed-kids', fee: 'ed-fee' }[k] });
       });
     });
     var bulk = $('todo-bulk');
@@ -2230,8 +2295,19 @@
       '<div class="field"><label>Příjezd</label><input id="ed-arrival" type="date" value="' + esc(arrival) + '"></div>' +
       '<div class="field"><label>Odjezd</label><input id="ed-departure" type="date" value="' + esc(departure) + '"></div>' +
       '</div>' +
+      '<div class="row2">' +
+      '<div class="field"><label>Dohodnutý čas příjezdu</label><input id="ed-time" type="time" value="' + esc(b && arrivalTime(b) !== ARRIVAL_DEFAULT ? arrivalTime(b) : '') + '">' +
+      '<p class="hint" id="ed-time-info"></p></div>' +
+      '<div class="field"><label>Poplatek obci</label><select id="ed-fee">' +
+      '<option value="">— nevyplněno —</option>' +
+      Object.keys(FEE_MODES).map(function (k) {
+        return '<option value="' + k + '"' + (b && feeMode(b) === k ? ' selected' : '') + '>' + esc(FEE_MODES[k]) + '</option>';
+      }).join('') + '</select></div>' +
+      '</div>' +
+      '<label class="check" id="ed-energy-wrap"><input type="checkbox" id="ed-energy"' + (b && feeEnergy(b) ? ' checked' : '') + '> Z kauce se účtují i energie (elektřina a plyn podle odečtu)</label>' +
+      '<label class="check" id="ed-fee-all-wrap" hidden><input type="checkbox" id="ed-fee-all"> <span id="ed-fee-all-lbl"></span></label>' +
       '<div class="field"><label>Poznámka</label><textarea id="ed-notes" maxlength="500">' + esc(b ? (b.notes || '') : '') + '</textarea></div>' +
-      '<p class="hint">Dospělé nech prázdné, dokud to nevíš — uvítací zpráva pak řekne jen sazbu poplatku, ne vymyšlenou částku. Děti zapiš věkem, oddělené čárkou; když víš jen počet, napiš otazníky (<code>?, ?</code>). Bez dětí nech pole prázdné. Po registraci se všechno přepočítá ze skutečných osob.</p>' +
+      '<p class="hint">Dospělé nech prázdné, dokud to nevíš. Děti zapiš věkem, oddělené čárkou; když víš jen počet, napiš otazníky (<code>?, ?</code>). Bez dětí nech pole prázdné. Po registraci se všechno přepočítá ze skutečných osob. Čas příjezdu a způsob placení poplatku jdou do uvítací zprávy.</p>' +
       '<p class="form-err" id="ed-err" hidden></p>' +
       '<button type="submit" class="btn btn-primary" id="ed-save" style="width:100%">' + (isEdit ? 'Uložit změny' : 'Založit hosta') + '</button>' +
       (isEdit ? '<button type="button" class="btn btn-danger" id="ed-del" style="width:100%;margin-top:10px">Smazat pobyt</button>' : '') +
@@ -2263,6 +2339,27 @@
     langEl.addEventListener('change', phoneFeedback);
     phoneFeedback();
 
+    // Podmínky pobytu: čas příjezdu, poplatek, energie. Energie dávají smysl jen
+    // u „z kauce"; a stejný způsob placení jde jedním uložením dát všem pobytům
+    // z téže platformy, které ho ještě nemají (ať se to nekliká pobyt po pobytu).
+    var feeEl = $('ed-fee'), timeEl = $('ed-time');
+    var siblings = feeSiblings(b, platform);
+    function termsFeedback() {
+      $('ed-energy-wrap').hidden = feeEl.value !== 'deposit';
+      var t = timeEl.value;
+      $('ed-time-info').className = 'hint' + (t && t < ARRIVAL_DEFAULT ? ' phone-guess' : '');
+      $('ed-time-info').textContent = !t ? 'Prázdné = od 15:00.'
+        : t < ARRIVAL_DEFAULT ? '⚠︎ Zámek pouští až od 15:00 — kód na ' + t + ' nastav ručně v Yale Home.'
+        : 'Zprávy hostovi řeknou „od ' + t + '“.';
+      var wrap = $('ed-fee-all-wrap');
+      wrap.hidden = !(feeEl.value && siblings.length);
+      if (!wrap.hidden) $('ed-fee-all-lbl').textContent = 'Stejně nastavit i dalším ' + siblings.length + ' pobytům z ' + platform + ', které to nemají';
+    }
+    feeEl.addEventListener('change', termsFeedback);
+    timeEl.addEventListener('input', termsFeedback);
+    $('ed-fee-all').checked = opts.focus === 'ed-fee';
+    termsFeedback();
+
     $('ed-form').addEventListener('submit', function (ev) {
       ev.preventDefault();
       saveEditor(b, uidh, opts.back);
@@ -2293,6 +2390,15 @@
     return { ages: ages, unknown: unknown };
   }
 
+  // Ostatní budoucí pobyty z téže platformy bez vyplněného způsobu placení poplatku.
+  function feeSiblings(b, platform) {
+    var today = isoToday(), plat = (platform || '').trim();
+    if (!plat || plat === 'Přímá') return [];
+    return bookings.filter(function (x) {
+      return (!b || x.id !== b.id) && (x.platform || '').trim() === plat && x.arrival > today && !feeModeSet(x) && !sentMap(x).welcome;
+    });
+  }
+
   // back: 'board' = po uložení zpět na přehled (voláno z „Co doplnit"), jinak detail.
   function saveEditor(existing, uidh, back) {
     var err = $('ed-err');
@@ -2312,6 +2418,8 @@
     var adults = adultsRaw === '' ? null : parseInt(adultsRaw, 10);
     if (adults !== null && !(adults >= 1 && adults <= 40)) { err.textContent = 'Počet dospělých: 1–40, nebo nech pole prázdné.'; err.hidden = false; $('ed-adults').focus(); return; }
     var guestsOk = adults !== null && !kids.unknown;
+    var terms = { time: $('ed-time').value, fee: $('ed-fee').value, energy: $('ed-energy').checked };
+    var alsoFor = (terms.fee && $('ed-fee-all').checked) ? feeSiblings(existing, $('ed-platform').value) : [];
     var payload = {
       p_id: existing ? existing.id : null,
       p_uidh: uidh || null,
@@ -2342,7 +2450,14 @@
       var mark = (guestsOk === had) ? Promise.resolve()
         : rpc('vr_admin_msg_log', { p_booking_id: d.id, p_msg_key: 'guests_ok', p_sent: guestsOk });
       return mark.catch(function () {}).then(function () {
-        toast(existing ? 'Uloženo.' : 'Host založen.');
+        return saveTerms(d.id, existing, terms);
+      }).then(function () {
+        // stejný způsob placení i ostatním pobytům z platformy (jen poplatek, ne čas)
+        return alsoFor.reduce(function (p, x) {
+          return p.then(function () { return saveTerms(x.id, x, { time: arrivalTime(x), fee: terms.fee, energy: terms.energy }); });
+        }, Promise.resolve());
+      }).catch(function () { toast('Podmínky pobytu se nepodařilo uložit celé — zkontroluj je.'); }).then(function () {
+        toast(existing ? (alsoFor.length ? 'Uloženo, poplatek nastaven i ' + alsoFor.length + ' dalším pobytům.' : 'Uloženo.') : 'Host založen.');
         return reload();
       }).then(function () {
         var s = stays.filter(function (x) { return x.booking && x.booking.id === d.id; })[0];
@@ -2399,7 +2514,9 @@
 
     body.innerHTML =
       '<div class="block">' +
-      '<div class="stay-sub" style="margin-bottom:10px">' + esc(fmtTermin(b.arrival, b.departure)) + ' · ' + nights(b.arrival, b.departure) + ' nocí · ' + esc(stay.platform) + '</div>' +
+      '<div class="stay-sub" style="margin-bottom:4px">' + esc(fmtTermin(b.arrival, b.departure)) + ' · ' + nights(b.arrival, b.departure) + ' nocí · ' + esc(stay.platform) + '</div>' +
+      '<div class="stay-sub" style="margin-bottom:10px">' + esc(termsLabel(b)) + '</div>' +
+      earlyArrivalNote(b) +
       '<button type="button" class="btn btn-sm btn-outline" id="d-edit">Upravit údaje pobytu</button>' +
       '</div>' +
 
@@ -2469,8 +2586,8 @@
       opt('none', 'Neodpověděl', 'btn-reply-none') + '</div>' +
       '<p class="hint">' + (st === 'ok' ? 'Host potvrdil, že jede. Nic dalšího není potřeba.'
         : st === 'risk' ? 'Host váhá — pobyt svítí v „Dnes na řadě“, dokud se stav nezmění. O stornu se v našich zprávách nemluví; stačí se zeptat, co by pomohlo.'
-        : quiet == null ? 'První ozvěna zatím neodešla. Až odejde a host ' + NUDGE_DAYS + ' dní neodpoví, připomene se v „Dnes na řadě“.'
-        : 'První ozvěna odešla ' + (quiet === 0 ? 'dnes' : (quiet === 1 ? 'včera' : 'před ' + quiet + ' dny')) + ', odpověď zatím žádná.' + (quiet >= NUDGE_DAYS ? ' Je čas se připomenout.' : '')) + '</p>';
+        : quiet == null ? 'První ozvěna zatím neodešla.'
+        : 'První ozvěna odešla ' + (quiet === 0 ? 'dnes' : (quiet === 1 ? 'včera' : 'před ' + quiet + ' dny')) + ', odpověď zatím žádná.') + '</p>';
     Array.prototype.forEach.call(box.querySelectorAll('[data-reply]'), function (btn) {
       btn.addEventListener('click', function () {
         btn.disabled = true;
@@ -2478,6 +2595,15 @@
           .catch(function () { btn.disabled = false; toast('Nepodařilo se uložit.'); });
       });
     });
+  }
+
+  // Dohodnutý příjezd před 15:00: zpráva hostovi slíbí kód od toho času, ale zámek ho
+  // pustí až v 15:00 — Home Assistant bere čas z vr_ha_stay a o dohodě zatím neví.
+  function earlyArrivalNote(b) {
+    return arrivalTime(b) < ARRIVAL_DEFAULT
+      ? '<div class="notice">⚠️ Dohodnutý příjezd ' + esc(arrivalTime(b)) + ' je dřív, než pouští zámek (15:00). Zprávy hostovi slíbí kód od ' + esc(arrivalTime(b)) +
+        ' — nastav ho na ten čas ručně v appce Yale Home, sám se do zámku zatím nepropíše.</div>'
+      : '';
   }
 
   function linkCard(title, url) {
@@ -2529,6 +2655,7 @@
     var sent = sentMap(b);
     var tl = $('d-tl');
     tl.innerHTML = '';
+    var copies = [];   // texty pro tlačítka „Zkopírovat" (index v data-ci)
 
     sequenceFor(b).forEach(function (msg) {
       var st = stepState(msg, b, sent, today);
@@ -2557,21 +2684,39 @@
         partsHtml = '<div class="notice">Připomínka jen pro tebe — hostovi se nic neposílá. Vratku ' +
           esc(DEPOSIT_CZK.toLocaleString('cs-CZ')) + ' Kč pošli ručně přes Revolut (' + esc(REVOLUT_URL) + ').</div>';
       } else {
-        partsHtml = parts.map(function (p, idx) {
+        partsHtml = parts.map(function (p) {
           var warn = '';
-          if (p.needsToken) warn = '<div class="notice">Zpráva nese odkaz na průvodce a na registraci, a ten zatím není (pobyt vznikl před ukládáním odkazů). Vytvoř trvalý odkaz výše — do zprávy se doplní sám.</div>';
+          if (p.needsToken) warn = '<div class="notice">Zpráva nese odkaz na průvodce výlety, a ten zatím není (pobyt vznikl před ukládáním odkazů). Vytvoř trvalý odkaz výše — do zprávy se doplní sám.</div>';
           if (p.needsCode) warn = '<div class="notice">Zpráva nese kód ke dveřím, a ten není z čeho vzít — doplň telefon (kód = posledních 5 číslic), nebo kód ulož výše.</div>';
           if (p.needsWifi && !warn) warn = '<div class="notice">V Nastavení chybí heslo Wi-Fi — ve zprávě by zůstalo {WIFI_HESLO}. Doplň ho (⚙ Nastavení) a zpráva půjde odeslat.</div>';
-          var canWa = phoneUsable(b) && p.text && !p.needsToken && !p.needsCode && !p.needsWifi;
+          var ready = !!p.text && !p.needsToken && !p.needsCode && !p.needsWifi;
+          var canWa = phoneUsable(b) && ready;
           var waTitle = phoneUsable(b) ? 'chybí údaj' : (b.phone ? 'telefon nejde použít — oprav ho v „Upravit pobyt“' : 'chybí telefon');
-          var waHtml = canWa
-            ? '<a class="btn btn-sm btn-wa" href="' + esc(waLink(b, p.text)) + '" target="_blank" rel="noopener">Otevřít ve WhatsApp</a>'
-            : '<button class="btn btn-sm btn-wa" disabled title="' + esc(waTitle) + '">Otevřít ve WhatsApp</button>';
-          return (p.label ? '<div class="msg-when" style="margin:6px 0 4px">' + esc(p.label) + variant + '</div>' : (variant ? '<div class="msg-when" style="margin:6px 0 4px">' + variant.replace(/^ · /, '') + '</div>' : '')) +
+          var wa = function (text, label, cls) {
+            return canWa
+              ? '<a class="btn btn-sm ' + cls + '" href="' + esc(waLink(b, text)) + '" target="_blank" rel="noopener">' + label + '</a>'
+              : '<button class="btn btn-sm ' + cls + '" disabled title="' + esc(waTitle) + '">' + label + '</button>';
+          };
+          var copy = function (text, label, cls) {
+            copies.push(text);
+            return '<button class="btn btn-sm ' + cls + ' copybtn" data-ci="' + (copies.length - 1) + '"' + (ready ? '' : ' disabled title="chybí údaj"') + '>' + label + '</button>';
+          };
+          // Host z platformy: celý text na platformu (bez WhatsApp hvězdiček), na WhatsApp
+          // u prvních dvou zpráv jen průvodní. „Přímá": WhatsApp jako dřív.
+          var actions, cover = '';
+          if (isPlatform(b)) {
+            actions = copy(plainText(p.text), '📋 Zkopírovat pro ' + esc(ctx.platforma), 'btn-primary');
+            if (hasCover(msg, b)) {
+              actions += wa(coverText(ctx, b), 'WhatsApp · průvodní zpráva', 'btn-wa') + wa(p.text, 'WhatsApp · celý text', 'btn-outline');
+              cover = '<p class="hint msg-cover">Průvodní zpráva na WhatsApp: „' + esc(coverText(ctx, b)) + '“</p>';
+            } else actions += wa(p.text, 'Otevřít ve WhatsApp', 'btn-wa');
+          } else {
+            actions = wa(p.text, 'Otevřít ve WhatsApp', 'btn-wa') + copy(p.text, 'Kopírovat text', 'btn-outline');
+          }
+          return (variant ? '<div class="msg-when" style="margin:6px 0 4px">' + variant.replace(/^ · /, '') + '</div>' : '') +
             warn +
             '<div class="msg-preview">' + esc(p.text) + '</div>' +
-            '<div class="msg-actions">' + waHtml +
-            '<button class="btn btn-sm btn-outline copybtn" data-copy="' + esc(p.text).replace(/"/g, '&quot;') + '">Kopírovat text</button></div>';
+            '<div class="msg-actions">' + actions + '</div>' + cover;
         }).join('');
       }
 
@@ -2585,8 +2730,7 @@
     // copy handlers
     Array.prototype.forEach.call(tl.querySelectorAll('.copybtn'), function (btn) {
       btn.addEventListener('click', function () {
-        var el = document.createElement('textarea'); el.innerHTML = btn.getAttribute('data-copy');
-        copyText(el.value); toast('Text zkopírován.');
+        copyText(copies[+btn.getAttribute('data-ci')] || ''); toast('Text zkopírován.');
       });
     });
     // checkbox handlers
