@@ -3,7 +3,7 @@
 **Tady se zjišťuje, na čem se pracuje.** Mapa (`MAPA-SYSTEMU.md`) říká *kde co běží*,
 tenhle soubor říká *co zbývá udělat*. Kdo něco dokončí, přepíše to tady ve stejném commitu.
 
-Aktualizováno: 11. 10. 2026
+Aktualizováno: 13. 10. 2026
 
 ---
 
@@ -386,6 +386,53 @@ kalendáře: servisní blok (`service`) a nepotvrzený termín (`unconfirmed`) h
 jinak by od 12. 10. sedm týdnů denně strašila „rekonstrukce schodů". Okno nespárovaných rozšířeno na
 T+35, protože první zpráva sekvence je T−30 (v `sprava.js` i v e-mailu stejně).
 
+
+---
+
+## 🪪 Registrace hostů → `/registrace/` (kontrola data narození a čísla dokladu)
+
+Za správnost údajů v knize hostů ručí ubytovatel. Pokuta 500 Kč přišla za číslo polského
+dokladu, které neodpovídalo polskému formátu; hosté taky zadávali správný den a měsíc
+narození s rokem 2026 (kolečko v telefonu začíná dneškem).
+
+| | Stav |
+|---|---|
+| Datum narození jako tři políčka (den, měsíc, rok – rok se píše celý, nic není předvyplněné) | ✅ **13. 10. 2026** (PR, čeká na merge) |
+| Budoucnost a věk nad 110 let formulář odmítne; u miminka a letošního/loňského roku se zeptá „Opravdu je hostovi X měsíců?“ | ✅ 13. 10. 2026 |
+| Stejná mez (110 let) v databázi – `_vr_persons_insert` | 🟡 **migrace `20261013_vr_persons_birth_limit.sql` připravená, neaplikovaná** (živá DB odmítá jen budoucnost a rok < 1900) |
+| Číslo dokladu podle státu a druhu (pas / průkaz), tabulka v `registrace/doklady.js` | ✅ 13. 10. 2026 – DE, CZ, PL, NL, BE, AT, SK; jen pas u UK a IT |
+| Kontrolní číslice: polský dowód a pas (tvrdě), belgická eID (jen varuje), německé doklady (jen když host opíše 10 znaků ze strojové zóny) | ✅ 13. 10. 2026 |
+| Stát bez pravidla nebo „Jiný doklad“: obecná kontrola + zaškrtnutí „opsal(a) jsem přesně“ | ✅ 13. 10. 2026 |
+| Čtečka dokladu foťákem (strojově čitelná zóna, celé v prohlížeči) | 🟡 **prototyp ve vlastním PR za přepínačem `?ctecka=1`** – na vzorových dokladech čte, na skutečném telefonu neověřeno (viz níž) |
+
+**Kde co je.** `registrace/doklady.js` = čisté funkce bez DOM (meze data narození, tabulka `RULES`
+se zdrojem u každého státu, kontrolní číslice). `registrace/registrace.js` = formulář a texty
+(cs/en/de/pl). Test: `node tools/test-doklady.mjs` (350 kontrol – úřední vzory z PRADO a ministerstev,
+překlepy, texty ve všech jazycích). Zkoušení bez živé DB: `node tools/registrace-harness.mjs`
+→ `http://localhost:4174/registrace/?t=demo` (lednicová cesta: bez `?t=`, kód 12345).
+
+**Tvrdé pravidlo je jen tam, kde je formát doložený úředně** (zákon, ministerstvo, PRADO).
+Číslo, které na něj nesedí, formulář nepřijme, ukáže vzor a kde na dokladu číslo je. Pojistka
+pro doklad, který do pravidla nepatří (povolení k pobytu, starší vzor): druh „Jiný doklad“.
+Co doložit nešlo a proč:
+- **Polsko:** váhy kontrolní číslice nejsou v žádném předpisu; drží na všech 7 úředních vzorech
+  z PRADO a u dowodu je potvrzuje školicí materiál policie. Kdyby se ozval Polák s platným
+  dokladem, který neprojde, je to první místo, kam se podívat (`RULES.PL` v `doklady.js`).
+- **Belgie:** kontrola mod 97 u eID nesedí na dvou úředních vzorech → jen se ptá, neblokuje.
+- **Rakousko:** zdroj je Město Vídeň + vzory PRADO, spolkový předpis formát neurčuje → pravidlo
+  je schválně volnější.
+- **Francie, USA, Dánsko, Švýcarsko, Maďarsko, Ukrajina, italský průkaz:** formát jen ze vzorů
+  v PRADO, bez textového zdroje → zůstávají v obecné kontrole.
+
+**Po merge ručně:**
+1. Aplikovat migraci `20261013_vr_persons_birth_limit.sql` (workflow „DB migrace“, nejdřív dry run).
+2. Na vlastním telefonu projít `/registrace/` z QR na lednici: datum narození, český průkaz a pas.
+3. V živé DB je k 13. 10. 2026 **jeden** záznam s rokem narození v roce pobytu nebo o rok dřív
+   (z 14 osob) – ve `/sprava/` ověřit, jestli je to opravdu miminko.
+
+**Otevřené:** `/sprava/` nedovolí opravit číslo dokladu ani datum narození u zapsané osoby
+(host ji musí smazat a zapsat znovu, nahlášenou smazat nejde). V hlavičce formuláře se na
+šířce 375 px v němčině překrývá štítek „Gästeregistrierung“ s přepínačem jazyků.
 
 ---
 

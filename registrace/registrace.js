@@ -44,7 +44,6 @@
       submit: 'Přidat osobu', sending: 'Ukládám…',
       okAdded: 'Osoba přidána. Můžete zadat další.',
       addHint: 'Po přidání zůstane formulář otevřený — rovnou zadejte další osobu.',
-      docWarn: 'Toto nevypadá jako číslo dokladu ({type}) — zkontrolujte prosím proti dokladu.',
       docWarnFix: 'Opravit', delLabel: 'Odebrat osobu', docWarnContinue: 'Je to správně, pokračovat',
       gdprTitle: 'Ochrana údajů',
       gdprBody: 'Údaje sbíráme jen kvůli zákonné evidenci ubytovaných a místnímu poplatku. Leží v zabezpečené databázi u zpracovatele Supabase (AWS Londýn, Spojené království — země s rozhodnutím EU o odpovídající ochraně). Čísla dokladů nevidí nikdo další z vaší skupiny — v přehledu se ukazuje jen, že je doklad vyplněný.',
@@ -79,6 +78,30 @@
       errBirthReq: 'Vyplňte prosím datum narození — je povinné pro evidenci ubytovaných.',
       errDocAdult: 'U dospělých je číslo dokladu povinné (evidence ubytovaných).',
       errStreet: 'Vyplňte prosím ulici a číslo domu.',
+      fDay: 'Den', fMonth: 'Měsíc', fYear: 'Rok', phDay: 'DD', phMonth: 'MM', phYear: 'RRRR',
+      errBirthBad: 'Takové datum neexistuje. Zadejte den, měsíc a celý rok narození (čtyři číslice).',
+      errBirthFuture: 'Datum narození je v budoucnosti — zkontrolujte prosím rok.',
+      errBirthOld: 'Podle tohoto data by hostovi bylo přes 110 let — zkontrolujte prosím rok.',
+      birthAsk: 'Opravdu je hostovi {age}?',
+      ageMonths: ['{n} měsíc', '{n} měsíce', '{n} měsíců'], ageNewborn: 'méně než měsíc',
+      birthFix: 'Opravit datum', birthYes: 'Ano, je to správně',
+      docShape: 'Tvar čísla: {shape}, například {ex}. {where}',
+      shapeL: ['písmeno', 'písmena', 'písmen'], shapeD: ['číslice', 'číslice', 'číslic'], shapeA: ['znak', 'znaky', 'znaků'],
+      shapeANote: '(písmena a číslice)',
+      where_idFrontTopRight: 'Najdete ho vpravo nahoře na přední straně průkazu.',
+      where_idFront: 'Najdete ho na přední straně průkazu.',
+      where_idFrontCard: 'Najdete ho na přední straně průkazu jako číslo karty (ne rodné číslo nad ním).',
+      where_idPl: 'Najdete ho na přední straně pod občanstvím, u starších průkazů na zadní straně vpravo nahoře.',
+      where_passTopRight: 'Najdete ho vpravo nahoře na stránce s fotografií.',
+      docCan: 'Šestimístné číslo na průkazu to není.',
+      errDocFormat: 'Tohle neodpovídá dokladu „{type}“ ({country}). Jeho číslo má {shape}, například {ex}. {where}',
+      errDocOther: 'Tohle číslo odpovídá dokladu „{other}“, ne „{type}“. Vyberte prosím správný druh dokladu.',
+      errDocChecksum: 'V čísle je nejspíš překlep — nesedí jeho kontrolní číslice. Zkontrolujte ho prosím znak po znaku. {where}',
+      docEscape: 'Máte jiný nebo starší doklad? Vyberte druh „Jiný doklad“.',
+      errDocLong: 'Číslo dokladu je příliš dlouhé — zkontrolujte ho prosím.',
+      docSure: 'Číslo jsem opsal(a) přesně podle dokladu.',
+      errDocSure: 'Potvrďte prosím, že je číslo opsané přesně podle dokladu.',
+      docSoft: 'Kontrolní číslo na konci nesedí — v čísle je nejspíš překlep. Zkontrolujte ho prosím podle dokladu.',
       citCommon: 'Časté', citOthers: 'Ostatní země'
     },
     en: {
@@ -108,7 +131,6 @@
       submit: 'Add person', sending: 'Saving…',
       okAdded: 'Person added. You can add another.',
       addHint: 'The form stays open after adding — go straight on to the next person.',
-      docWarn: 'This doesn’t look like a {type} number — please double-check it against the document.',
       docWarnFix: 'Fix it', delLabel: 'Remove person', docWarnContinue: 'It’s correct, continue',
       gdprTitle: 'Data protection',
       gdprBody: 'We collect these details only for the legal guest register and the local fee. They’re stored in a secure database with our processor Supabase (AWS London, United Kingdom — a country covered by an EU adequacy decision). No one else in your group sees the document numbers — the overview only shows whether a document is filled in.',
@@ -143,6 +165,30 @@
       errBirthReq: 'Please enter the date of birth — it is required for the guest register.',
       errDocAdult: 'A document number is required for adults (guest register).',
       errStreet: 'Please enter street and house number.',
+      fDay: 'Day', fMonth: 'Month', fYear: 'Year', phDay: 'DD', phMonth: 'MM', phYear: 'YYYY',
+      errBirthBad: 'That date doesn’t exist. Please enter the day, month and full year of birth (four digits).',
+      errBirthFuture: 'The date of birth is in the future — please check the year.',
+      errBirthOld: 'With this date the guest would be over 110 years old — please check the year.',
+      birthAsk: 'Is the guest really {age} old?',
+      ageMonths: ['{n} month', '{n} months', '{n} months'], ageNewborn: 'less than a month',
+      birthFix: 'Fix the date', birthYes: 'Yes, that’s correct',
+      docShape: 'Number format: {shape}, for example {ex}. {where}',
+      shapeL: ['letter', 'letters', 'letters'], shapeD: ['digit', 'digits', 'digits'], shapeA: ['character', 'characters', 'characters'],
+      shapeANote: '(letters and digits)',
+      where_idFrontTopRight: 'You’ll find it at the top right on the front of the card.',
+      where_idFront: 'You’ll find it on the front of the card.',
+      where_idFrontCard: 'You’ll find it on the front of the card as the card number (not the national number above it).',
+      where_idPl: 'You’ll find it on the front below the nationality; on older cards at the top right on the back.',
+      where_passTopRight: 'You’ll find it at the top right of the photo page.',
+      docCan: 'It is not the six-digit number on the card.',
+      errDocFormat: 'This doesn’t match a “{type}” ({country}). Its number has {shape}, for example {ex}. {where}',
+      errDocOther: 'This number matches a “{other}”, not a “{type}”. Please choose the correct document type.',
+      errDocChecksum: 'There is probably a typo — the number’s check digit doesn’t match. Please check it character by character. {where}',
+      docEscape: 'Do you have a different or older document? Choose “Other document”.',
+      errDocLong: 'The document number is too long — please check it.',
+      docSure: 'I have copied the number exactly as it appears on the document.',
+      errDocSure: 'Please confirm that the number is copied exactly from the document.',
+      docSoft: 'The check number at the end doesn’t match — there is probably a typo. Please check the number against the document.',
       citCommon: 'Common', citOthers: 'Other countries'
     },
     de: {
@@ -172,7 +218,6 @@
       submit: 'Person hinzufügen', sending: 'Speichern…',
       okAdded: 'Person hinzugefügt. Sie können eine weitere eintragen.',
       addHint: 'Das Formular bleibt offen — tragen Sie gleich die nächste Person ein.',
-      docWarn: 'Das sieht nicht wie eine {type}-Nummer aus — bitte gegen das Dokument prüfen.',
       docWarnFix: 'Korrigieren', delLabel: 'Person entfernen', docWarnContinue: 'Stimmt so, weiter',
       gdprTitle: 'Datenschutz',
       gdprBody: 'Wir erheben diese Daten nur für das gesetzliche Gästeregister und die Kurtaxe. Sie liegen in einer sicheren Datenbank beim Auftragsverarbeiter Supabase (AWS London, Vereinigtes Königreich — ein Land mit EU-Angemessenheitsbeschluss). Die Dokumentnummern sieht niemand sonst aus Ihrer Gruppe — die Übersicht zeigt nur, ob ein Dokument eingetragen ist.',
@@ -207,6 +252,30 @@
       errBirthReq: 'Bitte das Geburtsdatum angeben — es ist für das Gästeverzeichnis erforderlich.',
       errDocAdult: 'Für Erwachsene ist die Ausweisnummer Pflicht (Gästeverzeichnis).',
       errStreet: 'Bitte Straße und Hausnummer angeben.',
+      fDay: 'Tag', fMonth: 'Monat', fYear: 'Jahr', phDay: 'TT', phMonth: 'MM', phYear: 'JJJJ',
+      errBirthBad: 'Dieses Datum gibt es nicht. Bitte Tag, Monat und das vollständige Geburtsjahr (vier Ziffern) eingeben.',
+      errBirthFuture: 'Das Geburtsdatum liegt in der Zukunft — bitte das Jahr prüfen.',
+      errBirthOld: 'Mit diesem Datum wäre der Gast über 110 Jahre alt — bitte das Jahr prüfen.',
+      birthAsk: 'Ist der Gast wirklich {age} alt?',
+      ageMonths: ['{n} Monat', '{n} Monate', '{n} Monate'], ageNewborn: 'weniger als einen Monat',
+      birthFix: 'Datum korrigieren', birthYes: 'Ja, das stimmt',
+      docShape: 'Aufbau der Nummer: {shape}, zum Beispiel {ex}. {where}',
+      shapeL: ['Buchstabe', 'Buchstaben', 'Buchstaben'], shapeD: ['Ziffer', 'Ziffern', 'Ziffern'], shapeA: ['Zeichen', 'Zeichen', 'Zeichen'],
+      shapeANote: '(Buchstaben und Ziffern)',
+      where_idFrontTopRight: 'Sie steht oben rechts auf der Vorderseite des Ausweises.',
+      where_idFront: 'Sie steht auf der Vorderseite des Ausweises.',
+      where_idFrontCard: 'Sie steht auf der Vorderseite als Kartennummer (nicht die Nationalregisternummer darüber).',
+      where_idPl: 'Sie steht auf der Vorderseite unter der Staatsangehörigkeit, bei älteren Ausweisen oben rechts auf der Rückseite.',
+      where_passTopRight: 'Sie steht oben rechts auf der Seite mit dem Foto.',
+      docCan: 'Die sechsstellige Nummer auf dem Ausweis ist es nicht.',
+      errDocFormat: 'Das passt nicht zum Dokument „{type}“ ({country}). Dessen Nummer hat {shape}, zum Beispiel {ex}. {where}',
+      errDocOther: 'Diese Nummer passt zu „{other}“, nicht zu „{type}“. Bitte die richtige Art des Ausweises wählen.',
+      errDocChecksum: 'In der Nummer ist vermutlich ein Tippfehler — die Prüfziffer stimmt nicht. Bitte Zeichen für Zeichen prüfen. {where}',
+      docEscape: 'Haben Sie ein anderes oder älteres Dokument? Wählen Sie „Anderes Dokument“.',
+      errDocLong: 'Die Dokumentnummer ist zu lang — bitte prüfen.',
+      docSure: 'Ich habe die Nummer genau vom Dokument abgeschrieben.',
+      errDocSure: 'Bitte bestätigen Sie, dass die Nummer genau vom Dokument abgeschrieben ist.',
+      docSoft: 'Die Prüfnummer am Ende stimmt nicht — vermutlich ein Tippfehler. Bitte die Nummer mit dem Dokument vergleichen.',
       citCommon: 'Häufig', citOthers: 'Weitere Länder'
     },
     pl: {
@@ -236,7 +305,6 @@
       submit: 'Dodaj osobę', sending: 'Zapisywanie…',
       okAdded: 'Osoba dodana. Możesz dodać kolejną.',
       addHint: 'Po dodaniu formularz zostaje otwarty — od razu wpisz kolejną osobę.',
-      docWarn: 'To nie wygląda jak numer dokumentu ({type}) — sprawdź proszę z dokumentem.',
       docWarnFix: 'Popraw', delLabel: 'Usuń osobę', docWarnContinue: 'Jest poprawny, kontynuuj',
       gdprTitle: 'Ochrona danych',
       gdprBody: 'Dane zbieramy wyłącznie do ustawowej ewidencji gości i opłaty miejscowej. Przechowujemy je w bezpiecznej bazie u podmiotu przetwarzającego Supabase (AWS Londyn, Wielka Brytania — kraj objęty decyzją UE o odpowiednim stopniu ochrony). Numerów dokumentów nie widzi nikt inny z grupy — w podglądzie widać tylko, czy dokument jest wpisany.',
@@ -271,6 +339,30 @@
       errBirthReq: 'Podaj datę urodzenia — jest wymagana w ewidencji gości.',
       errDocAdult: 'U dorosłych numer dokumentu jest obowiązkowy (ewidencja gości).',
       errStreet: 'Podaj ulicę i numer domu.',
+      fDay: 'Dzień', fMonth: 'Miesiąc', fYear: 'Rok', phDay: 'DD', phMonth: 'MM', phYear: 'RRRR',
+      errBirthBad: 'Taka data nie istnieje. Podaj dzień, miesiąc i pełny rok urodzenia (cztery cyfry).',
+      errBirthFuture: 'Data urodzenia jest w przyszłości — sprawdź proszę rok.',
+      errBirthOld: 'Według tej daty gość miałby ponad 110 lat — sprawdź proszę rok.',
+      birthAsk: 'Czy gość naprawdę ma {age}?',
+      ageMonths: ['{n} miesiąc', '{n} miesiące', '{n} miesięcy'], ageNewborn: 'mniej niż miesiąc',
+      birthFix: 'Popraw datę', birthYes: 'Tak, to prawda',
+      docShape: 'Format numeru: {shape}, na przykład {ex}. {where}',
+      shapeL: ['litera', 'litery', 'liter'], shapeD: ['cyfra', 'cyfry', 'cyfr'], shapeA: ['znak', 'znaki', 'znaków'],
+      shapeANote: '(litery i cyfry)',
+      where_idFrontTopRight: 'Znajdziesz go w prawym górnym rogu na przedniej stronie dowodu.',
+      where_idFront: 'Znajdziesz go na przedniej stronie dowodu.',
+      where_idFrontCard: 'Znajdziesz go na przedniej stronie jako numer karty (nie numer rejestru nad nim).',
+      where_idPl: 'Znajdziesz go na przedniej stronie pod obywatelstwem, w starszych dowodach na odwrocie w prawym górnym rogu.',
+      where_passTopRight: 'Znajdziesz go w prawym górnym rogu strony ze zdjęciem.',
+      docCan: 'To nie jest sześciocyfrowy numer na dowodzie.',
+      errDocFormat: 'To nie pasuje do dokumentu „{type}” ({country}). Jego numer ma {shape}, na przykład {ex}. {where}',
+      errDocOther: 'Ten numer pasuje do dokumentu „{other}”, a nie „{type}”. Wybierz proszę właściwy rodzaj dokumentu.',
+      errDocChecksum: 'W numerze jest prawdopodobnie literówka — nie zgadza się cyfra kontrolna. Sprawdź go proszę znak po znaku. {where}',
+      docEscape: 'Masz inny lub starszy dokument? Wybierz „Inny dokument”.',
+      errDocLong: 'Numer dokumentu jest za długi — sprawdź proszę.',
+      docSure: 'Numer przepisałem(-am) dokładnie z dokumentu.',
+      errDocSure: 'Potwierdź proszę, że numer jest przepisany dokładnie z dokumentu.',
+      docSoft: 'Numer kontrolny na końcu się nie zgadza — w numerze jest prawdopodobnie literówka. Sprawdź go proszę z dokumentem.',
       citCommon: 'Częste', citOthers: 'Pozostałe kraje'
     }
   };
@@ -308,27 +400,11 @@
     });
   }
 
-  /* ===================== validace čísel dokladů (MĚKKÁ) ===================== */
-  // Regexy ověřené proti oficiálním/PRADO a MS Purview zdrojům (červenec 2026).
-  // Kontrola je MĚKKÁ: neshoda -> varování s možností „je to správně, pokračovat".
-  var DOC_RULES = {
-    CZ: { re: [/^[0-9]{8}$/, /^[0-9]{9}$/], type: { cs:'pas / OP', en:'passport / ID', de:'Pass / Ausweis', pl:'paszport / dowód' } },
-    SK: { re: [/^[A-Z]{1,2}[0-9]{6,7}$/], type: { cs:'pas / OP', en:'passport / ID', de:'Pass / Ausweis', pl:'paszport / dowód' } },
-    PL: { re: [/^[A-Z]{2}[0-9]{7}$/], type: { cs:'pas', en:'passport', de:'Reisepass', pl:'paszport' } },
-    DE: { re: [/^[CFGHJKLMNPRTVWXYZ0-9]{9}$/], type: { cs:'Reisepass', en:'passport', de:'Reisepass', pl:'paszport' } },
-    AT: { re: [/^[A-Z][0-9]{7,8}$/], type: { cs:'Reisepass', en:'passport', de:'Reisepass', pl:'paszport' } },
-    NL: { re: [/^[A-Z]{2}[A-Z0-9][0-9]{5}[0-9]$/], type: { cs:'paspoort', en:'passport', de:'Pass', pl:'paszport' } },
-    UA: { re: [/^[A-Z]{2}[0-9]{6}$/], type: { cs:'passport', en:'passport', de:'Pass', pl:'paszport' } },
-    GB: { re: [/^[0-9]{9}$/], type: { cs:'passport', en:'passport', de:'Pass', pl:'passport' } }
-  };
-  var DOC_OTHER_RE = /^[A-Za-z0-9]{5,15}$/;      // měkká kontrola pro „jiné" země
-  var DOC_HARD_RE = /^[A-Za-z0-9-]+$/;           // tvrdě: bez mezer/diakritiky
+  /* ===================== doklad a datum narození ===================== */
+  // Pravidla (formáty čísel podle států, kontrolní číslice, meze data narození) jsou
+  // v doklady.js – čisté funkce, které zkouší tools/test-doklady.mjs.
+  var D = window.VRDoklady;
 
-  function docTypeLabel(cit, l) {
-    var r = DOC_RULES[cit];
-    if (r && r.type) return r.type[l] || r.type.en;
-    return { cs:'dokladu', en:'document', de:'Dokument', pl:'dokumentu' }[l];
-  }
   // Doklad je povinný u cizinců (UbyPort) a u dospělých (evidenční kniha § 3g).
   // Bez data narození bereme osobu jako dospělou — datum je stejně povinné.
   function isAdultAt(birth, at) {
@@ -338,17 +414,29 @@
     return b <= a;
   }
   function docRequired(cit) { return cit !== 'CZ' || isAdultAt($('f-birth').value, $('f-from').value); }
-  // vrátí 'hard-empty' | 'hard-short' | 'hard-chars' | 'soft' | 'ok'
-  function checkDoc(val, cit) {
-    var v = (val || '').trim();
-    if (v === '') return docRequired(cit) ? 'hard-empty' : 'ok';
-    if (!DOC_HARD_RE.test(v)) return 'hard-chars';
-    if (v.replace(/-/g, '').length < 5) return 'hard-short';
-    var up = v.toUpperCase();
-    var rule = DOC_RULES[cit];
-    if (rule) { return rule.re.some(function (re) { return re.test(up); }) ? 'ok' : 'soft'; }
-    return DOC_OTHER_RE.test(up) ? 'ok' : 'soft';
+  function plural(n, forms) {
+    if (n === 1) return forms[0];
+    if (lang === 'cs') return n >= 2 && n <= 4 ? forms[1] : forms[2];
+    if (lang === 'pl') return (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? forms[1] : forms[2];
+    return forms[1];
   }
+  // „2 písmena + 7 číslic“ z masky pravidla
+  function shapeText(form) {
+    var L = T[lang], runs = D.shape(form);
+    var txt = runs.map(function (r) {
+      return r[0] + ' ' + plural(r[0], L['shape' + r[1]]);
+    }).join(' + ');
+    if (runs.length === 1 && runs[0][1] === 'A') txt += ' ' + L.shapeANote;
+    return txt;
+  }
+  function whereText(rule) {
+    var L = T[lang];
+    return L['where_' + rule.where] + (rule.can ? ' ' + L.docCan : '');
+  }
+  function fill(tpl, map) {
+    return tpl.replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : m; });
+  }
+  function typeName(t) { return T[lang]['dt' + t] || t; }
 
   /* ===================== helpers ===================== */
   var $ = function (id) { return document.getElementById(id); };
@@ -358,7 +446,8 @@
   var booking = null;         // { arrival, departure, lastName }
   var fridge = false;         // token je klíč relace z kódu od dveří, ne osobní odkaz
   var SESSION_KEY = 'vr_reg_session';
-  var docConfirmed = false;   // uživatel odklikl „je to správně, pokračovat"
+  var docConfirmed = false;   // uživatel odklikl „je to správně, pokračovat" (jen měkká kontrolní číslice)
+  var birthConfirmed = '';    // datum, u kterého host potvrdil „ano, je to miminko"
 
   /* Whitelist přes hasOwnProperty — `T['constructor']` by jinak prošel. */
   function isLang(x) { return typeof x === 'string' && Object.prototype.hasOwnProperty.call(T, x); }
@@ -450,12 +539,21 @@
       var k = el.getAttribute('data-i18n');
       if (L[k] != null) el.textContent = L[k];
     });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n-ph');
+      if (L[k] != null) el.placeholder = L[k];
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      var k = el.getAttribute('data-i18n-aria');
+      if (L[k] != null) el.setAttribute('aria-label', L[k]);
+    });
     document.querySelectorAll('.vp-lang').forEach(function (b) {
       b.setAttribute('data-on', String(b.getAttribute('data-lang') === lang));
     });
 
     fillCountrySelects();
     updateDocUi();
+    hideBirthWarn(); hideDocErr(); hideDocWarn();     // hlášky jsou v jazyce, který právě odešel
     renderHeader();
     // pokud už je seznam načtený, přerenderuj kvůli lokalizaci
     if (lastPersons) renderList(lastPersons);
@@ -483,8 +581,82 @@
     }
   }
 
+  /* ===================== datum narození ===================== */
+  var BIRTH_IDS = ['f-bd', 'f-bm', 'f-by'];
+  // Tři políčka → skryté #f-birth (RRRR-MM-DD, nebo prázdné, dokud datum není celé a platné).
+  function syncBirth() {
+    var iso = D.birthFromParts($('f-bd').value, $('f-bm').value, $('f-by').value);
+    $('f-birth').value = iso || '';
+    return iso;
+  }
+  function birthEmpty() { return BIRTH_IDS.every(function (id) { return $(id).value.trim() === ''; }); }
+  function hideBirthWarn() { $('birthWarn').hidden = true; }
+  function showBirthWarn(msg, canConfirm) {
+    $('birthWarnMsg').textContent = msg;
+    $('birthWarnOk').hidden = !canConfirm;
+    $('birthWarn').classList.toggle('vp-docwarn-hard', !canConfirm);
+    $('birthWarn').hidden = false;
+  }
+  function ageText(months) {
+    var L = T[lang];
+    return months < 1 ? L.ageNewborn : fill(plural(months, L.ageMonths), { n: months });
+  }
+  /**
+   * Zkontroluje datum narození a případnou hlášku ukáže přímo u pole.
+   * Vrací datum RRRR-MM-DD, nebo null (nejde dál). quiet = jen průběžná kontrola po opuštění
+   * pole: neúplné datum mlčí, na miminko se ptá.
+   */
+  function validateBirth(quiet) {
+    var L = T[lang];
+    if (birthEmpty()) {
+      if (!quiet) { showBirthWarn(L.errBirthReq, false); markInvalid(BIRTH_IDS); }
+      return null;
+    }
+    var iso = syncBirth();
+    if (!iso) {
+      if (quiet && BIRTH_IDS.some(function (id) { return $(id).value.trim() === ''; })) return null;
+      showBirthWarn(L.errBirthBad, false); markInvalid(BIRTH_IDS);
+      return null;
+    }
+    var c = D.checkBirth(iso, isoToday());
+    if (c.code === 'future') { showBirthWarn(L.errBirthFuture, false); markInvalid(['f-by']); return null; }
+    if (c.code === 'old') { showBirthWarn(L.errBirthOld, false); markInvalid(['f-by']); return null; }
+    if (c.code === 'confirm' && birthConfirmed !== iso) {
+      showBirthWarn(fill(L.birthAsk, { age: ageText(c.months) }), true);
+      return null;
+    }
+    hideBirthWarn();
+    return iso;
+  }
+  function onBirthInput(ev) {
+    var el = ev.target, i = BIRTH_IDS.indexOf(el.id);
+    // vložené celé datum („15.3.1985“, „15/03/1985“) se rozdělí do políček
+    var m = /^\s*(\d{1,2})[.\/\- ]+(\d{1,2})[.\/\- ]+(\d{4})\s*$/.exec(el.value);
+    if (m) { $('f-bd').value = m[1]; $('f-bm').value = m[2]; $('f-by').value = m[3]; $('f-by').focus(); }
+    else {
+      el.value = el.value.replace(/\D/g, '');
+      // plné políčko → skok na další (den 4–9 a měsíc 2–9 jsou jasné už z jedné číslice)
+      var v = el.value, full = v.length >= el.maxLength || (i === 0 && v.length === 1 && +v > 3) || (i === 1 && v.length === 1 && +v > 1);
+      if (full && i < 2 && ev.inputType !== 'deleteContentBackward') $(BIRTH_IDS[i + 1]).focus();
+    }
+    birthConfirmed = '';
+    hideBirthWarn();
+    BIRTH_IDS.forEach(function (id) { $(id).removeAttribute('aria-invalid'); });
+    syncBirth();
+    updateDocUi();
+  }
+  function setBirth(iso) {
+    $('f-bd').value = iso ? String(+iso.slice(8, 10)) : '';
+    $('f-bm').value = iso ? String(+iso.slice(5, 7)) : '';
+    $('f-by').value = iso ? iso.slice(0, 4) : '';
+    birthConfirmed = '';
+    hideBirthWarn();
+    syncBirth();
+  }
+
   /* ===================== doc UI ===================== */
   function currentCit() { return ($('f-cit').value || 'CZ').toUpperCase(); }
+  function currentDtype() { return $('f-dtype').value || 'ID'; }
   function updateDocUi() {
     var L = T[lang];
     var foreign = currentCit() !== 'CZ';
@@ -492,8 +664,62 @@
     $('docStar').hidden = !req;                  // povinné: cizinec nebo dospělý
     $('docOpt').hidden = req;                    // „(nepovinné)" jen u dětí z ČR
     $('docHint').textContent = foreign ? L.docHintForeign : L.docHintCz;
+    // stát s přesným pravidlem: ukaž tvar čísla a kde na dokladu je, ještě než host začne psát
+    var rule = D.ruleFor(currentCit(), currentDtype()), sh = $('docShape');
+    if (rule) {
+      sh.textContent = '';
+      var parts = fill(L.docShape, { shape: shapeText(rule.forms[0]), where: whereText(rule) }).split('{ex}');
+      sh.appendChild(document.createTextNode(parts[0]));
+      var b = document.createElement('b'); b.textContent = rule.forms[0].ex; sh.appendChild(b);
+      sh.appendChild(document.createTextNode(parts[1] || ''));
+    }
+    sh.hidden = !rule;
+    updateDocSure();
+  }
+  // „Opsal jsem přesně“ se chce jen tam, kde číslo neumíme zkontrolovat sami.
+  function updateDocSure() {
+    var r = D.checkDoc($('f-doc').value, currentCit(), currentDtype());
+    var need = r.code === 'generic';
+    $('docSureRow').hidden = !need;
+    if (!need) $('f-docsure').checked = false;
+    return r;
   }
   function hideDocWarn() { $('docWarn').hidden = true; $('f-doc').classList.remove('warn'); }
+  function hideDocErr() {
+    $('docErr').hidden = true; $('docErr').textContent = '';
+    $('docShape').hidden = !D.ruleFor(currentCit(), currentDtype());
+  }
+  // Chyba tvaru nese vzor i místo na dokladu sama, nápověda nad ní by se jen opakovala.
+  function showDocErr(msg, ids, keepShape) {
+    $('docErr').textContent = msg; $('docErr').hidden = false;
+    if (!keepShape) $('docShape').hidden = true;
+    markInvalid(ids || ['f-doc']);
+  }
+  // Hláška k výsledku kontroly; null = číslo je v pořádku (nebo čeká jen na potvrzení).
+  function docMessage(r) {
+    var L = T[lang], cit = currentCit(), t = currentDtype();
+    switch (r.code) {
+      case 'chars': return L.errDocChars;
+      case 'short': return L.errDocShort;
+      case 'long': return L.errDocLong;
+      case 'format':
+        return fill(L.errDocFormat, { type: typeName(t), country: countryName(cit, lang),
+          shape: shapeText(r.rule.forms[0]), ex: r.rule.forms[0].ex, where: whereText(r.rule) }) + '\n' + L.docEscape;
+      case 'other': return fill(L.errDocOther, { type: typeName(t), other: typeName(r.other) });
+      case 'checksum': return fill(L.errDocChecksum, { where: whereText(r.rule) }) + '\n' + L.docEscape;
+    }
+    return null;
+  }
+  // Průběžná kontrola, když host pole opustí nebo změní stát / druh dokladu.
+  function checkDocLive() {
+    hideDocErr(); $('f-doc').removeAttribute('aria-invalid');
+    var r = updateDocSure();
+    if (r.code === 'empty') return r;
+    var msg = docMessage(r);
+    if (msg) showDocErr(msg);
+    else if (r.value !== $('f-doc').value) $('f-doc').value = r.value;   // velká písmena, bez mezer a pomlček
+    return r;
+  }
 
   /* ===================== error/ok ===================== */
   // aria-invalid: zvýrazní dotčené pole (CSS [aria-invalid="true"]) a čtečka ho ohlásí.
@@ -541,7 +767,7 @@
   // které pole patří k chybovému kódu ze serveru (pro aria-invalid)
   var ERR_FIELD = {
     first_required: ['f-first'], last_required: ['f-last'], citizenship_invalid: ['f-cit'],
-    doc_required: ['f-doc'], doc_invalid: ['f-doc'], birth_invalid: ['f-birth'], birth_required: ['f-birth'],
+    doc_required: ['f-doc'], doc_invalid: ['f-doc'], birth_invalid: BIRTH_IDS, birth_required: BIRTH_IDS,
     dates_invalid: ['f-from', 'f-to'], out_of_window: ['f-from', 'f-to']
   };
 
@@ -615,11 +841,11 @@
   /* ===================== submit ===================== */
   function resetPersonFields() {
     $('f-first').value = ''; $('f-last').value = '';
-    $('f-birth').value = ''; $('f-doc').value = '';
-    $('f-ztp').checked = false;
+    setBirth(''); $('f-doc').value = '';
+    $('f-ztp').checked = false; $('f-docsure').checked = false;
     // občanství, adresu i termín necháme — skupina bývá rodina z jednoho místa
     updateDocUi();
-    hideDocWarn();
+    hideDocWarn(); hideDocErr();
     docConfirmed = false;
     $('f-first').focus();
   }
@@ -638,7 +864,6 @@
     var ztp = $('f-ztp').checked;
     var first = $('f-first').value.trim();
     var last = $('f-last').value.trim();
-    var birth = $('f-birth').value || null;
     var cit = currentCit();
     var doc = $('f-doc').value.trim();
     var city = $('f-city').value.trim();
@@ -648,25 +873,40 @@
 
     if (!first) { showError(L.errFirst, ['f-first']); return; }
     if (!last) { showError(L.errLast, ['f-last']); return; }
-    if (!birth) { showError(L.errBirthReq, ['f-birth']); $('f-birth').focus(); return; }
+    // datum narození: hláška (i dotaz na miminko) se ukáže přímo u pole
+    var birth = validateBirth(false);
+    if (!birth) { $('birthWarn').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     if (!street) { showError(L.errStreet, ['f-street']); $('f-street').focus(); return; }
     if (!from || !to) { showError(L.errStay, [].concat(from ? [] : ['f-from'], to ? [] : ['f-to'])); return; }
     if (to < from) { showError(L.errDates, ['f-to']); return; }
 
-    // --- validace dokladu ---
-    var dc = checkDoc(doc, cit);
-    if (dc === 'hard-empty') { showError(cit !== 'CZ' ? L.errDocRequired : L.errDocAdult, ['f-doc']); $('f-doc').focus(); return; }
-    if (dc === 'hard-chars') { showError(L.errDocChars, ['f-doc']); $('f-doc').focus(); return; }
-    if (dc === 'hard-short') { showError(L.errDocShort, ['f-doc']); $('f-doc').focus(); return; }
-    if (dc === 'soft' && !docConfirmed) {
-      // měkké varování — necháme uživatele potvrdit
-      var msg = L.docWarn.replace('{type}', docTypeLabel(cit, lang));
-      $('docWarnMsg').textContent = msg;
+    // --- validace dokladu (pravidla podle státu a druhu: doklady.js) ---
+    hideDocErr();
+    var dc = D.checkDoc(doc, cit, dtype || 'ID');
+    var docMsg = dc.code === 'empty'
+      ? (docRequired(cit) ? (cit !== 'CZ' ? L.errDocRequired : L.errDocAdult) : null)
+      : docMessage(dc);
+    if (docMsg) {
+      showDocErr(docMsg, null, dc.code === 'empty');
+      $('docErr').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      $('f-doc').focus({ preventScroll: true });
+      return;
+    }
+    if (dc.code === 'checksoft' && !docConfirmed) {
+      // kontrolní číslice nesedí, ale algoritmus není doložen úředně — host může potvrdit
+      $('docWarnMsg').textContent = L.docSoft;
       $('docWarn').hidden = false;
       $('f-doc').classList.add('warn');
       $('docWarn').scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    if (dc.code === 'generic' && !$('f-docsure').checked) {
+      $('docSureRow').hidden = false;
+      showDocErr(L.errDocSure, ['f-docsure'], true);
+      $('docSureRow').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    doc = dc.value;                              // velká písmena, bez mezer a pomlček
 
     setBusy(true);
     hideDocWarn();
@@ -799,12 +1039,30 @@
     $('f-cit').addEventListener('change', function () {
       // srovnej i zemi bydliště, pokud ji uživatel neměnil ručně
       if ($('f-rescnt').getAttribute('data-touched') !== 'true') $('f-rescnt').value = currentCit();
-      updateDocUi(); hideDocWarn(); docConfirmed = false;
+      updateDocUi(); hideDocWarn(); docConfirmed = false; checkDocLive();
     });
     $('f-rescnt').addEventListener('change', function () { this.setAttribute('data-touched', 'true'); });
-    $('f-doc').addEventListener('input', function () { hideDocWarn(); docConfirmed = false; });
-    $('f-birth').addEventListener('change', updateDocUi);
+    $('f-dtype').addEventListener('change', function () { updateDocUi(); hideDocWarn(); docConfirmed = false; checkDocLive(); });
+    $('f-doc').addEventListener('input', function () {
+      hideDocWarn(); hideDocErr(); docConfirmed = false;
+      $('f-docsure').checked = false;              // změněné číslo = potvrdit znovu
+      updateDocSure();
+    });
+    $('f-doc').addEventListener('blur', checkDocLive);
+    $('f-docsure').addEventListener('change', hideDocErr);
     $('f-from').addEventListener('change', updateDocUi);
+
+    // datum narození: tři políčka
+    BIRTH_IDS.forEach(function (id) {
+      $(id).addEventListener('input', onBirthInput);
+      $(id).addEventListener('keydown', function (ev) {      // Backspace v prázdném políčku → zpět
+        var i = BIRTH_IDS.indexOf(id);
+        if (ev.key === 'Backspace' && this.value === '' && i > 0) $(BIRTH_IDS[i - 1]).focus();
+      });
+    });
+    $('f-by').addEventListener('blur', function () { validateBirth(true); });
+    $('birthWarnFix').addEventListener('click', function () { hideBirthWarn(); $('f-by').focus(); $('f-by').select(); });
+    $('birthWarnOk').addEventListener('click', function () { birthConfirmed = syncBirth() || ''; hideBirthWarn(); });
 
     // doc warning tlačítka
     $('docWarnFix').addEventListener('click', function () { hideDocWarn(); $('f-doc').focus(); });
