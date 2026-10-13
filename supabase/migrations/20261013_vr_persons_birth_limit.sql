@@ -16,8 +16,9 @@
 --
 -- Jediná změna proti 20260923_vr_poplatek.sql je podmínka u birth_invalid. Signatura je
 -- stejná → granty zůstávají, PostgREST nic nového nevidí (notify je jen pro jistotu).
--- Nasazení: workflow „DB migrace (Supabase)“ (nejdřív dry run), nebo
---   supabase db query --linked --file supabase/migrations/20261013_vr_persons_birth_limit.sql
+-- Nasazení: supabase db query --linked --file supabase/migrations/20261013_vr_persons_birth_limit.sql
+--   (nebo konektor / SQL editor v Supabase). Workflow „DB migrace (Supabase)“ potřebuje secret
+--   SUPABASE_DB_URL, který repo k 13. 10. 2026 nemá.
 -- =====================================================================================
 
 create or replace function public._vr_persons_insert(

@@ -425,7 +425,9 @@ Co doložit nešlo a proč:
   v PRADO, bez textového zdroje → zůstávají v obecné kontrole.
 
 **Po merge ručně:**
-1. Aplikovat migraci `20261013_vr_persons_birth_limit.sql` (workflow „DB migrace“, nejdřív dry run).
+1. Aplikovat migraci `20261013_vr_persons_birth_limit.sql`: přes konektor Supabase / `supabase db query --linked --file …`,
+   nebo vložit obsah souboru do SQL editoru v Supabase. Workflow „DB migrace“ zatím nejde použít –
+   repo nemá secret `SUPABASE_DB_URL` (ověřeno 13. 10. 2026, workflow ještě nikdy neběžel).
 2. Na vlastním telefonu projít `/registrace/` z QR na lednici: datum narození, český průkaz a pas.
 3. V živé DB je k 13. 10. 2026 **jeden** záznam s rokem narození v roce pobytu nebo o rok dřív
    (z 14 osob) – ve `/sprava/` ověřit, jestli je to opravdu miminko.
