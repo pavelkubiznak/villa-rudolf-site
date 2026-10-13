@@ -11,6 +11,12 @@
  *    v kalendáři a hlídá splatnost. Smlouva sama termín neblokuje.
  *
  * Zálohová faktura se vystavuje ručně v iDokladu; sem se opíše číslo, VS a splatnost.
+ *
+ * Dvě odchylky od běžné smlouvy (obě jsou jen data pro šablonu, viz smlouva-sablona.js):
+ *  - „Ve faktuře je předem i úklid / mazlíčci“ (d.prepaid) — nabídka s jednou částkou
+ *    za všechno; z kauce se pak strhává jen poplatek obci.
+ *  - „Host už zaplatil“ (d.paid) — smlouva se posílá až po úhradě jako potvrzení;
+ *    storno podmínky platí, až je host potvrdí e-mailem.
  */
 (function () {
   'use strict';
@@ -248,7 +254,9 @@
       inv1: { no: '', vs: '', due: S.addDays(today, 7), amount: null, amountEur: null },
       inv2: { no: '', vs: '', due: '', amount: null, amountEur: null },
       deposit: PRICING.bond, cleaning: PRICING.cleaning, cityTax: PRICING.cityTaxAdultNight, petFee: PRICING.petPerStay,
-      pet: '', note: ''
+      pet: '', note: '',
+      prepaid: { cleaning: false, pets: 0 },
+      paid: { on: '', amount: null, freeUntil: '' }
     };
     d.guest.country = COUNTRY_BY_LANG[d.lang] || '';
     if (d.arrival) { d.nightly = nightlyFor(d.arrival); d.contractNo = suggestNo(d.arrival, d.guest.name, null); }
@@ -296,6 +304,12 @@
     $('f-inv2-due').value = d.inv2.due || '';
     $('f-inv2-amount').value = d.inv2.amount != null ? d.inv2.amount : '';
     $('f-note').value = d.note || '';
+    var pp = d.prepaid || {}, pd = d.paid || {};          // starší smlouvy tato pole nemají
+    $('f-pre-cleaning').checked = !!pp.cleaning;
+    $('f-pre-pets').value = pp.pets ? pp.pets : '';
+    $('f-paid-on').value = pd.on || '';
+    $('f-paid-amount').value = pd.amount != null ? pd.amount : '';
+    $('f-paid-free').value = pd.freeUntil || '';
     $('form-err').hidden = true;
     var st = STATUS[cur.status] || STATUS.draft;
     $('edit-status').className = 'hold-st ' + st.cls; $('edit-status').textContent = st.label;
@@ -368,9 +382,20 @@
         : 'Host zaplatí celou cenu jednou fakturou. Dvě splátky jsou možné — doplatek by byl splatný ' + fmtDay(balDue) + '.')
       : 'Příjezd je moc blízko (doplatek by byl splatný ' + (balDue ? fmtDay(balDue) : '—') + ') — celá cena najednou.');
 
+    // úklid a mazlíčci už ve faktuře — jen u jedné faktury na celou cenu
+    var single = d.plan !== 'split';
+    $('pre-wrap').hidden = !single;
+    d.prepaid = single
+      ? { cleaning: $('f-pre-cleaning').checked, pets: Math.max(0, Math.round(Number($('f-pre-pets').value) || 0)) }
+      : { cleaning: false, pets: 0 };
+    var pre = S.prepaidOf(d);
+    $('h-pre').textContent = pre.any
+      ? 'Faktura = pronájem ' + fmtKc(d.price) + ' + ' + fmtKc(pre.sum) + ' = ' + fmtKc(d.price + pre.sum) + '. Z kauce se strhne jen poplatek obci' + (pre.cleaning ? '' : ' a úklid') + '; storno se počítá jen z pronájmu.'
+      : 'Nevyplněno = úklid i mazlíček se po pobytu strhnou z kauce (běžná smlouva).';
+
     $('inv2').hidden = d.plan !== 'split';
-    $('inv1-lbl').textContent = d.plan === 'split' ? '— 1. splátka 50 %' : '— celá cena';
-    var a1 = d.plan === 'split' ? Math.round(d.price / 2) : d.price;
+    $('inv1-lbl').textContent = d.plan === 'split' ? '— 1. splátka 50 %' : (pre.any ? '— celá cena včetně položek předem' : '— celá cena');
+    var a1 = d.plan === 'split' ? Math.round(d.price / 2) : d.price + pre.sum;
     if (!opts.inv1Edited) $('f-inv1-amount').value = a1 || '';
     d.inv1.no = $('f-inv1-no').value.trim();
     if (opts.invNoEdited && !d.vsManual) $('f-inv1-vs').value = d.inv1.no.replace(/\D/g, '');
@@ -390,10 +415,20 @@
       d.inv2.amountEur = d.currency === 'EUR' ? Math.round(d.inv2.amount / d.fx) : null;
     } else { d.inv2 = { no: '', vs: '', due: '', amount: null, amountEur: null }; }
 
+    // host už zaplatil → smlouva jako potvrzení uzavřené dohody
+    var paidOn = $('f-paid-on').value;
+    if (paidOn && $('f-paid-amount').value === '') $('f-paid-amount').value = d.inv1.amount || '';
+    d.paid = { on: paidOn, amount: paidOn ? (Number($('f-paid-amount').value) || null) : null, freeUntil: paidOn ? $('f-paid-free').value : '' };
+    var expected = single ? d.price + pre.sum : d.inv1.amount;
+    $('h-paid').textContent = !paidOn ? ''
+      : 'Smlouva se vystaví jako potvrzení už uzavřené dohody; storno podmínky platí, až je host potvrdí e-mailem. Platbu přiřaď ve správě (Platby k vyřízení).' +
+        (d.paid.amount && d.paid.amount !== expected ? ' ⚠️ Uhrazeno ' + fmtKc(d.paid.amount) + ', smlouva počítá s ' + fmtKc(expected) + '.' : '');
+
     // splatnost 1. faktury vs. doplatek: první musí být dřív
     var warn = [];
     if (d.plan === 'split' && d.inv1.due && d.inv1.due >= balDue) warn.push('splatnost zálohy je až po splatnosti doplatku');
     if (d.arrival && d.inv1.due && d.inv1.due >= d.arrival) warn.push('splatnost faktury je po příjezdu');
+    if (paidOn && d.paid.freeUntil && d.paid.freeUntil < today) warn.push('lhůta pro zrušení bez storna už uplynula');
     $('h-issue').textContent = warn.length ? '⚠️ ' + warn.join(' · ') : '';
 
     schedulePreview();
@@ -528,14 +563,61 @@
     var eur = function (n) { return d.currency === 'EUR' && n ? ' (' + n + ' EUR)' : ''; };
     var last = d.guest.lastName || d.guest.name;
     var split = d.plan === 'split';
+    var pre = S.prepaidOf(d), paid = d.paid && d.paid.on ? d.paid : null;
+    var sig = { cs: 'S pozdravem\nPavel Kubizňák\n775 220 785\nVilla Rudolf, Svoboda nad Úpou\nvillarudolf.com',
+                de: 'Herzliche Grüße\nPavel Kubizňák\n+420 775 220 785\nVilla Rudolf, Svoboda nad Úpou\nvillarudolf.com',
+                en: 'Kind regards\nPavel Kubizňák\n+420 775 220 785\nVilla Rudolf, Svoboda nad Úpou\nvillarudolf.com' }[L];
+    // kauce: když je úklid už ve faktuře, strhává se z ní jen poplatek obci
+    var bond = {
+      cs: 'Kauce ' + money(d.deposit) + ' se skládá až při příjezdu. Po pobytu se z ní odečte ' + (pre.cleaning ? 'jen ' : 'závěrečný úklid a prádelna (' + money(d.cleaning) + ') a ') + 'poplatek obci (' + d.cityTax + ' Kč za dospělou osobu a noc, děti neplatí) a zbytek se vám vrací.',
+      de: 'Die Kaution von ' + money(d.deposit) + ' wird erst bei Anreise hinterlegt. Daraus ' + (pre.cleaning ? 'wird nach dem Aufenthalt nur die Kurtaxe (' + d.cityTax + ' CZK pro Erwachsenem und Nacht)' : 'werden nach dem Aufenthalt die Endreinigung (' + money(d.cleaning) + ') und die Kurtaxe (' + d.cityTax + ' CZK pro Erwachsenem und Nacht)') + ' abgerechnet, der Rest wird zurückerstattet.',
+      en: 'The deposit of ' + money(d.deposit) + ' is paid on arrival. After the stay, ' + (pre.cleaning ? 'only the local tourist tax (CZK ' + d.cityTax + ' per adult per night) is' : 'the final cleaning (' + money(d.cleaning) + ') and the local tourist tax (CZK ' + d.cityTax + ' per adult per night) are') + ' settled from it and the rest is refunded.'
+    }[L];
+    // co je ve faktuře navíc k pronájmu
+    var preParts = [];
+    if (pre.cleaning) preParts.push({ cs: 'závěrečný úklid a prádelnu (' + money(d.cleaning) + ')', de: 'die Endreinigung (' + money(d.cleaning) + ')', en: 'the final cleaning (' + money(d.cleaning) + ')' }[L]);
+    if (pre.pets) preParts.push({ cs: 'poplatek za mazlíčka (' + money(pre.petsSum) + ')', de: 'die Haustiergebühr (' + money(pre.petsSum) + ')', en: 'the pet fee (' + money(pre.petsSum) + ')' }[L]);
+    var preLine = !pre.any ? '' : {
+      cs: 'Faktura zahrnuje i ' + preParts.join(' a ') + '.\n',
+      de: 'Die Rechnung enthält außerdem ' + preParts.join(' und ') + '.\n',
+      en: 'The invoice also covers ' + preParts.join(' and ') + '.\n' }[L];
+
+    // host už zaplatil: smlouva jde dodatečně, prosíme o potvrzení e-mailem
+    if (paid) {
+      var amt = money(paid.amount || d.inv1.amount);
+      if (L === 'de') return {
+        subject: 'Villa Rudolf — Beherbergungsvertrag, ' + span,
+        body: 'Guten Tag ' + d.guest.name + ',\n\nvielen Dank, Ihre Zahlung über ' + amt + ' ist am ' + S.fmtD(paid.on, 'de') + ' eingegangen und der Termin ' + span + ' ist verbindlich Ihrer.\n\n' +
+          'Zugleich möchte ich mich entschuldigen: Zusammen mit der Vorausrechnung hätte ich Ihnen auch den Beherbergungsvertrag schicken sollen. Jeder Gast erhält ihn von uns, Sie finden ihn im Anhang.\n\n' +
+          'An Preis und Termin ändert sich nichts. Der Vertrag fasst zusammen, was wir vereinbart haben, und ergänzt die Hausordnung und die Stornobedingungen. Bitte lesen Sie ihn durch und bestätigen Sie mir per Antwort auf diese E-Mail, dass Sie einverstanden sind. Eine Unterschrift ist nicht nötig.\n' +
+          (paid.freeUntil ? '\nDa Sie den Vertrag erst nach der Zahlung erhalten: Sollten Ihnen die Bedingungen nicht zusagen, können Sie den Aufenthalt bis zum ' + S.fmtD(paid.freeUntil, 'de') + ' stornieren und ich erstatte Ihnen den gesamten Betrag.\n' : '') +
+          '\n' + bond + '\n\nBei Fragen melden Sie sich gern.\n\n' + sig
+      };
+      if (L === 'en') return {
+        subject: 'Villa Rudolf — accommodation agreement, ' + span,
+        body: 'Dear ' + d.guest.name + ',\n\nthank you, your payment of ' + amt + ' arrived on ' + S.fmtD(paid.on, 'en') + ' and the dates ' + span + ' are firmly yours.\n\n' +
+          'I also owe you an apology: I should have sent you the accommodation agreement together with the advance invoice. Every guest receives it from us; you will find it attached.\n\n' +
+          'Nothing changes about the price or the dates. The agreement sums up what we agreed and adds the house rules and the cancellation terms. Please read it and reply to this e-mail to confirm that you agree. No signature is needed.\n' +
+          (paid.freeUntil ? '\nAs you are receiving it only after payment: should the terms not suit you, you can cancel the stay until ' + S.fmtD(paid.freeUntil, 'en') + ' and I will refund the full amount.\n' : '') +
+          '\n' + bond + '\n\nIf anything is unclear, just let me know.\n\n' + sig
+      };
+      return {
+        subject: 'Villa Rudolf — ubytovací smlouva, ' + span,
+        body: 'Dobrý den, ' + (vocative(d.guest.name) || d.guest.name) + ',\n\nděkuji, platba ' + amt + ' dorazila ' + S.fmtD(paid.on, 'cs') + ' a termín ' + span + ' je pevně váš.\n\n' +
+          'Zároveň se vám musím omluvit. Se zálohovou fakturou jsem vám měl poslat i ubytovací smlouvu. Posíláme ji každému hostovi, najdete ji v příloze.\n\n' +
+          'Na ceně ani na termínu se nic nemění. Smlouva shrnuje, na čem jsme se domluvili, a doplňuje domovní řád a storno podmínky. Prosím, přečtěte si ji a odpovězte mi na tento e-mail, že s ní souhlasíte. Podpis není potřeba.\n' +
+          (paid.freeUntil ? '\nProtože ji dostáváte až po zaplacení: kdyby vám podmínky nevyhovovaly, můžete pobyt do ' + S.fmtD(paid.freeUntil, 'cs') + ' zrušit a vrátím vám celou částku.\n' : '') +
+          '\n' + bond + '\n\nKdyby cokoliv nebylo jasné, klidně zavolejte.\n\n' + sig
+      };
+    }
     if (L === 'de') return {
       subject: 'Villa Rudolf — Vorausrechnung und Vertrag, ' + span,
       body: 'Guten Tag ' + d.guest.name + ',\n\nanbei sende ich Ihnen die Vorausrechnung und den Beherbergungsvertrag für ' + span + ' (' + d.nights + ' Nächte, Anreise ab ' + d.checkin + ', Abreise bis ' + d.checkout + ' Uhr).\n\n' +
         'Der Vertrag muss nicht unterschrieben oder zurückgeschickt werden — mit der Zahlung der Vorausrechnung ist er geschlossen und der Termin verbindlich Ihrer. Bis dahin kann ich den Termin leider nicht freihalten.\n\n' +
         'Zum Betrag: der Mietpreis beträgt ' + money(d.price) + ' für das ganze Haus samt Grundstück (' + d.nights + ' × ' + money(d.nightly) + '). Energie, Wasser und Heizung sind enthalten.\n' +
         (split ? 'Die Zahlung erfolgt in zwei Raten: ' + money(d.inv1.amount) + eur(d.inv1.amountEur) + ' laut beigefügter Rechnung bis ' + S.fmtD(d.inv1.due, 'de') + ', die zweite Rate ' + money(d.inv2.amount) + eur(d.inv2.amountEur) + ' bis ' + S.fmtD(d.inv2.due, 'de') + ' (die Rechnung dafür schicke ich rechtzeitig).\n'
-               : 'Die Rechnung über ' + money(d.inv1.amount) + eur(d.inv1.amountEur) + ' ist bis ' + S.fmtD(d.inv1.due, 'de') + ' fällig.\n') +
-        '\nDie Kaution von ' + money(d.deposit) + ' wird erst bei Anreise hinterlegt. Daraus werden nach dem Aufenthalt die Endreinigung (' + money(d.cleaning) + ') und die Kurtaxe (' + d.cityTax + ' CZK pro Erwachsenem und Nacht) abgerechnet, der Rest wird zurückerstattet.\n\n' +
+               : preLine + 'Die Rechnung über ' + money(d.inv1.amount) + eur(d.inv1.amountEur) + ' ist bis ' + S.fmtD(d.inv1.due, 'de') + ' fällig.\n') +
+        '\n' + bond + '\n\n' +
         'Bei Fragen zur Rechnung oder zum Vertrag melden Sie sich gern.\n\nHerzliche Grüße\nPavel Kubizňák\n+420 775 220 785\nVilla Rudolf, Svoboda nad Úpou\nvillarudolf.com'
     };
     if (L === 'en') return {
@@ -544,8 +626,8 @@
         'The agreement needs no signature — it is concluded by paying the invoice, and the dates are then firmly yours. Until then I unfortunately cannot hold the dates.\n\n' +
         'About the amount: the rental price is ' + money(d.price) + ' for the whole house and grounds (' + d.nights + ' × ' + money(d.nightly) + '). Energy, water and heating are included.\n' +
         (split ? 'Payment is in two instalments: ' + money(d.inv1.amount) + eur(d.inv1.amountEur) + ' per the attached invoice by ' + S.fmtD(d.inv1.due, 'en') + ', and the second instalment of ' + money(d.inv2.amount) + eur(d.inv2.amountEur) + ' by ' + S.fmtD(d.inv2.due, 'en') + ' (I will send that invoice in good time).\n'
-               : 'The invoice for ' + money(d.inv1.amount) + eur(d.inv1.amountEur) + ' is due by ' + S.fmtD(d.inv1.due, 'en') + '.\n') +
-        '\nThe deposit of ' + money(d.deposit) + ' is paid on arrival. After the stay, the final cleaning (' + money(d.cleaning) + ') and the local tourist tax (CZK ' + d.cityTax + ' per adult per night) are settled from it and the rest is refunded.\n\n' +
+               : preLine + 'The invoice for ' + money(d.inv1.amount) + eur(d.inv1.amountEur) + ' is due by ' + S.fmtD(d.inv1.due, 'en') + '.\n') +
+        '\n' + bond + '\n\n' +
         'If anything about the invoice or the agreement is unclear, just let me know.\n\nKind regards\nPavel Kubizňák\n+420 775 220 785\nVilla Rudolf, Svoboda nad Úpou\nvillarudolf.com'
     };
     return {
@@ -554,8 +636,8 @@
         'Smlouvu není potřeba podepisovat ani posílat zpět. Uhrazením faktury je uzavřená a termín je pevně váš — do té doby ho bohužel držet nemůžu, zůstává v nabídce i pro ostatní zájemce.\n\n' +
         'K částce. Cena za pronájem je ' + money(d.price) + ' za celý dům i pozemek (' + d.nights + ' × ' + money(d.nightly) + '). Energie, voda i vytápění jsou v ceně, nic dalšího se k pobytu nepřipočítává.\n' +
         (split ? 'Platí se ve dvou splátkách: ' + money(d.inv1.amount) + ' podle přiložené faktury se splatností ' + S.fmtD(d.inv1.due, 'cs') + ' a druhá splátka ' + money(d.inv2.amount) + ' do ' + S.fmtD(d.inv2.due, 'cs') + ' (fakturu na ni pošlu s předstihem).\n'
-               : 'Faktura na ' + money(d.inv1.amount) + ' má splatnost ' + S.fmtD(d.inv1.due, 'cs') + '.\n') +
-        '\nKauce ' + money(d.deposit) + ' se skládá až při příjezdu. Po pobytu se z ní odečte závěrečný úklid a prádelna (' + money(d.cleaning) + ') a poplatek obci (' + d.cityTax + ' Kč za dospělou osobu a noc, děti neplatí) a zbytek se vám vrací.\n\n' +
+               : preLine + 'Faktura na ' + money(d.inv1.amount) + ' má splatnost ' + S.fmtD(d.inv1.due, 'cs') + '.\n') +
+        '\n' + bond + '\n\n' +
         'Kdyby k faktuře nebo ke smlouvě cokoliv nebylo jasné, klidně zavolejte.\n\nS pozdravem\nPavel Kubizňák\n775 220 785\nVilla Rudolf, Svoboda nad Úpou\nvillarudolf.com'
     };
   }
@@ -654,6 +736,8 @@
     f('f-inv1-due', 'change', {});
     f('f-inv1-amount', 'input', { inv1Edited: true });
     f('f-inv1-eur', 'input', { eurEdited: true });
+    f('f-pre-cleaning', 'change', {}); f('f-pre-pets', 'input', {});
+    f('f-paid-on', 'change', {}); f('f-paid-amount', 'input', {}); f('f-paid-free', 'change', {});
     $('form').addEventListener('submit', function (e) { e.preventDefault(); });
 
     $('btn-back').addEventListener('click', function () { showList(); renderList(); });

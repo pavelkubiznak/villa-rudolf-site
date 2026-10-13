@@ -537,9 +537,7 @@ ${hlavicka(api, lang, { cesta, cesty: FAQ, title: S.title, desc: S.desc, jsonld 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
 <link rel="stylesheet" href="${koren}info/info.css?v=33">
 <link rel="stylesheet" href="${koren}assets/faq.css?v=1">
 <script src="${koren}assets/season.js?v=54"></script>

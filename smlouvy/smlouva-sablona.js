@@ -15,6 +15,12 @@
  *                      před skokem storna na 70 % (arrival − 65 dní)
  *   d.currency 'CZK' | 'EUR' — EUR = platba v EUR na eurový účet, částky
  *              se ukazují v CZK s orientačním přepočtem
+ *   d.prepaid  { cleaning: bool, pets: n } — úklid a/nebo mazlíčci jsou už v zálohové
+ *              faktuře (jen u plan 'single'); z kauce se pak strhává jen poplatek obci.
+ *              Storno se dál počítá jen z ceny za pronájem, předem hrazené položky se vrací.
+ *   d.paid     { on: 'RRRR-MM-DD', amount, freeUntil } — smlouva jde hostovi dodatečně,
+ *              až po úhradě: je potvrzením už uzavřené dohody, storno podmínky platí
+ *              od potvrzení hosta. freeUntil = do kdy může zrušit bez storna (volitelné).
  */
 (function (global) {
   'use strict';
@@ -135,6 +141,21 @@
     });
   }
 
+  /* Položky hrazené předem v zálohové faktuře (jen u jedné faktury na celou cenu). */
+  function prepaidOf(d) {
+    var p = d.prepaid || {};
+    var pets = d.plan === 'split' ? 0 : Math.max(0, Math.round(Number(p.pets) || 0));
+    var cleaning = d.plan !== 'split' && !!p.cleaning;
+    return { cleaning: cleaning, pets: pets, any: cleaning || pets > 0,
+             petsSum: pets * (Number(d.petFee) || 0),
+             sum: (cleaning ? (Number(d.cleaning) || 0) : 0) + pets * (Number(d.petFee) || 0) };
+  }
+  function paidOf(d) { return d.paid && d.paid.on ? d.paid : null; }
+  /* Výčet: každá položka končí čárkou, poslední tečkou — i po vynechání některých. */
+  function punct(items) {
+    return items.map(function (x, i) { return String(x).replace(/[,.]\s*$/, '') + (i === items.length - 1 ? '.' : ','); });
+  }
+
   /* ---------- texty ---------- */
   var T = {
     cs: {
@@ -147,6 +168,10 @@
       f2single: 'Pronajímatel činí tímto dokumentem a přiloženou zálohovou fakturou hostovi závaznou nabídku. Smlouva je uzavřena okamžikem, kdy host uhradí celou fakturovanou částku ve lhůtě splatnosti na účet uvedený v § 5.',
       f2split: 'Pronajímatel činí tímto dokumentem a přiloženou zálohovou fakturou hostovi závaznou nabídku. Smlouva je uzavřena okamžikem, kdy host uhradí první splátku ve lhůtě splatnosti na účet uvedený v § 5.',
       f3: 'Úhradou host přijímá veškeré podmínky této smlouvy, zejména storno podmínky podle § 7. Nedojde-li k úhradě, smlouva nevzniká a termín zůstává volně k dispozici.',
+      f1paid: function (d) { return 'Tato smlouva je písemným potvrzením ubytování sjednaného na základě zálohové faktury č. <b>' + esc(d.inv1.no) + '</b> a nevyžaduje podpis.'; },
+      f2paid: function (d, amount) { return 'Smlouva byla uzavřena dne <b>' + fmtD(d.paid.on, 'cs') + '</b>, kdy host uhradil částku ' + money(amount, d) + ' na účet pronajímatele. Od toho dne je termín závazně blokován pro hosta.'; },
+      f3paid: 'Tento dokument shrnuje sjednané podmínky a doplňuje je o domovní řád a storno podmínky podle § 7. Doplněné podmínky jsou pro obě strany závazné okamžikem, kdy je host pronajímateli potvrdí v textové podobě (stačí odpověď e-mailem).',
+      f4paid: function (d) { return 'Protože host dostává tento dokument až po úhradě, může pobyt do <b>' + fmtD(d.paid.freeUntil, 'cs') + '</b> zrušit bez storno poplatku; pronajímatel mu v takovém případě vrátí celou uhrazenou částku do 7 dnů.'; },
       p1: 'Předmět smlouvy',
       p1a: 'Pronajímatel přenechává hostovi celý objekt Villa Rudolf k výhradnímu užívání po dobu uvedenou v § 2. K výhradnímu užívání po celou dobu pobytu patří zejména:',
       p1list: ['obytný dům se sedmi ložnicemi a 22 lůžky,', 'zastřešený vyhřívaný bazén,', 'privátní finská sauna se sprchou,', 'kulečník,',
@@ -173,6 +198,12 @@
         'pobytový poplatek obci — ' + d.cityTax + ' Kč za dospělou osobu a noc, podle skutečného počtu ubytovaných zapsaných do knihy hostů; osoby mladší 18 let poplatku nepodléhají,',
         'poplatek za domácího mazlíčka — ' + kc(d.petFee, 'cs') + ' za zvíře a pobyt, pokud se host na jeho přítomnosti s pronajímatelem předem dohodne.']; },
       p4none: 'Žádné další náklady se neúčtují.',
+      p4pre: 'Spolu s cenou za pronájem host hradí předem:',
+      p4preCleaning: function (d) { return 'závěrečný úklid a prádelna — ' + kc(d.cleaning, 'cs') + ' jednorázově'; },
+      p4prePets: function (d, n, sum) { return n === 1 ? 'poplatek za domácího mazlíčka — ' + kc(d.petFee, 'cs') + ' za pobyt'
+        : 'poplatek za domácího mazlíčka — ' + kc(d.petFee, 'cs') + ' za zvíře a pobyt, celkem ' + kc(sum, 'cs') + ' za ' + n + (n < 5 ? ' zvířata' : ' zvířat'); },
+      p4preSum: function (d, total) { return 'Celkem se předem hradí ' + money(total, d) + '.'; },
+      p4later: 'Z kauce podle § 6 se po skončení pobytu vyúčtuje:',
       p4eur: 'Platba probíhá v EUR na eurový účet pronajímatele. Částka v EUR je závazně stanovena v přiložené zálohové faktuře; jejím uhrazením je příslušná splátka vyrovnána v plné výši a pozdější kurzové dorovnání se neprovádí.',
       p5: 'Platba',
       p5single: function (d) { return 'Cena za pronájem ve výši ' + money(d.price, d) + ' se hradí bankovním převodem podle přiložené zálohové faktury č. <b>' + esc(d.inv1.no) + '</b>, splatné nejpozději <b>' + fmtD(d.inv1.due, 'cs') + '</b>. Připsáním platby je termín závazně blokován pro hosta.'; },
@@ -181,6 +212,9 @@
       p5i2: function (d) { return '<b>2. splátka — ' + money(d.inv2.amount, d) + '</b>, splatná nejpozději <b>' + fmtD(d.inv2.due, 'cs') + '</b>. Zálohovou fakturu na doplatek zašle pronajímatel v dostatečném předstihu.'; },
       p5late: 'Nebude-li kterákoliv splátka připsána včas, může pronajímatel od smlouvy odstoupit a termín znovu uvolnit; tím není dotčen jeho nárok na storno poplatek podle § 7.',
       p5lateSingle: 'Nebude-li platba připsána včas, může pronajímatel termín znovu uvolnit.',
+      p5singlePre: function (d, total) { return 'Cena za pronájem a položky hrazené předem podle § 4, celkem ' + money(total, d) + ', se hradí bankovním převodem podle přiložené zálohové faktury č. <b>' + esc(d.inv1.no) + '</b>, splatné nejpozději <b>' + fmtD(d.inv1.due, 'cs') + '</b>. Připsáním platby je termín závazně blokován pro hosta.'; },
+      p5paid: function (d, amount, pre) { return (pre ? 'Cena za pronájem a položky hrazené předem podle § 4, celkem ' + money(amount, d) + ', byly uhrazeny' : 'Cena za pronájem ve výši ' + money(amount, d) + ' byla uhrazena') +
+        ' bankovním převodem dne <b>' + fmtD(d.paid.on, 'cs') + '</b> na základě zálohové faktury č. <b>' + esc(d.inv1.no) + '</b>. Před příjezdem se už nic nedoplácí.'; },
       bank: 'Bankovní spojení:', holder: 'Majitel účtu', accNo: 'Číslo účtu', iban: 'IBAN', bic: 'BIC / SWIFT', bankName: 'Banka', vs: 'Variabilní symbol',
       sepa: 'Platbu proveďte jako SEPA převod v EUR.', qr: 'QR platba',
       p6: 'Kauce',
@@ -209,6 +243,8 @@
       p7b: 'Storno poplatek se počítá z celé ceny za pronájem podle § 4 bez ohledu na to, jaká její část už byla uhrazena. Přeplatek vrátí pronajímatel do 7 dnů od zrušení pobytu, případný rozdíl je ve stejné lhůtě splatný hostem.',
       p7c: 'Kauce storno poplatkům nepodléhá a v případě zrušení pobytu se vrací v plné výši.',
       p7d: 'Hostovi se doporučuje sjednat si pojištění storna cesty.',
+      p7pre: 'Položky hrazené předem podle § 4 storno poplatku nepodléhají a při zrušení pobytu se vracejí v plné výši.',
+      p7free: function (d) { return 'Do <b>' + fmtD(d.paid.freeUntil, 'cs') + '</b> může host pobyt zrušit bez storno poplatku (viz Vznik smlouvy).'; },
       p8: 'Domovní řád',
       p8list: ['Kouření je ve všech vnitřních prostorách zakázáno.', 'Noční klid od 22:00 do 07:00.', 'Párty a akce s externími hosty nejsou povoleny.',
         'Bazén a sauna se užívají na vlastní nebezpečí; děti pouze pod dohledem dospělé osoby. Bazén musí být uzamčen, pokud se právě nevyužívá. Skleněné nádobí do prostoru bazénu nepatří.',
@@ -229,7 +265,8 @@
       p13a: 'Změny a doplňky vyžadují textovou podobu. Smlouva se řídí českým právem.',
       p13b: 'U ubytování sjednaného na určený termín nevzniká zákonné právo odstoupit od smlouvy bez udání důvodu; uplatní se storno podmínky podle § 7.',
       p13c: 'Případná neplatnost jednotlivého ustanovení nemá vliv na platnost zbytku smlouvy.',
-      sign: 'Podpis není nutný — smlouva nabývá účinnosti uhrazením zálohové faktury.'
+      sign: 'Podpis není nutný — smlouva nabývá účinnosti uhrazením zálohové faktury.',
+      signPaid: 'Podpis není nutný — smlouva byla uzavřena úhradou zálohové faktury; doplněné podmínky platí potvrzením hosta v textové podobě.'
     },
 
     de: {
@@ -242,6 +279,10 @@
       f2single: 'Der Vermieter unterbreitet dem Gast mit diesem Dokument und der beigefügten Vorausrechnung ein verbindliches Angebot. Der Vertrag kommt zustande, sobald der Gast den vollständigen Rechnungsbetrag fristgerecht auf das in § 5 genannte Konto überweist.',
       f2split: 'Der Vermieter unterbreitet dem Gast mit diesem Dokument und der beigefügten Vorausrechnung ein verbindliches Angebot. Der Vertrag kommt zustande, sobald der Gast die erste Rate fristgerecht auf das in § 5 genannte Konto überweist.',
       f3: 'Mit der Zahlung erkennt der Gast sämtliche Bedingungen dieses Vertrages an, insbesondere die Stornobedingungen nach § 7. Erfolgt keine Zahlung, kommt kein Vertrag zustande und der Termin bleibt frei verfügbar.',
+      f1paid: function (d) { return 'Dieser Vertrag ist die schriftliche Bestätigung der auf Grundlage der Vorausrechnung Nr. <b>' + esc(d.inv1.no) + '</b> vereinbarten Beherbergung und bedarf keiner Unterschrift.'; },
+      f2paid: function (d, amount) { return 'Der Vertrag ist am <b>' + fmtD(d.paid.on, 'de') + '</b> zustande gekommen, als der Gast den Betrag von ' + money(amount, d) + ' auf das Konto des Vermieters überwiesen hat. Seit diesem Tag ist der Termin verbindlich für den Gast reserviert.'; },
+      f3paid: 'Dieses Dokument fasst die vereinbarten Bedingungen zusammen und ergänzt sie um die Hausordnung und die Stornobedingungen nach § 7. Die ergänzten Bedingungen werden für beide Seiten verbindlich, sobald der Gast sie dem Vermieter in Textform bestätigt (eine Antwort per E-Mail genügt).',
+      f4paid: function (d) { return 'Da der Gast dieses Dokument erst nach der Zahlung erhält, kann er den Aufenthalt bis zum <b>' + fmtD(d.paid.freeUntil, 'de') + '</b> ohne Stornogebühr stornieren; der Vermieter erstattet in diesem Fall den gesamten gezahlten Betrag innerhalb von 7 Tagen.'; },
       p1: 'Vertragsgegenstand',
       p1a: 'Der Vermieter überlässt dem Gast das gesamte Objekt Villa Rudolf zur alleinigen Nutzung für den in § 2 genannten Zeitraum. Zur alleinigen Nutzung während des gesamten Aufenthalts gehören insbesondere:',
       p1list: ['das Wohnhaus mit sieben Schlafzimmern und 22 Betten,', 'der überdachte, beheizte Pool,', 'die private finnische Sauna mit Dusche,', 'der Billardtisch,',
@@ -268,6 +309,12 @@
         'Kurtaxe der Gemeinde — ' + d.cityTax + ' CZK pro Erwachsenem und Nacht, nach der tatsächlichen Zahl der im Gästebuch eingetragenen Personen; Personen unter 18 Jahren sind befreit,',
         'Haustiergebühr — ' + kc(d.petFee, 'de') + ' pro Tier und Aufenthalt, sofern die Mitnahme vorab mit dem Vermieter vereinbart wurde.']; },
       p4none: 'Weitere Nebenkosten fallen nicht an.',
+      p4pre: 'Zusammen mit dem Mietpreis zahlt der Gast im Voraus:',
+      p4preCleaning: function (d) { return 'Endreinigung und Wäsche — ' + kc(d.cleaning, 'de') + ' einmalig'; },
+      p4prePets: function (d, n, sum) { return n === 1 ? 'Haustiergebühr — ' + kc(d.petFee, 'de') + ' pro Aufenthalt'
+        : 'Haustiergebühr — ' + kc(d.petFee, 'de') + ' pro Tier und Aufenthalt, insgesamt ' + kc(sum, 'de') + ' für ' + n + ' Tiere'; },
+      p4preSum: function (d, total) { return 'Im Voraus sind insgesamt ' + money(total, d) + ' zu zahlen.'; },
+      p4later: 'Über die Kaution nach § 6 wird nach dem Aufenthalt abgerechnet:',
       p4eur: 'Die Zahlung erfolgt in EUR auf das EUR-Konto des Vermieters. Der zu zahlende EUR-Betrag ist in der beigefügten Vorausrechnung verbindlich festgelegt; mit dessen Zahlung ist die jeweilige Rate vollständig beglichen. Ein späterer Wechselkursausgleich findet nicht statt.',
       p5: 'Zahlung',
       p5single: function (d) { return 'Der Mietpreis von ' + money(d.price, d) + ' ist per Überweisung gemäß der beigefügten Vorausrechnung Nr. <b>' + esc(d.inv1.no) + '</b> zu zahlen, spätestens bis <b>' + fmtD(d.inv1.due, 'de') + '</b>. Mit Zahlungseingang ist der Termin verbindlich für den Gast reserviert.'; },
@@ -276,6 +323,9 @@
       p5i2: function (d) { return '<b>2. Rate — ' + money(d.inv2.amount, d) + '</b>, fällig spätestens am <b>' + fmtD(d.inv2.due, 'de') + '</b>. Die Vorausrechnung für die Restzahlung übersendet der Vermieter rechtzeitig vorab.'; },
       p5late: 'Geht eine Rate nicht fristgerecht ein, kann der Vermieter vom Vertrag zurücktreten und den Termin wieder freigeben; sein Anspruch auf die Stornogebühr nach § 7 bleibt unberührt.',
       p5lateSingle: 'Geht die Zahlung nicht fristgerecht ein, kann der Vermieter den Termin wieder freigeben.',
+      p5singlePre: function (d, total) { return 'Der Mietpreis und die im Voraus zu zahlenden Posten nach § 4, insgesamt ' + money(total, d) + ', sind per Überweisung gemäß der beigefügten Vorausrechnung Nr. <b>' + esc(d.inv1.no) + '</b> zu zahlen, spätestens bis <b>' + fmtD(d.inv1.due, 'de') + '</b>. Mit Zahlungseingang ist der Termin verbindlich für den Gast reserviert.'; },
+      p5paid: function (d, amount, pre) { return (pre ? 'Der Mietpreis und die im Voraus zu zahlenden Posten nach § 4, insgesamt ' + money(amount, d) + ', wurden' : 'Der Mietpreis von ' + money(amount, d) + ' wurde') +
+        ' am <b>' + fmtD(d.paid.on, 'de') + '</b> per Überweisung auf Grundlage der Vorausrechnung Nr. <b>' + esc(d.inv1.no) + '</b> bezahlt. Vor der Anreise ist nichts mehr zu zahlen.'; },
       bank: 'Bankverbindung:', holder: 'Kontoinhaber', accNo: 'Kontonummer', iban: 'IBAN', bic: 'BIC / SWIFT', bankName: 'Bank', vs: 'Verwendungszweck / Variabler Symbol',
       sepa: 'Bitte als SEPA-Überweisung in EUR ausführen.', qr: 'QR-Zahlung',
       p6: 'Kaution',
@@ -304,6 +354,8 @@
       p7b: 'Die Stornogebühr berechnet sich aus dem gesamten Mietpreis nach § 4, unabhängig davon, welcher Teil bereits gezahlt wurde. Ein Überschuss wird vom Vermieter innerhalb von 7 Tagen nach der Stornierung erstattet; ein etwaiger Fehlbetrag ist vom Gast in derselben Frist zu zahlen.',
       p7c: 'Die Kaution unterliegt nicht der Stornogebühr und wird bei Stornierung in voller Höhe erstattet.',
       p7d: 'Dem Gast wird der Abschluss einer Reiserücktrittsversicherung empfohlen.',
+      p7pre: 'Die im Voraus gezahlten Posten nach § 4 unterliegen nicht der Stornogebühr und werden bei Stornierung in voller Höhe erstattet.',
+      p7free: function (d) { return 'Bis zum <b>' + fmtD(d.paid.freeUntil, 'de') + '</b> kann der Gast den Aufenthalt ohne Stornogebühr stornieren (siehe „Zustandekommen des Vertrages“).'; },
       p8: 'Hausordnung',
       p8list: ['Rauchen ist im gesamten Innenbereich untersagt.', 'Nachtruhe von 22:00 bis 07:00 Uhr.', 'Partys und Veranstaltungen mit externen Gästen sind nicht gestattet.',
         'Pool und Sauna werden auf eigene Gefahr genutzt; Kinder nur unter Aufsicht Erwachsener. Der Pool ist abzuschließen, wenn er nicht benutzt wird. Glas gehört nicht in den Poolbereich.',
@@ -324,7 +376,8 @@
       p13a: 'Änderungen und Ergänzungen bedürfen der Textform. Es gilt tschechisches Recht.',
       p13b: 'Ein gesetzliches Widerrufsrecht besteht bei der Buchung von Beherbergungsleistungen für einen bestimmten Zeitraum nicht (Art. 16 lit. l der Richtlinie 2011/83/EU). Maßgeblich sind die Stornobedingungen nach § 7.',
       p13c: 'Sollte eine Bestimmung unwirksam sein, bleibt der übrige Vertrag wirksam.',
-      sign: 'Keine Unterschrift erforderlich — der Vertrag wird mit Zahlung der Vorausrechnung wirksam.'
+      sign: 'Keine Unterschrift erforderlich — der Vertrag wird mit Zahlung der Vorausrechnung wirksam.',
+      signPaid: 'Keine Unterschrift erforderlich — der Vertrag ist mit Zahlung der Vorausrechnung zustande gekommen; die ergänzten Bedingungen gelten mit der Bestätigung des Gastes in Textform.'
     },
 
     en: {
@@ -337,6 +390,10 @@
       f2single: 'By way of this document and the attached advance invoice, the Provider makes a binding offer to the Guest. The Agreement is concluded as soon as the Guest transfers the full invoice amount within the deadline to the account stated in § 5.',
       f2split: 'By way of this document and the attached advance invoice, the Provider makes a binding offer to the Guest. The Agreement is concluded as soon as the Guest transfers the first instalment within the deadline to the account stated in § 5.',
       f3: 'By making payment the Guest accepts all terms of this Agreement, in particular the cancellation terms under § 7. If no payment is made, no agreement comes into existence and the dates remain freely available.',
+      f1paid: function (d) { return 'This Agreement is the written confirmation of the accommodation agreed on the basis of advance invoice No. <b>' + esc(d.inv1.no) + '</b> and requires no signature.'; },
+      f2paid: function (d, amount) { return 'The Agreement was concluded on <b>' + fmtD(d.paid.on, 'en') + '</b>, when the Guest transferred ' + money(amount, d) + ' to the Provider’s account. The dates have been firmly reserved for the Guest since that day.'; },
+      f3paid: 'This document summarises the agreed terms and adds the house rules and the cancellation terms under § 7. The added terms become binding on both parties once the Guest confirms them to the Provider in text form (a reply by e-mail is sufficient).',
+      f4paid: function (d) { return 'As the Guest receives this document only after payment, the Guest may cancel the stay until <b>' + fmtD(d.paid.freeUntil, 'en') + '</b> free of any cancellation fee; in that case the Provider refunds the full amount paid within 7 days.'; },
       p1: 'Subject of the Agreement',
       p1a: 'The Provider grants the Guest exclusive use of the entire Villa Rudolf property for the period set out in § 2. Exclusive use for the whole stay includes in particular:',
       p1list: ['the house with seven bedrooms and 22 beds,', 'the covered, heated pool,', 'the private Finnish sauna with shower,', 'the billiard table,',
@@ -363,6 +420,12 @@
         'local tourist tax — CZK ' + d.cityTax + ' per adult per night, according to the actual number of persons entered in the guest register; persons under 18 are exempt,',
         'pet fee — ' + kc(d.petFee, 'en') + ' per animal and stay, if the Guest has agreed the pet’s presence with the Provider in advance.']; },
       p4none: 'No further costs are charged.',
+      p4pre: 'Together with the rental price, the Guest pays in advance:',
+      p4preCleaning: function (d) { return 'final cleaning and laundry — ' + kc(d.cleaning, 'en') + ' one-off'; },
+      p4prePets: function (d, n, sum) { return n === 1 ? 'pet fee — ' + kc(d.petFee, 'en') + ' per stay'
+        : 'pet fee — ' + kc(d.petFee, 'en') + ' per animal and stay, ' + kc(sum, 'en') + ' in total for ' + n + ' animals'; },
+      p4preSum: function (d, total) { return 'The total payable in advance is ' + money(total, d) + '.'; },
+      p4later: 'The following is settled from the security deposit under § 6 after the stay:',
       p4eur: 'Payment is made in EUR to the Provider’s EUR account. The EUR amount payable is fixed bindingly in the attached advance invoice; upon its payment the respective instalment is settled in full and no subsequent exchange-rate adjustment is made.',
       p5: 'Payment',
       p5single: function (d) { return 'The rental price of ' + money(d.price, d) + ' is payable by bank transfer in accordance with the attached advance invoice No. <b>' + esc(d.inv1.no) + '</b>, due no later than <b>' + fmtD(d.inv1.due, 'en') + '</b>. Once payment is received, the dates are firmly reserved for the Guest.'; },
@@ -371,6 +434,9 @@
       p5i2: function (d) { return '<b>2nd instalment — ' + money(d.inv2.amount, d) + '</b>, due no later than <b>' + fmtD(d.inv2.due, 'en') + '</b>. The Provider will send the advance invoice for the balance well in advance.'; },
       p5late: 'If any instalment is not received on time, the Provider may withdraw from the Agreement and release the dates; this does not affect the Provider’s claim to the cancellation fee under § 7.',
       p5lateSingle: 'If payment is not received on time, the Provider may release the dates.',
+      p5singlePre: function (d, total) { return 'The rental price and the items payable in advance under § 4, ' + money(total, d) + ' in total, are payable by bank transfer in accordance with the attached advance invoice No. <b>' + esc(d.inv1.no) + '</b>, due no later than <b>' + fmtD(d.inv1.due, 'en') + '</b>. Once payment is received, the dates are firmly reserved for the Guest.'; },
+      p5paid: function (d, amount, pre) { return (pre ? 'The rental price and the items payable in advance under § 4, ' + money(amount, d) + ' in total, were paid' : 'The rental price of ' + money(amount, d) + ' was paid') +
+        ' by bank transfer on <b>' + fmtD(d.paid.on, 'en') + '</b> on the basis of advance invoice No. <b>' + esc(d.inv1.no) + '</b>. Nothing further is payable before arrival.'; },
       bank: 'Bank details:', holder: 'Account holder', accNo: 'Account number', iban: 'IBAN', bic: 'BIC / SWIFT', bankName: 'Bank', vs: 'Payment reference / variable symbol',
       sepa: 'Please send as a SEPA transfer in EUR.', qr: 'QR payment',
       p6: 'Security Deposit',
@@ -399,6 +465,8 @@
       p7b: 'The cancellation fee is calculated from the full rental price under § 4 regardless of how much of it has already been paid. Any overpayment is refunded by the Provider within 7 days of cancellation; any shortfall is payable by the Guest within the same period.',
       p7c: 'The deposit is not subject to cancellation fees and is refunded in full in the event of cancellation.',
       p7d: 'The Guest is advised to take out travel cancellation insurance.',
+      p7pre: 'The items paid in advance under § 4 are not subject to the cancellation fee and are refunded in full in the event of cancellation.',
+      p7free: function (d) { return 'Until <b>' + fmtD(d.paid.freeUntil, 'en') + '</b> the Guest may cancel the stay free of any cancellation fee (see “Conclusion of the Agreement”).'; },
       p8: 'House Rules',
       p8list: ['Smoking is prohibited throughout the interior.', 'Quiet hours from 22:00 to 07:00.', 'Parties and events with external guests are not permitted.',
         'The pool and sauna are used at the Guest’s own risk; children only under adult supervision. The pool must be locked when not in use. Glassware does not belong in the pool area.',
@@ -419,7 +487,8 @@
       p13a: 'Amendments and additions require text form. Czech law applies.',
       p13b: 'There is no statutory right of withdrawal for accommodation booked for a specific period (Art. 16(l) of Directive 2011/83/EU). The cancellation terms under § 7 apply instead.',
       p13c: 'Should any provision be invalid, the remainder of the Agreement remains in force.',
-      sign: 'No signature required — the Agreement takes effect upon payment of the advance invoice.'
+      sign: 'No signature required — the Agreement takes effect upon payment of the advance invoice.',
+      signPaid: 'No signature required — the Agreement was concluded upon payment of the advance invoice; the added terms apply once confirmed by the Guest in text form.'
     }
   };
 
@@ -439,7 +508,8 @@
     '.box{border:1.2pt solid var(--navy);background:var(--cream);padding:8pt 11pt;margin-bottom:13pt}' +
     '.box h2{font-size:8.4pt;letter-spacing:.07em;color:var(--navy);margin:0 0 6pt}.box p{margin:0 0 5pt}.box p:last-child{margin-bottom:0}' +
     'section{border-top:.6pt solid var(--line);padding-top:5pt;margin-top:5pt;page-break-inside:avoid}section:first-of-type{border-top:none}' +
-    'h2.par{font-size:10.2pt;color:var(--navy);margin:0 0 4pt}p{margin:0 0 4pt}ul{margin:0 0 5pt;padding-left:14pt}li{margin-bottom:1.5pt}' +
+    'section.flow{page-break-inside:auto}table.storno,table.storno tr{page-break-inside:avoid}' +
+    'h2.par{font-size:10.2pt;color:var(--navy);margin:0 0 4pt;page-break-after:avoid}p{margin:0 0 4pt}ul{margin:0 0 5pt;padding-left:14pt}li{margin-bottom:1.5pt}' +
     '.lead{font-weight:700}.fine{color:var(--muted);font-size:8.8pt}.fx{color:var(--muted);font-weight:400}' +
     'table.storno{margin:4pt 0;font-size:8.5pt}' +
     'table.storno th{background:#f1f2f5;color:var(--navy);text-align:left;font-size:8pt;letter-spacing:.04em;padding:4pt 7pt;border:.6pt solid var(--line)}' +
@@ -451,7 +521,8 @@
     '.close .sign{font-weight:700;color:var(--navy);margin-bottom:4pt}.close .foot{color:var(--muted);font-size:7.8pt}';
 
   function ul(items) { return '<ul>' + items.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
-  function par(n, title, inner) { return '<section><h2 class="par">§ ' + n + ' &nbsp;' + title + '</h2>' + inner + '</section>'; }
+  /* cls 'flow' = paragraf se smí zalomit přes stránku (dlouhý § 7 jinak nechá půl strany prázdné) */
+  function par(n, title, inner, cls) { return '<section' + (cls ? ' class="' + cls + '"' : '') + '><h2 class="par">§ ' + n + ' &nbsp;' + title + '</h2>' + inner + '</section>'; }
 
   /* QR platba (SPD 1.0 — standard ČBA). Vrací SVG, nebo '' když knihovna chybí. */
   function qrSvg(d) {
@@ -472,6 +543,9 @@
     var b = BANK[d.currency] || BANK.CZK;
     var split = d.plan === 'split';
     var rows = stornoRows(d);
+    var pre = prepaidOf(d), paid = paidOf(d);
+    var total = d.price + pre.sum;                                   // co se hradí předem
+    var paidAmount = paid ? (Number(paid.amount) || (split ? d.inv1.amount : total)) : 0;
 
     var header = '<h1>' + t.title + '</h1>' +
       '<div class="sub">Villa Rudolf, Svoboda nad Úpou &nbsp;·&nbsp; ' + fmtSpan(d.arrival, d.departure, L) + '</div>' +
@@ -494,7 +568,10 @@
       '<p class="note" style="margin-top:6pt">' + t.guestNote + '</p>' +
       '</td></tr></table>';
 
-    var formation = '<div class="box"><h2>' + t.formation + '</h2><p>' + t.f1(d) + '</p><p>' + (split ? t.f2split : t.f2single) + '</p><p>' + t.f3 + '</p></div>';
+    var formation = paid
+      ? '<div class="box"><h2>' + t.formation + '</h2><p>' + t.f1paid(d) + '</p><p>' + t.f2paid(d, paidAmount) + '</p><p>' + t.f3paid + '</p>' +
+        (paid.freeUntil ? '<p>' + t.f4paid(d) + '</p>' : '') + '</div>'
+      : '<div class="box"><h2>' + t.formation + '</h2><p>' + t.f1(d) + '</p><p>' + (split ? t.f2split : t.f2single) + '</p><p>' + t.f3 + '</p></div>';
 
     var s1 = par(1, t.p1, '<p>' + t.p1a + '</p>' + ul(t.p1list) + '<p>' + t.p1b + '</p>');
     var s2 = par(2, t.p2,
@@ -502,29 +579,43 @@
       '<p class="lead">' + t.departure + ' ' + fmtLong(d.departure, L) + ', ' + t.to + ' ' + esc(d.checkout) + '</p>' +
       '<p>' + t.total + ' ' + t.nightsWord(d.nights) + '.</p><p>' + t.p2b + '</p>');
     var s3 = par(3, t.p3, '<p>' + t.p3a + '</p><p>' + t.p3b + '</p><p>' + t.p3c + '</p>' + (d.pet ? '<p>' + t.p3pet(d) + '</p>' : ''));
+    // p4extras / p6list: [0] úklid, [1] poplatek obci, [2] mazlíček, ([3] škody) — předem hrazené se vynechají
+    var notPre = function (x, i) { return !(i === 0 && pre.cleaning) && !(i === 2 && pre.pets > 0); };
+    var preItems = [];
+    if (pre.cleaning) preItems.push(t.p4preCleaning(d));
+    if (pre.pets > 0) preItems.push(t.p4prePets(d, pre.pets, pre.petsSum));
     var s4 = par(4, t.p4, '<p class="lead">' + t.p4price(d) + '</p><p>' + t.p4incl + '</p>' + ul(t.p4list) + '<p>' + t.p4fixed + '</p>' +
-      '<p>' + t.p4extra + '</p>' + ul(t.p4extras(d)) + '<p>' + t.p4none + '</p>' + (d.currency === 'EUR' ? '<p>' + t.p4eur + '</p>' : ''));
+      (pre.any
+        ? '<p>' + t.p4pre + '</p>' + ul(punct(preItems)) + '<p class="lead">' + t.p4preSum(d, total) + '</p>' +
+          '<p>' + t.p4later + '</p>' + ul(punct(t.p4extras(d).filter(notPre)))
+        : '<p>' + t.p4extra + '</p>' + ul(t.p4extras(d))) +
+      '<p>' + t.p4none + '</p>' + (d.currency === 'EUR' ? '<p>' + t.p4eur + '</p>' : ''));
 
     var bankRows = [[t.holder, b.holder], [t.accNo, b.acc], [t.iban, b.iban], [t.bic, b.bic], [t.bankName, b.bank],
       [t.vs, '<b>' + esc(d.inv1.vs || d.inv1.no) + '</b>']];
     var bankTbl = '<table class="bank">' + bankRows.map(function (r) { return '<tr><td class="k">' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</table>' +
       (d.currency === 'EUR' ? '<p class="fine" style="margin-top:3pt">' + t.sepa + '</p>' : '');
     var qr = qrSvg(d);
-    var s5 = par(5, t.p5,
+    // host už zaplatil celou cenu → jen konstatování úhrady, platební údaje by mátly
+    var s5 = (paid && !split)
+      ? par(5, t.p5, '<p>' + t.p5paid(d, paidAmount, pre.any) + '</p>')
+      : par(5, t.p5,
       (split
         ? '<p>' + t.p5split(d) + '</p>' + ul([t.p5i1(d), t.p5i2(d)]) + '<p>' + t.p5late + '</p>'
-        : '<p>' + t.p5single(d) + '</p><p>' + t.p5lateSingle + '</p>') +
+        : '<p>' + (pre.any ? t.p5singlePre(d, total) : t.p5single(d)) + '</p><p>' + t.p5lateSingle + '</p>') +
       '<p style="margin-top:8pt"><span class="lead">' + t.bank + '</span></p>' +
       '<div class="pay"><div class="bankwrap">' + bankTbl + '</div>' +
       (qr ? '<div class="qr">' + qr + t.qr + '</div>' : '') + '</div>');
 
-    var s6 = par(6, t.p6, '<p>' + t.p6a(d) + '</p><p>' + t.p6b + '</p>' + ul(t.p6list(d)) + '<p>' + t.p6c + '</p><p>' + t.p6d + '</p>');
+    var s6 = par(6, t.p6, '<p>' + t.p6a(d) + '</p><p>' + t.p6b + '</p>' + ul(pre.any ? punct(t.p6list(d).filter(notPre)) : t.p6list(d)) + '<p>' + t.p6c + '</p><p>' + t.p6d + '</p>');
 
     var storno = '<table class="storno"><tr><th>' + t.th[0] + '</th><th>' + t.th[1] + '</th><th style="text-align:right">' + t.th[2] + '</th><th style="text-align:right">' + t.th[3] + '</th></tr>' +
       rows.map(function (r) {
         return '<tr><td>' + t.rowLbl(r.s) + '</td><td>' + t.rowPeriod(r) + '</td><td class="num">' + pct(r.s.pct) + '</td><td class="num">' + money(r.amount, d) + '</td></tr>';
       }).join('') + '</table>';
-    var s7 = par(7, t.p7, '<p>' + t.p7a + '</p>' + storno + '<p>' + t.p7b + '</p><p>' + t.p7c + '</p><p>' + t.p7d + '</p>');
+    var s7 = par(7, t.p7, '<p>' + t.p7a + '</p>' + storno +
+      (paid && paid.freeUntil ? '<p>' + t.p7free(d) + '</p>' : '') +
+      '<p>' + t.p7b + '</p>' + (pre.any ? '<p>' + t.p7pre + '</p>' : '') + '<p>' + t.p7c + '</p><p>' + t.p7d + '</p>', 'flow');
     var s8 = par(8, t.p8, ul(t.p8list));
     var s9 = par(9, t.p9, '<p>' + t.p9a + '</p><p>' + t.p9b + '</p>');
     var s10 = par(10, t.p10, '<p>' + t.p10a + '</p>');
@@ -532,7 +623,7 @@
     var s12 = par(12, t.p12, '<p>' + t.p12a + '</p>');
     var s13 = par(13, t.p13, '<p>' + t.p13a + '</p><p>' + t.p13b + '</p><p>' + t.p13c + '</p>');
 
-    var close = '<div class="close"><div class="sign">' + t.sign + '</div>' +
+    var close = '<div class="close"><div class="sign">' + (paid ? t.signPaid : t.sign) + '</div>' +
       '<div class="foot">' + LESSOR.name + ', ' + LESSOR.addr + ' · Villa Rudolf, ' + LESSOR.objectAddr + ' · ' + LESSOR.email + ' · ' + LESSOR.phone + '</div></div>';
 
     var title = t.title.charAt(0) + t.title.slice(1).toLowerCase() + ' — Villa Rudolf — ' + esc(d.guest.lastName || d.guest.name) + ' ' + d.arrival.slice(0, 4);
@@ -547,6 +638,6 @@
 
   global.VR_SMLOUVA = {
     render: render, STORNO: STORNO, BALANCE_DAYS_BEFORE: BALANCE_DAYS_BEFORE, balanceDue: balanceDue,
-    stornoRows: stornoRows, BANK: BANK, LESSOR: LESSOR, fmtD: fmtD, fmtSpan: fmtSpan, nights: nights, addDays: addDays
+    stornoRows: stornoRows, prepaidOf: prepaidOf, BANK: BANK, LESSOR: LESSOR, fmtD: fmtD, fmtSpan: fmtSpan, nights: nights, addDays: addDays
   };
 })(typeof window !== 'undefined' ? window : globalThis);

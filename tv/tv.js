@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var VERZE = '2026-10-11c';
+  var VERZE = '2026-10-11d';
   var PORTAL = 'https://pavelkubiznak.github.io/villa-rudolf-portal/data/';
   var WEB = 'https://villarudolf.com/';
   /* QR v detailu výletu nevede rovnou na cizí mapu / web, ale přes villarudolf.com/k/ (k/index.html):
@@ -120,9 +120,11 @@
     if (S.lang === 'de') return den + (kratce ? ' ' : ', ') + d.getDate() + '.' + (kratce ? '' : ' ' + t.mesice[d.getMonth()]);
     return den + ' ' + d.getDate() + '.' + (kratce ? '' : ' ' + t.mesice[d.getMonth()]);
   }
-  /* Hranice sezón jako na webu (assets/season.js): zima 15. 10. – 31. 3. */
-  function zima(d) { var m = d.getMonth() + 1, x = d.getDate(); return m >= 11 || m <= 3 || (m === 10 && x >= 15); }
-  function sezonaOk(t) { var s = t.seasons; return !s || !s.length || s.indexOf(zima(dnes()) ? 'winter' : 'summer') >= 0; }
+  /* PROVOZNÍ sezóna výletů — stejné hranice jako seasonOf() v assets/planner.js, ne marketingová
+     hranice webu 15. 10. (assets/season.js): zima 1. 12. – 31. 3., léto 1. 4. – 14. 10.,
+     15. 10. – 30. 11. jen celoroční výlety (lyže ještě nejedou, koupaliště už zavřela). */
+  function sezona(d) { var m = d.getMonth() + 1, x = d.getDate(); if (m === 12 || m <= 3) return 'winter'; if (m >= 4 && (m < 10 || (m === 10 && x < 15))) return 'summer'; return 'shoulder'; }
+  function sezonaOk(t) { var s = t.seasons; return !s || !s.length || s.indexOf(sezona(dnes())) >= 0; }
   function bazenSezona(d) { var m = d.getMonth() + 1; return m >= 5 && m <= 9; }
   function wxDen(d) { var v = S.fc && S.fc.byLocation && S.fc.byLocation.villa; return v && v.daily ? v.daily[iso(d)] : null; }
   function wxIco(c) { return { clear: 'sun', fair: 'pocasi', partly: 'pocasi', cloudy: 'cloud', fog: 'cloud', showers: 'rain', rain: 'rain', snow: 'snow', sleet: 'snow', thunder: 'storm' }[c] || 'cloud'; }
@@ -326,7 +328,7 @@
     var qrs = (web ? qrBtn(web, false, true) : '') + (mapa ? qrBtn(mapa, true, !web) : '');
     var foto = t.photo && /^https:\/\//.test(t.photo.url || '') ? '<figure class="foto"><img src="' + esc(t.photo.url) + '" alt="">' +
       (t.photo.credit ? '<figcaption>' + esc(L.foto + ': ' + t.photo.credit) + '</figcaption>' : '') + '</figure>' : '';
-    var kdy = t.openNote ? '<div class="kdy">' + ico('clock') + '<div><span>' + esc(L.otevreno) + '</span><b>' + esc(loc(t.openNote)) + '</b></div></div>' : '';
+    var kdy = t.openNote ? '<div class="kdy' + (loc(t.openNote).length > 150 ? ' dlouhe' : '') + '">' + ico('clock') + '<div><span>' + esc(L.otevreno) + '</span><b>' + esc(loc(t.openNote)) + '</b></div></div>' : '';
     var pozor = t.warn && loc(t.warn) ? '<div class="pozor">' + ico('warn') + '<p>' + esc(loc(t.warn)) + '</p></div>' : '';
     var dl = '<dt>' + esc(L.cestaT) + '</dt><dd>' + esc(cesta(t, true)) + '</dd>' +
       (t.price ? '<dt>' + esc(L.cena) + '</dt><dd>' + esc(loc(t.price)) + '</dd>' : '');
@@ -339,6 +341,13 @@
     var img = $('detail').querySelector('.foto img');
     if (img) img.onerror = function () { var f = img.parentNode; if (f && f.parentNode) f.parentNode.removeChild(f); };   // bez internetu / smazaná fotka → detail bez ní
     $('detail').hidden = false;
+    /* Dlouhé texty: nejdřív menší písmo, pak ustoupí fotka, nakonec se zkrátí popis –
+       otevírací doba, upozornění a cena zůstávají vždy celé. */
+    var lev = $('detail').querySelector('.levy'), pan = $('detail').querySelector('.panel'), fo = lev.querySelector('.foto');
+    var pretika = function () { return lev.scrollHeight > lev.clientHeight + 1; };
+    if (pretika()) pan.classList.add('husty');
+    if (pretika() && fo) lev.removeChild(fo);
+    if (pretika()) pan.classList.add('orez');
     S.predDetailem = document.activeElement;
     $('detailFokus').focus();
     pocitej('vylet', S.sec);               // odkud byl detail otevřen (home / vylety / pocasi), ne který výlet

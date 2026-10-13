@@ -1,0 +1,18 @@
+Fonty v této složce jsou šířené pod licencí SIL Open Font License 1.1
+(https://openfontlicense.org/open-font-license-official-text/).
+
+Soubory WOFF2 byly staženy 11. 10. 2026 z Google Fonts (fonts.gstatic.com, Archivo v25,
+Newsreader v26) v podmnožinách latin a latin-ext, aby se načítaly ze stejného původu jako web
+a IP adresa hosta nešla do Googlu. Deklarace @font-face jsou ve fonts.css.
+
+- Archivo (variabilní, wght 400–700) – Omnibus-Type
+  https://fonts.google.com/specimen/Archivo
+  archivo-latin.woff2, archivo-latin-ext.woff2
+
+- Newsreader (variabilní, wght 300–600, kurzíva 300–500, osa opsz 6–72) – Production Type
+  https://fonts.google.com/specimen/Newsreader
+  newsreader-latin.woff2, newsreader-latin-ext.woff2,
+  newsreader-italic-latin.woff2, newsreader-italic-latin-ext.woff2
+
+Podle OFL lze fonty volně používat, šířit i vkládat do webu; nesmí se prodávat samostatně
+a odvozená díla nesmí nést vyhrazená jména (Reserved Font Name) původních rodin.
