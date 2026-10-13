@@ -384,7 +384,8 @@ jsou z ní přeložené.
 - **První ozvěna místo „Potvrzení rezervace" v T−30.** Na řadě je hned, jak má pobyt hosta
   s telefonem, i když je příjezd za rok — smysl je zahájit konverzaci a včas poznat, kdo váhá.
   Říká, že je pobyt potvrzený, vede na web v jazyce hosta (`#interier`, `#loznice`, video podle sezóny —
-  **ne na keypano**) a vysvětlí doklady: cizincům celý odstavec o knize hostů a cizinecké policii,
+  **ne na keypano**), zve naplánovat si výlety už teď (veřejný plánovač `/vylety/`, pro de/en/pl
+  s `?lang=` — osobní průvodce `/pruvodce/?t=` je až v uvítací zprávě) a vysvětlí doklady: cizincům celý odstavec o knize hostů a cizinecké policii,
   **českým hostům kratší verzi bez cizinecké policie**. Žádná otázka na počty, žádné postýlky,
   žádná registrace, o stornu se nemluví. 14 dní před příjezdem už nemá smysl a nenabízí se.
   Odstavec o novince (schodiště) dostanou jen příjezdy 19. 12. 2026 – 31. 12. 2027 — je to **jedna

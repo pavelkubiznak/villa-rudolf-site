@@ -72,7 +72,11 @@ for (const L of LANGS) {
   ok(T.first.includes('{NOVINKA}') && T.first.includes('{VIDEO}') && !/KOD_DVERI|PRUVODCE_LINK/.test(T.first), L + '.first: má nést {NOVINKA} a {VIDEO}, ne kód ani průvodce');
   ok(T.first.includes(WEB[L] + 'interier') && T.first.includes(WEB[L] + 'loznice'), L + '.first: odkazy na prohlídku a pokoje vedou na web v jazyce hosta');
   ok(!/storn|cancel|rezygn|postýlk|Kinderbett|\bcots?\b|łóżeczk/i.test(T.first), L + '.first: bez storna a bez postýlek');
-  ok(!T.first.includes('?'), L + '.first: žádná otázka na hosta (počty osob se neptáme)');
+  ok(!T.first.replace(/https?:\/\/\S+/g, '').includes('?'), L + '.first: žádná otázka na hosta (počty osob se neptáme)');
+  // veřejný plánovač výletů (bez tokenu) v jazyce hosta — /vylety/ přepíná jazyk přes ?lang=
+  ok(T.first.includes('https://villarudolf.com/vylety/' + (L === 'cs' ? '\n' : '?lang=' + L + '\n')), L + '.first: odkaz na plánovač výletů v jazyce hosta');
+  ok(T.first.indexOf('#loznice') < T.first.indexOf('/vylety/') && T.first.indexOf('/vylety/') < T.first.indexOf('🛂'), L + '.first: výlety jsou za prohlídkou domu a před doklady');
+  ok(!/pruvodce/.test(T.first), L + '.first: osobní průvodce (/pruvodce/?t=) až v uvítací zprávě');
   // uvítací zpráva: kód, čas, video, průvodce, Wi-Fi, věta o placení
   for (const ph of ['KOD_DVERI', 'CAS', 'VIDEO', 'VIDEO_OBSAH', 'PRUVODCE_LINK', 'WIFI_HESLO', 'JAK_SE_PLATI'])
     ok(T.welcomeCore.includes('{' + ph + '}'), `${L}.welcomeCore: chybí {${ph}}`);
