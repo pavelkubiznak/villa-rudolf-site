@@ -15,7 +15,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="registrace.css?v=4">
+<link rel="stylesheet" href="registrace.css?v=5">
 </head>
 <body>
 <div class="vp-root">
@@ -100,10 +100,34 @@
             </label>
           </div>
 
-          <label class="vp-field">
-            <span class="vp-lbl"><span data-i18n="fBirth">Datum narození</span> <em>*</em></span>
-            <input type="date" id="f-birth" required>
-          </label>
+          <!-- Datum narození = tři políčka, ne <input type="date">: kolečko v telefonu začíná
+               dneškem a hosté nechávali letošní rok. Rok se musí napsat celý, nic není předvyplněné.
+               #f-birth drží složené datum RRRR-MM-DD pro zbytek skriptu. -->
+          <div class="vp-field" role="group" aria-labelledby="birthLbl">
+            <span class="vp-lbl" id="birthLbl"><span data-i18n="fBirth">Datum narození</span> <em>*</em></span>
+            <div class="vp-birth">
+              <label class="vp-datecol">
+                <span class="vp-sub" data-i18n="fDay">Den</span>
+                <input type="text" id="f-bd" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" data-i18n-ph="phDay" placeholder="DD">
+              </label>
+              <label class="vp-datecol">
+                <span class="vp-sub" data-i18n="fMonth">Měsíc</span>
+                <input type="text" id="f-bm" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" data-i18n-ph="phMonth" placeholder="MM">
+              </label>
+              <label class="vp-datecol">
+                <span class="vp-sub" data-i18n="fYear">Rok</span>
+                <input type="text" id="f-by" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" data-i18n-ph="phYear" placeholder="RRRR">
+              </label>
+            </div>
+            <input type="hidden" id="f-birth">
+            <div class="vp-docwarn" id="birthWarn" role="alert" hidden>
+              <p id="birthWarnMsg"></p>
+              <div class="vp-docwarn-btns">
+                <button type="button" class="vp-docwarn-fix" id="birthWarnFix" data-i18n="birthFix">Opravit datum</button>
+                <button type="button" class="vp-docwarn-ok" id="birthWarnOk" data-i18n="birthYes">Ano, je to správně</button>
+              </div>
+            </div>
+          </div>
 
           <label class="vp-field">
             <span class="vp-lbl"><span data-i18n="fCitizenship">Občanství</span> <em>*</em></span>
@@ -127,7 +151,15 @@
               <input type="text" id="f-doc" autocomplete="off" maxlength="40" inputmode="latin" autocapitalize="characters" spellcheck="false" aria-describedby="docHint">
             </div>
             <span class="vp-hint" id="docHint" data-i18n="docHintCz">Cestovní pas nebo občanský průkaz. U českých občanů nepovinné.</span>
-            <div class="vp-docwarn" id="docWarn" hidden>
+            <!-- stát má přesné pravidlo: jaký tvar číslo má a kde na dokladu je -->
+            <span class="vp-hint vp-docshape" id="docShape" hidden></span>
+            <p class="vp-err vp-docerr" id="docErr" role="alert" hidden></p>
+            <!-- stát bez pravidla (nebo „Jiný doklad“): host potvrdí, že číslo opsal přesně -->
+            <label class="vp-check vp-docsure" id="docSureRow" hidden>
+              <input type="checkbox" id="f-docsure">
+              <span data-i18n="docSure">Číslo jsem opsal(a) přesně podle dokladu.</span>
+            </label>
+            <div class="vp-docwarn" id="docWarn" role="alert" hidden>
               <p id="docWarnMsg"></p>
               <div class="vp-docwarn-btns">
                 <button type="button" class="vp-docwarn-fix" id="docWarnFix" data-i18n="docWarnFix">Opravit</button>
@@ -202,7 +234,8 @@
 
   </div>
 </div>
-<script src="registrace.js?v=5" defer></script>
+<script src="doklady.js?v=1" defer></script>
+<script src="registrace.js?v=6" defer></script>
 <!-- Umami analytics (self-hosted, cookieless). data-exclude-search: v URL je
      hostovský token ?t=…, do analytiky smí jen cesta bez parametrů. -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-exclude-search="true"></script>

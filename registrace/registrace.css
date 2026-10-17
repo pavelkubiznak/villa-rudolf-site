@@ -190,10 +190,24 @@ body{margin:0;background:#0E1311}
 .vp-code-form #f-code{font-size:22px;letter-spacing:.18em;text-align:center;max-width:220px}
 
 /* druh dokladu vedle čísla */
-.vp-docrow{display:flex;gap:8px}
-.vp-docrow select{flex:0 0 42%;min-width:0}
-.vp-docrow input{flex:1 1 auto;min-width:0}
+/* pod sebou: podle druhu se řídí pravidlo pro číslo, název musí být čitelný celý */
+.vp-docrow{display:flex;flex-direction:column;gap:8px}
+.vp-docrow input{letter-spacing:.06em}
 /* osvobození od poplatku */
 .vp-check{display:flex;gap:10px;align-items:flex-start;margin:4px 0 14px;font-size:13.5px;line-height:1.45;cursor:pointer}
-.vp-check input{flex:0 0 auto;width:18px;height:18px;margin-top:2px;accent-color:var(--vp-ember, #D68A4C)}
+.vp-check input{flex:0 0 auto;width:18px;height:18px;margin-top:2px;padding:0;accent-color:var(--vp-ember, #D68A4C);
+  -webkit-appearance:auto;appearance:auto}
 .vp-check .vp-hint{display:block;margin-top:2px}
+
+/* datum narození: den / měsíc / rok */
+.vp-birth{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:10px}
+.vp-birth input{text-align:center;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+/* doklad: tvar čísla, chyba u pole, potvrzení opisu */
+.vp-docshape{color:var(--vp-muted)}
+.vp-docshape b{font-weight:600;color:var(--vp-text);letter-spacing:.04em;white-space:nowrap}
+.vp-docerr{white-space:pre-line}
+.vp-docsure{margin:2px 0 0}
+.vp-form input[type="checkbox"][aria-invalid="true"]{outline:2px solid var(--vp-err);outline-offset:2px}
+/* tvrdá chyba u data narození (budoucnost, přes 110 let) – stejný rámeček, červeně */
+.vp-docwarn-hard{border-color:rgba(229,135,122,.3);background:rgba(229,135,122,.08)}
+.vp-docwarn-hard p{color:var(--vp-err)}
