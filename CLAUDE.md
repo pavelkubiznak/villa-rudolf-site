@@ -24,7 +24,7 @@ všechny provozní moduly. Statický web na GitHub Pages, bez build kroku.
 | `/album/` | fotoalbum pobytu | hosté |
 | `/vylety/`, `/pruvodce/` | tipy na výlety (data z repa `villa-rudolf-portal`); `/pruvodce/?t=` je jediný odkaz, který hosté dostávají — portál na GitHub Pages je od 11. 10. 2026 jen demo a hosty s tokenem přesměrovává sem | hosté |
 | `/tv/` | **průvodce pro hosty na TV ve vile** – obsah aplikace Villa Rudolf na Google TV (APK v repu `jablotron - topení/tv-app`), ovládání šipkami, 4 jazyky; texty v `tv/texty.js`, bez Wi-Fi hesla (veřejné) | hosté na TV |
-| `/info/`, `/podminky/` | informace, podmínky | hosté |
+| `/info/`, `/podminky/` (+ `/de/info/`, `/de/podminky/` … ve všech 6 jazycích) | Praktické info a Ubytovací podmínky (storno, pobyt a platby, GDPR) — statické z `tools/gen-jazyky.mjs` a `tools/podstranky-obsah.mjs`, JS jen `assets/podstranka.js` (sezóna, menu) | hosté, AI roboti |
 | `/n8n/` | exporty n8n workflow (importovatelné) | provoz |
 | `supabase/migrations/` | **schéma databáze — zdroj pravdy** (neúplný, viz `STAV.md`) | vývoj |
 | `supabase/functions/album/` | Edge Function `album` — jediná brána ke Storage bucketu `vr-album`, autorizace tokenem pobytu | vývoj |
@@ -314,8 +314,13 @@ a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.m
 - Bloky, které kreslí JS (ceník, rozpis lůžek, hodnocení, patička, „Než dorazíte"), generátor kreslí
   **stejnými funkcemi ze `site.js`** (načte ho do `vm` s mini-DOMem) — statické HTML je to, co vidí host.
   Ceník staticky **bez řádku o záloze 30 %** (o záloze rozhodne Pavel).
-- **Nizozemština a francouzština (Benelux, od 9. 10. 2026)** jsou jen homepage a Časté dotazy.
-  Výlety, info, podmínky a průvodce hosta umí dál jen cs/en/de/pl. Z `/nl/` a `/fr/` se proto otevírají
+- **Praktické info a Ubytovací podmínky (od 17. 10. 2026)** jsou statické stránky v každém jazyce
+  (`info/`, `podminky/`, `<jazyk>/info/`, `<jazyk>/podminky/`). Texty v `tools/podstranky-obsah.mjs`
+  (částky úklidu, poplatku, psa a kauce dosadí generátor z `VR_PRICING`), šablona info je `info/index.html`
+  (`data-i18n`), podmínky skládá generátor celé. Staré odkazy `?lang=` (QR na TV, průvodce) přesměruje
+  skript v `<head>` české stránky. Adresy a vlastní jména v info nesou `lang="cs"`.
+- **Nizozemština a francouzština (Benelux, od 9. 10. 2026)** jsou homepage, Časté dotazy, info a podmínky.
+  Výlety a průvodce hosta umí dál jen cs/en/de/pl. Z `/nl/` a `/fr/` se proto otevírají
   anglicky: `vrSubLang()` v `site.js`, `jazykPodstranky()` v generátoru a mapa `NAHRADA` v jejich JS.
   Texty jsou přeložené z EN/DE. Nizozemština oslovuje „jullie/je“, francouzština „vous“. Fakta jen
   z `text-villa-rudolf.md`. Poptávka posílá `p_lang` nl/fr. `vr_request` je přijímá od migrace
@@ -327,7 +332,7 @@ a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.m
 - Jazykové stránky mají `<html data-root="../">` a **každou cestu k souboru skládá `site.js` přes
   `vrUrl()`** — nová cesta bez něj se na `/de/` rozbije (vedla by do `/de/media/…`).
 - hreflang: cs/de/pl/en/nl/fr + `x-default` = `/en/` (pro jazyky, které web nemá).
-  `/vylety/`, `/info/` a `/podminky/` jazykové verze nemají (jazyk jen v JS), proto hreflang nenesou.
+  `/vylety/` jazykové verze nemá (jazyk jen v JS), proto hreflang nenese.
 - `sitemap.xml` generuje `gen-jazyky.mjs` (jazykové páry přes `xhtml:link`, `lastmod` jen při změně).
 - `/llms.txt` (CS + odstavce EN/DE/PL/NL/FR) a `/de/llms.txt` — fakta jen z
   `villa-rudolf-portal/docs/text-villa-rudolf.md`, kap. 3. Časté dotazy taky: otázky ze skutečných

@@ -110,7 +110,23 @@ for (const [jazyk, fakta] of Object.entries(FAKTA)) {
 }
 
 // ---------- 4. relativní odkazy a cesty ve statických stránkách vedou na existující soubory ----------
-const stranky = ['', 'de/', 'pl/', 'en/', 'nl/', 'fr/'].flatMap((j) => [j + 'index.html', j + 'faq/index.html']);
+// Praktické info a podmínky (od 10/2026 statické v každém jazyce): robot bez JS musí dostat fakta.
+const PODSTRANKY_FAKTA = {
+  '': ['Check-in od 15:00', '5 000 Kč', '60 a více dní před příjezdem', 'Sintera Czech s.r.o.'],
+  'de/': ['Check-in ab 15:00', '5 000 Kč', '60 oder mehr Tage vor Anreise', 'Sintera Czech s.r.o.'],
+  'pl/': ['Zameldowanie od 15:00', '5 000 Kč', '60 lub więcej dni przed przyjazdem', 'Sintera Czech s.r.o.'],
+  'en/': ['Check-in from 15:00', '5 000 Kč', '60 or more days before arrival', 'Sintera Czech s.r.o.'],
+  'nl/': ['Inchecken vanaf 15:00', '5 000 Kč', '60 of meer dagen vóór aankomst', 'Sintera Czech s.r.o.'],
+  'fr/': ['Arrivée à partir de 15h00', '5 000 Kč', '60 jours ou plus avant l’arrivée', 'Sintera Czech s.r.o.'],
+};
+for (const [j, fakta] of Object.entries(PODSTRANKY_FAKTA)) {
+  const html = ['info/index.html', 'podminky/index.html'].map((s) => (existsSync(join(root, j + s)) ? readFileSync(join(root, j + s), 'utf8') : '')).join('\n')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '').replace(/\u00a0/g, ' ');
+  const chybi = fakta.filter((f) => !html.includes(f));
+  ok(!chybi.length, `/${j}info/ a /${j}podminky/ bez JavaScriptu nesou check-in, kauci, storno a provozovatele${chybi.length ? ' — chybí: ' + chybi.join(', ') : ''}`);
+}
+
+const stranky = ['', 'de/', 'pl/', 'en/', 'nl/', 'fr/'].flatMap((j) => [j + 'index.html', j + 'faq/index.html', j + 'info/index.html', j + 'podminky/index.html']);
 for (const s of stranky) {
   if (!existsSync(join(root, s))) continue;
   const html = readFileSync(join(root, s), 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (m) => m.replace(/>[\s\S]*$/, '>'));

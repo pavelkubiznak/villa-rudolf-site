@@ -254,7 +254,7 @@
       <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Summer</a>
       <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Winter</a>
     </div>
-    <a class="vr-mob-2nd" href="../info/" data-langlink="../info/" data-t="nav.info">Guest info</a>
+    <a class="vr-mob-2nd" href="info/" data-jazyk-strom data-t="nav.info">Guest info</a>
     <!-- Časté dotazy mají vlastní stránku v každém jazyce (faq/, de/faq/…), proto data-jazyk-strom:
          tools/gen-jazyky.mjs u nich na /de/ cestu neposouvá o adresář výš. -->
     <a class="vr-mob-2nd" href="faq/" data-jazyk-strom data-t="footer.faq">FAQ</a>
@@ -1097,7 +1097,7 @@
           <li><b data-t="prebook.facts.6.k">Skiing</b><span data-t="prebook.facts.6.v">Slopes right here in Svoboda · free ski bus 200 m from the gate</span></li>
           <li><b data-t="prebook.facts.7.k">Internet</b><span data-t="prebook.facts.7.v">Fast Wi-Fi in the house and across the grounds</span></li>
         </ul>
-        <a class="vr-prebook-link" href="../info/" data-langlink="../info/" data-t="prebook.link">All the practical info →</a>
+        <a class="vr-prebook-link" href="info/" data-jazyk-strom data-t="prebook.link">All the practical info →</a>
       </div>
 
       <!-- Ceník kreslí renderPriceBlock() z VR_PRICING; statickou kopii (bez řádku o záloze) dopisuje tools/gen-jazyky.mjs.
@@ -1180,7 +1180,7 @@
               <textarea id="vr-message" class="vr-book-textarea" rows="3" maxlength="2000" data-t-ph="cta.phMessage" placeholder="Anything we should know — number of children, arrival time, requests… (optional)" autocomplete="off"></textarea>
             </label>
             <div class="vr-book-msg" id="vr-book-msg" role="alert" aria-live="assertive" style="display:none"></div>
-            <p class="vr-book-consent" data-t-html="book.consent">By sending this request you acknowledge our <a href="/podminky/" target="_blank" rel="noopener">booking terms and the processing of your personal data</a>.</p>
+            <p class="vr-book-consent" data-t-html="book.consent">By sending this request you acknowledge our <a href="/en/podminky/" target="_blank" rel="noopener">booking terms and the processing of your personal data</a>.</p>
             <button type="submit" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Send stay request</span> <span aria-hidden="true">&#8594;</span></button>
             <div class="vr-book-note">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
@@ -1253,10 +1253,10 @@
       <div class="vr-foot-bottom">
         <span data-t="footer.rights">© 2026 Villa Rudolf</span>
         <span class="vr-foot-botlinks">
-          <a class="vr-foot-terms" href="../info/" data-langlink="../info/" data-t="nav.info">Guest info</a>
+          <a class="vr-foot-terms" href="info/" data-jazyk-strom data-t="nav.info">Guest info</a>
           <a class="vr-foot-terms" href="faq/" data-jazyk-strom data-t="footer.faq">FAQ</a>
           <a class="vr-foot-terms" href="../vylety/#planovac" data-langlink="../vylety/#planovac" data-t="footer.guide">Trip planner</a>
-          <a class="vr-foot-terms" href="../podminky/" data-langlink="../podminky/" data-t="footer.terms">Booking terms &amp; privacy</a>
+          <a class="vr-foot-terms" href="podminky/" data-jazyk-strom data-t="footer.terms">Booking terms &amp; privacy</a>
         </span>
       </div>
     </div>
@@ -1290,7 +1290,7 @@
   </div>
 
 </div>
-<script src="../assets/site.js?v=65" defer></script>
+<script src="../assets/site.js?v=66" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-before-send="vrUmamiRef"></script>
 </body>

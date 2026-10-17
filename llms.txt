@@ -28,7 +28,7 @@ Adresa: Luční 519, 542 24 Svoboda nad Úpou, Česko. GPS 50.6254, 15.8136.
 - [Časté dotazy](https://villarudolf.com/faq/)
 - [Výlety a plánovač na léto i zimu](https://villarudolf.com/vylety/)
 - [Praktické informace k pobytu](https://villarudolf.com/info/)
-- [Ubytovací podmínky a storno](https://villarudolf.com/podminky/)
+- [Ubytovací podmínky: storno, kauce, úklid, pes, check-in](https://villarudolf.com/podminky/)
 - Jiné jazyky — celá stránka i s ceníkem: [Deutsch](https://villarudolf.com/de/) ([llms.txt](https://villarudolf.com/de/llms.txt), [Häufige Fragen](https://villarudolf.com/de/faq/)) · [Polski](https://villarudolf.com/pl/) ([Częste pytania](https://villarudolf.com/pl/faq/)) · [English](https://villarudolf.com/en/) ([FAQ](https://villarudolf.com/en/faq/)) · [Nederlands](https://villarudolf.com/nl/) ([Veelgestelde vragen](https://villarudolf.com/nl/faq/)) · [Français](https://villarudolf.com/fr/) ([Questions fréquentes](https://villarudolf.com/fr/faq/))
 
 ## In English

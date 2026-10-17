@@ -264,7 +264,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
       <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Léto</a>
       <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Zima</a>
     </div>
-    <a class="vr-mob-2nd" href="info/" data-langlink="info/" data-t="nav.info">Praktické info</a>
+    <a class="vr-mob-2nd" href="info/" data-jazyk-strom data-t="nav.info">Praktické info</a>
     <!-- Časté dotazy mají vlastní stránku v každém jazyce (faq/, de/faq/…), proto data-jazyk-strom:
          tools/gen-jazyky.mjs u nich na /de/ cestu neposouvá o adresář výš. -->
     <a class="vr-mob-2nd" href="faq/" data-jazyk-strom data-t="footer.faq">Časté dotazy</a>
@@ -1107,7 +1107,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
           <li><b data-t="prebook.facts.6.k">Lyžování</b><span data-t="prebook.facts.6.v">Sjezdovky přímo ve Svobodě · skibus zdarma 200 m od brány</span></li>
           <li><b data-t="prebook.facts.7.k">Internet</b><span data-t="prebook.facts.7.v">Rychlá Wi-Fi v domě i na celém pozemku</span></li>
         </ul>
-        <a class="vr-prebook-link" href="info/" data-langlink="info/" data-t="prebook.link">Vše praktické →</a>
+        <a class="vr-prebook-link" href="info/" data-jazyk-strom data-t="prebook.link">Vše praktické →</a>
       </div>
 
       <!-- Ceník kreslí renderPriceBlock() z VR_PRICING; statickou kopii (bez řádku o záloze) dopisuje tools/gen-jazyky.mjs.
@@ -1263,10 +1263,10 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
       <div class="vr-foot-bottom">
         <span data-t="footer.rights">© 2026 Villa Rudolf</span>
         <span class="vr-foot-botlinks">
-          <a class="vr-foot-terms" href="info/" data-langlink="info/" data-t="nav.info">Praktické info</a>
+          <a class="vr-foot-terms" href="info/" data-jazyk-strom data-t="nav.info">Praktické info</a>
           <a class="vr-foot-terms" href="faq/" data-jazyk-strom data-t="footer.faq">Časté dotazy</a>
           <a class="vr-foot-terms" href="vylety/#planovac" data-langlink="vylety/#planovac" data-t="footer.guide">Plánovač výletů</a>
-          <a class="vr-foot-terms" href="podminky/" data-langlink="podminky/" data-t="footer.terms">Ubytovací podmínky a ochrana údajů</a>
+          <a class="vr-foot-terms" href="podminky/" data-jazyk-strom data-t="footer.terms">Ubytovací podmínky a ochrana údajů</a>
         </span>
       </div>
     </div>
@@ -1300,7 +1300,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
   </div>
 
 </div>
-<script src="assets/site.js?v=65" defer></script>
+<script src="assets/site.js?v=66" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-before-send="vrUmamiRef"></script>
 </body>

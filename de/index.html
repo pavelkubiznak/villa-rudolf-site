@@ -254,7 +254,7 @@
       <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Sommer</a>
       <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Winter</a>
     </div>
-    <a class="vr-mob-2nd" href="../info/" data-langlink="../info/" data-t="nav.info">Gäste-Infos</a>
+    <a class="vr-mob-2nd" href="info/" data-jazyk-strom data-t="nav.info">Gäste-Infos</a>
     <!-- Časté dotazy mají vlastní stránku v každém jazyce (faq/, de/faq/…), proto data-jazyk-strom:
          tools/gen-jazyky.mjs u nich na /de/ cestu neposouvá o adresář výš. -->
     <a class="vr-mob-2nd" href="faq/" data-jazyk-strom data-t="footer.faq">Häufige Fragen</a>
@@ -1097,7 +1097,7 @@
           <li><b data-t="prebook.facts.6.k">Skifahren</b><span data-t="prebook.facts.6.v">Pisten direkt in Svoboda · kostenloser Skibus 200 m vom Tor</span></li>
           <li><b data-t="prebook.facts.7.k">Internet</b><span data-t="prebook.facts.7.v">Schnelles WLAN im Haus und auf dem ganzen Grundstück</span></li>
         </ul>
-        <a class="vr-prebook-link" href="../info/" data-langlink="../info/" data-t="prebook.link">Alle Praxis-Infos →</a>
+        <a class="vr-prebook-link" href="info/" data-jazyk-strom data-t="prebook.link">Alle Praxis-Infos →</a>
       </div>
 
       <!-- Ceník kreslí renderPriceBlock() z VR_PRICING; statickou kopii (bez řádku o záloze) dopisuje tools/gen-jazyky.mjs.
@@ -1180,7 +1180,7 @@
               <textarea id="vr-message" class="vr-book-textarea" rows="3" maxlength="2000" data-t-ph="cta.phMessage" placeholder="Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)" autocomplete="off"></textarea>
             </label>
             <div class="vr-book-msg" id="vr-book-msg" role="alert" aria-live="assertive" style="display:none"></div>
-            <p class="vr-book-consent" data-t-html="book.consent">Mit dem Absenden der Anfrage akzeptiert ihr die <a href="/podminky/" target="_blank" rel="noopener">Buchungsbedingungen und die Verarbeitung eurer personenbezogenen Daten</a>.</p>
+            <p class="vr-book-consent" data-t-html="book.consent">Mit dem Absenden der Anfrage akzeptiert ihr die <a href="/de/podminky/" target="_blank" rel="noopener">Buchungsbedingungen und die Verarbeitung eurer personenbezogenen Daten</a>.</p>
             <button type="submit" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Aufenthaltsanfrage senden</span> <span aria-hidden="true">&#8594;</span></button>
             <div class="vr-book-note">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
@@ -1253,10 +1253,10 @@
       <div class="vr-foot-bottom">
         <span data-t="footer.rights">© 2026 Villa Rudolf</span>
         <span class="vr-foot-botlinks">
-          <a class="vr-foot-terms" href="../info/" data-langlink="../info/" data-t="nav.info">Gäste-Infos</a>
+          <a class="vr-foot-terms" href="info/" data-jazyk-strom data-t="nav.info">Gäste-Infos</a>
           <a class="vr-foot-terms" href="faq/" data-jazyk-strom data-t="footer.faq">Häufige Fragen</a>
           <a class="vr-foot-terms" href="../vylety/#planovac" data-langlink="../vylety/#planovac" data-t="footer.guide">Ausflugsplaner</a>
-          <a class="vr-foot-terms" href="../podminky/" data-langlink="../podminky/" data-t="footer.terms">Buchungsbedingungen &amp; Datenschutz</a>
+          <a class="vr-foot-terms" href="podminky/" data-jazyk-strom data-t="footer.terms">Buchungsbedingungen &amp; Datenschutz</a>
         </span>
       </div>
     </div>
@@ -1290,7 +1290,7 @@
   </div>
 
 </div>
-<script src="../assets/site.js?v=65" defer></script>
+<script src="../assets/site.js?v=66" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-before-send="vrUmamiRef"></script>
 </body>

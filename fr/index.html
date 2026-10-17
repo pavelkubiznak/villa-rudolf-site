@@ -254,7 +254,7 @@
       <a class="vr-segbtn" href="?season=leto" data-season="leto" data-active="true" aria-current="true" data-t="hero.summer">Été</a>
       <a class="vr-segbtn" href="?season=zima" data-season="zima" data-active="false" data-t="hero.winter">Hiver</a>
     </div>
-    <a class="vr-mob-2nd" href="../info/" data-langlink="../info/" data-t="nav.info">Infos pratiques</a>
+    <a class="vr-mob-2nd" href="info/" data-jazyk-strom data-t="nav.info">Infos pratiques</a>
     <!-- Časté dotazy mají vlastní stránku v každém jazyce (faq/, de/faq/…), proto data-jazyk-strom:
          tools/gen-jazyky.mjs u nich na /de/ cestu neposouvá o adresář výš. -->
     <a class="vr-mob-2nd" href="faq/" data-jazyk-strom data-t="footer.faq">Questions fréquentes</a>
@@ -1097,7 +1097,7 @@
           <li><b data-t="prebook.facts.6.k">Ski</b><span data-t="prebook.facts.6.v">Pistes à Svoboda même · skibus gratuit à 200 m du portail</span></li>
           <li><b data-t="prebook.facts.7.k">Internet</b><span data-t="prebook.facts.7.v">Wi-Fi rapide dans la maison et sur tout le terrain</span></li>
         </ul>
-        <a class="vr-prebook-link" href="../info/" data-langlink="../info/" data-t="prebook.link">Toutes les infos pratiques →</a>
+        <a class="vr-prebook-link" href="info/" data-jazyk-strom data-t="prebook.link">Toutes les infos pratiques →</a>
       </div>
 
       <!-- Ceník kreslí renderPriceBlock() z VR_PRICING; statickou kopii (bez řádku o záloze) dopisuje tools/gen-jazyky.mjs.
@@ -1180,7 +1180,7 @@
               <textarea id="vr-message" class="vr-book-textarea" rows="3" maxlength="2000" data-t-ph="cta.phMessage" placeholder="Tout ce que nous devrions savoir — nombre d’enfants, heure d’arrivée, souhaits… (facultatif)" autocomplete="off"></textarea>
             </label>
             <div class="vr-book-msg" id="vr-book-msg" role="alert" aria-live="assertive" style="display:none"></div>
-            <p class="vr-book-consent" data-t-html="book.consent">En envoyant cette demande, vous prenez connaissance de nos <a href="/podminky/" target="_blank" rel="noopener">conditions de réservation et du traitement de vos données personnelles</a>.</p>
+            <p class="vr-book-consent" data-t-html="book.consent">En envoyant cette demande, vous prenez connaissance de nos <a href="/fr/podminky/" target="_blank" rel="noopener">conditions de réservation et du traitement de vos données personnelles</a>.</p>
             <button type="submit" class="vr-book-pay" id="vr-pay"><span id="vr-pay-label" data-t="book.pay">Envoyer la demande de séjour</span> <span aria-hidden="true">&#8594;</span></button>
             <div class="vr-book-note">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
@@ -1253,10 +1253,10 @@
       <div class="vr-foot-bottom">
         <span data-t="footer.rights">© 2026 Villa Rudolf</span>
         <span class="vr-foot-botlinks">
-          <a class="vr-foot-terms" href="../info/" data-langlink="../info/" data-t="nav.info">Infos pratiques</a>
+          <a class="vr-foot-terms" href="info/" data-jazyk-strom data-t="nav.info">Infos pratiques</a>
           <a class="vr-foot-terms" href="faq/" data-jazyk-strom data-t="footer.faq">Questions fréquentes</a>
           <a class="vr-foot-terms" href="../vylety/#planovac" data-langlink="../vylety/#planovac" data-t="footer.guide">Planificateur d’excursions</a>
-          <a class="vr-foot-terms" href="../podminky/" data-langlink="../podminky/" data-t="footer.terms">Conditions de réservation et confidentialité</a>
+          <a class="vr-foot-terms" href="podminky/" data-jazyk-strom data-t="footer.terms">Conditions de réservation et confidentialité</a>
         </span>
       </div>
     </div>
@@ -1290,7 +1290,7 @@
   </div>
 
 </div>
-<script src="../assets/site.js?v=65" defer></script>
+<script src="../assets/site.js?v=66" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-before-send="vrUmamiRef"></script>
 </body>

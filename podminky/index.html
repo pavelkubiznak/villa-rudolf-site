@@ -3,40 +3,171 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- JAZYKY:START — generuje node tools/gen-jazyky.mjs, ručně neupravovat (texty jsou v T v assets/site.js a v tools/jazyky-obsah.mjs) -->
+<script>/* Jazyk (tools/gen-jazyky.mjs): ?lang= ze starých odkazů → volba z přepínače → prohlížeč de/pl/nl/fr. */
+(function(){try{var q=location.search,m=/[?&]lang=([a-z]{2})(?![a-z])/i.exec(q),t=m?m[1].toLowerCase():null;
+if(!t){try{t=localStorage.getItem('vrLang')}catch(e){}
+if(!t){var n=String((navigator.languages&&navigator.languages[0])||navigator.language||'').slice(0,2).toLowerCase();if(n==='de'||n==='pl'||n==='nl'||n==='fr')t=n;}}
+if(t==='cs'&&m){try{localStorage.setItem('vrLang','cs')}catch(e){}}
+if(t==='de'||t==='pl'||t==='en'||t==='nl'||t==='fr'){
+try{var r=document.referrer,h=r?new URL(r).hostname.replace(/^www\./,''):'',ven=!!h&&h!==location.hostname.replace(/^www\./,'');
+if(ven)sessionStorage.setItem('vrRef',JSON.stringify({r:r,t:Date.now()}));
+if(!sessionStorage.getItem('vrZdroj')){var u=new URLSearchParams(q).get('utm_source'),z=u?u.slice(0,40):(ven?h:'');if(z)sessionStorage.setItem('vrZdroj',z);}}catch(e){}
+q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace('../'+t+'/podminky/'+q+location.hash);}}catch(e){}})();</script>
 <title>Ubytovací podmínky a ochrana údajů | Villa Rudolf</title>
-<meta name="description" content="Storno podmínky, ochrana osobních údajů (GDPR) a kontakt na provozovatele Villa Rudolf ve Svobodě nad Úpou. Web bez sledovacích cookies.">
+<meta name="description" content="Storno podmínky, check-in a check-out, úklid, poplatek obci, pes, vratná kauce, ochrana osobních údajů (GDPR) a kontakt na provozovatele Villa Rudolf ve Svobodě nad Úpou.">
 <link rel="canonical" href="https://villarudolf.com/podminky/">
-<meta name="robots" content="index, follow">
+<link rel="alternate" hreflang="cs" href="https://villarudolf.com/podminky/">
+<link rel="alternate" hreflang="de" href="https://villarudolf.com/de/podminky/">
+<link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/podminky/">
+<link rel="alternate" hreflang="en" href="https://villarudolf.com/en/podminky/">
+<link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/podminky/">
+<link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/podminky/">
+<link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/podminky/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://villarudolf.com/podminky/#stranka",
+      "url": "https://villarudolf.com/podminky/",
+      "name": "Ubytovací podmínky a ochrana údajů | Villa Rudolf",
+      "inLanguage": "cs",
+      "about": {
+        "@id": "https://villarudolf.com/#villa"
+      }
+    },
+    {
+      "@type": "VacationRental",
+      "@id": "https://villarudolf.com/#villa",
+      "name": "Villa Rudolf",
+      "url": "https://villarudolf.com/"
+    }
+  ]
+}
+</script>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Villa Rudolf">
 <meta property="og:title" content="Ubytovací podmínky a ochrana údajů | Villa Rudolf">
-<meta property="og:description" content="Storno podmínky, zpracování osobních údajů a kontakt na provozovatele.">
+<meta property="og:description" content="Storno podmínky, check-in a check-out, úklid, poplatek obci, pes, vratná kauce, ochrana osobních údajů (GDPR) a kontakt na provozovatele Villa Rudolf ve Svobodě nad Úpou.">
 <meta property="og:url" content="https://villarudolf.com/podminky/">
+<meta property="og:image" content="https://villarudolf.com/media/photos/hero-summer.jpg">
+<meta property="og:locale" content="cs_CZ">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="fr_FR">
+<!-- JAZYKY:END -->
+<meta name="robots" content="index, follow">
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="podminky.css?v=23">
+<link rel="stylesheet" href="../podminky/podminky.css?v=23">
 <!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
      s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
 <script src="../assets/season.js?v=48"></script>
 </head>
 <body>
+<!-- Ubytovací podmínky — generuje node tools/gen-jazyky.mjs z tools/podstranky-obsah.mjs. Ručně neupravovat. -->
 <div class="pd-root" data-season="leto">
-<script>/* Sezóna do DOM ještě před vykreslením — dědí se z hlavního webu
-     (?season → datum → volba v rámci návštěvy), viz assets/season.js. */
-(function(){try{var r=document.currentScript.parentNode;var s=window.VRSeason&&window.VRSeason.resolve();if(s)r.setAttribute('data-season',s);}catch(e){}})();</script>
+<script>(function(){try{var r=document.currentScript.parentNode;var s=window.VRSeason&&window.VRSeason.resolve();if(s)r.setAttribute('data-season',s);}catch(e){}})();</script>
   <div id="app">
-    <noscript>
-      <div style="max-width:820px;margin:0 auto;padding:40px 18px;font-family:'Archivo',sans-serif;color:#F0EBE1">
-        <h1 style="font-family:'Newsreader',serif;font-weight:400">Ubytovací podmínky a ochrana údajů</h1>
-        <p><b>Storno podmínky:</b> 60 a více dní před příjezdem 10 %, 59–35 dní 35 %, 34–21 dní 50 %, 20–11 dní 70 %, 10 a méně dní 100 % z celkové ceny. Záloha 30 % se započítává.</p>
-        <p><b>Osobní údaje</b> zpracováváme pro vyřízení poptávky a rezervace, ubytovací smlouvu, zákonnou evidenci ubytovaných (6 let), osobního průvodce výlety (odkaz platí 14 dní po odjezdu) a provoz vily. Uložení u zpracovatele Supabase (Londýn, Spojené království — země s rozhodnutím EU o odpovídající ochraně); kontakty, poznámky a kód ke dveřím se 30 dní po odjezdu anonymizují. Web ani průvodce nepoužívají sledovací cookies (Umami bez cookies a IP adres); písma z Google Fonts (Google LLC, USA). Práva subjektů a žádosti: rezervace@villarudolf.com, vyřízení do 30 dnů.</p>
-        <p><b>Provozovatel:</b> Sintera Czech s.r.o., IČO 29130336, Orlická 163/18, 500 03 Hradec Králové · objekt Villa Rudolf, Svoboda nad Úpou, Krkonoše · kontaktní osoba Pavel Kubizňák · <a href="mailto:rezervace@villarudolf.com" style="color:#E7B588">rezervace@villarudolf.com</a> · <a href="tel:+420775220785" style="color:#E7B588">+420 775 220 785</a></p>
+    <header class="vr-nav"><div class="vr-nav-inner">
+      <a class="vr-brand" data-site="domu" href="../?lang=cs"><b>VILLA RUDOLF</b><i lang="cs">KRKONOŠE</i></a>
+      <nav class="vr-navlinks" aria-label="Sekce">
+        <a data-site="dum" href="../?lang=cs#dum">Dům</a>
+        <a data-site="vybaveni" href="../?lang=cs#vybaveni">Vybavení</a>
+        <a data-site="galerie" href="../?lang=cs#galerie">Galerie</a>
+        <a data-site="loznice" href="../?lang=cs#loznice">Interiér</a>
+        <a data-site="lokalita" href="../?lang=cs#lokalita">Lokalita</a>
+        <a data-site="vylety" href="../vylety/?lang=cs">Výlety</a>
+      </nav>
+      <div class="vr-navright"><div class="vr-langs" role="group" aria-label="Jazyk / Language">
+          <a class="vr-lang" href="./" hreflang="cs" lang="cs" data-lang="cs" data-active="true" aria-current="page">CS</a>
+          <a class="vr-lang" href="../en/podminky/" hreflang="en" lang="en" data-lang="en" data-active="false">EN</a>
+          <a class="vr-lang" href="../de/podminky/" hreflang="de" lang="de" data-lang="de" data-active="false">DE</a>
+          <a class="vr-lang" href="../pl/podminky/" hreflang="pl" lang="pl" data-lang="pl" data-active="false">PL</a>
+          <a class="vr-lang" href="../nl/podminky/" hreflang="nl" lang="nl" data-lang="nl" data-active="false">NL</a>
+          <a class="vr-lang" href="../fr/podminky/" hreflang="fr" lang="fr" data-lang="fr" data-active="false">FR</a>
+        </div>
+        <a class="vr-navcta" data-site="rezervace" href="../?lang=cs#rezervace">Rezervovat</a>
+        <button class="vr-burger" id="vr-burger" aria-label="Menu" aria-expanded="false" aria-controls="vr-mob"><span></span><span></span><span></span></button>
       </div>
-    </noscript>
+    </div></header>
+    <div class="vr-mob" id="vr-mob" data-open="false">
+      <a data-site="dum" href="../?lang=cs#dum">Dům</a>
+      <a data-site="vybaveni" href="../?lang=cs#vybaveni">Vybavení</a>
+      <a data-site="galerie" href="../?lang=cs#galerie">Galerie</a>
+      <a data-site="loznice" href="../?lang=cs#loznice">Interiér</a>
+      <a data-site="lokalita" href="../?lang=cs#lokalita">Lokalita</a>
+      <a data-site="vylety" href="../vylety/?lang=cs">Výlety</a>
+      <a class="vr-mob-cta" data-site="rezervace" href="../?lang=cs#rezervace">Rezervovat</a>
+      <a class="vr-mob-2nd" href="../info/">Praktické info</a>
+      <div class="vr-mob-langs" role="group" aria-label="Jazyk / Language">
+        <a class="vr-lang" href="./" hreflang="cs" lang="cs" data-lang="cs" data-active="true" aria-current="page">CS</a>
+        <a class="vr-lang" href="../en/podminky/" hreflang="en" lang="en" data-lang="en" data-active="false">EN</a>
+        <a class="vr-lang" href="../de/podminky/" hreflang="de" lang="de" data-lang="de" data-active="false">DE</a>
+        <a class="vr-lang" href="../pl/podminky/" hreflang="pl" lang="pl" data-lang="pl" data-active="false">PL</a>
+        <a class="vr-lang" href="../nl/podminky/" hreflang="nl" lang="nl" data-lang="nl" data-active="false">NL</a>
+        <a class="vr-lang" href="../fr/podminky/" hreflang="fr" lang="fr" data-lang="fr" data-active="false">FR</a>
+      </div>
+    </div>
+    <div class="pd-wrap">
+      <section class="pd-hero"><p class="pd-eyebrow">Villa Rudolf · Krkonoše</p><h1 class="pd-title">Ubytovací podmínky a ochrana údajů</h1><p class="pd-intro">Storno podmínky, zpracování osobních údajů a kontakt na provozovatele. Střízlivě a přehledně.</p></section>
+      <main class="pd-main">
+        <section class="pd-sec" id="pobyt"><h2 class="pd-h2">Pobyt a platby</h2><p class="pd-lead">Co platí pro každý pobyt. Cenu za noc a nejkratší délku pobytu pro váš termín najdete v <a href="../?lang=cs#rezervace">ceníku a kalendáři</a>.</p>
+          <div class="pd-rows">
+          <div class="pd-row"><div class="pd-rk">Příjezd a odjezd</div><div class="pd-rv">Check-in od 15:00, check-out do 10:00.</div></div>
+          <div class="pd-row"><div class="pd-rk">Úklid</div><div class="pd-rv">3 500 Kč za pobyt, jednorázově.</div></div>
+          <div class="pd-row"><div class="pd-rk">Poplatek obci</div><div class="pd-rv">25 Kč za dospělého a noc, děti neplatí.</div></div>
+          <div class="pd-row"><div class="pd-rk">Pes</div><div class="pd-rv">Vítaný, poplatek 500 Kč za pobyt.</div></div>
+          <div class="pd-row"><div class="pd-rk">Vratná kauce</div><div class="pd-rv">5 000 Kč, úklid se z ní odečítá.</div></div>
+          <div class="pd-row"><div class="pd-rk">V ceně</div><div class="pd-rv">Energie, finská sauna, Wi-Fi, parkování na pozemku, ručník pro každého hosta a dětská postýlka.</div></div>
+          <div class="pd-row"><div class="pd-rk">Dům</div><div class="pd-rv">Vždy celý a jen pro jednu skupinu, nejvýš 22 osob. Nekuřácký.</div></div>
+          <div class="pd-row"><div class="pd-rk">Klid</div><div class="pd-rv">Kvůli sousedům na zahradě bez reproduktorů a po 22:00 klid. Posezení u ohně do noci je v pořádku.</div></div>
+          </div>
+        </section>
+        <section class="pd-sec" id="storno"><h2 class="pd-h2">Storno podmínky</h2><p class="pd-lead">Záloha ve výši 30 % z celkové ceny je splatná po potvrzení termínu a započítává se do konečné ceny pobytu. Při zrušení rezervace účtujeme storno poplatek podle toho, kolik dní před příjezdem k zrušení dojde:</p>
+          <div class="pd-tablewrap"><table class="pd-table"><thead><tr><th>Zrušení pobytu</th><th style="text-align:right">Storno poplatek</th></tr></thead><tbody>
+              <tr><td class="when">60 a více dní před příjezdem</td><td class="fee">10 % z celkové ceny</td></tr>
+              <tr><td class="when">59–35 dní před příjezdem</td><td class="fee">35 %</td></tr>
+              <tr><td class="when">34–21 dní před příjezdem</td><td class="fee">50 %</td></tr>
+              <tr><td class="when">20–11 dní před příjezdem</td><td class="fee">70 %</td></tr>
+              <tr><td class="when">10 a méně dní před příjezdem</td><td class="fee">100 %</td></tr>
+          </tbody></table></div>
+        </section>
+        <section class="pd-sec" id="udaje"><h2 class="pd-h2">Ochrana osobních údajů</h2><div class="pd-rows">
+          <div class="pd-row"><div class="pd-rk">Správce údajů</div><div class="pd-rv">Sintera Czech s.r.o., IČO 29130336, Orlická 163/18, 500 03 Hradec Králové</div></div>
+          <div class="pd-row"><div class="pd-rk">Poptávka a rezervace</div><div class="pd-rv">Jméno, e-mail, telefon, termín pobytu, počet osob a text vaší zprávy — abychom vyřídili poptávku, uzavřeli ubytovací smlouvu a domluvili s vámi průběh pobytu. Právní základ: plnění smlouvy.</div></div>
+          <div class="pd-row"><div class="pd-rk">Zákonná evidence ubytovaných</div><div class="pd-rv">Jméno, datum narození a adresa, u cizinců také státní občanství a číslo dokladu — pro domovní knihu, poplatek z pobytu a hlášení cizinecké policii (UbyPort). Právní základ: zákonná povinnost; evidenci uchováváme 6 let a nelze ji na žádost vymazat dříve.</div></div>
+          <div class="pd-row"><div class="pd-rk">Osobní průvodce výlety</div><div class="pd-rv">Odkaz s tokenem jen pro vás. Průvodce zná vaše jméno, termín a složení skupiny (počet dospělých a dětí, případně zájmy), aby doporučil výlety na míru. Odkaz platí 14 dní po odjezdu.</div></div>
+          <div class="pd-row"><div class="pd-rk">Provoz vily</div><div class="pd-rv">Kód ke dveřím a lednici a poznámky k pobytu (např. postýlka, dřívější příjezd) — používáme je jen během pobytu, aby vše fungovalo bez čekání.</div></div>
+          <div class="pd-row"><div class="pd-rk">Kde údaje jsou</div><div class="pd-rv">U zpracovatele Supabase (servery AWS v Londýně, Spojené království — země s rozhodnutím EU o odpovídající ochraně) a v e-mailu a kalendáři majitele. Rezervační portály (Booking.com, Airbnb, FeWo-direkt, e-chalupy, Megaubytko) jsou samostatní správci a řídí se vlastními podmínkami. Web a průvodce běží na GitHub Pages (GitHub, USA – standardní smluvní doložky), návštěvnost měříme na vlastním serveru v Německu (Hetzner), zálohy serveru leží na Google Drive (Google, USA).</div></div>
+          <div class="pd-row"><div class="pd-rk">Doba uchování</div><div class="pd-rv">Kontaktní údaje, poznámky a kód ke dveřím se 30 dní po odjezdu automaticky anonymizují. Jméno, termín pobytu a počet osob zůstávají v přehledu pobytů 6 let. Evidenci ubytovaných uchováváme 6 let, účetní doklady po dobu stanovenou zákonem.</div></div>
+          <div class="pd-row"><div class="pd-rk">Měření návštěvnosti a externí zdroje</div><div class="pd-rv">Návštěvnost webu i průvodce měříme nástrojem Umami — bez cookies a bez ukládání IP adres (z polohy jen země a město). Data o výletech, počasí i písma načítáme z vlastních zdrojů.</div></div>
+          <div class="pd-row"><div class="pd-rk">Vaše práva</div><div class="pd-rv">Přístup k údajům, oprava, výmaz, omezení zpracování, námitka a přenositelnost. Stížnost můžete podat u Úřadu pro ochranu osobních údajů (uoou.gov.cz). Žádosti vyřídíme do 30 dnů.</div></div>
+          <div class="pd-row"><div class="pd-rk">Kontakt</div><div class="pd-rv"><a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a></div></div>
+          </div>
+          <div class="pd-note"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg><p>Web ani průvodce nepoužívají žádné sledovací cookies. Návštěvnost měříme anonymně nástrojem Umami, který funguje bez cookies a neukládá IP adresy.</p></div>
+        </section>
+        <section class="pd-sec" id="provozovatel"><h2 class="pd-h2">Provozovatel</h2><div class="pd-rows">
+          <div class="pd-row"><div class="pd-rk">Provozovatel</div><div class="pd-rv">Sintera Czech s.r.o.</div></div>
+          <div class="pd-row"><div class="pd-rk">IČO</div><div class="pd-rv">29130336</div></div>
+          <div class="pd-row"><div class="pd-rk">Sídlo</div><div class="pd-rv">Orlická 163/18, 500 03 Hradec Králové</div></div>
+          <div class="pd-row"><div class="pd-rk">Objekt</div><div class="pd-rv">Villa Rudolf — soukromé horské sídlo, Svoboda nad Úpou, Krkonoše</div></div>
+          <div class="pd-row"><div class="pd-rk">Kontaktní osoba</div><div class="pd-rv">Pavel Kubizňák</div></div>
+          <div class="pd-row"><div class="pd-rk">E-mail</div><div class="pd-rv"><a href="mailto:rezervace@villarudolf.com">rezervace@villarudolf.com</a></div></div>
+          <div class="pd-row"><div class="pd-rk">Telefon</div><div class="pd-rv"><a href="tel:+420775220785">+420 775 220 785</a></div></div>
+          </div>
+        </section>
+      </main>
+      <footer class="pd-footer"><a class="pd-back" data-site="domu" href="../?lang=cs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg><span>Zpět na web vily</span></a><span class="pd-foot-brand">Villa Rudolf · Svoboda nad Úpou, Krkonoše</span></footer>
+    </div>
   </div>
 </div>
-<script src="podminky.js?v=54" defer></script>
+<script src="../assets/podstranka.js?v=1" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
 </body>
