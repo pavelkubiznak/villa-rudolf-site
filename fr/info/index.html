@@ -24,6 +24,7 @@
       "url": "https://villarudolf.com/fr/info/",
       "name": "Informations pratiques pour les voyageurs | Villa Rudolf",
       "inLanguage": "fr",
+      "dateModified": "2026-10-17",
       "about": {
         "@id": "https://villarudolf.com/#villa"
       }
@@ -55,7 +56,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="../../info/info.css?v=34">
+<link rel="stylesheet" href="../../info/info.css?v=35">
 <!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
      s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
 <script src="../../assets/season.js?v=48"></script>
@@ -195,6 +196,40 @@
               <h3 class="pi-name" data-i18n="c4title">Calme la nuit</h3>
             </div>
             <p class="pi-body" data-i18n="vQuiet">Après 22h00, merci de rester calmes par égard pour les voisins proches. Svoboda nad Úpou est une petite ville de montagne tranquille — merci de l’aider à le rester.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ============ 1b. Vzdálenosti (od 10/2026; čísla jen z text-villa-rudolf.md, homepage a trips.json travelMin) ============ -->
+      <section class="pi-sec" id="vzdalenosti">
+        <div class="pi-sechead">
+          <h2 class="pi-h2" data-i18n="sDist">Distances depuis la maison</h2>
+          <p class="pi-sub" data-i18n="sDistSub">À pied, en voiture et jusqu’aux grandes villes — à titre indicatif.</p>
+        </div>
+        <div class="pi-grid">
+
+          <article class="pi-card pi-card-wide">
+            <div class="pi-ctop">
+              <span class="pi-ico"><svg><use href="#i-route"/></svg></span>
+              <h3 class="pi-name" data-i18n="cDistTitle">À quelle distance</h3>
+            </div>
+            <div class="pi-rows">
+              <div class="pi-row"><span class="pi-rl" data-i18n="dCentrum">Centre de Svoboda nad Úpou</span><span class="pi-rv" data-i18n="vCentrum">150 m à pied — magasin, restaurants, bowling, location</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dBus">Arrêt de bus</span><span class="pi-rv" data-i18n="vBus">100 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSkibus">Arrêt du skibus (gratuit)</span><span class="pi-rv" data-i18n="vSkibus">200 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dVlak">Gare</span><span class="pi-rv" data-i18n="vVlak">500 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSjezd">Pistes de Svoboda nad Úpou</span><span class="pi-rv" data-i18n="vSjezd">1,9 km</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dCerna">Černá hora et Janské Lázně</span><span class="pi-rv" data-i18n="vCerna">4 km, environ 10 min en voiture</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dTrutnov">Trutnov</span><span class="pi-rv" data-i18n="vTrutnov">11 km</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dPec">Pec pod Sněžkou</span><span class="pi-rv" data-i18n="vPec">13 km, environ 20 min en voiture</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSnezka">Téléphérique de la Sněžka</span><span class="pi-rv" data-i18n="vSnezka">environ 20 min en voiture</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dStachel">Forteresse de Stachelberg</span><span class="pi-rv" data-i18n="vStachel">environ 15 min en voiture</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dAdrspach">Rochers d’Adršpach</span><span class="pi-rv" data-i18n="vAdrspach">environ 45 min en voiture</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dKarpacz">Aquapark Tropikana, Karpacz (Pologne)</span><span class="pi-rv" data-i18n="vKarpacz">environ 45 min en voiture</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dMesta">Prague et Wrocław</span><span class="pi-rv" data-i18n="vMesta">environ 2 heures de route</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dDrazdany">Dresde</span><span class="pi-rv" data-i18n="vDrazdany">environ 3 heures de route</span></div>
+            </div>
           </article>
 
         </div>
@@ -382,6 +417,7 @@
       <a class="pi-back" href="../"><svg><use href="#i-arrow-l"/></svg><span data-i18n="back">Retour au site de la villa</span></a>
       <a class="pi-terms" data-i18n="terms" href="../podminky/">Conditions et confidentialité</a>
       <span class="pi-foot-brand">Villa Rudolf · Svoboda nad Úpou, Krkonoše</span>
+      <span class="pi-foot-brand" data-aktualizovano-obal>Mis à jour le <time data-aktualizovano datetime="2026-10-17">17 oct. 2026</time></span>
     </footer>
 
   </div>

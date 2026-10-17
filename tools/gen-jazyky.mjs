@@ -80,7 +80,7 @@ class VEl {
   set className(v) { this.attrs.set('class', String(v)); }
   get id() { return this.attrs.get('id') || ''; }
   set id(v) { this.attrs.set('id', String(v)); }
-  appendChild(c) { this.childNodes.push(c); return c; }
+  appendChild(c) { if (c && c.tag === '#fragment') this.childNodes.push(...c.childNodes); else this.childNodes.push(c); return c; }
   get textContent() { return this.childNodes.map((c) => c.textContent).join(''); }
   set textContent(v) { this.childNodes = v === '' || v == null ? [] : [new VText(v)]; }
   get innerHTML() { return this.childNodes.map(serialize).join(''); }
@@ -121,6 +121,7 @@ function nactiSite() {
     readyState: 'loading', documentElement: new VEl('html'),
     addEventListener() {}, removeEventListener() {},
     createElement: (t) => new VEl(t), createTextNode: (s) => new VText(s),
+    createDocumentFragment: () => new VEl('#fragment'),
     getElementById: (id) => ids.get(id) || null,
     querySelector: (sel) => { const m = /^#([\w-]+)$/.exec(sel); return m ? ids.get(m[1]) || null : null; },
     querySelectorAll: () => [],
@@ -132,7 +133,7 @@ function nactiSite() {
   vm.runInContext(readFileSync(join(ROOT, 'assets/site.js'), 'utf8'), ctx, { filename: 'assets/site.js' });
   const api = vm.runInContext(`({ T, VR_FACTS, VR_PRICING, VR_REVIEWS, VR_CONTACT, VR_TRIP_COUNTS, GALLERY, state, NBf,
     fillFacts, pluralForm, resolve, fmtM, fxLine, fmtCheckedAt, renderRatings, buildRoster, renderPriceBlock, renderFooterContact,
-    buildMarqList, buildMarqCard })`, ctx);
+    buildMarqList, buildMarqCard, renderGallery })`, ctx);
   /* Vykreslí blok funkcí ze site.js do prázdného prvku #id a vrátí ho. */
   api.blok = (id, lang, kresli) => {
     const host = new VEl('div'); host.id = id; ids.set(id, host);
@@ -377,6 +378,9 @@ function bloky(api, lang) {
   for (const it of api.buildMarqList()) pul.appendChild(api.buildMarqCard(it));
   return {
     'vr-teaser': pojezd,
+    /* Galerie: 79 fotek s popisky v jazyce stránky (GALLERY + GALLERY_ALT), lazy — stahují se až při
+       scrollu. Robot bez JS tak čte, co na fotkách je (altán, sauna, pokoje…). */
+    'vr-gal': api.blok('vr-gal', lang, () => api.renderGallery()),
     'vr-ratings': api.blok('vr-ratings', lang, () => api.renderRatings()),
     'vr-roster': api.blok('vr-roster', lang, (h) => api.buildRoster(h)),
     'vr-priceblock': cenik,
@@ -547,7 +551,7 @@ ${polozky}
   const jsonld = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'FAQPage', '@id': abs(cesta) + '#faq', url: abs(cesta), name: S.title, inLanguage: lang,
+      { '@type': 'FAQPage', '@id': abs(cesta) + '#faq', url: abs(cesta), name: S.title, inLanguage: lang, dateModified: '%%DATUM%%',
         about: { '@id': VILA_ID },
         mainEntity: OBSAH.FAQ.flatMap((sk) => sk.otazky.map((o) => ({
           '@type': 'Question', name: q(o.q), acceptedAnswer: { '@type': 'Answer', text: prostyText(q(o.a)) },
@@ -568,7 +572,7 @@ ${hlavicka(api, lang, { cesta, cesty: FAQ, title: S.title, desc: S.desc, jsonld 
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="${koren}info/info.css?v=34">
+<link rel="stylesheet" href="${koren}info/info.css?v=35">
 <link rel="stylesheet" href="${koren}assets/faq.css?v=3">
 <script src="${koren}assets/season.js?v=54"></script>
 </head>
@@ -617,7 +621,7 @@ ${sekce}
       <a class="pi-back" href="${domu}"><span aria-hidden="true">←</span> ${escText(S.zpet)}</a>
       <a class="pi-terms" href="${relativni(cesta, INFO_CESTY[lang])}">${escText(t.nav.info)}</a>
       <a class="pi-terms" href="${relativni(cesta, POD_CESTY[lang])}">${escText(t.footer.terms)}</a>
-      <span class="pi-foot-brand">Villa Rudolf · Luční 519, Svoboda nad Úpou · ${escText(t.footer.formerly)}</span>
+      <span class="pi-foot-brand">Villa Rudolf · Luční 519, Svoboda nad Úpou · ${escText(t.footer.formerly)} · ${datumPrvek(lang)}</span>
     </footer>
   </div>
 </div>
@@ -667,7 +671,7 @@ function schemaPodstranka(lang, cesta, nazev) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'WebPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: nazev, inLanguage: lang, about: { '@id': VILA_ID } },
+      { '@type': 'WebPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: nazev, inLanguage: lang, dateModified: '%%DATUM%%', about: { '@id': VILA_ID } },
       { '@type': 'VacationRental', '@id': VILA_ID, name: 'Villa Rudolf', url: abs(DOMOV[lang]) },
     ],
   };
@@ -690,6 +694,7 @@ function infoStranka(api, sablona, lang) {
       setAttr(el, 'lang', lang, edits);
       if (lang === 'cs') delAttr(html, el, 'data-root', edits); else setAttr(el, 'data-root', '../', edits);
     }
+    if (hasAttr(el, 'data-aktualizovano-obal')) { setInner(el, datumPrvek(lang), edits); continue; }
     if (el.tag === 'div' && (hasClass(el, 'vr-langs') || hasClass(el, 'vr-mob-langs'))) {
       const radek = html.slice(html.lastIndexOf('\n', el.start) + 1, el.start);
       setInner(el, prepinac(cesta, INFO_CESTY, lang, radek.match(/^\s*/)[0]), edits);
@@ -782,7 +787,7 @@ ${radky(L.operatorRows, true)}
           </div>
         </section>
       </main>
-      <footer class="pd-footer"><a class="pd-back" data-site="domu" href="${domu}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg><span>${escText(L.back)}</span></a><span class="pd-foot-brand">${escText(L.footBrand)}</span></footer>
+      <footer class="pd-footer"><a class="pd-back" data-site="domu" href="${domu}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg><span>${escText(L.back)}</span></a><span class="pd-foot-brand">${escText(L.footBrand)} · ${datumPrvek(lang)}</span></footer>
     </div>
   </div>
 </div>
@@ -820,7 +825,7 @@ ${hlavicka(api, lang, { cesta, cesty, title, desc, jsonld })}
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="${koren}info/info.css?v=34">
+<link rel="stylesheet" href="${koren}info/info.css?v=35">
 <link rel="stylesheet" href="${koren}assets/faq.css?v=3">
 <script src="${koren}assets/season.js?v=54"></script>
 </head>
@@ -871,7 +876,7 @@ ${obsah}
       <a class="pi-terms" href="${relativni(cesta, SROV_CESTY[lang])}">${escText(PK.SROVNANI[lang].eyebrow)}</a>
       <a class="pi-terms" href="${relativni(cesta, INFO_CESTY[lang])}">${escText(t.nav.info)}</a>
       <a class="pi-terms" href="${relativni(cesta, POD_CESTY[lang])}">${escText(t.footer.terms)}</a>
-      <span class="pi-foot-brand">Villa Rudolf · Luční 519, Svoboda nad Úpou · ${escText(t.footer.formerly)}</span>
+      <span class="pi-foot-brand">Villa Rudolf · Luční 519, Svoboda nad Úpou · ${escText(t.footer.formerly)} · ${datumPrvek(lang)}</span>
     </footer>
   </div>
 </div>
@@ -906,7 +911,7 @@ ${karty}
   const jsonld = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'CollectionPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: H.title, inLanguage: lang, about: { '@id': VILA_ID },
+      { '@type': 'CollectionPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: H.title, inLanguage: lang, dateModified: '%%DATUM%%', about: { '@id': VILA_ID },
         hasPart: PK.PRO_KOHO.map((p) => ({ '@type': 'WebPage', url: abs(proCesty(p.id)[lang]), name: p[lang].h1 })) },
       { '@type': 'VacationRental', '@id': VILA_ID, name: 'Villa Rudolf', url: abs(DOMOV[lang]) },
     ],
@@ -945,7 +950,7 @@ ${dalsi}
     '@context': 'https://schema.org',
     '@graph': [
       { '@type': 'WebPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: T.title, description: T.desc, inLanguage: lang,
-        about: { '@id': VILA_ID }, isPartOf: { '@id': abs(PRO_CESTY[lang]) + '#stranka' } },
+        dateModified: '%%DATUM%%', about: { '@id': VILA_ID }, isPartOf: { '@id': abs(PRO_CESTY[lang]) + '#stranka' } },
       { '@type': 'VacationRental', '@id': VILA_ID, name: 'Villa Rudolf', url: abs(DOMOV[lang]) },
     ],
   };
@@ -986,12 +991,37 @@ ${tabulka(S.sloupceB, S.radkyB)}
   const jsonld = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'WebPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: S.title, description: S.desc, inLanguage: lang, about: { '@id': VILA_ID } },
+      { '@type': 'WebPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: S.title, description: S.desc, inLanguage: lang, dateModified: '%%DATUM%%', about: { '@id': VILA_ID } },
       { '@type': 'VacationRental', '@id': VILA_ID, name: 'Villa Rudolf', url: abs(DOMOV[lang]) },
     ],
   };
   return obalPodstranky(api, lang, { cesta, cesty: SROV_CESTY, title: S.title, desc: S.desc, eyebrow: 'Villa Rudolf · ' + S.eyebrow,
     h1: S.h1, intro: S.intro, obsah, jsonld, komentar: 'Srovnání (tools/pro-koho-obsah.mjs, SROVNANI)' });
+}
+
+
+/* ============================ Datum „aktualizováno" (od 10/2026) ============================
+   Podstránky (info, podmínky, Časté dotazy, Pro koho, Srovnání) nesou viditelné datum poslední změny
+   a v JSON-LD dateModified — AI asistenti podle něj poznají, jak čerstvá fakta jsou. Generátor píše
+   zástupné znaky %%DATUM%% / %%DATUM_TEXT%% a na konci je dosadí: datum se posune JEN tehdy, když se
+   obsah stránky (bez data) opravdu změnil, jinak zůstane to staré (a --check projde i druhý den). */
+const AKTUALIZOVANO = { cs: 'Aktualizováno', de: 'Aktualisiert am', pl: 'Zaktualizowano', en: 'Updated', nl: 'Bijgewerkt op', fr: 'Mis à jour le' };
+const datumPrvek = (lang) => `${AKTUALIZOVANO[lang]} <time data-aktualizovano datetime="%%DATUM%%">%%DATUM_TEXT%%</time>`;
+const normalizujDatum = (h) => h
+  .replace(/<time data-aktualizovano datetime="\d{4}-\d{2}-\d{2}">[^<]*<\/time>/g, '<time data-aktualizovano datetime="%%DATUM%%">%%DATUM_TEXT%%</time>')
+  .replace(/"dateModified": "\d{4}-\d{2}-\d{2}"/g, '"dateModified": "%%DATUM%%"');
+function dosadDatum(api, soubor, html, dnes) {
+  if (!html.includes('%%DATUM%%')) return html;
+  const lang = JAZYKY.includes(soubor.split('/')[0]) ? soubor.split('/')[0] : 'cs';
+  const cesta = join(ROOT, soubor);
+  const stary = existsSync(cesta) ? readFileSync(cesta, 'utf8') : null;
+  let datum = dnes;
+  if (stary && normalizujDatum(stary) === html) {
+    const m = /<time data-aktualizovano datetime="(\d{4}-\d{2}-\d{2})"/.exec(stary) || /"dateModified": "(\d{4}-\d{2}-\d{2})"/.exec(stary);
+    if (m) datum = m[1];
+  }
+  api.state.lang = lang;
+  return html.replace(/%%DATUM%%/g, datum).replace(/%%DATUM_TEXT%%/g, escText(api.fmtCheckedAt(datum)));
 }
 
 /* ============================ 6. sitemap.xml ============================ */
@@ -1092,7 +1122,9 @@ for (const L of JAZYKY) vystupy[POD_CESTY[L] + 'index.html'] = podminkyStranka(a
 for (const L of JAZYKY) vystupy[PRO_CESTY[L] + 'index.html'] = proKohoHub(api, L);
 for (const p of PK.PRO_KOHO) for (const L of JAZYKY) vystupy[proCesty(p.id)[L] + 'index.html'] = proKohoStranka(api, L, p);
 for (const L of JAZYKY) vystupy[SROV_CESTY[L] + 'index.html'] = srovnaniStranka(api, L);
-vystupy['sitemap.xml'] = sitemap(vystupy, new Date().toISOString().slice(0, 10));
+const DNES = process.env.GEN_DNES || new Date().toISOString().slice(0, 10);   // GEN_DNES jen pro test-jazyky
+for (const f of Object.keys(vystupy)) vystupy[f] = dosadDatum(api, f, vystupy[f], DNES);
+vystupy['sitemap.xml'] = sitemap(vystupy, DNES);
 
 if (chyby.length) {
   console.error(`✗ ${chyby.length} chyb — nic se nezapsalo:\n  - ` + chyby.join('\n  - '));

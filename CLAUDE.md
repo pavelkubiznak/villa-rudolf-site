@@ -326,6 +326,14 @@ a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.m
 - **Srovnání (od 17. 10. 2026):** `/srovnani/` (+ jazyky) — celá vila vs. hotel / dvě chaty a přímo vs. portál.
   Texty `SROVNANI` v `tools/pro-koho-obsah.mjs`. U hotelu, chat a portálů jen obecně („obvykle“), bez cizích
   jmen a cen; „cena bez provize“ = ceník z 21. 9. 2026; cena na osobu `{naosobu:úroveň:počet}` počítá generátor.
+- **Datum „aktualizováno“ (od 17. 10. 2026):** podstránky (info, podmínky, Časté dotazy, Pro koho, Srovnání)
+  mají v patičce viditelné datum a v JSON-LD `dateModified`. Generátor ho posune jen při skutečné změně obsahu
+  (`dosadDatum()`, test „jiný den bez změny“ v `test-jazyky.mjs`). V `llms.txt` a `de/llms.txt` je řádek
+  „Aktualizováno …“ psaný ručně — přepsat při každé úpravě faktů; test hlídá, že není starší než `VR_REVIEWS.checkedAt`.
+- **Galerie a vzdálenosti pro AI (od 17. 10. 2026):** 79 fotek galerie je ve statickém HTML (kreslí je
+  `renderGallery()`), popisky v jazyce stránky z `GALLERY_ALT` v `site.js` — nová fotka v `GALLERY` potřebuje
+  i překlad tam. Praktické info má sekci „Vzdálenosti od domu“ (čísla z text-villa-rudolf.md, homepage a `travelMin`
+  v `trips.json`).
 - **Nizozemština a francouzština (Benelux, od 9. 10. 2026)** jsou homepage, Časté dotazy, info a podmínky.
   Výlety a průvodce hosta umí dál jen cs/en/de/pl. Z `/nl/` a `/fr/` se proto otevírají
   anglicky: `vrSubLang()` v `site.js`, `jazykPodstranky()` v generátoru a mapa `NAHRADA` v jejich JS.

@@ -34,6 +34,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
       "url": "https://villarudolf.com/info/",
       "name": "Praktické informace pro hosty | Villa Rudolf",
       "inLanguage": "cs",
+      "dateModified": "2026-10-17",
       "about": {
         "@id": "https://villarudolf.com/#villa"
       }
@@ -65,7 +66,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="info.css?v=34">
+<link rel="stylesheet" href="info.css?v=35">
 <!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
      s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
 <script src="../assets/season.js?v=48"></script>
@@ -205,6 +206,40 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
               <h3 class="pi-name" data-i18n="c4title">Noční klid</h3>
             </div>
             <p class="pi-body" data-i18n="vQuiet">Po 22:00 prosíme o klid kvůli blízkým sousedům. Svoboda nad Úpou je klidné horské městečko — díky, že ho takové udržíme.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ============ 1b. Vzdálenosti (od 10/2026; čísla jen z text-villa-rudolf.md, homepage a trips.json travelMin) ============ -->
+      <section class="pi-sec" id="vzdalenosti">
+        <div class="pi-sechead">
+          <h2 class="pi-h2" data-i18n="sDist">Vzdálenosti od domu</h2>
+          <p class="pi-sub" data-i18n="sDistSub">Pěšky, autem i k velkým městům — orientačně.</p>
+        </div>
+        <div class="pi-grid">
+
+          <article class="pi-card pi-card-wide">
+            <div class="pi-ctop">
+              <span class="pi-ico"><svg><use href="#i-route"/></svg></span>
+              <h3 class="pi-name" data-i18n="cDistTitle">Jak daleko to je</h3>
+            </div>
+            <div class="pi-rows">
+              <div class="pi-row"><span class="pi-rl" data-i18n="dCentrum">Centrum Svobody nad Úpou</span><span class="pi-rv" data-i18n="vCentrum">150 m pěšky — obchod, restaurace, bowling, půjčovny</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dBus">Autobusová zastávka</span><span class="pi-rv" data-i18n="vBus">100 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSkibus">Zastávka skibusu (zdarma)</span><span class="pi-rv" data-i18n="vSkibus">200 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dVlak">Vlakové nádraží</span><span class="pi-rv" data-i18n="vVlak">500 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSjezd">Sjezdovky ve Svobodě nad Úpou</span><span class="pi-rv" data-i18n="vSjezd">1,9 km</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dCerna">Černá hora a Janské Lázně</span><span class="pi-rv" data-i18n="vCerna">4 km, asi 10 min autem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dTrutnov">Trutnov</span><span class="pi-rv" data-i18n="vTrutnov">11 km</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dPec">Pec pod Sněžkou</span><span class="pi-rv" data-i18n="vPec">13 km, asi 20 min autem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSnezka">Lanovka na Sněžku</span><span class="pi-rv" data-i18n="vSnezka">asi 20 min autem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dStachel">Pevnost Stachelberg</span><span class="pi-rv" data-i18n="vStachel">asi 15 min autem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dAdrspach">Adršpašské skály</span><span class="pi-rv" data-i18n="vAdrspach">asi 45 min autem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dKarpacz">Aquapark Tropikana, Karpacz (PL)</span><span class="pi-rv" data-i18n="vKarpacz">asi 45 min autem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dMesta">Praha a Vratislav</span><span class="pi-rv" data-i18n="vMesta">asi 2 hodiny autem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dDrazdany">Drážďany</span><span class="pi-rv" data-i18n="vDrazdany">asi 3 hodiny autem</span></div>
+            </div>
           </article>
 
         </div>
@@ -392,6 +427,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
       <a class="pi-back" href="../?lang=cs"><svg><use href="#i-arrow-l"/></svg><span data-i18n="back">Zpět na web vily</span></a>
       <a class="pi-terms" data-i18n="terms" href="../podminky/">Podmínky a ochrana údajů</a>
       <span class="pi-foot-brand">Villa Rudolf · Svoboda nad Úpou, Krkonoše</span>
+      <span class="pi-foot-brand" data-aktualizovano-obal>Aktualizováno <time data-aktualizovano datetime="2026-10-17">17. 10. 2026</time></span>
     </footer>
 
   </div>

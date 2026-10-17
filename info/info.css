@@ -186,3 +186,5 @@ body:has(.pi-root[data-season="zima"]){background:#eef2f6}
 /* Přepínač jazyka jsou od 10/2026 odkazy (každý jazyk má vlastní stránku) — .pi-root a by jim vzal barvu. */
 .pi-root a.vr-lang{display:inline-block;line-height:normal;color:var(--vrn-fg-muted)}
 .pi-root a.vr-lang[data-active="true"]{color:var(--vrn-fg)}
+/* Vzdálenosti od domu (sekce 1b) — jedna karta přes celou šířku mřížky. */
+.pi-card-wide{grid-column:1/-1}

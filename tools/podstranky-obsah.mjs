@@ -56,6 +56,23 @@ export const INFO = {
     vTrips: 'Tipy na výlety, hory a atrakce najdete v plánovači výletů — mapa, filtry i doporučení na konkrétní den.',
     tripsLink: 'Otevřít plánovač výletů',
 
+    /* Vzdálenosti od domu (sekce 1b) */
+    sDist: 'Vzdálenosti od domu', sDistSub: 'Pěšky, autem i k velkým městům — orientačně.', cDistTitle: 'Jak daleko to je',
+    dCentrum: 'Centrum Svobody nad Úpou', vCentrum: '150 m pěšky — obchod, restaurace, bowling, půjčovny',
+    dBus: 'Autobusová zastávka', vBus: '100 m',
+    dSkibus: 'Zastávka skibusu (zdarma)', vSkibus: '200 m',
+    dVlak: 'Vlakové nádraží', vVlak: '500 m',
+    dSjezd: 'Sjezdovky ve Svobodě nad Úpou', vSjezd: '1,9 km',
+    dCerna: 'Černá hora a Janské Lázně', vCerna: '4 km, asi 10 min autem',
+    dTrutnov: 'Trutnov', vTrutnov: '11 km',
+    dPec: 'Pec pod Sněžkou', vPec: '13 km, asi 20 min autem',
+    dSnezka: 'Lanovka na Sněžku', vSnezka: 'asi 20 min autem',
+    dStachel: 'Pevnost Stachelberg', vStachel: 'asi 15 min autem',
+    dAdrspach: 'Adršpašské skály', vAdrspach: 'asi 45 min autem',
+    dKarpacz: 'Aquapark Tropikana, Karpacz (PL)', vKarpacz: 'asi 45 min autem',
+    dMesta: 'Praha a Vratislav', vMesta: 'asi 2 hodiny autem',
+    dDrazdany: 'Drážďany', vDrazdany: 'asi 3 hodiny autem',
+
     disclaimer: 'Údaje jsme pečlivě ověřovali. Otevírací doby se ale mohou měnit — u obchodů a služeb je před cestou raději ověřte.'
   },
 
@@ -107,6 +124,23 @@ export const INFO = {
     cTripsTitle: 'Trips nearby',
     vTrips: 'Trip ideas, mountains and attractions live in the trip planner — map, filters and a pick for a specific day.',
     tripsLink: 'Open the trip planner',
+
+    /* Vzdálenosti od domu (sekce 1b) */
+    sDist: 'Distances from the house', sDistSub: 'On foot, by car and to the big cities — approximate.', cDistTitle: 'How far it is',
+    dCentrum: 'Centre of Svoboda nad Úpou', vCentrum: '150 m on foot — shop, restaurants, bowling, rentals',
+    dBus: 'Bus stop', vBus: '100 m',
+    dSkibus: 'Ski bus stop (free)', vSkibus: '200 m',
+    dVlak: 'Railway station', vVlak: '500 m',
+    dSjezd: 'Slopes in Svoboda nad Úpou', vSjezd: '1.9 km',
+    dCerna: 'Černá hora and Janské Lázně', vCerna: '4 km, about 10 min by car',
+    dTrutnov: 'Trutnov', vTrutnov: '11 km',
+    dPec: 'Pec pod Sněžkou', vPec: '13 km, about 20 min by car',
+    dSnezka: 'Sněžka cable car', vSnezka: 'about 20 min by car',
+    dStachel: 'Stachelberg Fortress', vStachel: 'about 15 min by car',
+    dAdrspach: 'Adršpach Rocks', vAdrspach: 'about 45 min by car',
+    dKarpacz: 'Tropikana Aquapark, Karpacz (PL)', vKarpacz: 'about 45 min by car',
+    dMesta: 'Prague and Wrocław', vMesta: 'about 2 hours by car',
+    dDrazdany: 'Dresden', vDrazdany: 'about 3 hours by car',
 
     disclaimer: 'We checked these details carefully. Opening hours can change, though — please verify shops and services before you set off.'
   },
@@ -160,6 +194,23 @@ export const INFO = {
     vTrips: 'Ausflugstipps, Berge und Attraktionen finden Sie im Ausflugsplaner — Karte, Filter und ein Tipp für einen konkreten Tag.',
     tripsLink: 'Ausflugsplaner öffnen',
 
+    /* Vzdálenosti od domu (sekce 1b) */
+    sDist: 'Entfernungen vom Haus', sDistSub: 'Zu Fuß, mit dem Auto und zu den großen Städten — ungefähr.', cDistTitle: 'Wie weit es ist',
+    dCentrum: 'Zentrum von Svoboda nad Úpou', vCentrum: '150 m zu Fuß — Laden, Restaurants, Bowling, Verleih',
+    dBus: 'Bushaltestelle', vBus: '100 m',
+    dSkibus: 'Skibus-Haltestelle (kostenlos)', vSkibus: '200 m',
+    dVlak: 'Bahnhof', vVlak: '500 m',
+    dSjezd: 'Pisten in Svoboda nad Úpou', vSjezd: '1,9 km',
+    dCerna: 'Černá hora und Janské Lázně', vCerna: '4 km, etwa 10 Min. mit dem Auto',
+    dTrutnov: 'Trutnov', vTrutnov: '11 km',
+    dPec: 'Pec pod Sněžkou', vPec: '13 km, etwa 20 Min. mit dem Auto',
+    dSnezka: 'Seilbahn auf die Schneekoppe (Sněžka)', vSnezka: 'etwa 20 Min. mit dem Auto',
+    dStachel: 'Festung Stachelberg', vStachel: 'etwa 15 Min. mit dem Auto',
+    dAdrspach: 'Adersbacher Felsen (Adršpach)', vAdrspach: 'etwa 45 Min. mit dem Auto',
+    dKarpacz: 'Aquapark Tropikana, Karpacz (PL)', vKarpacz: 'etwa 45 Min. mit dem Auto',
+    dMesta: 'Prag und Breslau', vMesta: 'etwa 2 Stunden mit dem Auto',
+    dDrazdany: 'Dresden', vDrazdany: 'etwa 3 Stunden mit dem Auto',
+
     disclaimer: 'Wir haben die Angaben sorgfältig geprüft. Öffnungszeiten können sich jedoch ändern — bitte prüfen Sie Geschäfte und Services vor der Fahrt.'
   },
 
@@ -211,6 +262,23 @@ export const INFO = {
     cTripsTitle: 'Wycieczki w okolicy',
     vTrips: 'Pomysły na wycieczki, góry i atrakcje znajdziecie w planerze wycieczek — mapa, filtry i tip na konkretny dzień.',
     tripsLink: 'Otwórz planer wycieczek',
+
+    /* Vzdálenosti od domu (sekce 1b) */
+    sDist: 'Odległości od domu', sDistSub: 'Pieszo, samochodem i do dużych miast — orientacyjnie.', cDistTitle: 'Jak daleko',
+    dCentrum: 'Centrum Svobody nad Úpą', vCentrum: '150 m pieszo — sklep, restauracje, kręgielnia, wypożyczalnie',
+    dBus: 'Przystanek autobusowy', vBus: '100 m',
+    dSkibus: 'Przystanek skibusu (bezpłatny)', vSkibus: '200 m',
+    dVlak: 'Dworzec kolejowy', vVlak: '500 m',
+    dSjezd: 'Stoki w Svobodzie nad Úpą', vSjezd: '1,9 km',
+    dCerna: 'Černá hora i Janské Lázně', vCerna: '4 km, ok. 10 min samochodem',
+    dTrutnov: 'Trutnov', vTrutnov: '11 km',
+    dPec: 'Pec pod Sněžką', vPec: '13 km, ok. 20 min samochodem',
+    dSnezka: 'Kolejka na Śnieżkę', vSnezka: 'ok. 20 min samochodem',
+    dStachel: 'Twierdza Stachelberg', vStachel: 'ok. 15 min samochodem',
+    dAdrspach: 'Skalne Miasto w Adršpachu', vAdrspach: 'ok. 45 min samochodem',
+    dKarpacz: 'Aquapark Tropikana, Karpacz', vKarpacz: 'ok. 45 min samochodem',
+    dMesta: 'Wrocław i Praga', vMesta: 'ok. 2 godziny samochodem',
+    dDrazdany: 'Drezno', vDrazdany: 'ok. 3 godziny samochodem',
 
     disclaimer: 'Dane sprawdziliśmy starannie. Godziny otwarcia mogą się jednak zmieniać — sklepy i usługi lepiej sprawdzić przed wyjazdem.'
   },
@@ -265,6 +333,23 @@ export const INFO = {
     vTrips: 'Ideeën voor uitstapjes, bergen en attracties staan in de uitstapjesplanner — kaart, filters en een tip voor een bepaalde dag.',
     tripsLink: 'Uitstapjesplanner openen',
 
+    /* Vzdálenosti od domu (sekce 1b) */
+    sDist: 'Afstanden vanaf het huis', sDistSub: 'Te voet, met de auto en naar de grote steden — bij benadering.', cDistTitle: 'Hoe ver het is',
+    dCentrum: 'Centrum van Svoboda nad Úpou', vCentrum: '150 m te voet — winkel, restaurants, bowling, verhuur',
+    dBus: 'Bushalte', vBus: '100 m',
+    dSkibus: 'Halte van de skibus (gratis)', vSkibus: '200 m',
+    dVlak: 'Treinstation', vVlak: '500 m',
+    dSjezd: 'Pistes in Svoboda nad Úpou', vSjezd: '1,9 km',
+    dCerna: 'Černá hora en Janské Lázně', vCerna: '4 km, ongeveer 10 min met de auto',
+    dTrutnov: 'Trutnov', vTrutnov: '11 km',
+    dPec: 'Pec pod Sněžkou', vPec: '13 km, ongeveer 20 min met de auto',
+    dSnezka: 'Kabelbaan naar de Sněžka', vSnezka: 'ongeveer 20 min met de auto',
+    dStachel: 'Fort Stachelberg', vStachel: 'ongeveer 15 min met de auto',
+    dAdrspach: 'Rotsen van Adršpach', vAdrspach: 'ongeveer 45 min met de auto',
+    dKarpacz: 'Aquapark Tropikana, Karpacz (PL)', vKarpacz: 'ongeveer 45 min met de auto',
+    dMesta: 'Praag en Wrocław', vMesta: 'ongeveer 2 uur met de auto',
+    dDrazdany: 'Dresden', vDrazdany: 'ongeveer 3 uur met de auto',
+
     disclaimer: 'We hebben deze gegevens zorgvuldig gecontroleerd. Openingstijden kunnen wel veranderen — controleer winkels en diensten liever voordat jullie op pad gaan.'
   },
 
@@ -316,6 +401,23 @@ export const INFO = {
     cTripsTitle: 'Excursions aux alentours',
     vTrips: 'Idées d’excursions, sommets et attractions : tout est dans le planificateur d’excursions — carte, filtres et suggestion pour un jour précis.',
     tripsLink: 'Ouvrir le planificateur d’excursions',
+
+    /* Vzdálenosti od domu (sekce 1b) */
+    sDist: 'Distances depuis la maison', sDistSub: 'À pied, en voiture et jusqu’aux grandes villes — à titre indicatif.', cDistTitle: 'À quelle distance',
+    dCentrum: 'Centre de Svoboda nad Úpou', vCentrum: '150 m à pied — magasin, restaurants, bowling, location',
+    dBus: 'Arrêt de bus', vBus: '100 m',
+    dSkibus: 'Arrêt du skibus (gratuit)', vSkibus: '200 m',
+    dVlak: 'Gare', vVlak: '500 m',
+    dSjezd: 'Pistes de Svoboda nad Úpou', vSjezd: '1,9 km',
+    dCerna: 'Černá hora et Janské Lázně', vCerna: '4 km, environ 10 min en voiture',
+    dTrutnov: 'Trutnov', vTrutnov: '11 km',
+    dPec: 'Pec pod Sněžkou', vPec: '13 km, environ 20 min en voiture',
+    dSnezka: 'Téléphérique de la Sněžka', vSnezka: 'environ 20 min en voiture',
+    dStachel: 'Forteresse de Stachelberg', vStachel: 'environ 15 min en voiture',
+    dAdrspach: 'Rochers d’Adršpach', vAdrspach: 'environ 45 min en voiture',
+    dKarpacz: 'Aquapark Tropikana, Karpacz (Pologne)', vKarpacz: 'environ 45 min en voiture',
+    dMesta: 'Prague et Wrocław', vMesta: 'environ 2 heures de route',
+    dDrazdany: 'Dresde', vDrazdany: 'environ 3 heures de route',
 
     disclaimer: 'Nous avons vérifié ces informations avec soin. Les horaires peuvent toutefois changer — vérifiez magasins et services avant de partir.'
   },

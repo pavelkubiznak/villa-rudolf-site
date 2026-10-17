@@ -28,6 +28,11 @@ let aktualni = true;
 try { execFileSync(process.execPath, [join(root, 'tools/gen-jazyky.mjs'), '--check'], { cwd: root, stdio: 'pipe' }); }
 catch (e) { aktualni = false; console.log(String(e.stderr || e.stdout || e.message).trim()); }
 ok(aktualni, 'statické stránky odpovídají site.js a šabloně (gen-jazyky --check)');
+// Druhý den se nesmí nic změnit: datum „aktualizováno" (a lastmod v sitemap) se posouvá jen při změně obsahu.
+let zitra = true;
+try { execFileSync(process.execPath, [join(root, 'tools/gen-jazyky.mjs'), '--check'], { cwd: root, stdio: 'pipe', env: { ...process.env, GEN_DNES: '2099-01-01' } }); }
+catch (e) { zitra = false; console.log(String(e.stderr || e.stdout || e.message).trim()); }
+ok(zitra, 'jiný den bez změny obsahu = stejné stránky (datum „aktualizováno" se neposouvá samo)');
 
 // ---------- 2. přesměrování na „/" ----------
 const index = readFileSync(join(root, 'index.html'), 'utf8');
@@ -159,6 +164,11 @@ for (const f of ['llms.txt', 'de/llms.txt']) {
   const chybi = platformy.map((m) => `${m[2]} ${Number(m[3]).toFixed(1).replace('.', ',')}/${m[4]} (${m[5]} `).filter((x) => !txt.includes(x));
   if (overeno.length && !txt.includes(`${overeno[2]}. ${overeno[1]}. ${overeno[0]}`)) chybi.push('datum ověření ' + overeno.reverse().join('. '));
   ok(platformy.length && !chybi.length, `${f}: hodnocení hostů odpovídá VR_REVIEWS${chybi.length ? ' — chybí: ' + chybi.join(', ') : ''}`);
+  // „Aktualizováno" v llms.txt se píše ručně — nesmí být starší než ověření hodnocení.
+  const a = /(?:Aktualizováno|Aktualisiert am) (\d{1,2})\. (\d{1,2})\. (\d{4})/.exec(txt);
+  const isoA = a ? `${a[3]}-${a[2].padStart(2, '0')}-${a[1].padStart(2, '0')}` : '';
+  const isoR = (/checkedAt: '(\d{4}-\d{2}-\d{2})'/.exec(siteJs) || [])[1] || '';
+  ok(a && isoA >= isoR, `${f}: má datum „Aktualizováno" a není starší než ověření hodnocení (${isoA || 'chybí'} ≥ ${isoR})`);
 }
 
 if (chyby) { console.log(`\n${chyby} chyb`); process.exit(1); }

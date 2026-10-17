@@ -24,6 +24,7 @@
       "url": "https://villarudolf.com/pl/info/",
       "name": "Praktyczne informacje dla gości | Villa Rudolf",
       "inLanguage": "pl",
+      "dateModified": "2026-10-17",
       "about": {
         "@id": "https://villarudolf.com/#villa"
       }
@@ -55,7 +56,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="../../info/info.css?v=34">
+<link rel="stylesheet" href="../../info/info.css?v=35">
 <!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
      s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
 <script src="../../assets/season.js?v=48"></script>
@@ -195,6 +196,40 @@
               <h3 class="pi-name" data-i18n="c4title">Cisza nocna</h3>
             </div>
             <p class="pi-body" data-i18n="vQuiet">Po 22:00 prosimy o ciszę ze względu na bliskich sąsiadów. Svoboda nad Úpou to spokojne górskie miasteczko — dziękujemy, że takie pozostanie.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ============ 1b. Vzdálenosti (od 10/2026; čísla jen z text-villa-rudolf.md, homepage a trips.json travelMin) ============ -->
+      <section class="pi-sec" id="vzdalenosti">
+        <div class="pi-sechead">
+          <h2 class="pi-h2" data-i18n="sDist">Odległości od domu</h2>
+          <p class="pi-sub" data-i18n="sDistSub">Pieszo, samochodem i do dużych miast — orientacyjnie.</p>
+        </div>
+        <div class="pi-grid">
+
+          <article class="pi-card pi-card-wide">
+            <div class="pi-ctop">
+              <span class="pi-ico"><svg><use href="#i-route"/></svg></span>
+              <h3 class="pi-name" data-i18n="cDistTitle">Jak daleko</h3>
+            </div>
+            <div class="pi-rows">
+              <div class="pi-row"><span class="pi-rl" data-i18n="dCentrum">Centrum Svobody nad Úpą</span><span class="pi-rv" data-i18n="vCentrum">150 m pieszo — sklep, restauracje, kręgielnia, wypożyczalnie</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dBus">Przystanek autobusowy</span><span class="pi-rv" data-i18n="vBus">100 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSkibus">Przystanek skibusu (bezpłatny)</span><span class="pi-rv" data-i18n="vSkibus">200 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dVlak">Dworzec kolejowy</span><span class="pi-rv" data-i18n="vVlak">500 m</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSjezd">Stoki w Svobodzie nad Úpą</span><span class="pi-rv" data-i18n="vSjezd">1,9 km</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dCerna">Černá hora i Janské Lázně</span><span class="pi-rv" data-i18n="vCerna">4 km, ok. 10 min samochodem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dTrutnov">Trutnov</span><span class="pi-rv" data-i18n="vTrutnov">11 km</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dPec">Pec pod Sněžką</span><span class="pi-rv" data-i18n="vPec">13 km, ok. 20 min samochodem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dSnezka">Kolejka na Śnieżkę</span><span class="pi-rv" data-i18n="vSnezka">ok. 20 min samochodem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dStachel">Twierdza Stachelberg</span><span class="pi-rv" data-i18n="vStachel">ok. 15 min samochodem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dAdrspach">Skalne Miasto w Adršpachu</span><span class="pi-rv" data-i18n="vAdrspach">ok. 45 min samochodem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dKarpacz">Aquapark Tropikana, Karpacz</span><span class="pi-rv" data-i18n="vKarpacz">ok. 45 min samochodem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dMesta">Wrocław i Praga</span><span class="pi-rv" data-i18n="vMesta">ok. 2 godziny samochodem</span></div>
+              <div class="pi-row"><span class="pi-rl" data-i18n="dDrazdany">Drezno</span><span class="pi-rv" data-i18n="vDrazdany">ok. 3 godziny samochodem</span></div>
+            </div>
           </article>
 
         </div>
@@ -382,6 +417,7 @@
       <a class="pi-back" href="../"><svg><use href="#i-arrow-l"/></svg><span data-i18n="back">Powrót na stronę willi</span></a>
       <a class="pi-terms" data-i18n="terms" href="../podminky/">Warunki i ochrona danych</a>
       <span class="pi-foot-brand">Villa Rudolf · Svoboda nad Úpou, Krkonoše</span>
+      <span class="pi-foot-brand" data-aktualizovano-obal>Zaktualizowano <time data-aktualizovano datetime="2026-10-17">17. 10. 2026</time></span>
     </footer>
 
   </div>
