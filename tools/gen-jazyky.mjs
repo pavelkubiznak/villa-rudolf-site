@@ -522,6 +522,7 @@ function faqStranka(api, lang) {
   const q = (x) => {
     if (x[lang] == null) { chyba(`${lang}: Časté dotazy — chybí překlad „${x.cs}"`); return ''; }
     const s = dosadHodnoceni(api, lang, dosadCeny(api, lang, x[lang])).replace(/\{domu\}/g, domu).replace(/\{planovac\}/g, planovac)
+      .replace(/\{srovnani\}/g, () => relativni(cesta, SROV_CESTY[lang]))
       .replace(/\{pro:([a-z-]+)\}/g, (m, id) => (PRO_KOHO_OBSAH.PRO_KOHO.some((p) => p.id === id) ? relativni(cesta, PRO_CESTY[lang] + id + '/') : m));
     if (/\{[a-z:-]+\}/i.test(s)) chyba(`${lang}: Časté dotazy — nedosazený zástupný znak v „${s.slice(0, 80)}"`);
     return s;
@@ -568,7 +569,7 @@ ${hlavicka(api, lang, { cesta, cesty: FAQ, title: S.title, desc: S.desc, jsonld 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
 <link rel="stylesheet" href="${koren}info/info.css?v=34">
-<link rel="stylesheet" href="${koren}assets/faq.css?v=2">
+<link rel="stylesheet" href="${koren}assets/faq.css?v=3">
 <script src="${koren}assets/season.js?v=54"></script>
 </head>
 <body>
@@ -820,7 +821,7 @@ ${hlavicka(api, lang, { cesta, cesty, title, desc, jsonld })}
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
 <link rel="stylesheet" href="${koren}info/info.css?v=34">
-<link rel="stylesheet" href="${koren}assets/faq.css?v=2">
+<link rel="stylesheet" href="${koren}assets/faq.css?v=3">
 <script src="${koren}assets/season.js?v=54"></script>
 </head>
 <body>
@@ -866,6 +867,8 @@ ${obsah}
     <footer class="pi-footer">
       <a class="pi-back" href="${domu}"><span aria-hidden="true">←</span> ${escText(H.vice)}</a>
       <a class="pi-terms" href="${relativni(cesta, FAQ[lang])}">${escText(H.faq)}</a>
+      <a class="pi-terms" href="${relativni(cesta, PRO_CESTY[lang])}">${escText(H.eyebrow)}</a>
+      <a class="pi-terms" href="${relativni(cesta, SROV_CESTY[lang])}">${escText(PK.SROVNANI[lang].eyebrow)}</a>
       <a class="pi-terms" href="${relativni(cesta, INFO_CESTY[lang])}">${escText(t.nav.info)}</a>
       <a class="pi-terms" href="${relativni(cesta, POD_CESTY[lang])}">${escText(t.footer.terms)}</a>
       <span class="pi-foot-brand">Villa Rudolf · Luční 519, Svoboda nad Úpou · ${escText(t.footer.formerly)}</span>
@@ -950,6 +953,47 @@ ${dalsi}
     h1: T.h1, intro: T.intro, obsah, jsonld, komentar: `Pro koho: ${p.id} (tools/pro-koho-obsah.mjs)` });
 }
 
+/* ============================ 5d. Srovnání (/srovnani/) ============================
+   Vila vs. hotel / dvě chaty a přímo vs. portál. Texty SROVNANI v tools/pro-koho-obsah.mjs. */
+const SROV_CESTY = Object.fromEntries(JAZYKY.map((L) => [L, (L === 'cs' ? '' : L + '/') + 'srovnani/']));
+function srovnaniStranka(api, lang) {
+  const S = PK.SROVNANI[lang], cesta = SROV_CESTY[lang];
+  if (!S) { chyba(`${lang}: chybí SROVNANI`); return ''; }
+  const P = api.VR_PRICING.levels || {};
+  const text = (s) => {
+    const v = dosadHodnoceni(api, lang, dosadCeny(api, lang, s
+      .replace(/\{naosobu:(\w+):(\d+)\}/g, (m, u, n) => (P[u] ? api.fmtM(Math.round(P[u].nightly / Number(n))) : (chyba(`${lang}: srovnání — ceník nemá úroveň „${u}"`), m)))))
+      .replace(/\{podminky\}/g, relativni(cesta, POD_CESTY[lang]) + '#storno');
+    if (/\{[a-z:]+\}/i.test(v)) chyba(`${lang}: srovnání — nedosazený zástupný znak v „${v.slice(0, 80)}"`);
+    return v;
+  };
+  const tabulka = (sloupce, radky) => `        <div class="pk-tablewrap"><table class="pk-table">
+          <thead><tr>${sloupce.map((c) => `<th scope="col">${escText(c)}</th>`).join('')}</tr></thead>
+          <tbody>
+${radky.map((r) => `            <tr><th scope="row">${escText(r[0])}</th>${r.slice(1).map((c) => `<td>${text(c)}</td>`).join('')}</tr>`).join('\n')}
+          </tbody>
+        </table></div>`;
+  const obsah = `      <section class="pi-sec" id="vila-hotel">
+        <div class="pi-sechead"><h2 class="pi-h2">${escText(S.h2a)}</h2></div>
+${tabulka(S.sloupceA, S.radkyA)}
+      </section>
+
+      <section class="pi-sec" id="primo-portal">
+        <div class="pi-sechead"><h2 class="pi-h2">${escText(S.h2b)}</h2></div>
+${tabulka(S.sloupceB, S.radkyB)}
+        <p class="faq-a">${escText(S.zaver)}</p>
+      </section>`;
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: S.title, description: S.desc, inLanguage: lang, about: { '@id': VILA_ID } },
+      { '@type': 'VacationRental', '@id': VILA_ID, name: 'Villa Rudolf', url: abs(DOMOV[lang]) },
+    ],
+  };
+  return obalPodstranky(api, lang, { cesta, cesty: SROV_CESTY, title: S.title, desc: S.desc, eyebrow: 'Villa Rudolf · ' + S.eyebrow,
+    h1: S.h1, intro: S.intro, obsah, jsonld, komentar: 'Srovnání (tools/pro-koho-obsah.mjs, SROVNANI)' });
+}
+
 /* ============================ 6. sitemap.xml ============================ */
 const SITEMAP_HLAVA = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Generuje node tools/gen-jazyky.mjs — ručně neupravovat (samostatné stránky: SAMOSTATNE v tom skriptu).
@@ -991,6 +1035,7 @@ function sitemap(vystupy, dnes) {
   for (const L of JAZYKY) radky.push(url(POD_CESTY[L], POD_CESTY[L] + 'index.html', 'yearly', '0.5', POD_CESTY));
   for (const L of JAZYKY) radky.push(url(PRO_CESTY[L], PRO_CESTY[L] + 'index.html', 'monthly', '0.7', PRO_CESTY));
   for (const p of PK.PRO_KOHO) for (const L of JAZYKY) radky.push(url(proCesty(p.id)[L], proCesty(p.id)[L] + 'index.html', 'monthly', '0.7', proCesty(p.id)));
+  for (const L of JAZYKY) radky.push(url(SROV_CESTY[L], SROV_CESTY[L] + 'index.html', 'monthly', '0.6', SROV_CESTY));
   for (const s of SAMOSTATNE) radky.push(url(s.cesta, null, s.changefreq, s.priority));
   return SITEMAP_HLAVA + '\n' + radky.join('\n') + '\n</urlset>\n';
 }
@@ -1046,6 +1091,7 @@ for (const L of JAZYKY) vystupy[INFO_CESTY[L] + 'index.html'] = infoStranka(api,
 for (const L of JAZYKY) vystupy[POD_CESTY[L] + 'index.html'] = podminkyStranka(api, L);
 for (const L of JAZYKY) vystupy[PRO_CESTY[L] + 'index.html'] = proKohoHub(api, L);
 for (const p of PK.PRO_KOHO) for (const L of JAZYKY) vystupy[proCesty(p.id)[L] + 'index.html'] = proKohoStranka(api, L, p);
+for (const L of JAZYKY) vystupy[SROV_CESTY[L] + 'index.html'] = srovnaniStranka(api, L);
 vystupy['sitemap.xml'] = sitemap(vystupy, new Date().toISOString().slice(0, 10));
 
 if (chyby.length) {

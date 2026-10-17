@@ -21,3 +21,11 @@
 .pi-root .pk-card h2 a{color:inherit}
 .pi-root .pk-card h2 a:hover{color:var(--pi-accent)}
 .pk-card .pi-name{font-size:inherit}
+/* Srovnání (/srovnani/): tabulky, na mobilu se posouvají jen ony, ne celá stránka. */
+.pk-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -2px}
+.pk-table{width:100%;min-width:560px;border-collapse:collapse;font-size:14.5px;line-height:1.55;color:var(--pi-muted)}
+.pk-table th,.pk-table td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--pi-line,rgba(127,127,127,.25))}
+.pk-table thead th{font-weight:600;color:var(--pi-text)}
+.pk-table tbody th{font-weight:600;color:var(--pi-text);min-width:7.5em}
+.pk-table td:nth-child(2){color:var(--pi-text)}
+.pi-root .pk-table a{color:var(--pi-accent);text-decoration:underline;text-underline-offset:2px}

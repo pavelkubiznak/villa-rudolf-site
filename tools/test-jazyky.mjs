@@ -127,8 +127,8 @@ for (const [j, fakta] of Object.entries(PODSTRANKY_FAKTA)) {
 }
 
 const PRO = ['', 'pratele/', 'rodina/', 'firmy/', 'oslava/', 'lyze-s-detmi/', 'leto-s-bazenem/'].map((x) => 'pro/' + x + 'index.html');
-const stranky = ['', 'de/', 'pl/', 'en/', 'nl/', 'fr/'].flatMap((j) => [j + 'index.html', j + 'faq/index.html', j + 'info/index.html', j + 'podminky/index.html', ...PRO.map((x) => j + x)]);
-ok(stranky.every((s) => existsSync(join(root, s))), 'všechny stránky Pro koho existují ve všech jazycích');
+const stranky = ['', 'de/', 'pl/', 'en/', 'nl/', 'fr/'].flatMap((j) => [j + 'index.html', j + 'faq/index.html', j + 'info/index.html', j + 'podminky/index.html', j + 'srovnani/index.html', ...PRO.map((x) => j + x)]);
+ok(stranky.every((s) => existsSync(join(root, s))), 'všechny stránky Pro koho a Srovnání existují ve všech jazycích');
 for (const s of stranky) {
   if (!existsSync(join(root, s))) continue;
   const html = readFileSync(join(root, s), 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (m) => m.replace(/>[\s\S]*$/, '>'));

@@ -323,6 +323,9 @@ a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.m
   firemní akce, oslava, lyžování s dětmi, léto s bazénem, ve všech 6 jazycích. Texty `tools/pro-koho-obsah.mjs`,
   fakta jen z `text-villa-rudolf.md` (žádný catering, sál ani projektor), ceny přes `{cena:…}` z `VR_PRICING`.
   Každá stránka má poctivou výhradu (hudba kvůli sousedům, bazén v zimě, chladnější voda na kraji sezony).
+- **Srovnání (od 17. 10. 2026):** `/srovnani/` (+ jazyky) — celá vila vs. hotel / dvě chaty a přímo vs. portál.
+  Texty `SROVNANI` v `tools/pro-koho-obsah.mjs`. U hotelu, chat a portálů jen obecně („obvykle“), bez cizích
+  jmen a cen; „cena bez provize“ = ceník z 21. 9. 2026; cena na osobu `{naosobu:úroveň:počet}` počítá generátor.
 - **Nizozemština a francouzština (Benelux, od 9. 10. 2026)** jsou homepage, Časté dotazy, info a podmínky.
   Výlety a průvodce hosta umí dál jen cs/en/de/pl. Z `/nl/` a `/fr/` se proto otevírají
   anglicky: `vrSubLang()` v `site.js`, `jazykPodstranky()` v generátoru a mapa `NAHRADA` v jejich JS.
