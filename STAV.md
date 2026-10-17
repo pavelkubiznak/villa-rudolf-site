@@ -403,7 +403,7 @@ narození s rokem 2026 (kolečko v telefonu začíná dneškem).
 | Číslo dokladu podle státu a druhu (pas / průkaz), tabulka v `registrace/doklady.js` | ✅ 13. 10. 2026 – DE, CZ, PL, NL, BE, AT, SK; jen pas u UK a IT |
 | Kontrolní číslice: polský dowód a pas (tvrdě), belgická eID (jen varuje), německé doklady (jen když host opíše 10 znaků ze strojové zóny) | ✅ 13. 10. 2026 |
 | Stát bez pravidla nebo „Jiný doklad“: obecná kontrola + zaškrtnutí „opsal(a) jsem přesně“ | ✅ 13. 10. 2026 |
-| Čtečka dokladu foťákem (strojově čitelná zóna, celé v prohlížeči) | 🔴 **v tomhle PR není** – prototyp je na větvi `claude/registrace-ctecka-dokladu`; čte, ale v simulaci jednou z 96 pokusů přijal špatně přečtené číslo dokladu, na skutečném telefonu neměřeno |
+| Čtečka dokladu foťákem (strojově čitelná zóna, celé v prohlížeči) | 🟡 **prototyp, vypnutý** – vidět je jen s `?ctecka=1`; čte, ale v simulaci jednou přijal špatně přečtené číslo (viz níž) |
 
 **Kde co je.** `registrace/doklady.js` = čisté funkce bez DOM (meze data narození, tabulka `RULES`
 se zdrojem u každého státu, kontrolní číslice). `registrace/registrace.js` = formulář a texty
@@ -423,6 +423,27 @@ Co doložit nešlo a proč:
   je schválně volnější.
 - **Francie, USA, Dánsko, Švýcarsko, Maďarsko, Ukrajina, italský průkaz:** formát jen ze vzorů
   v PRADO, bez textového zdroje → zůstávají v obecné kontrole.
+
+**Čtečka dokladu – prototyp (13. 10. 2026), pro hosty vypnutý.** `registrace/ctecka.js` +
+`registrace/mrz.js` + `vendor/tesseract/` (Tesseract.js 5.1.1 a model na písmo OCR-B, obojí v repu,
+žádné CDN). Host namíří foťák na řádky se znaky `<<<`, čte se celé v prohlížeči, obraz se nikam
+neodesílá ani neukládá, do formuláře jde jen text. Tlačítko je vidět jen s `?ctecka=1`
+(`SCAN_ON` v `registrace.js`) a jen na telefonu s WebAssembly SIMD.
+- **Velikost:** asi 2,8 MB, stáhne se až po klepnutí na tlačítko (v repu 5,6 MB).
+- **Rychlost:** 0,15–0,25 s na snímek na Macu, na telefonu odhadem 0,5–1 s; průměrně 3–4 snímky.
+- **Úspěšnost v simulaci** (vymyšlené doklady v písmu OCR-B, snímky zhoršené jako z ruky: náklon,
+  rozmazání, šum, odlesk; 96 pokusů): 87 přečteno správně, 8 nepřečteno do 8 snímků,
+  **1 přijat se špatným číslem dokladu**. Pět úředních vzorů (DE průkaz a pas, PL a NL průkaz)
+  přečetl správně. **Na skutečném telefonu se skutečným dokladem neměřeno.**
+- **Proč není zapnutá:** kontrolní číslice strojové zóny (váhy 7-3-1, mod 10) nepozná záměnu
+  znaků, jejichž hodnoty se liší o 10 – a právě ty si OCR plete (Q↔G, G↔6, P↔F, S↔8). Ze 518
+  snímků, kde seděly všechny kontrolní číslice, bylo 11 špatně (6× číslo dokladu, 5× jméno –
+  jméno kontrolní číslici nemá vůbec). Pojistka „dva shodné snímky + jistota OCR ≥ 75“ jich většinu
+  odfiltruje, ale ne všechny. Špatné číslo, které vypadá věrohodně, je horší než ruční opis.
+- **Co by ji mohlo pustit:** rozhodovat podle jistoty jednotlivých znaků (Tesseract ji vrací),
+  u států s pravidlem křížová kontrola s `doklady.js`, jméno nepředvyplňovat, a hlavně zkouška
+  na několika skutečných telefonech a dokladech. Test rozboru: `node tools/test-mrz.mjs`.
+- Chybové stavy ověřené: foťák nepovolený („vyplňte ručně“), telefon bez podpory (tlačítko není).
 
 **Po merge ručně:**
 1. Aplikovat migraci `20261013_vr_persons_birth_limit.sql`: přes konektor Supabase / `supabase db query --linked --file …`,

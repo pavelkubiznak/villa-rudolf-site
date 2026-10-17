@@ -15,7 +15,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="registrace.css?v=5">
+<link rel="stylesheet" href="registrace.css?v=6">
 </head>
 <body>
 <div class="vp-root">
@@ -87,6 +87,17 @@
             <label>Company website
               <input type="text" id="hp" name="company_website" tabindex="-1" autocomplete="off">
             </label>
+          </div>
+
+          <!-- Čtečka dokladu: volitelná, ZKUŠEBNĚ jen s ?ctecka=1 a jen když ji telefon umí.
+               Knihovna (vendor/tesseract/, ~2,8 MB) se stáhne až po klepnutí. -->
+          <div class="vp-scanrow" id="scanRow" hidden>
+            <button type="button" class="vp-scanbtn" id="scanBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>
+              <span data-i18n="scanBtn">Načíst údaje z dokladu foťákem</span>
+            </button>
+            <span class="vp-hint" data-i18n="scanBtnHint">Nepovinné. Obraz zůstává ve vašem telefonu.</span>
+            <p class="vp-ok" id="scanNote" role="status" hidden></p>
           </div>
 
           <div class="vp-row2">
@@ -219,6 +230,7 @@
       <section class="vp-gdpr" id="gdprSection" hidden>
         <h2 class="vp-gdpr-t" data-i18n="gdprTitle">Ochrana údajů</h2>
         <p class="vp-gdpr-b" data-i18n="gdprBody">Údaje sbíráme jen kvůli zákonné evidenci ubytovaných a místnímu poplatku. Leží v zabezpečené databázi v EU. Čísla dokladů nevidí nikdo další z vaší skupiny — v přehledu se ukazuje jen, že je doklad vyplněný.</p>
+        <p class="vp-gdpr-b" id="gdprScan" data-i18n="gdprScan" hidden></p>
         <p class="vp-gdpr-c">
           <a href="../podminky/" data-i18n="gdprLink">Podmínky a ochrana údajů</a>
           <span aria-hidden="true">·</span>
@@ -235,7 +247,7 @@
   </div>
 </div>
 <script src="doklady.js?v=1" defer></script>
-<script src="registrace.js?v=6" defer></script>
+<script src="registrace.js?v=7" defer></script>
 <!-- Umami analytics (self-hosted, cookieless). data-exclude-search: v URL je
      hostovský token ?t=…, do analytiky smí jen cesta bez parametrů. -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-exclude-search="true"></script>

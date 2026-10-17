@@ -102,6 +102,22 @@
       docSure: 'Číslo jsem opsal(a) přesně podle dokladu.',
       errDocSure: 'Potvrďte prosím, že je číslo opsané přesně podle dokladu.',
       docSoft: 'Kontrolní číslo na konci nesedí — v čísle je nejspíš překlep. Zkontrolujte ho prosím podle dokladu.',
+      scanBtn: 'Načíst údaje z dokladu foťákem',
+      scanBtnHint: 'Nepovinné. Foťák přečte řádky se znaky <<< na pasu nebo na zadní straně průkazu. Obraz zůstává ve vašem telefonu.',
+      scanTitle: 'Namiřte na řádky se znaky <<<',
+      scanStarting: 'Spouštím foťák…',
+      scanLoading: 'Načítám čtečku (asi 3 MB)…',
+      scanAim: 'Dejte řádky se znaky <<< do rámečku. Pas: dole na stránce s fotografií. Průkaz: zadní strana.',
+      scanHold: 'Čtu… držte telefon v klidu.',
+      scanSlow: 'Nejde to? Zkuste víc světla, bez odlesku a o kousek blíž. Nebo údaje vyplňte ručně.',
+      scanErrDenied: 'Foťák není povolený. Nevadí — údaje vyplňte ručně.',
+      scanErrNoCam: 'Foťák se nepodařilo spustit. Údaje vyplňte prosím ručně.',
+      scanErrLoad: 'Čtečku se nepodařilo načíst. Údaje vyplňte prosím ručně.',
+      scanManual: 'Zavřít a vyplnit ručně',
+      scanPrivacy: 'Obraz z foťáku se zpracovává jen v tomto telefonu. Nikam se neodesílá ani neukládá.',
+      scanDone: 'Načteno z dokladu: číslo a druh dokladu, datum narození, občanství{names}. Zkontrolujte je prosím, než osobu přidáte.',
+      scanDoneNames: ' a jméno (v této části dokladu je bez diakritiky — opravte ho prosím)',
+      gdprScan: 'Čtečka dokladu: obraz z foťáku zpracuje prohlížeč přímo ve vašem telefonu, nikam se neodesílá ani neukládá. Do formuláře se přepíše jen přečtený text (číslo a druh dokladu, datum narození, občanství, jméno), který před odesláním vidíte a můžete opravit.',
       citCommon: 'Časté', citOthers: 'Ostatní země'
     },
     en: {
@@ -189,6 +205,22 @@
       docSure: 'I have copied the number exactly as it appears on the document.',
       errDocSure: 'Please confirm that the number is copied exactly from the document.',
       docSoft: 'The check number at the end doesn’t match — there is probably a typo. Please check the number against the document.',
+      scanBtn: 'Read the details from the document with the camera',
+      scanBtnHint: 'Optional. The camera reads the lines with <<< characters in a passport or on the back of an ID card. The image stays on your phone.',
+      scanTitle: 'Point at the lines with <<< characters',
+      scanStarting: 'Starting the camera…',
+      scanLoading: 'Loading the reader (about 3 MB)…',
+      scanAim: 'Put the lines with <<< characters inside the frame. Passport: bottom of the photo page. ID card: the back.',
+      scanHold: 'Reading… hold the phone still.',
+      scanSlow: 'Not working? Try more light, no glare and a little closer. Or fill in the details by hand.',
+      scanErrDenied: 'The camera isn’t allowed. No problem — please fill in the details by hand.',
+      scanErrNoCam: 'The camera couldn’t be started. Please fill in the details by hand.',
+      scanErrLoad: 'The reader couldn’t be loaded. Please fill in the details by hand.',
+      scanManual: 'Close and fill in by hand',
+      scanPrivacy: 'The camera image is processed only on this phone. It is not sent or stored anywhere.',
+      scanDone: 'Read from the document: document number and type, date of birth, citizenship{names}. Please check them before adding the person.',
+      scanDoneNames: ' and name (this part of the document has no accents — please correct it)',
+      gdprScan: 'Document reader: the camera image is processed by the browser on your phone; it is not sent or stored anywhere. Only the text that was read (document number and type, date of birth, citizenship, name) is copied into the form, where you can see and correct it before submitting.',
       citCommon: 'Common', citOthers: 'Other countries'
     },
     de: {
@@ -276,6 +308,22 @@
       docSure: 'Ich habe die Nummer genau vom Dokument abgeschrieben.',
       errDocSure: 'Bitte bestätigen Sie, dass die Nummer genau vom Dokument abgeschrieben ist.',
       docSoft: 'Die Prüfnummer am Ende stimmt nicht — vermutlich ein Tippfehler. Bitte die Nummer mit dem Dokument vergleichen.',
+      scanBtn: 'Daten mit der Kamera vom Ausweis ablesen',
+      scanBtnHint: 'Optional. Die Kamera liest die Zeilen mit den Zeichen <<< im Reisepass oder auf der Rückseite des Ausweises. Das Bild bleibt auf Ihrem Telefon.',
+      scanTitle: 'Auf die Zeilen mit den Zeichen <<< richten',
+      scanStarting: 'Kamera wird gestartet…',
+      scanLoading: 'Lesegerät wird geladen (ca. 3 MB)…',
+      scanAim: 'Bringen Sie die Zeilen mit den Zeichen <<< in den Rahmen. Reisepass: unten auf der Seite mit dem Foto. Ausweis: Rückseite.',
+      scanHold: 'Lese… bitte das Telefon ruhig halten.',
+      scanSlow: 'Klappt es nicht? Mehr Licht, keine Spiegelung und etwas näher. Oder die Daten von Hand eintragen.',
+      scanErrDenied: 'Die Kamera ist nicht freigegeben. Kein Problem — bitte die Daten von Hand eintragen.',
+      scanErrNoCam: 'Die Kamera konnte nicht gestartet werden. Bitte die Daten von Hand eintragen.',
+      scanErrLoad: 'Das Lesegerät konnte nicht geladen werden. Bitte die Daten von Hand eintragen.',
+      scanManual: 'Schließen und von Hand eintragen',
+      scanPrivacy: 'Das Kamerabild wird nur auf diesem Telefon verarbeitet. Es wird nirgendwohin gesendet und nicht gespeichert.',
+      scanDone: 'Vom Dokument gelesen: Nummer und Art des Dokuments, Geburtsdatum, Staatsangehörigkeit{names}. Bitte prüfen Sie die Angaben, bevor Sie die Person hinzufügen.',
+      scanDoneNames: ' und Name (in diesem Teil des Dokuments ohne Umlaute — bitte korrigieren)',
+      gdprScan: 'Ausweisleser: Das Kamerabild verarbeitet der Browser direkt auf Ihrem Telefon; es wird nirgendwohin gesendet und nicht gespeichert. In das Formular wird nur der gelesene Text übernommen (Nummer und Art des Dokuments, Geburtsdatum, Staatsangehörigkeit, Name), den Sie vor dem Absenden sehen und korrigieren können.',
       citCommon: 'Häufig', citOthers: 'Weitere Länder'
     },
     pl: {
@@ -363,6 +411,22 @@
       docSure: 'Numer przepisałem(-am) dokładnie z dokumentu.',
       errDocSure: 'Potwierdź proszę, że numer jest przepisany dokładnie z dokumentu.',
       docSoft: 'Numer kontrolny na końcu się nie zgadza — w numerze jest prawdopodobnie literówka. Sprawdź go proszę z dokumentem.',
+      scanBtn: 'Odczytaj dane z dokumentu aparatem',
+      scanBtnHint: 'Opcjonalnie. Aparat odczyta wiersze ze znakami <<< w paszporcie lub na odwrocie dowodu. Obraz zostaje w Twoim telefonie.',
+      scanTitle: 'Skieruj aparat na wiersze ze znakami <<<',
+      scanStarting: 'Uruchamiam aparat…',
+      scanLoading: 'Wczytuję czytnik (ok. 3 MB)…',
+      scanAim: 'Umieść wiersze ze znakami <<< w ramce. Paszport: na dole strony ze zdjęciem. Dowód: odwrót.',
+      scanHold: 'Czytam… trzymaj telefon nieruchomo.',
+      scanSlow: 'Nie działa? Spróbuj przy lepszym świetle, bez odblasku i trochę bliżej. Albo wpisz dane ręcznie.',
+      scanErrDenied: 'Aparat nie jest dozwolony. Nic nie szkodzi — wpisz dane ręcznie.',
+      scanErrNoCam: 'Nie udało się uruchomić aparatu. Wpisz proszę dane ręcznie.',
+      scanErrLoad: 'Nie udało się wczytać czytnika. Wpisz proszę dane ręcznie.',
+      scanManual: 'Zamknij i wpisz ręcznie',
+      scanPrivacy: 'Obraz z aparatu jest przetwarzany tylko w tym telefonie. Nie jest nigdzie wysyłany ani zapisywany.',
+      scanDone: 'Odczytano z dokumentu: numer i rodzaj dokumentu, datę urodzenia, obywatelstwo{names}. Sprawdź je proszę przed dodaniem osoby.',
+      scanDoneNames: ' oraz imię i nazwisko (w tej części dokumentu bez polskich znaków — popraw je proszę)',
+      gdprScan: 'Czytnik dokumentu: obraz z aparatu przetwarza przeglądarka bezpośrednio w Twoim telefonie; nie jest nigdzie wysyłany ani zapisywany. Do formularza trafia tylko odczytany tekst (numer i rodzaj dokumentu, data urodzenia, obywatelstwo, imię i nazwisko), który widzisz i możesz poprawić przed wysłaniem.',
       citCommon: 'Częste', citOthers: 'Pozostałe kraje'
     }
   };
@@ -721,6 +785,61 @@
     return r;
   }
 
+  /* ===================== čtečka dokladu (volitelná) ===================== */
+  // Foťák přečte strojově čitelnou zónu; obraz neopouští prohlížeč (viz hlavička ctecka.js).
+  // ZKUŠEBNÍ PROVOZ: tlačítko je vidět jen s ?ctecka=1 — na skutečném telefonu zatím neměřeno.
+  // Po ověření stačí SCAN_ON nastavit na true.
+  var SCAN_ON = qs.get('ctecka') === '1';
+  function scanSupported() {
+    try {
+      return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.Worker &&
+        window.WebAssembly && WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123,
+          3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11])));       // WebAssembly SIMD
+    } catch (e) { return false; }
+  }
+  function loadScript(src) {
+    return new Promise(function (ok, fail) {
+      var el = document.createElement('script');
+      el.src = src; el.onload = ok; el.onerror = function () { fail(new Error(src)); };
+      document.head.appendChild(el);
+    });
+  }
+  var readerP = null;             // mrz.js + ctecka.js se načtou až po prvním klepnutí
+  function loadReader() {
+    if (!readerP) {
+      readerP = loadScript('mrz.js?v=1').then(function () { return loadScript('ctecka.js?v=1'); });
+      readerP.catch(function () { readerP = null; });
+    }
+    return readerP;
+  }
+  function scanNote(msg) { var n = $('scanNote'); n.textContent = msg || ''; n.hidden = !msg; }
+  function openScan() {
+    scanNote('');
+    loadReader().then(function () {
+      window.VRCtecka.open({ texts: T[lang], onResult: applyScan });
+    }).catch(function () { scanNote(T[lang].scanErrLoad); });
+  }
+  // Přečtené údaje do formuláře. Host je vidí a může opravit; kontroly běží stejně jako u psaní.
+  function applyScan(r) {
+    var L = T[lang], named = false, cit = $('f-cit');
+    if (r.citizenship && cit.querySelector('option[value="' + r.citizenship + '"]')) {
+      cit.value = r.citizenship;
+      if ($('f-rescnt').getAttribute('data-touched') !== 'true') $('f-rescnt').value = r.citizenship;
+    }
+    $('f-dtype').value = r.docType;
+    $('f-doc').value = r.docNumber;
+    setBirth(r.birth);
+    // jméno jen do prázdných políček: strojová zóna nemá diakritiku (MUELLER, NOVAK)
+    if (!$('f-first').value.trim() && !$('f-last').value.trim() && r.lastName) {
+      $('f-first').value = r.firstName; $('f-last').value = r.lastName; named = true;
+    }
+    clearError();
+    docConfirmed = false; $('f-docsure').checked = false;
+    updateDocUi(); hideDocWarn(); checkDocLive(); validateBirth(true);
+    scanNote(fill(L.scanDone, { names: named ? L.scanDoneNames : '' }));
+    $('scanRow').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   /* ===================== error/ok ===================== */
   // aria-invalid: zvýrazní dotčené pole (CSS [aria-invalid="true"]) a čtečka ho ohlásí.
   // Maže se při dalším pokusu (clearError) i jakmile uživatel do pole sáhne (init).
@@ -845,7 +964,7 @@
     $('f-ztp').checked = false; $('f-docsure').checked = false;
     // občanství, adresu i termín necháme — skupina bývá rodina z jednoho místa
     updateDocUi();
-    hideDocWarn(); hideDocErr();
+    hideDocWarn(); hideDocErr(); scanNote('');
     docConfirmed = false;
     $('f-first').focus();
   }
@@ -1077,6 +1196,12 @@
       if (f.value && t.value && t.value < f.value) t.value = f.value;
       if (f.value) t.min = token ? t.min : f.value;
     });
+
+    // čtečka dokladu: jen zkušebně a jen když ji telefon umí
+    if (SCAN_ON && scanSupported()) {
+      $('scanRow').hidden = false; $('gdprScan').hidden = false;
+      $('scanBtn').addEventListener('click', openScan);
+    }
 
     $('form').addEventListener('submit', submit);
     $('codeForm').addEventListener('submit', submitCode);
