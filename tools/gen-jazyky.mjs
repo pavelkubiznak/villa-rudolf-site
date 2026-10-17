@@ -130,7 +130,8 @@ function nactiSite() {
   });
   vm.runInContext(readFileSync(join(ROOT, 'assets/site.js'), 'utf8'), ctx, { filename: 'assets/site.js' });
   const api = vm.runInContext(`({ T, VR_FACTS, VR_PRICING, VR_REVIEWS, VR_CONTACT, VR_TRIP_COUNTS, GALLERY, state, NBf,
-    fillFacts, pluralForm, resolve, fmtM, fxLine, renderRatings, buildRoster, renderPriceBlock, renderFooterContact })`, ctx);
+    fillFacts, pluralForm, resolve, fmtM, fxLine, fmtCheckedAt, renderRatings, buildRoster, renderPriceBlock, renderFooterContact,
+    buildMarqList, buildMarqCard })`, ctx);
   /* Vykreslí blok funkcí ze site.js do prázdného prvku #id a vrátí ho. */
   api.blok = (id, lang, kresli) => {
     const host = new VEl('div'); host.id = id; ids.set(id, host);
@@ -365,7 +366,16 @@ function bloky(api, lang) {
     row.appendChild(new VEl('dt')).textContent = r.k;
     row.appendChild(new VEl('dd')).textContent = r.v;
   }
+  /* Citace hostů z pásu pod heroem (VR_REVIEWS.items): JS je točí v pojezdu (renderTrustBand),
+     staticky jde jedna sada bez opakování — robot i čtečka je přečtou jednou. Letní sada (vm má
+     sezónu „leto"), takže i citace o bazénu; zimní filtr si udělá JS. */
+  api.state.lang = lang;
+  const pojezd = new VEl('div');
+  const draha = pojezd.appendChild(new VEl('div')); draha.className = 'vr-revmarq-track';
+  const pul = draha.appendChild(new VEl('div')); pul.className = 'vr-revmarq-half';
+  for (const it of api.buildMarqList()) pul.appendChild(api.buildMarqCard(it));
   return {
+    'vr-teaser': pojezd,
     'vr-ratings': api.blok('vr-ratings', lang, () => api.renderRatings()),
     'vr-roster': api.blok('vr-roster', lang, (h) => api.buildRoster(h)),
     'vr-priceblock': cenik,
@@ -486,6 +496,18 @@ function dosadCeny(api, lang, s) {
     return kc(P.bond, true);
   });
 }
+/* Hodnocení z VR_REVIEWS (to, co ukazuje pás pod heroem): {hodnoceni:airbnb} → „5,0/5 (8 recenzí)",
+   {overeno} → datum ověření. Skrytou platformu (hidden) odmítne — na stránce není vidět. */
+function dosadHodnoceni(api, lang, s) {
+  api.state.lang = lang;
+  const t = api.T[lang].ratings;
+  return s.replace(/\{hodnoceni:(\w+)\}/g, (m, k) => {
+    const p = api.VR_REVIEWS.platforms.find((x) => x.key === k);
+    if (!p || p.hidden) { chyba(`${lang}: hodnocení „${k}" není ve VR_REVIEWS nebo je skryté (${m})`); return m; }
+    const cislo = p.rating.toFixed(1).replace('.', lang === 'en' ? '.' : ',');
+    return `${cislo}/${p.outOf} (${p.count}\u00a0${t.reviewsWord})`;
+  }).replace(/\{overeno\}/g, () => api.fmtCheckedAt(api.VR_REVIEWS.checkedAt));
+}
 function faqStranka(api, lang) {
   if (!OBSAH.FAQ || !OBSAH.FAQ_STRANKA) return null;
   const S = OBSAH.FAQ_STRANKA[lang], cesta = FAQ[lang], t = api.T[lang];
@@ -498,7 +520,7 @@ function faqStranka(api, lang) {
   const planovac = sJazykem('vylety/') + '#planovac';
   const q = (x) => {
     if (x[lang] == null) { chyba(`${lang}: Časté dotazy — chybí překlad „${x.cs}"`); return ''; }
-    const s = dosadCeny(api, lang, x[lang]).replace(/\{domu\}/g, domu).replace(/\{planovac\}/g, planovac);
+    const s = dosadHodnoceni(api, lang, dosadCeny(api, lang, x[lang])).replace(/\{domu\}/g, domu).replace(/\{planovac\}/g, planovac);
     if (/\{[a-z:]+\}/i.test(s)) chyba(`${lang}: Časté dotazy — nedosazený zástupný znak v „${s.slice(0, 80)}"`);
     return s;
   };
@@ -854,6 +876,8 @@ function kontrolaStranky(html, lang, cesta, cesty) {
 
 /* ============================ 8. Hlavní běh ============================ */
 const api = nactiSite();
+/* Křestní jména hostů u citací (Evžen…) jsou jména, ne zbylá čeština. */
+for (const r of api.VR_REVIEWS.items) JMENA.push(String(r.author).toLowerCase());
 const sablona = readFileSync(join(ROOT, 'index.html'), 'utf8');
 const vystupy = {};
 for (const L of JAZYKY) vystupy[DOMOV[L] + 'index.html'] = domovska(api, sablona, L);

@@ -403,6 +403,20 @@ export const FAQ = [
           fr: 'Toujours toute la maison avec son terrain, et toujours à un seul groupe — pas d’autres vacanciers, pas de réception. Jusqu’à vingt-deux personnes dorment confortablement dans sept chambres.',
         },
       },
+      {
+        /* Čísla se nepíšou — {hodnoceni:airbnb|booking} a {overeno} dosadí generátor z VR_REVIEWS v site.js.
+           Co hosté chválí = shrnutí skutečných citací ve VR_REVIEWS.items, nic navíc. */
+        id: 'hodnoceni', zdroj: 'otázka, kterou lidé kladou chatbotům (10/2026); čísla z VR_REVIEWS',
+        q: { cs: 'Jaké hodnocení má Villa Rudolf od hostů?', de: 'Wie bewerten Gäste die Villa Rudolf?', pl: 'Jak goście oceniają Villa Rudolf?', en: 'How do guests rate Villa Rudolf?', nl: 'Hoe beoordelen gasten Villa Rudolf?', fr: 'Quelles notes les voyageurs donnent-ils à la Villa Rudolf ?' },
+        a: {
+          cs: 'Na Airbnb {hodnoceni:airbnb}, na Booking.com {hodnoceni:booking}, ověřeno {overeno}. Hosté nejčastěji chválí, že se pohodlně vejde i velká parta, čistotu, velkou vybavenou kuchyň, bazén, saunu, postele a ochotu hostitele.',
+          de: 'Auf Airbnb {hodnoceni:airbnb}, auf Booking.com {hodnoceni:booking}, geprüft am {overeno}. Gäste loben am häufigsten, dass auch eine große Gruppe bequem Platz hat, die Sauberkeit, die große, voll ausgestattete Küche, den Pool, die Sauna, die Betten und den hilfsbereiten Gastgeber.',
+          pl: 'Na Airbnb {hodnoceni:airbnb}, na Booking.com {hodnoceni:booking}, sprawdzone {overeno}. Goście najczęściej chwalą, że wygodnie zmieści się nawet duża grupa, czystość, dużą wyposażoną kuchnię, basen, saunę, łóżka i pomocnego gospodarza.',
+          en: 'On Airbnb {hodnoceni:airbnb}, on Booking.com {hodnoceni:booking}, checked on {overeno}. Guests most often praise how comfortably even a big group fits, the cleanliness, the large fully equipped kitchen, the pool, the sauna, the beds and the helpful host.',
+          nl: 'Op Airbnb {hodnoceni:airbnb}, op Booking.com {hodnoceni:booking}, gecontroleerd op {overeno}. Gasten prijzen vooral dat ook een grote groep er comfortabel past, de netheid, de grote, volledig uitgeruste keuken, het zwembad, de sauna, de bedden en de behulpzame gastheer.',
+          fr: 'Sur Airbnb {hodnoceni:airbnb}, sur Booking.com {hodnoceni:booking}, vérifié le {overeno}. Les voyageurs saluent surtout la place pour un grand groupe, la propreté, la grande cuisine tout équipée, la piscine, le sauna, les lits et la disponibilité de l’hôte.',
+        },
+      },
     ],
   },
   {

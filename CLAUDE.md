@@ -338,7 +338,12 @@ a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.m
   `villa-rudolf-portal/docs/text-villa-rudolf.md`, kap. 3. Časté dotazy taky: otázky ze skutečných
   poptávek, odpovědi jen z kap. 3; co tam není, se nepíše.
 - Schema.org (`VacationRental` + `WebPage` s `inLanguage`, na Častých dotazech `FAQPage`) smí nést jen to,
-  co je na stránce vidět. `aggregateRating` ne.
+  co je na stránce vidět. `aggregateRating` ne: hodnocení pochází z Bookingu a Airbnb a Google zakazuje
+  značkovat hodnocení převzatá z jiných webů (a vlastní recenze ubytování mu jsou „self-serving").
+- **Hodnocení hostů pro AI (od 17. 10. 2026)** je v textu: řádek hodnocení i citace z pásu pod heroem
+  (`VR_REVIEWS.items`, kreslí je staticky `buildMarqList`/`buildMarqCard`), otázka `hodnoceni` v Častých
+  dotazech (čísla dosadí generátor) a řádek „Hodnocení hostů“ v `llms.txt` a `de/llms.txt` — ten se píše
+  ručně a `test-jazyky.mjs` hlídá, že sedí s `VR_REVIEWS`. Po aktualizaci čísel přepsat i llms.txt.
 - Hodnocení Google je skryté (`hidden` ve `VR_REVIEWS`), dokud profil „Rudolfův dvůr“ na Mapách
   nebude nárokovaný a přejmenovaný. Patička a `alternateName` říkají „dříve Rudolfův dvůr“ (Pavel 8. 10. 2026).
 - Žádný skrytý text pro roboty ani pokyny pro AI ve stránce.

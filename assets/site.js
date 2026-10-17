@@ -4618,9 +4618,10 @@ function platformScore(p) {
 }
 function buildMarqList() {
   return reviewsForSeason().map((r) => {
-    const p = platformByKey(r.platform);
+    const p = platformByKey(r.platform), text = reviewText(r);
     return {
-      q: marqTrim(reviewText(r)), a: r.author,
+      // lang = jazyk zobrazeného textu (originál, nebo český překlad) — čtečka i robot ho tak přečtou
+      q: marqTrim(text), lang: text === r.quote ? r.lang : 'cs', a: r.author,
       source: p.name || r.platform, url: p.url || '', score: platformScore(p),
     };
   }).filter((x) => x.q);
@@ -4638,9 +4639,9 @@ function buildMarqCard(it) {
     it.url ? el('span', { class: 'vr-rating-arrow', 'aria-hidden': 'true', text: '↗' }) : null,
   ]);
   const kids = [
-    el('blockquote', { class: 'vr-revcard-q', text: it.q }),
+    el('blockquote', { class: 'vr-revcard-q', lang: it.lang, text: it.q }),
     el('div', { class: 'vr-revcard-cap' }, [
-      el('span', { class: 'vr-revcard-author', text: it.a }),
+      el('span', { class: 'vr-revcard-author', lang: it.lang, text: it.a }),
       badge,
     ]),
   ];

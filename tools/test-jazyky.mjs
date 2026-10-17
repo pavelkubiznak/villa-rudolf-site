@@ -146,5 +146,18 @@ for (const s of stranky) {
   ok(!rozbite.size, `${s}: všechny relativní odkazy a cesty vedou na existující soubor${rozbite.size ? ' — rozbité: ' + [...rozbite].slice(0, 6).join(', ') : ''}`);
 }
 
+// ---------- 5. hodnocení v llms.txt sedí s VR_REVIEWS (site.js) ----------
+// llms.txt se píše ručně; po aktualizaci čísel ve VR_REVIEWS je potřeba přepsat i řádek „Hodnocení hostů".
+const siteJs = readFileSync(join(root, 'assets/site.js'), 'utf8');
+const overeno = (/checkedAt: '(\d{4})-(\d{2})-(\d{2})'/.exec(siteJs) || []).slice(1).map(Number);
+const platformy = [...siteJs.matchAll(/\{ key: '(\w+)',\s*name: '([^']+)',\s*rating: ([\d.]+),\s*outOf: (\d+),\s*count: (\d+),([^}]*)\}/g)]
+  .filter((m) => !/hidden: true/.test(m[6]));
+for (const f of ['llms.txt', 'de/llms.txt']) {
+  const txt = readFileSync(join(root, f), 'utf8');
+  const chybi = platformy.map((m) => `${m[2]} ${Number(m[3]).toFixed(1).replace('.', ',')}/${m[4]} (${m[5]} `).filter((x) => !txt.includes(x));
+  if (overeno.length && !txt.includes(`${overeno[2]}. ${overeno[1]}. ${overeno[0]}`)) chybi.push('datum ověření ' + overeno.reverse().join('. '));
+  ok(platformy.length && !chybi.length, `${f}: hodnocení hostů odpovídá VR_REVIEWS${chybi.length ? ' — chybí: ' + chybi.join(', ') : ''}`);
+}
+
 if (chyby) { console.log(`\n${chyby} chyb`); process.exit(1); }
 console.log('\nVše v pořádku.');
