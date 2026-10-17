@@ -1521,3 +1521,8 @@ a.vr-revcard:hover .vr-revcard-plat{border-color:var(--vr-ember-2)}
   .vr-stickycta[data-show="true"] ~ .vr-langbar{bottom:calc(68px + env(safe-area-inset-bottom))}
 }
 @media(prefers-reduced-motion:reduce){.vr-langbar{animation:none}}
+/* Volné termíny jako text (tools/gen-jazyky.mjs z assets/volno.json) — hlavně pro roboty bez JS, lidem sbalené. */
+.vr-volno details{margin-top:12px;font-family:'Archivo',sans-serif;font-size:12px;color:var(--vr-text-faint)}
+.vr-volno summary{cursor:pointer;width:max-content;max-width:100%}
+.vr-volno p{margin:8px 0 0;line-height:1.5}
+.vr-volno ul{margin:6px 0 0;padding-left:18px;line-height:1.6}
