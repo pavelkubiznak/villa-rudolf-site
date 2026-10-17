@@ -521,8 +521,9 @@ function faqStranka(api, lang) {
   const planovac = sJazykem('vylety/') + '#planovac';
   const q = (x) => {
     if (x[lang] == null) { chyba(`${lang}: Časté dotazy — chybí překlad „${x.cs}"`); return ''; }
-    const s = dosadHodnoceni(api, lang, dosadCeny(api, lang, x[lang])).replace(/\{domu\}/g, domu).replace(/\{planovac\}/g, planovac);
-    if (/\{[a-z:]+\}/i.test(s)) chyba(`${lang}: Časté dotazy — nedosazený zástupný znak v „${s.slice(0, 80)}"`);
+    const s = dosadHodnoceni(api, lang, dosadCeny(api, lang, x[lang])).replace(/\{domu\}/g, domu).replace(/\{planovac\}/g, planovac)
+      .replace(/\{pro:([a-z-]+)\}/g, (m, id) => (PRO_KOHO_OBSAH.PRO_KOHO.some((p) => p.id === id) ? relativni(cesta, PRO_CESTY[lang] + id + '/') : m));
+    if (/\{[a-z:-]+\}/i.test(s)) chyba(`${lang}: Časté dotazy — nedosazený zástupný znak v „${s.slice(0, 80)}"`);
     return s;
   };
   if (lang === 'cs') for (const p of OBSAH.FAQ_PREDPOKLADY || []) {
