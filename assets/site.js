@@ -4463,6 +4463,7 @@ function submitBooking() {
     p_name: name, p_email: email, p_phone: phone,
     p_lang: lang, p_breakdown: breakdown, p_total: q.total,
     p_message: message || null,
+    p_source: vrZdroj(),   // odkud host přišel (chatgpt.com, google.com, primo…) → vr_requests.source
   };
   fetch(VR_SUPABASE.URL + '/rest/v1/rpc/vr_request', {
     method: 'POST',

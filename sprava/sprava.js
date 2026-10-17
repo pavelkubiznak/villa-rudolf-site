@@ -880,6 +880,21 @@
   }
   function nightWord(n) { return n === 1 ? 'noc' : (n <= 4 ? 'noci' : 'nocí'); }
 
+  // Odkud host na web přišel (vr_requests.source od 17. 10. 2026, vrZdroj v assets/site.js).
+  // Starší žádosti zdroj nemají → nic se nezobrazí.
+  function srcLabel(src) {
+    if (!src) return '';
+    var t = src === 'primo' ? 'napřímo / zdroj neznámý'
+      : /chatgpt|openai/.test(src) ? 'ChatGPT'
+      : /perplexity/.test(src) ? 'Perplexity'
+      : /claude\.ai|anthropic/.test(src) ? 'Claude'
+      : /gemini|bard/.test(src) ? 'Gemini'
+      : /copilot|bing/.test(src) ? (src.indexOf('copilot') >= 0 ? 'Copilot' : 'Bing')
+      : /google/.test(src) ? 'Google'
+      : src;
+    return ' · přes <b>' + esc(t) + '</b>';
+  }
+
   function requestCard(r, idx) {
     var n = daysBetween(r.arrival, r.departure);
     var done = r.status === 'done';
@@ -910,7 +925,7 @@
       + '<div class="req-d">' + esc(fmtShort(r.arrival, r.departure)) + ' · ' + n + ' ' + nightWord(n)
       + ' · ' + esc(hoste) + ' · <b>' + esc(Number(r.total || 0).toLocaleString('cs-CZ')) + ' Kč</b></div>'
       + '<div class="req-c">' + links + '</div>' + msg
-      + '<div class="req-when">Přišla ' + esc(fmtWhen(r.created_at)) + '</div>'
+      + '<div class="req-when">Přišla ' + esc(fmtWhen(r.created_at)) + srcLabel(r.source) + '</div>'
       + '</div>'
       + '<button type="button" class="btn btn-sm ' + (done ? 'btn-ghost' : 'btn-outline')
       + '" data-req="' + idx + '">' + (done ? 'Vrátit' : 'Vyřízeno') + '</button>'
