@@ -359,12 +359,12 @@ export const FAQ = [
         id: 'volny-termin', zdroj: 'téma 2 — je termín volný? (10 vláken)',
         q: { cs: 'Jak zjistíme, jestli je náš termín volný?', de: 'Wie sehen wir, ob unser Termin frei ist?', pl: 'Jak sprawdzić, czy nasz termin jest wolny?', en: 'How can we tell whether our dates are free?', nl: 'Hoe zien we of onze data nog vrij zijn?', fr: 'Comment savoir si nos dates sont libres ?' },
         a: {
-          cs: 'Volné termíny ukazuje kalendář na <a href="{domu}#rezervace">hlavní stránce</a>. Vyberete v něm příjezd a odjezd, uvidíte rozpis ceny a pošlete nám nezávaznou žádost o pobyt. Termín vám potvrdíme osobně.',
-          de: 'Freie Termine zeigt der Kalender auf der <a href="{domu}#rezervace">Startseite</a>. Dort wählt ihr An- und Abreise, seht die Preisaufstellung und sendet uns eine unverbindliche Aufenthaltsanfrage. Den Termin bestätigen wir euch persönlich.',
-          pl: 'Wolne terminy pokazuje kalendarz na <a href="{domu}#rezervace">stronie głównej</a>. Wybierzcie w nim przyjazd i wyjazd, zobaczycie rozpiskę ceny i wyślecie nam niezobowiązującą prośbę o pobyt. Termin potwierdzimy osobiście.',
-          en: 'The calendar on the <a href="{domu}#rezervace">home page</a> shows the free dates. Pick your arrival and departure there, see the price breakdown and send us a non-binding stay request. We’ll confirm your dates personally.',
-          nl: 'De kalender op de <a href="{domu}#rezervace">startpagina</a> laat de vrije data zien. Kies daar jullie aankomst en vertrek, bekijk de prijsopbouw en stuur ons een vrijblijvende aanvraag. We bevestigen jullie data persoonlijk.',
-          fr: 'Le calendrier de la <a href="{domu}#rezervace">page d’accueil</a> affiche les dates libres. Choisissez-y votre arrivée et votre départ, consultez le détail du prix et envoyez-nous une demande de séjour sans engagement. Nous vous confirmons les dates personnellement.',
+          cs: 'Volné termíny ukazuje kalendář na <a href="{domu}#rezervace">hlavní stránce</a>. Vyberete v něm příjezd a odjezd, uvidíte rozpis ceny a pošlete nám nezávaznou žádost o pobyt. Termín vám potvrdíme osobně. {volno}',
+          de: 'Freie Termine zeigt der Kalender auf der <a href="{domu}#rezervace">Startseite</a>. Dort wählt ihr An- und Abreise, seht die Preisaufstellung und sendet uns eine unverbindliche Aufenthaltsanfrage. Den Termin bestätigen wir euch persönlich. {volno}',
+          pl: 'Wolne terminy pokazuje kalendarz na <a href="{domu}#rezervace">stronie głównej</a>. Wybierzcie w nim przyjazd i wyjazd, zobaczycie rozpiskę ceny i wyślecie nam niezobowiązującą prośbę o pobyt. Termin potwierdzimy osobiście. {volno}',
+          en: 'The calendar on the <a href="{domu}#rezervace">home page</a> shows the free dates. Pick your arrival and departure there, see the price breakdown and send us a non-binding stay request. We’ll confirm your dates personally. {volno}',
+          nl: 'De kalender op de <a href="{domu}#rezervace">startpagina</a> laat de vrije data zien. Kies daar jullie aankomst en vertrek, bekijk de prijsopbouw en stuur ons een vrijblijvende aanvraag. We bevestigen jullie data persoonlijk. {volno}',
+          fr: 'Le calendrier de la <a href="{domu}#rezervace">page d’accueil</a> affiche les dates libres. Choisissez-y votre arrivée et votre départ, consultez le détail du prix et envoyez-nous une demande de séjour sans engagement. Nous vous confirmons les dates personnellement. {volno}',
         },
       },
       {
@@ -586,3 +586,58 @@ export const FAQ_PREDPOKLADY = [
   { pole: 'minNights', urovne: ['mimo', 'zimni'], kde: 'minimum („mimo sezónu a v zimě")' },
   { pole: 'minNights', urovne: ['vanoce', 'silvestr'], kde: 'minimum („o Vánocích a na Silvestra")' },
 ];
+
+/* Volné termíny — seznam z assets/volno.json (tools/gen-volno.mjs, obnovuje se 2× denně).
+   Vypisuje se pod kalendářem na homepage (rozbalovací <details>), v odpovědi „Jak zjistíme, jestli je
+   náš termín volný?" (zástupný znak {volno}) a v llms.txt (cs + en) a de/llms.txt.
+   {datum} = den, ke kterému seznam platí; {od}/{do} = data; {rok}/{rok2} = rok Vánoc a následující. */
+export const VOLNO = {
+  cs: {
+    locale: 'cs-CZ', nadpis: 'Volné termíny', souhrn: 'Volné termíny jako seznam',
+    uvod: 'Stav k {datum}. Seznam se obnovuje automaticky dvakrát denně z rezervačního kalendáře; uvádí jen termíny, do kterých se vejde minimální pobyt. První datum je příjezd, druhé odjezd. Termín vždy potvrzujeme osobně.',
+    dal: '{od} a dál (kalendář je otevřený do {do})', zadny: 'Momentálně žádný volný termín.',
+    vanoce: 'Vánoce {rok}', silvestr: 'Silvestr {rok}/{rok2}',
+    stavy: { volno: 'volno', castecne: 'částečně volno', obsazeno: 'obsazeno' },
+    faq: 'Nejbližší volné termíny (stav k {datum}):', faqVse: 'Celý seznam je pod kalendářem.',
+  },
+  de: {
+    locale: 'de-DE', nadpis: 'Freie Termine', souhrn: 'Freie Termine als Liste',
+    uvod: 'Stand: {datum}. Die Liste wird zweimal täglich automatisch aus dem Buchungskalender aktualisiert und nennt nur Zeiträume, in die der Mindestaufenthalt passt. Erstes Datum = Anreise, zweites = Abreise. Den Termin bestätigen wir euch immer persönlich.',
+    dal: 'ab {od} (der Kalender ist bis {do} offen)', zadny: 'Derzeit kein freier Termin.',
+    vanoce: 'Weihnachten {rok}', silvestr: 'Silvester {rok}/{rok2}',
+    stavy: { volno: 'frei', castecne: 'teilweise frei', obsazeno: 'ausgebucht' },
+    faq: 'Die nächsten freien Termine (Stand: {datum}):', faqVse: 'Die ganze Liste steht unter dem Kalender.',
+  },
+  pl: {
+    locale: 'pl-PL', nadpis: 'Wolne terminy', souhrn: 'Wolne terminy jako lista',
+    uvod: 'Stan na {datum}. Lista aktualizuje się automatycznie dwa razy dziennie z kalendarza rezerwacji i podaje tylko terminy, w które mieści się minimalny pobyt. Pierwsza data to przyjazd, druga wyjazd. Termin zawsze potwierdzamy osobiście.',
+    dal: 'od {od} (kalendarz jest otwarty do {do})', zadny: 'Obecnie brak wolnych terminów.',
+    vanoce: 'Boże Narodzenie {rok}', silvestr: 'Sylwester {rok}/{rok2}',
+    stavy: { volno: 'wolne', castecne: 'częściowo wolne', obsazeno: 'zajęte' },
+    faq: 'Najbliższe wolne terminy (stan na {datum}):', faqVse: 'Pełna lista jest pod kalendarzem.',
+  },
+  en: {
+    locale: 'en-GB', nadpis: 'Free dates', souhrn: 'Free dates as a list',
+    uvod: 'As of {datum}. The list updates automatically twice a day from the booking calendar and only shows dates long enough for the minimum stay. First date = arrival, second = departure. We always confirm your dates personally.',
+    dal: 'from {od} onwards (the calendar is open until {do})', zadny: 'No free dates at the moment.',
+    vanoce: 'Christmas {rok}', silvestr: 'New Year’s Eve {rok}/{rok2}',
+    stavy: { volno: 'free', castecne: 'partly free', obsazeno: 'booked' },
+    faq: 'The next free dates (as of {datum}):', faqVse: 'The full list is below the calendar.',
+  },
+  nl: {
+    locale: 'nl-NL', nadpis: 'Vrije data', souhrn: 'Vrije data als lijst',
+    uvod: 'Stand op {datum}. De lijst wordt twee keer per dag automatisch bijgewerkt vanuit de boekingskalender en toont alleen periodes waarin het minimale verblijf past. Eerste datum = aankomst, tweede = vertrek. We bevestigen jullie data altijd persoonlijk.',
+    dal: 'vanaf {od} (de kalender is open tot {do})', zadny: 'Op dit moment geen vrije data.',
+    vanoce: 'Kerst {rok}', silvestr: 'Oud en Nieuw {rok}/{rok2}',
+    stavy: { volno: 'vrij', castecne: 'deels vrij', obsazeno: 'volgeboekt' },
+    faq: 'De eerstvolgende vrije data (stand op {datum}):', faqVse: 'De volledige lijst staat onder de kalender.',
+  },
+  fr: {
+    locale: 'fr-FR', nadpis: 'Dates libres', souhrn: 'Dates libres sous forme de liste',
+    uvod: 'Situation au {datum}. La liste se met à jour automatiquement deux fois par jour depuis le calendrier de réservation et ne montre que les périodes assez longues pour le séjour minimum. Première date = arrivée, seconde = départ. Nous confirmons toujours vos dates personnellement.',
+    dal: 'à partir du {od} (le calendrier est ouvert jusqu’au {do})', zadny: 'Aucune date libre pour le moment.',
+    vanoce: 'Noël {rok}', silvestr: 'Saint-Sylvestre {rok}/{rok2}',
+    stavy: { volno: 'libre', castecne: 'partiellement libre', obsazeno: 'complet' },
+    faq: 'Les prochaines dates libres (situation au {datum}) :', faqVse: 'La liste complète se trouve sous le calendrier.',
+  },
+};

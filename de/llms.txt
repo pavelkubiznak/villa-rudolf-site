@@ -23,6 +23,33 @@ Haus und Grundstück gehören nur einer Gruppe, nichts wird mit fremden Gästen 
 Unverbindliche Anfrage über den Kalender auf https://villarudolf.com/de/#rezervace, E-Mail rezervace@villarudolf.com, Telefon und WhatsApp +420 775 220 785. Die Villa Rudolf ist auch auf Booking.com, Airbnb, FeWo-direkt (Vrbo) und e-chalupy.cz unter dem Namen „Villa Rudolf, Svoboda nad Úpou" zu finden.
 Adresse: Luční 519, 542 24 Svoboda nad Úpou, Tschechien. GPS 50.6254, 15.8136.
 
+<!-- VOLNO:START — generiert von tools/gen-jazyky.mjs aus assets/volno.json (2× täglich), nicht von Hand ändern -->
+## Freie Termine
+Stand: 17. Oktober 2026. Die Liste wird zweimal täglich automatisch aus dem Buchungskalender aktualisiert und nennt nur Zeiträume, in die der Mindestaufenthalt passt. Erstes Datum = Anreise, zweites = Abreise. Den Termin bestätigen wir euch immer persönlich.
+
+- Weihnachten 2026: ausgebucht
+- Silvester 2026/27: ausgebucht
+- Weihnachten 2027: frei
+- Silvester 2027/28: frei
+- Weihnachten 2028: frei
+- Silvester 2028/29: frei
+- 26. Oktober – 28. Oktober 2026 (2 Nächte)
+- 10. Januar – 30. Januar 2027 (20 Nächte)
+- 13. Februar – 20. Februar 2027 (7 Nächte)
+- 27. Februar – 4. März 2027 (5 Nächte)
+- 7. März – 29. April 2027 (53 Nächte)
+- 2. Mai – 5. Mai 2027 (3 Nächte)
+- 9. Mai – 14. Mai 2027 (5 Nächte)
+- 18. Mai – 22. Mai 2027 (4 Nächte)
+- 29. Mai – 2. Juni 2027 (4 Nächte)
+- 6. Juni – 10. Juni 2027 (4 Nächte)
+- 13. Juni – 17. Juni 2027 (4 Nächte)
+- 20. Juni – 23. Juni 2027 (3 Nächte)
+- 5. September – 29. Oktober 2027 (54 Nächte)
+- 1. November 2027 – 25. Mai 2028 (206 Nächte)
+- ab 28. Mai 2028 (der Kalender ist bis 11. Januar 2029 offen)
+<!-- VOLNO:END -->
+
 ## Seiten
 - [Haus, Ausstattung, Preisliste, Kalender und Anfrage](https://villarudolf.com/de/)
 - [Häufige Fragen](https://villarudolf.com/de/faq/)
