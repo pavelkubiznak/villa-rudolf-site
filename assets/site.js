@@ -3927,7 +3927,7 @@ function applyGalleryNote() {
    are ever read, cached or rendered — guest names and platforms are never
    touched. `end` is the departure day, so occupied nights are start..end-1. */
 const AVAIL_URL = 'https://pavelkubiznak.github.io/villa-booking-calendar/data/history.json';
-const AVAIL_CACHE_KEY = 'vr_avail_v1';
+const AVAIL_CACHE_KEY = 'vr_avail_v2';   // v2: bez duchů (stale)
 const AVAIL_TTL = 3600000; // 1 h
 let BOOKED = new Set();      // integer day-keys (YYYYMMDD) of occupied nights
 let availStatus = 'loading'; // 'loading' | 'ok' | 'fail'
@@ -3950,6 +3950,9 @@ function slimFuture(records) {
   const out = [];
   records.forEach((r) => {
     if (!r || !r.start || !r.end) return;
+    /* „Duch" (stale a pobyt teprve má proběhnout) z feedu platformy vypadl = storno; termín
+       neblokuje. Stejné pravidlo jako /sprava/ (blockedOnPlatform) a tools/gen-volno.mjs. */
+    if (r.stale === true && parseISO(r.end) > today) return;
     if (parseISO(r.end) > today) out.push({ s: r.start, e: r.end });
   });
   return out;

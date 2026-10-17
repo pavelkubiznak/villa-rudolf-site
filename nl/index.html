@@ -175,7 +175,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="../assets/site.css?v=60">
+<link rel="stylesheet" href="../assets/site.css?v=61">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
@@ -1128,6 +1128,31 @@
             <span class="sw"><i style="background:linear-gradient(135deg,var(--vr-day-free) 0 50%,transparent 50%);border:1px solid var(--vr-line)"></i><span data-t="book.checkoutOnly">alleen vertrek</span></span>
             <span class="demo" id="vr-avail-note" role="status" aria-live="polite"></span>
           </div>
+          <!-- Volné termíny jako text pro roboty bez JavaScriptu (AI asistenti). Plní tools/gen-jazyky.mjs z assets/volno.json. -->
+          <div class="vr-volno" id="vr-volno">
+            <details>
+              <summary>Vrije data als lijst</summary>
+              <p>Stand op 17 oktober 2026. De lijst wordt twee keer per dag automatisch bijgewerkt vanuit de boekingskalender en toont alleen periodes waarin het minimale verblijf past. Eerste datum = aankomst, tweede = vertrek. We bevestigen jullie data altijd persoonlijk.</p>
+              <p>Kerst 2026: volgeboekt · Oud en Nieuw 2026/27: volgeboekt · Kerst 2027: vrij · Oud en Nieuw 2027/28: vrij · Kerst 2028: vrij · Oud en Nieuw 2028/29: vrij</p>
+              <ul>
+                <li>26 oktober – 28 oktober 2026 (2 nachten)</li>
+                <li>10 januari – 30 januari 2027 (20 nachten)</li>
+                <li>13 februari – 20 februari 2027 (7 nachten)</li>
+                <li>27 februari – 4 maart 2027 (5 nachten)</li>
+                <li>7 maart – 29 april 2027 (53 nachten)</li>
+                <li>2 mei – 5 mei 2027 (3 nachten)</li>
+                <li>9 mei – 14 mei 2027 (5 nachten)</li>
+                <li>18 mei – 22 mei 2027 (4 nachten)</li>
+                <li>29 mei – 2 juni 2027 (4 nachten)</li>
+                <li>6 juni – 10 juni 2027 (4 nachten)</li>
+                <li>13 juni – 17 juni 2027 (4 nachten)</li>
+                <li>20 juni – 23 juni 2027 (3 nachten)</li>
+                <li>5 september – 29 oktober 2027 (54 nachten)</li>
+                <li>1 november 2027 – 25 mei 2028 (206 nachten)</li>
+                <li>vanaf 28 mei 2028 (de kalender is open tot 11 januari 2029)</li>
+              </ul>
+            </details>
+          </div>
         </div>
         <aside class="vr-book-aside" data-state="form">
           <form class="vr-book-form" id="vr-book-formEl" novalidate>
@@ -1290,7 +1315,7 @@
   </div>
 
 </div>
-<script src="../assets/site.js?v=65" defer></script>
+<script src="../assets/site.js?v=66" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-before-send="vrUmamiRef"></script>
 </body>
