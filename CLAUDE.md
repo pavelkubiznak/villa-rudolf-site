@@ -319,6 +319,10 @@ a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.m
   (částky úklidu, poplatku, psa a kauce dosadí generátor z `VR_PRICING`), šablona info je `info/index.html`
   (`data-i18n`), podmínky skládá generátor celé. Staré odkazy `?lang=` (QR na TV, průvodce) přesměruje
   skript v `<head>` české stránky. Adresy a vlastní jména v info nesou `lang="cs"`.
+- **Pro koho (od 17. 10. 2026):** `/pro/` (rozcestník) a `/pro/<id>/` — parta přátel, rodinné setkání,
+  firemní akce, oslava, lyžování s dětmi, léto s bazénem, ve všech 6 jazycích. Texty `tools/pro-koho-obsah.mjs`,
+  fakta jen z `text-villa-rudolf.md` (žádný catering, sál ani projektor), ceny přes `{cena:…}` z `VR_PRICING`.
+  Každá stránka má poctivou výhradu (hudba kvůli sousedům, bazén v zimě, chladnější voda na kraji sezony).
 - **Nizozemština a francouzština (Benelux, od 9. 10. 2026)** jsou homepage, Časté dotazy, info a podmínky.
   Výlety a průvodce hosta umí dál jen cs/en/de/pl. Z `/nl/` a `/fr/` se proto otevírají
   anglicky: `vrSubLang()` v `site.js`, `jazykPodstranky()` v generátoru a mapa `NAHRADA` v jejich JS.

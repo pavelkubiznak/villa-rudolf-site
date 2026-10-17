@@ -317,6 +317,552 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/podminky/"/>
   </url>
   <url>
+    <loc>https://villarudolf.com/pro/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/pro/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/pro/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/pro/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/nl/pro/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/fr/pro/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pro/pratele/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/pratele/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/pro/pratele/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/pratele/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/pro/pratele/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/pratele/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/pro/pratele/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/pratele/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/nl/pro/pratele/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/pratele/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/fr/pro/pratele/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/pratele/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/pratele/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pro/rodina/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/rodina/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/pro/rodina/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/rodina/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/pro/rodina/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/rodina/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/pro/rodina/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/rodina/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/nl/pro/rodina/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/rodina/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/fr/pro/rodina/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/rodina/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/rodina/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pro/firmy/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/firmy/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/pro/firmy/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/firmy/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/pro/firmy/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/firmy/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/pro/firmy/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/firmy/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/nl/pro/firmy/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/firmy/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/fr/pro/firmy/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/firmy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/firmy/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pro/oslava/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/oslava/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/pro/oslava/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/oslava/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/pro/oslava/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/oslava/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/pro/oslava/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/oslava/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/nl/pro/oslava/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/oslava/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/fr/pro/oslava/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/oslava/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/oslava/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pro/lyze-s-detmi/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/pro/lyze-s-detmi/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/pro/lyze-s-detmi/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/pro/lyze-s-detmi/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/nl/pro/lyze-s-detmi/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/fr/pro/lyze-s-detmi/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/lyze-s-detmi/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/lyze-s-detmi/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pro/leto-s-bazenem/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/de/pro/leto-s-bazenem/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/pl/pro/leto-s-bazenem/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/en/pro/leto-s-bazenem/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/nl/pro/leto-s-bazenem/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+  </url>
+  <url>
+    <loc>https://villarudolf.com/fr/pro/leto-s-bazenem/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://villarudolf.com/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://villarudolf.com/de/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://villarudolf.com/pl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://villarudolf.com/nl/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://villarudolf.com/fr/pro/leto-s-bazenem/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://villarudolf.com/en/pro/leto-s-bazenem/"/>
+  </url>
+  <url>
     <loc>https://villarudolf.com/vylety/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

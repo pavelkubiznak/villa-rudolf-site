@@ -625,7 +625,7 @@ const T = {
       lblMessage: 'Zpráva pro hostitele', phMessage: 'Cokoli, co bychom měli vědět — počet dětí, čas příjezdu, přání… (nepovinné)',
     },
     mail: { subject: 'Villa Rudolf — žádost o pobyt', dates: 'Termín', nights: 'Počet nocí', breakdown: 'Rozpis ceny', cleaning: 'Úklidový poplatek', cityTax: 'Městský poplatek', guests: 'Hosté', adults: 'Dospělí', children: 'Děti', pets: 'Domácí mazlíčci', total: 'Celkem', deposit: 'Záloha 30 % (po potvrzení)', from: 'Kontaktní e-mail', phone: 'Telefon / WhatsApp', greeting: 'Dobrý den, rád(a) bych požádal(a) o pobyt ve Villa Rudolf v tomto termínu:' },
-    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', formerly: 'Dříve Rudolfův dvůr.', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Plánovač výletů', faq: 'Časté dotazy' },
+    footer: { tagline: 'Soukromé horské sídlo pro velké skupiny v srdci Krkonoš.', langLabel: 'Jazyk', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Sledujte nás', host: 'Pavel — váš hostitel', region: 'Krkonoše, Česko', formerly: 'Dříve Rudolfův dvůr.', terms: 'Ubytovací podmínky a ochrana údajů', guide: 'Plánovač výletů', faq: 'Časté dotazy', proKoho: 'Pro koho' },
     /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
     langbar: { text: 'Tuhle stránku máme i v češtině.', go: 'Česky' },
     prebook: {
@@ -986,7 +986,7 @@ const T = {
       lblMessage: 'Message to the host', phMessage: 'Anything we should know — number of children, arrival time, requests… (optional)',
     },
     mail: { subject: 'Villa Rudolf — stay request', dates: 'Dates', nights: 'Nights', breakdown: 'Price breakdown', cleaning: 'Cleaning fee', cityTax: 'City tax', guests: 'Guests', adults: 'Adults', children: 'Children', pets: 'Pets', total: 'Total', deposit: '30% deposit (after confirmation)', from: 'Contact email', phone: 'Phone / WhatsApp', greeting: 'Hello, I’d like to request a stay at Villa Rudolf for these dates:' },
-    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', formerly: 'Formerly Rudolfův dvůr.', terms: 'Booking terms & privacy', guide: 'Trip planner', faq: 'FAQ' },
+    footer: { tagline: 'A private mountain estate for large groups in the heart of Krkonoše.', langLabel: 'Language', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Follow us', host: 'Pavel — your host', region: 'Krkonoše, Czechia', formerly: 'Formerly Rudolfův dvůr.', terms: 'Booking terms & privacy', guide: 'Trip planner', faq: 'FAQ', proKoho: 'Who it’s for' },
     /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
     langbar: { text: 'This page is also available in English.', go: 'English' },
     prebook: {
@@ -1347,7 +1347,7 @@ const T = {
       lblMessage: 'Nachricht an den Gastgeber', phMessage: 'Was wir wissen sollten — Kinderzahl, Ankunftszeit, Wünsche… (optional)',
     },
     mail: { subject: 'Villa Rudolf — Aufenthaltsanfrage', dates: 'Termin', nights: 'Nächte', breakdown: 'Preisaufstellung', cleaning: 'Endreinigung', cityTax: 'Kurtaxe', guests: 'Gäste', adults: 'Erwachsene', children: 'Kinder', pets: 'Haustiere', total: 'Gesamt', deposit: '30 % Anzahlung (nach Bestätigung)', from: 'Kontakt-E-Mail', phone: 'Telefon / WhatsApp', greeting: 'Guten Tag, ich möchte einen Aufenthalt in der Villa Rudolf zu diesem Termin anfragen:' },
-    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', formerly: 'Früher Rudolfův dvůr.', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsplaner', faq: 'Häufige Fragen' },
+    footer: { tagline: 'Ein privates Berganwesen für große Gruppen im Herzen des Riesengebirges.', langLabel: 'Sprache', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Folgt uns', host: 'Pavel — euer Gastgeber', region: 'Riesengebirge, Tschechien', formerly: 'Früher Rudolfův dvůr.', terms: 'Buchungsbedingungen & Datenschutz', guide: 'Ausflugsplaner', faq: 'Häufige Fragen', proKoho: 'Für wen' },
     /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
     langbar: { text: 'Diese Seite gibt es auch auf Deutsch.', go: 'Deutsch' },
     prebook: {
@@ -1708,7 +1708,7 @@ const T = {
       lblMessage: 'Wiadomość do gospodarza', phMessage: 'Cokolwiek, co powinniśmy wiedzieć — liczba dzieci, godzina przyjazdu, życzenia… (opcjonalnie)',
     },
     mail: { subject: 'Villa Rudolf — prośba o pobyt', dates: 'Termin', nights: 'Noce', breakdown: 'Rozpiska ceny', cleaning: 'Opłata za sprzątanie', cityTax: 'Opłata miejscowa', guests: 'Goście', adults: 'Dorośli', children: 'Dzieci', pets: 'Zwierzęta', total: 'Razem', deposit: 'Zaliczka 30% (po potwierdzeniu)', from: 'E-mail kontaktowy', phone: 'Telefon / WhatsApp', greeting: 'Dzień dobry, chciałbym/chciałabym poprosić o pobyt w Villa Rudolf w tym terminie:' },
-    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', formerly: 'Dawniej Rudolfův dvůr.', terms: 'Warunki pobytu i prywatność', guide: 'Planer wycieczek', faq: 'Częste pytania' },
+    footer: { tagline: 'Prywatna górska rezydencja dla dużych grup w sercu Karkonoszy.', langLabel: 'Język', contact: 'Kontakt', rights: '© 2026 Villa Rudolf', social: 'Obserwuj nas', host: 'Pavel — wasz gospodarz', region: 'Karkonosze, Czechy', formerly: 'Dawniej Rudolfův dvůr.', terms: 'Warunki pobytu i prywatność', guide: 'Planer wycieczek', faq: 'Częste pytania', proKoho: 'Dla kogo' },
     /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
     langbar: { text: 'Ta strona jest też po polsku.', go: 'Polski' },
     prebook: {
@@ -2050,7 +2050,7 @@ const T = {
       lblMessage: 'Bericht aan de gastheer', phMessage: 'Alles wat we moeten weten — aantal kinderen, aankomsttijd, wensen… (optioneel)',
     },
     mail: { subject: 'Villa Rudolf — aanvraag voor een verblijf', dates: 'Periode', nights: 'Nachten', breakdown: 'Prijsopbouw', cleaning: 'Eindschoonmaak', cityTax: 'Toeristenbelasting', guests: 'Gasten', adults: 'Volwassenen', children: 'Kinderen', pets: 'Huisdieren', total: 'Totaal', deposit: '30% aanbetaling (na bevestiging)', from: 'E-mailadres', phone: 'Telefoon / WhatsApp', greeting: 'Hallo, ik wil graag een verblijf in Villa Rudolf aanvragen voor deze periode:' },
-    footer: { tagline: 'Een privévilla voor grote groepen in het hart van het Reuzengebergte.', langLabel: 'Taal', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Volg ons', host: 'Pavel — jullie gastheer', region: 'Reuzengebergte, Tsjechië', formerly: 'Voorheen Rudolfův dvůr.', terms: 'Boekingsvoorwaarden & privacy', guide: 'Uitstapjesplanner', faq: 'Veelgestelde vragen' },
+    footer: { tagline: 'Een privévilla voor grote groepen in het hart van het Reuzengebergte.', langLabel: 'Taal', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Volg ons', host: 'Pavel — jullie gastheer', region: 'Reuzengebergte, Tsjechië', formerly: 'Voorheen Rudolfův dvůr.', terms: 'Boekingsvoorwaarden & privacy', guide: 'Uitstapjesplanner', faq: 'Veelgestelde vragen', proKoho: 'Voor wie' },
     /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
     langbar: { text: 'Deze pagina is ook beschikbaar in het Nederlands.', go: 'Nederlands' },
     prebook: {
@@ -2392,7 +2392,7 @@ const T = {
       lblMessage: 'Message à l’hôte', phMessage: 'Tout ce que nous devrions savoir — nombre d’enfants, heure d’arrivée, souhaits… (facultatif)',
     },
     mail: { subject: 'Villa Rudolf — demande de séjour', dates: 'Dates', nights: 'Nuits', breakdown: 'Détail du prix', cleaning: 'Frais de ménage', cityTax: 'Taxe de séjour', guests: 'Personnes', adults: 'Adultes', children: 'Enfants', pets: 'Animaux', total: 'Total', deposit: 'Acompte de 30 % (après confirmation)', from: 'E-mail de contact', phone: 'Téléphone / WhatsApp', greeting: 'Bonjour, je souhaiterais faire une demande de séjour à la Villa Rudolf pour les dates suivantes :' },
-    footer: { tagline: 'Un domaine de montagne privé pour les grands groupes, au cœur des Monts des Géants.', langLabel: 'Langue', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Suivez-nous', host: 'Pavel — votre hôte', region: 'Monts des Géants, Tchéquie', formerly: 'Anciennement Rudolfův dvůr.', terms: 'Conditions de réservation et confidentialité', guide: 'Planificateur d’excursions', faq: 'Questions fréquentes' },
+    footer: { tagline: 'Un domaine de montagne privé pour les grands groupes, au cœur des Monts des Géants.', langLabel: 'Langue', contact: 'Contact', rights: '© 2026 Villa Rudolf', social: 'Suivez-nous', host: 'Pavel — votre hôte', region: 'Monts des Géants, Tchéquie', formerly: 'Anciennement Rudolfův dvůr.', terms: 'Conditions de réservation et confidentialité', guide: 'Planificateur d’excursions', faq: 'Questions fréquentes', proKoho: 'Pour qui' },
     /* Lišta „tahle stránka je i v …" (langSuggest) — text v jazyce, KTERÝ se nabízí. */
     langbar: { text: 'Cette page existe aussi en français.', go: 'Français' },
     prebook: {

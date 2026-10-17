@@ -39,6 +39,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as OBSAH from './jazyky-obsah.mjs';
 import * as PODSTRANKY_OBSAH from './podstranky-obsah.mjs';
+import * as PRO_KOHO_OBSAH from './pro-koho-obsah.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'https://villarudolf.com';
@@ -565,8 +566,8 @@ ${hlavicka(api, lang, { cesta, cesty: FAQ, title: S.title, desc: S.desc, jsonld 
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="${koren}info/info.css?v=33">
-<link rel="stylesheet" href="${koren}assets/faq.css?v=1">
+<link rel="stylesheet" href="${koren}info/info.css?v=34">
+<link rel="stylesheet" href="${koren}assets/faq.css?v=2">
 <script src="${koren}assets/season.js?v=54"></script>
 </head>
 <body>
@@ -730,7 +731,7 @@ ${hlavicka(api, lang, { cesta, cesty: POD_CESTY, title: M.title, desc: M.desc, j
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="${koren}podminky/podminky.css?v=23">
+<link rel="stylesheet" href="${koren}podminky/podminky.css?v=24">
 <!-- Výchozí sezóna (?season → datum → volba v rámci návštěvy) — sdílená logika
      s hlavním webem. Synchronně, ať v lednu nebliká léto. -->
 <script src="${koren}assets/season.js?v=48"></script>
@@ -793,6 +794,161 @@ ${radky(L.operatorRows, true)}
   return html;
 }
 
+/* ============================ 5c. Pro koho (/pro/ a /pro/<id>/) ============================
+   Stránky podle příležitosti (parta, rodina, firma, oslava, lyže s dětmi, léto s bazénem) —
+   texty v tools/pro-koho-obsah.mjs, fakta jen z text-villa-rudolf.md, ceny z VR_PRICING.
+   Vzhled = Časté dotazy (info.css + faq.css). */
+const PK = PRO_KOHO_OBSAH;
+const PRO_CESTY = Object.fromEntries(JAZYKY.map((L) => [L, (L === 'cs' ? '' : L + '/') + 'pro/']));
+const proCesty = (id) => Object.fromEntries(JAZYKY.map((L) => [L, PRO_CESTY[L] + id + '/']));
+
+/* Společný obal stránek „Pro koho" (a srovnání): hlavička webu, hero, obsah, výzva, patička. */
+function obalPodstranky(api, lang, { cesta, cesty, title, desc, eyebrow, h1, intro, obsah, jsonld, komentar }) {
+  const t = api.T[lang], H = PK.PRO_KOHO_HUB[lang], c = api.VR_CONTACT;
+  const domu = relativni(cesta, DOMOV[lang]) + (lang === 'cs' ? '?lang=cs' : ''), koren = relativni(cesta, '');
+  const nav = (k, kotva) => `<a href="${domu}#${kotva}">${escText(t.nav[k])}</a>`;
+  const jazyky = PREPINAC.map((L) => `<a class="vr-lang" href="${relativni(cesta, cesty[L])}" hreflang="${L}" lang="${L}" data-lang="${L}" data-active="${L === lang}"${L === lang ? ' aria-current="page"' : ''}>${L.toUpperCase()}</a>`).join('\n          ');
+  const html = `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+${hlavicka(api, lang, { cesta, cesty, title, desc, jsonld })}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0E1311">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="${koren}assets/fonts/fonts.css?v=1">
+<link rel="stylesheet" href="${koren}info/info.css?v=34">
+<link rel="stylesheet" href="${koren}assets/faq.css?v=2">
+<script src="${koren}assets/season.js?v=54"></script>
+</head>
+<body>
+<!-- ${komentar} — generuje node tools/gen-jazyky.mjs. Ručně neupravovat. -->
+<div class="pi-root faq-root" data-season="leto">
+<script>(function(){try{var r=document.currentScript.parentNode;var s=window.VRSeason&&window.VRSeason.resolve();if(s)r.setAttribute('data-season',s);}catch(e){}})();</script>
+  <header class="vr-nav">
+    <div class="vr-nav-inner">
+      <a class="vr-brand" href="${domu}"><b>VILLA RUDOLF</b><i>${escText(OBSAH.FAQ_STRANKA[lang].brand)}</i></a>
+      <nav class="vr-navlinks" aria-label="${escAttr(t.aria.sections)}">
+        ${nav('dum', 'dum')}
+        ${nav('vybaveni', 'vybaveni')}
+        ${nav('loznice', 'loznice')}
+        ${nav('lokalita', 'lokalita')}
+        <a href="${koren}vylety/?lang=${jazykPodstranky(lang)}">${escText(t.nav.vylety)}</a>
+      </nav>
+      <div class="vr-navright">
+        <div class="vr-langs faq-langs" role="group" aria-label="Jazyk / Language">
+          ${jazyky}
+        </div>
+        <a class="vr-navcta" href="${domu}#rezervace">${escText(t.nav.cta)}</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="pi-wrap">
+    <section class="pi-hero">
+      <p class="pi-eyebrow">${escText(eyebrow)}</p>
+      <h1 class="pi-title">${escText(h1)}</h1>
+      <p class="pi-intro">${escText(intro)}</p>
+    </section>
+
+    <main class="pi-main">
+${obsah}
+
+      <section class="pi-sec faq-cta">
+        <div class="pi-sechead"><h2 class="pi-h2">${escText(OBSAH.FAQ_STRANKA[lang].dalsi)}</h2></div>
+        <p class="faq-a">${OBSAH.FAQ_STRANKA[lang].kontakt.replace('{email}', `<a href="mailto:${c.email}">${c.email}</a>`).replace('{telefon}', `<a href="tel:${c.phone.replace(/[^\d+]/g, '')}">${escText(c.phone)}</a>`)}</p>
+        <p><a class="faq-book" href="${domu}#rezervace">${escText(t.nav.cta)} →</a></p>
+      </section>
+    </main>
+
+    <footer class="pi-footer">
+      <a class="pi-back" href="${domu}"><span aria-hidden="true">←</span> ${escText(H.vice)}</a>
+      <a class="pi-terms" href="${relativni(cesta, FAQ[lang])}">${escText(H.faq)}</a>
+      <a class="pi-terms" href="${relativni(cesta, INFO_CESTY[lang])}">${escText(t.nav.info)}</a>
+      <a class="pi-terms" href="${relativni(cesta, POD_CESTY[lang])}">${escText(t.footer.terms)}</a>
+      <span class="pi-foot-brand">Villa Rudolf · Luční 519, Svoboda nad Úpou · ${escText(t.footer.formerly)}</span>
+    </footer>
+  </div>
+</div>
+<script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939"></script>
+</body>
+</html>
+`;
+  kontrolaStranky(html, lang, cesta, cesty);
+  return html;
+}
+
+function proKohoText(api, lang, s, kde) {
+  const v = dosadCeny(api, lang, s);
+  if (/\{[a-z:]+\}/i.test(v)) chyba(`${lang}: Pro koho (${kde}) — nedosazený zástupný znak v „${v.slice(0, 80)}"`);
+  return v;
+}
+function proKohoHub(api, lang) {
+  const H = PK.PRO_KOHO_HUB[lang], cesta = PRO_CESTY[lang];
+  const karty = PK.PRO_KOHO.map((p) => {
+    const T = p[lang];
+    if (!T) { chyba(`${lang}: Pro koho — chybí překlad „${p.id}"`); return ''; }
+    return `        <article class="pi-card faq-q pk-card" id="${p.id}">
+          <h2 class="pi-name"><a href="${relativni(cesta, proCesty(p.id)[lang])}">${escText(T.h1)}</a></h2>
+          <p class="faq-a">${escText(T.kratce)}</p>
+        </article>`;
+  }).join('\n');
+  const obsah = `      <section class="pi-sec">
+        <div class="faq-list">
+${karty}
+        </div>
+      </section>`;
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'CollectionPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: H.title, inLanguage: lang, about: { '@id': VILA_ID },
+        hasPart: PK.PRO_KOHO.map((p) => ({ '@type': 'WebPage', url: abs(proCesty(p.id)[lang]), name: p[lang].h1 })) },
+      { '@type': 'VacationRental', '@id': VILA_ID, name: 'Villa Rudolf', url: abs(DOMOV[lang]) },
+    ],
+  };
+  return obalPodstranky(api, lang, { cesta, cesty: PRO_CESTY, title: H.title, desc: H.desc, eyebrow: 'Villa Rudolf · ' + H.eyebrow,
+    h1: H.h1, intro: H.intro, obsah, jsonld, komentar: 'Pro koho — rozcestník (tools/pro-koho-obsah.mjs)' });
+}
+function proKohoStranka(api, lang, p) {
+  const H = PK.PRO_KOHO_HUB[lang], T = p[lang], cesty = proCesty(p.id), cesta = cesty[lang];
+  const odrazky = T.body.map((b) => `            <li>${escText(proKohoText(api, lang, b, p.id))}</li>`).join('\n');
+  const dalsi = PK.PRO_KOHO.filter((x) => x.id !== p.id).map((x) => `            <li><a href="${relativni(cesta, proCesty(x.id)[lang])}">${escText(x[lang].h1)}</a> — ${escText(x[lang].kratce)}</li>`).join('\n');
+  const obsah = `      <section class="pi-sec">
+        <div class="pi-sechead"><h2 class="pi-h2">${escText(H.proc)}</h2></div>
+        <ul class="pk-list">
+${odrazky}
+        </ul>
+      </section>
+
+      <section class="pi-sec">
+        <div class="pi-sechead"><h2 class="pi-h2">${escText(H.pozorNadpis)}</h2></div>
+        <p class="faq-a">${escText(T.pozor)}</p>
+      </section>
+
+      <section class="pi-sec">
+        <div class="pi-sechead"><h2 class="pi-h2">${escText(H.cenaNadpis)}</h2></div>
+        <p class="faq-a">${proKohoText(api, lang, T.cena, p.id)}</p>
+      </section>
+
+      <section class="pi-sec">
+        <div class="pi-sechead"><h2 class="pi-h2"><a href="${relativni(cesta, PRO_CESTY[lang])}">${escText(H.dalsi)}</a></h2></div>
+        <ul class="pk-list">
+${dalsi}
+        </ul>
+      </section>`;
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebPage', '@id': abs(cesta) + '#stranka', url: abs(cesta), name: T.title, description: T.desc, inLanguage: lang,
+        about: { '@id': VILA_ID }, isPartOf: { '@id': abs(PRO_CESTY[lang]) + '#stranka' } },
+      { '@type': 'VacationRental', '@id': VILA_ID, name: 'Villa Rudolf', url: abs(DOMOV[lang]) },
+    ],
+  };
+  return obalPodstranky(api, lang, { cesta, cesty, title: T.title, desc: T.desc, eyebrow: 'Villa Rudolf · ' + H.eyebrow,
+    h1: T.h1, intro: T.intro, obsah, jsonld, komentar: `Pro koho: ${p.id} (tools/pro-koho-obsah.mjs)` });
+}
+
 /* ============================ 6. sitemap.xml ============================ */
 const SITEMAP_HLAVA = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Generuje node tools/gen-jazyky.mjs — ručně neupravovat (samostatné stránky: SAMOSTATNE v tom skriptu).
@@ -832,6 +988,8 @@ function sitemap(vystupy, dnes) {
   if (vystupy[FAQ.cs + 'index.html']) for (const L of JAZYKY) radky.push(url(FAQ[L], FAQ[L] + 'index.html', 'monthly', '0.7', FAQ));
   for (const L of JAZYKY) radky.push(url(INFO_CESTY[L], INFO_CESTY[L] + 'index.html', 'monthly', '0.7', INFO_CESTY));
   for (const L of JAZYKY) radky.push(url(POD_CESTY[L], POD_CESTY[L] + 'index.html', 'yearly', '0.5', POD_CESTY));
+  for (const L of JAZYKY) radky.push(url(PRO_CESTY[L], PRO_CESTY[L] + 'index.html', 'monthly', '0.7', PRO_CESTY));
+  for (const p of PK.PRO_KOHO) for (const L of JAZYKY) radky.push(url(proCesty(p.id)[L], proCesty(p.id)[L] + 'index.html', 'monthly', '0.7', proCesty(p.id)));
   for (const s of SAMOSTATNE) radky.push(url(s.cesta, null, s.changefreq, s.priority));
   return SITEMAP_HLAVA + '\n' + radky.join('\n') + '\n</urlset>\n';
 }
@@ -885,6 +1043,8 @@ for (const L of JAZYKY) { const f = faqStranka(api, L); if (f) vystupy[FAQ[L] + 
 const sablonaInfo = readFileSync(join(ROOT, 'info/index.html'), 'utf8');
 for (const L of JAZYKY) vystupy[INFO_CESTY[L] + 'index.html'] = infoStranka(api, sablonaInfo, L);
 for (const L of JAZYKY) vystupy[POD_CESTY[L] + 'index.html'] = podminkyStranka(api, L);
+for (const L of JAZYKY) vystupy[PRO_CESTY[L] + 'index.html'] = proKohoHub(api, L);
+for (const p of PK.PRO_KOHO) for (const L of JAZYKY) vystupy[proCesty(p.id)[L] + 'index.html'] = proKohoStranka(api, L, p);
 vystupy['sitemap.xml'] = sitemap(vystupy, new Date().toISOString().slice(0, 10));
 
 if (chyby.length) {
