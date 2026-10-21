@@ -130,5 +130,35 @@ for (const s of stranky) {
   ok(!rozbite.size, `${s}: všechny relativní odkazy a cesty vedou na existující soubor${rozbite.size ? ' — rozbité: ' + [...rozbite].slice(0, 6).join(', ') : ''}`);
 }
 
+// ---------- 5. volné termíny (tools/gen-volno.mjs) ----------
+// Výpočet na umělém kalendáři: duch neblokuje, krátká mezera pod minimum nocí se nevypíše,
+// Silvestr se hlásí podle noci 31. 12. A staticky jsou seznamy na homepage a v llms.txt.
+{
+  const { spocitej } = await import('./gen-volno.mjs');
+  const P = { periods: [
+    { from: '2030-12-01', to: '2030-12-19', minNights: 2 },
+    { from: '2030-12-20', to: '2031-01-02', minNights: 6 },
+    { from: '2031-01-03', to: '2031-01-31', minNights: 2 },
+  ] };
+  const v = spocitej([
+    { start: '2030-12-01', end: '2030-12-10' },
+    { start: '2030-12-11', end: '2030-12-20' },                 // mezera 10.–11. 12. = 1 noc → nic
+    { start: '2030-12-27', end: '2031-01-03', stale: true },    // duch → Silvestr volný
+    { start: '2031-01-10', end: '2031-01-12', platform: 'Airbnb', uidh: 'x' },
+  ], P, '2030-12-01');
+  ok(JSON.stringify(v.okna) === JSON.stringify([
+    { od: '2030-12-20', do: '2031-01-10', noci: 21 }, { od: '2031-01-12', do: '2031-02-01', noci: 20, konec: true },
+  ]), 'volné termíny: duch neblokuje, mezera pod minimum se nevypíše, konec ceníku = „a dál"');
+  ok(JSON.stringify(v.svatky) === JSON.stringify([{ rok: 2030, vanoce: 'volno', silvestr: 'volno' }]), 'volné termíny: Vánoce a Silvestr');
+  ok(!/platform|uidh|Airbnb/.test(JSON.stringify(v)), 'volné termíny: výstup nenese platformu ani uidh');
+  const V = JSON.parse(readFileSync(join(root, 'assets/volno.json'), 'utf8'));
+  ok(/^\d{4}-\d{2}-\d{2}$/.test(V.stav) && Array.isArray(V.okna), 'assets/volno.json má stav a okna');
+  for (const [s, slovo] of [['index.html', 'Volné termíny'], ['de/index.html', 'Freie Termine'], ['pl/index.html', 'Wolne terminy'],
+    ['en/index.html', 'Free dates'], ['nl/index.html', 'Vrije data'], ['fr/index.html', 'Dates libres']]) {
+    ok(new RegExp(`id="vr-volno">\\s*<details>\\s*<summary>${slovo}`).test(readFileSync(join(root, s), 'utf8')), `${s}: seznam volných termínů pod kalendářem`);
+  }
+  for (const s of ['llms.txt', 'de/llms.txt']) ok(/<!-- VOLNO:START[^\n]*-->\n## /.test(readFileSync(join(root, s), 'utf8')), `${s}: sekce volných termínů`);
+}
+
 if (chyby) { console.log(`\n${chyby} chyb`); process.exit(1); }
 console.log('\nVše v pořádku.');

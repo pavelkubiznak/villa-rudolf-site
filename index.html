@@ -185,7 +185,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="assets/site.css?v=60">
+<link rel="stylesheet" href="assets/site.css?v=61">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
@@ -1138,6 +1138,31 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
             <span class="sw"><i style="background:linear-gradient(135deg,var(--vr-day-free) 0 50%,transparent 50%);border:1px solid var(--vr-line)"></i><span data-t="book.checkoutOnly">pouze odjezd</span></span>
             <span class="demo" id="vr-avail-note" role="status" aria-live="polite"></span>
           </div>
+          <!-- Volné termíny jako text pro roboty bez JavaScriptu (AI asistenti). Plní tools/gen-jazyky.mjs z assets/volno.json. -->
+          <div class="vr-volno" id="vr-volno">
+            <details>
+              <summary>Volné termíny jako seznam</summary>
+              <p>Stav k 17. října 2026. Seznam se obnovuje automaticky dvakrát denně z rezervačního kalendáře; uvádí jen termíny, do kterých se vejde minimální pobyt. První datum je příjezd, druhé odjezd. Termín vždy potvrzujeme osobně.</p>
+              <p>Vánoce 2026: obsazeno · Silvestr 2026/27: obsazeno · Vánoce 2027: volno · Silvestr 2027/28: volno · Vánoce 2028: volno · Silvestr 2028/29: volno</p>
+              <ul>
+                <li>26. října – 28. října 2026 (2 noci)</li>
+                <li>10. ledna – 30. ledna 2027 (20 nocí)</li>
+                <li>13. února – 20. února 2027 (7 nocí)</li>
+                <li>27. února – 4. března 2027 (5 nocí)</li>
+                <li>7. března – 29. dubna 2027 (53 nocí)</li>
+                <li>2. května – 5. května 2027 (3 noci)</li>
+                <li>9. května – 14. května 2027 (5 nocí)</li>
+                <li>18. května – 22. května 2027 (4 noci)</li>
+                <li>29. května – 2. června 2027 (4 noci)</li>
+                <li>6. června – 10. června 2027 (4 noci)</li>
+                <li>13. června – 17. června 2027 (4 noci)</li>
+                <li>20. června – 23. června 2027 (3 noci)</li>
+                <li>5. září – 29. října 2027 (54 nocí)</li>
+                <li>1. listopadu 2027 – 25. května 2028 (206 nocí)</li>
+                <li>28. května 2028 a dál (kalendář je otevřený do 11. ledna 2029)</li>
+              </ul>
+            </details>
+          </div>
         </div>
         <aside class="vr-book-aside" data-state="form">
           <form class="vr-book-form" id="vr-book-formEl" novalidate>
@@ -1300,7 +1325,7 @@ q=q.replace(/([?&])lang=[^&]*(&|$)/i,'$1').replace(/[?&]$/,'');location.replace(
   </div>
 
 </div>
-<script src="assets/site.js?v=65" defer></script>
+<script src="assets/site.js?v=66" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-before-send="vrUmamiRef"></script>
 </body>

@@ -175,7 +175,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="../assets/site.css?v=60">
+<link rel="stylesheet" href="../assets/site.css?v=61">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
@@ -1128,6 +1128,31 @@
             <span class="sw"><i style="background:linear-gradient(135deg,var(--vr-day-free) 0 50%,transparent 50%);border:1px solid var(--vr-line)"></i><span data-t="book.checkoutOnly">tylko wyjazd</span></span>
             <span class="demo" id="vr-avail-note" role="status" aria-live="polite"></span>
           </div>
+          <!-- Volné termíny jako text pro roboty bez JavaScriptu (AI asistenti). Plní tools/gen-jazyky.mjs z assets/volno.json. -->
+          <div class="vr-volno" id="vr-volno">
+            <details>
+              <summary>Wolne terminy jako lista</summary>
+              <p>Stan na 17 października 2026. Lista aktualizuje się automatycznie dwa razy dziennie z kalendarza rezerwacji i podaje tylko terminy, w które mieści się minimalny pobyt. Pierwsza data to przyjazd, druga wyjazd. Termin zawsze potwierdzamy osobiście.</p>
+              <p>Boże Narodzenie 2026: zajęte · Sylwester 2026/27: zajęte · Boże Narodzenie 2027: wolne · Sylwester 2027/28: wolne · Boże Narodzenie 2028: wolne · Sylwester 2028/29: wolne</p>
+              <ul>
+                <li>26 października – 28 października 2026 (2 noce)</li>
+                <li>10 stycznia – 30 stycznia 2027 (20 nocy)</li>
+                <li>13 lutego – 20 lutego 2027 (7 nocy)</li>
+                <li>27 lutego – 4 marca 2027 (5 nocy)</li>
+                <li>7 marca – 29 kwietnia 2027 (53 noce)</li>
+                <li>2 maja – 5 maja 2027 (3 noce)</li>
+                <li>9 maja – 14 maja 2027 (5 nocy)</li>
+                <li>18 maja – 22 maja 2027 (4 noce)</li>
+                <li>29 maja – 2 czerwca 2027 (4 noce)</li>
+                <li>6 czerwca – 10 czerwca 2027 (4 noce)</li>
+                <li>13 czerwca – 17 czerwca 2027 (4 noce)</li>
+                <li>20 czerwca – 23 czerwca 2027 (3 noce)</li>
+                <li>5 września – 29 października 2027 (54 noce)</li>
+                <li>1 listopada 2027 – 25 maja 2028 (206 nocy)</li>
+                <li>od 28 maja 2028 (kalendarz jest otwarty do 11 stycznia 2029)</li>
+              </ul>
+            </details>
+          </div>
         </div>
         <aside class="vr-book-aside" data-state="form">
           <form class="vr-book-form" id="vr-book-formEl" novalidate>
@@ -1290,7 +1315,7 @@
   </div>
 
 </div>
-<script src="../assets/site.js?v=65" defer></script>
+<script src="../assets/site.js?v=66" defer></script>
 <!-- Umami analytics (self-hosted, cookieless) -->
 <script defer src="https://178-104-207-97.sslip.io/script.js" data-website-id="e7532123-5434-44e1-a7ef-6c5d18bed939" data-before-send="vrUmamiRef"></script>
 </body>

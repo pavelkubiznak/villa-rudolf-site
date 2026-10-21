@@ -23,6 +23,58 @@ Dům i pozemek jsou jen pro jednu skupinu, nic se nesdílí s cizími hosty. Nej
 Nezávazná poptávka přes kalendář na https://villarudolf.com/#rezervace, e-mail rezervace@villarudolf.com, telefon a WhatsApp +420 775 220 785. Villa Rudolf je také na Booking.com, Airbnb, FeWo-direkt (Vrbo) a e-chalupy.cz pod názvem „Villa Rudolf, Svoboda nad Úpou“.
 Adresa: Luční 519, 542 24 Svoboda nad Úpou, Česko. GPS 50.6254, 15.8136.
 
+<!-- VOLNO:START — generuje tools/gen-jazyky.mjs z assets/volno.json (2× denně), ručně neupravovat -->
+## Volné termíny
+Stav k 17. října 2026. Seznam se obnovuje automaticky dvakrát denně z rezervačního kalendáře; uvádí jen termíny, do kterých se vejde minimální pobyt. První datum je příjezd, druhé odjezd. Termín vždy potvrzujeme osobně.
+
+- Vánoce 2026: obsazeno
+- Silvestr 2026/27: obsazeno
+- Vánoce 2027: volno
+- Silvestr 2027/28: volno
+- Vánoce 2028: volno
+- Silvestr 2028/29: volno
+- 26. října – 28. října 2026 (2 noci)
+- 10. ledna – 30. ledna 2027 (20 nocí)
+- 13. února – 20. února 2027 (7 nocí)
+- 27. února – 4. března 2027 (5 nocí)
+- 7. března – 29. dubna 2027 (53 nocí)
+- 2. května – 5. května 2027 (3 noci)
+- 9. května – 14. května 2027 (5 nocí)
+- 18. května – 22. května 2027 (4 noci)
+- 29. května – 2. června 2027 (4 noci)
+- 6. června – 10. června 2027 (4 noci)
+- 13. června – 17. června 2027 (4 noci)
+- 20. června – 23. června 2027 (3 noci)
+- 5. září – 29. října 2027 (54 nocí)
+- 1. listopadu 2027 – 25. května 2028 (206 nocí)
+- 28. května 2028 a dál (kalendář je otevřený do 11. ledna 2029)
+
+## Free dates
+As of 17 October 2026. The list updates automatically twice a day from the booking calendar and only shows dates long enough for the minimum stay. First date = arrival, second = departure. We always confirm your dates personally.
+
+- Christmas 2026: booked
+- New Year’s Eve 2026/27: booked
+- Christmas 2027: free
+- New Year’s Eve 2027/28: free
+- Christmas 2028: free
+- New Year’s Eve 2028/29: free
+- 26 October – 28 October 2026 (2 nights)
+- 10 January – 30 January 2027 (20 nights)
+- 13 February – 20 February 2027 (7 nights)
+- 27 February – 4 March 2027 (5 nights)
+- 7 March – 29 April 2027 (53 nights)
+- 2 May – 5 May 2027 (3 nights)
+- 9 May – 14 May 2027 (5 nights)
+- 18 May – 22 May 2027 (4 nights)
+- 29 May – 2 June 2027 (4 nights)
+- 6 June – 10 June 2027 (4 nights)
+- 13 June – 17 June 2027 (4 nights)
+- 20 June – 23 June 2027 (3 nights)
+- 5 September – 29 October 2027 (54 nights)
+- 1 November 2027 – 25 May 2028 (206 nights)
+- from 28 May 2028 onwards (the calendar is open until 11 January 2029)
+<!-- VOLNO:END -->
+
 ## Stránky
 - [Dům, vybavení, ceník, kalendář a poptávka](https://villarudolf.com/)
 - [Časté dotazy](https://villarudolf.com/faq/)

@@ -341,6 +341,14 @@ a Časté dotazy `/faq/` + `/<jazyk>/faq/`. Vyrábí je `node tools/gen-jazyky.m
 - **IndexNow:** po pushi do `main` ohlásí `.github/workflows/indexnow.yml` (`tools/indexnow.mjs`) změněné
   veřejné stránky Bingu a Seznamu (Bing = zdroj vyhledávání ChatGPT). Klíč je soubor
   `b8aed3a3195400dd83f225996cdf03cb.txt` v kořeni — nemazat. Nasazení (GitHub Pages z `main`) neshodí.
+- **Volné termíny jako text (od 17. 10. 2026):** `.github/workflows/volno.yml` 2× denně (04:40 a 16:40 UTC)
+  pustí `tools/gen-volno.mjs` → `assets/volno.json` (jen data, žádné PII) → `gen-jazyky.mjs` vypíše seznam
+  pod kalendářem (`#vr-volno`, rozbalovací), v odpovědi Častých dotazů „volný termín“ (`{volno}`) a v `llms.txt`
+  (cs + en) a `de/llms.txt` mezi `<!-- VOLNO:START/END -->`. Bot commituje „chore: volné termíny“ přímo do `main`,
+  sám si vyžádá nasazení Pages a IndexNow. Pravidla jako kalendář: duch (`stale` + budoucí) neblokuje, okno se
+  vypíše jen když se do něj vejde minimum nocí z `VR_PRICING`. **Konflikt v generovaných stránkách** (index.html,
+  `*/index.html`, `faq/`, `sitemap.xml`, `llms.txt`) po botovi neřeš ručně: vezmi verzi z `main` a pusť
+  `node tools/gen-jazyky.mjs`. Texty seznamu: `VOLNO` v `tools/jazyky-obsah.mjs`.
 - Měření: událost Umami `poptavka-odeslana` (`zdroj` = utm_source / referrer / „primo“).
 
 ## Jazyk

@@ -30,7 +30,10 @@
         a že hreflang a canonical sedí. Při chybě skončí kódem 1 a nic nezapíše.
 
    VÝSTUPY: index.html a <jazyk>/index.html, faq/index.html a <jazyk>/faq/index.html pro každý
-            jazyk z JAZYKY v jazyky-obsah.mjs (de, pl, en, nl, fr), sitemap.xml */
+            jazyk z JAZYKY v jazyky-obsah.mjs (de, pl, en, nl, fr), sitemap.xml a sekce volných termínů
+            v llms.txt a de/llms.txt (mezi <!-- VOLNO:START --> a <!-- VOLNO:END -->).
+   Volné termíny bere z assets/volno.json — ten přepisuje tools/gen-volno.mjs (2× denně Actionem
+   .github/workflows/volno.yml), který tenhle skript na konci spouští sám. */
 import vm from 'node:vm';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -95,7 +98,7 @@ function serialize(n) {
 }
 /* Čitelný zápis bloku do šablony: blokový prvek, který má jen blokové děti, je dá na vlastní
    řádky (prázdné místo mezi blokovými prvky se nevykresluje); vše ostatní zůstává na řádku. */
-const BLOKOVE = new Set(['div', 'dl', 'ul', 'ol', 'li', 'p', 'h2', 'h3', 'dt', 'dd', 'section', 'article']);
+const BLOKOVE = new Set(['div', 'dl', 'ul', 'ol', 'li', 'p', 'h2', 'h3', 'dt', 'dd', 'section', 'article', 'details', 'summary']);
 function serializeHezky(n, odsazeni) {
   if (n.nodeType !== 1 || !BLOKOVE.has(n.tag)) return serialize(n);
   const deti = n.childNodes;
@@ -366,6 +369,7 @@ function bloky(api, lang) {
     'vr-priceblock': cenik,
     'vr-foot-contact': api.blok('vr-foot-contact', lang, () => api.renderFooterContact()),
     'vr-lok-arrive': prijezd,
+    'vr-volno': blokVolno(api, lang),
   };
 }
 /* Obsah bloku do šablony; řádkování podle odsazení prvku v šabloně. */
@@ -464,6 +468,60 @@ function domovska(api, sablona, lang) {
   return html;
 }
 
+/* ============================ 4b. Volné termíny ============================ */
+/* Seznam z assets/volno.json (tools/gen-volno.mjs, 2× denně z kalendáře). Texty v jazyky-obsah.mjs
+   (VOLNO). Výstupy: blok #vr-volno pod kalendářem, {volno} v Častých dotazech, sekce mezi
+   <!-- VOLNO:START --> a <!-- VOLNO:END --> v llms.txt (cs + en) a de/llms.txt. */
+const VOLNO_DATA = existsSync(join(ROOT, 'assets/volno.json')) ? JSON.parse(readFileSync(join(ROOT, 'assets/volno.json'), 'utf8')) : null;
+const VOLNO_LLMS = { 'llms.txt': ['cs', 'en'], 'de/llms.txt': ['de'] };
+const datumV = (lang, iso, sRokem = true) => new Intl.DateTimeFormat(OBSAH.VOLNO[lang].locale,
+  { day: 'numeric', month: 'long', ...(sRokem ? { year: 'numeric' } : {}), timeZone: 'UTC' }).format(new Date(iso + 'T00:00:00Z'));
+function volnoTexty(api, lang) {
+  const V = OBSAH.VOLNO && OBSAH.VOLNO[lang], D = VOLNO_DATA;
+  if (!V || !D) { chyba(`${lang}: chybí ${V ? 'assets/volno.json (pusť node tools/gen-volno.mjs)' : 'VOLNO v jazyky-obsah.mjs'}`); return null; }
+  const sub = (s, o) => s.replace(/\{(\w+)\}/g, (m, k) => (o[k] != null ? o[k] : m));
+  const okna = D.okna.map((o) => (o.konec
+    ? sub(V.dal, { od: datumV(lang, o.od), do: datumV(lang, o.do) })
+    : `${datumV(lang, o.od, o.od.slice(0, 4) !== o.do.slice(0, 4))} – ${datumV(lang, o.do)} (${o.noci}\u00a0${(api.NBf[lang] || api.NBf.cs)(o.noci)})`));
+  const svatky = D.svatky.flatMap((s) => [
+    s.vanoce ? `${sub(V.vanoce, { rok: s.rok })}: ${V.stavy[s.vanoce]}` : null,
+    `${sub(V.silvestr, { rok: s.rok, rok2: String(s.rok + 1).slice(2) })}: ${V.stavy[s.silvestr]}`,
+  ]).filter(Boolean);
+  const datum = datumV(lang, D.stav);
+  return { V, okna, svatky, uvod: sub(V.uvod, { datum }), faq: sub(V.faq, { datum }) };
+}
+function blokVolno(api, lang) {
+  const host = new VEl('div'), x = volnoTexty(api, lang);
+  if (!x) return host;
+  const det = host.appendChild(new VEl('details'));
+  det.appendChild(new VEl('summary')).textContent = x.V.souhrn;
+  det.appendChild(new VEl('p')).textContent = x.uvod;
+  if (x.svatky.length) det.appendChild(new VEl('p')).textContent = x.svatky.join(' · ');
+  if (x.okna.length) { const ul = det.appendChild(new VEl('ul')); for (const o of x.okna) ul.appendChild(new VEl('li')).textContent = o; }
+  else det.appendChild(new VEl('p')).textContent = x.V.zadny;
+  return host;
+}
+/* {volno} v Častých dotazech: nejbližší čtyři termíny + Vánoce a Silvestr, jednou větou (HTML). */
+function volnoFaq(api, lang) {
+  const x = volnoTexty(api, lang);
+  if (!x) return '';
+  const okna = x.okna.length ? `${x.faq} ${x.okna.slice(0, 4).join('; ')}.` : x.V.zadny;
+  return escText([okna, x.svatky.length ? x.svatky.join(', ') + '.' : '', x.V.faqVse].filter(Boolean).join(' '));
+}
+function volnoLlms(api, soubor) {
+  const cesta = join(ROOT, soubor);
+  if (!existsSync(cesta)) { chyba(`${soubor}: chybí`); return null; }
+  const src = readFileSync(cesta, 'utf8');
+  const m = /(<!-- VOLNO:START[^\n]*-->\n)[\s\S]*?(<!-- VOLNO:END -->)/.exec(src);
+  if (!m) { chyba(`${soubor}: chybí značky <!-- VOLNO:START … --> a <!-- VOLNO:END -->`); return null; }
+  const bloky = VOLNO_LLMS[soubor].map((lang) => {
+    const x = volnoTexty(api, lang);
+    if (!x) return '';
+    return [`## ${x.V.nadpis}`, x.uvod, '', ...x.svatky.map((s) => '- ' + s), ...(x.okna.length ? x.okna.map((o) => '- ' + o) : ['- ' + x.V.zadny]), ''].join('\n');
+  });
+  return src.slice(0, m.index) + m[1] + bloky.join('\n') + m[2] + src.slice(m.index + m[0].length);
+}
+
 /* ============================ 5. Časté dotazy ============================ */
 /* Ceny v odpovědích se NEPÍŠOU — dosazují se z VR_PRICING (ceník = cenik.json přes gen-cenik-web):
    {cena:mimo|zimni|svatky|letni|spicka|vanoce|silvestr} cena za noc, {noci:…} minimum nocí,
@@ -493,7 +551,8 @@ function faqStranka(api, lang) {
   const planovac = sJazykem('vylety/') + '#planovac';
   const q = (x) => {
     if (x[lang] == null) { chyba(`${lang}: Časté dotazy — chybí překlad „${x.cs}"`); return ''; }
-    const s = dosadCeny(api, lang, x[lang]).replace(/\{domu\}/g, domu).replace(/\{planovac\}/g, planovac);
+    const s = dosadCeny(api, lang, x[lang]).replace(/\{domu\}/g, domu).replace(/\{planovac\}/g, planovac)
+      .replace(/\{volno\}/g, () => volnoFaq(api, lang));
     if (/\{[a-z:]+\}/i.test(s)) chyba(`${lang}: Časté dotazy — nedosazený zástupný znak v „${s.slice(0, 80)}"`);
     return s;
   };
@@ -636,7 +695,7 @@ function sitemap(vystupy, dnes) {
     '  </url>',
   ].join('\n');
   const radky = [];
-  for (const L of JAZYKY) radky.push(url(DOMOV[L], DOMOV[L] + 'index.html', 'weekly', L === 'cs' ? '1.0' : '0.9', DOMOV));
+  for (const L of JAZYKY) radky.push(url(DOMOV[L], DOMOV[L] + 'index.html', 'daily', L === 'cs' ? '1.0' : '0.9', DOMOV));
   if (vystupy[FAQ.cs + 'index.html']) for (const L of JAZYKY) radky.push(url(FAQ[L], FAQ[L] + 'index.html', 'monthly', '0.7', FAQ));
   for (const s of SAMOSTATNE) radky.push(url(s.cesta, null, s.changefreq, s.priority));
   return SITEMAP_HLAVA + '\n' + radky.join('\n') + '\n</urlset>\n';
@@ -687,6 +746,7 @@ const vystupy = {};
 for (const L of JAZYKY) vystupy[DOMOV[L] + 'index.html'] = domovska(api, sablona, L);
 for (const L of JAZYKY) { const f = faqStranka(api, L); if (f) vystupy[FAQ[L] + 'index.html'] = f; }
 vystupy['sitemap.xml'] = sitemap(vystupy, new Date().toISOString().slice(0, 10));
+for (const f of Object.keys(VOLNO_LLMS)) { const t = volnoLlms(api, f); if (t != null) vystupy[f] = t; }
 
 if (chyby.length) {
   console.error(`✗ ${chyby.length} chyb — nic se nezapsalo:\n  - ` + chyby.join('\n  - '));

@@ -1,0 +1,76 @@
+name: Volné termíny (text pro AI)
+
+# Dvakrát denně přepíše seznam volných termínů ve statickém HTML a llms.txt podle kalendáře
+# (tools/gen-volno.mjs → assets/volno.json → tools/gen-jazyky.mjs). Proč: AI asistenti nespouštějí
+# JavaScript, takže kalendář na homepage nevidí; seznam pod ním a v llms.txt ano.
+#
+# Časy: 04:40 a 16:40 UTC (6:40 a 18:40 v Praze v létě, o hodinu dřív v zimě). Kalendář
+# (villa-booking-calendar) obnovuje history.json každé 3 hodiny, takže seznam je starý nanejvýš ~15 h.
+# Commit „chore: volné termíny" jde přímo do main jen při změně (ráno vždy, protože se mění datum stavu).
+# Push přes GITHUB_TOKEN nespustí jiné workflow, proto si tenhle sám vyžádá nasazení Pages
+# a ohlásí změněné stránky přes IndexNow (jinak to dělá indexnow.yml).
+# Když kalendář nevrátí data, skript skončí chybou a NIC nezapíše — na webu zůstane poslední stav.
+
+on:
+  schedule:
+    - cron: '40 4,16 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: volno
+  cancel-in-progress: false
+
+jobs:
+  volno:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Přegenerovat volné termíny a commitnout
+        id: commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898475+github-actions[bot]@users.noreply.github.com'
+          BEFORE=$(git rev-parse HEAD)
+          for pokus in 1 2 3; do
+            node tools/gen-volno.mjs
+            node tools/gen-jazyky.mjs --check
+            if git diff --quiet; then echo "Beze změny."; echo "zmena=0" >> "$GITHUB_OUTPUT"; exit 0; fi
+            git add -A   # čistý checkout: změnit se mohou jen výstupy generátorů
+            git commit -q -m "chore: volné termíny ($(node -p "require('./assets/volno.json').stav"))"
+            if git push -q origin HEAD:main; then
+              echo "zmena=1" >> "$GITHUB_OUTPUT"; echo "before=$BEFORE" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            echo "main se mezitím pohnul — beru nový stav a generuju znovu (pokus $pokus)."
+            git fetch -q origin main && git reset -q --hard origin/main
+            BEFORE=$(git rev-parse HEAD)
+          done
+          exit 1
+
+      - name: Nasadit na Pages a ohlásit IndexNow
+        if: steps.commit.outputs.zmena == '1'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ steps.commit.outputs.before }}
+        run: |
+          SHA=$(git rev-parse HEAD)
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent || echo "Pages build si nevyžádám — nasadí se při příštím pushi."
+          for i in $(seq 1 30); do
+            st=$(gh api "repos/$GITHUB_REPOSITORY/pages/builds/latest" --jq '.status + " " + .commit' 2>/dev/null || true)
+            echo "Pages: ${st:-?}"
+            if [ "$st" = "built $SHA" ]; then break; fi
+            sleep 10
+          done
+          node tools/indexnow.mjs "$BEFORE"
