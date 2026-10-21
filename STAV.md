@@ -188,8 +188,9 @@ Od 11. 10. 2026 to pg_cron job nedělá (viz výš: jen anonymizace). Co zbývá
 | Zobrazení v úklidovém kalendáři i v `owner.html` | ✅ hotovo, ověřeno v Chromiu |
 | Nálezy revize na té publikaci (kalendář PR #14) | 🟡 **opraveno, čeká na merge** — 7 kol, po srovnání s `main` 23. 9. dalších 5, poslední čisté (`55770d2`) |
 | Přímý prodej v přehledu `/sprava/` dvakrát + falešné „nezablokováno" | ✅ **opraveno 23. 9.** (PR #22, živé po merge) |
-| Totéž v denním e-mailu `n8n/VrDailyTasks` | 🟡 **kód v PR #22, čeká na merge + nasazení na server** (patch skript přidá uzel „Načíst předrezervace") |
+| Totéž v denním e-mailu `n8n/VrDailyTasks` | 🟡 **kód v `main` (#22, #26), nasazení na server NEOVĚŘENÉ** — patch skript přidá uzel „Načíst předrezervace"; hotovo je to, až běh vypíše „řetěz po: … Načíst předrezervace … Spočítat úkoly" |
 | `n8n/VrConflictWatch` — „Přímá" × „Přímá" eskaluje | 🟡 **referenční kód v `main` od 15. 9. (i s filtrem duchů z 12. 9.), čeká na re-import** |
+| Ozvěna přímého prodeje se zahazovala jen do logu Action — nová rezervace z platformy na **přesně** tentýž termín by zmizela beze stopy | 🟡 **opraveno 21. 10., čeká na merge** (kalendář: pole `echo` + ozvěna hned `stale`; web: „ověř" v `/sprava/` a e-mail z `VrConflictWatch`, ten po re-importu) |
 | Párování plateb z Fia (`vr_payments`, `vr_ingest_payments`) | 🟡 **migrace v DB 15. 9., čeká na 3 tokeny Fia** |
 | Sekce „Platby k vyřízení" v `/sprava/` | ✅ hotovo, ověřeno v prohlížeči |
 | Čtečka Fia pro n8n (`n8n/VrPaymentWatch`) | 🟡 **kód hotov + offline testy, čeká na složení workflow** |
@@ -251,10 +252,27 @@ ručně v DB 23. 9.** (`vr_holds.booking_id` → pobyt se stejným termínem; je
   na reálné předrezervaci 7.–14. 8.). **Zbývá nasadit na server:** po merge
   `python3 tools/n8n-patch-vrdailytasks.py <export> <patched>` (přidá a zapojí uzel
   „Načíst předrezervace (service-role)"), import, publish, restart — viz `__jak_nasadit__`.
-- **Kalendářní stránky** (úklid i `owner.html`) ukazují na 7.–14. 8. 2027 do 25. 9. taky
-  červenou dvojitou rezervaci — týž dobíhající záznam `a86a13…`. Samo zmizí; trvale by to
-  chtělo, aby skript kalendáře při zahození ozvěny rovnou zestárnul i její archivní záznam.
-  Stejně tak `n8n/VrConflictWatch` může do té doby poslat e-mail o konfliktu 7.–14. 8.
+- **Kalendářní stránky** (úklid i `owner.html`) ukazovaly na 7.–14. 8. 2027 do 25. 9. taky
+  červenou dvojitou rezervaci — týž dobíhající záznam `a86a13…`, a `n8n/VrConflictWatch` z něj
+  23. 9. poslal e-mail (v `vr_conflicts`, vyřešeno 26. 9.). **Trvale opraveno 21. 10.:** skript
+  kalendáře zahozenou ozvěnu rovnou zestárne, viz níž.
+
+**🟡 Ozvěna přímého prodeje — zahazovaná, teď hlášená (21. 10. 2026).** Událost z feedu se
+stejnými nocemi jako přímý prodej skript kalendáře zahazuje (od kalendářního #17), `/sprava/`
+ji od #26 slučuje s předrezervací. Jenže **nová rezervace z platformy prodaná na přesně tentýž
+termín** (dřív, než platforma importovala náš blok) vypadá v datech úplně stejně jako ruční
+blokace — host bez jména, týž termín. Zahodila by se a jediná stopa by byl řádek v logu Action.
+Ztracená rezervace doložená není: k 21. 10. hlásí termín přímého prodeje jen e-chalupy
+(7.–14. 8. a 21.–28. 8., obojí bez hosta mimo předrezervaci — nejspíš majitelovy blokace).
+Rozlišit to umí jen majitel v extranetu, takže se to teď **neschová, ale zeptá**:
+- kalendář: přímý prodej nese v `history.json` pole **`echo`** (platformy, které jeho noci hlásí);
+  archivní řádek ozvěny je rovnou `stale` (dva dny dobíhal živý = falešný červený konflikt);
+- `/sprava/`: šedá položka v banneru „Termín přímého prodeje hlásí i …" — z `echo` i z řádků,
+  které sloučila sama v okně před během Action;
+- `VrConflictWatch`: e-mail „🟠 ověř termín přímého prodeje" **jednou** na platformu a termín
+  (`vr_conflicts`, kind `overlap`, `detail.type = 'echo'`, „vyřešeno" se u nich neposílá).
+  Po re-importu přijde jednou za obě stávající blokace z e-chalup — to je v pořádku.
+- Rezervace s **vlastním hostem** na termín předrezervace dál není ozvěna — červený konflikt.
 
 **🟡 Revize kalendářní části: opravené, čeká na merge.** Codex review nad PR #9
 v kalendáři se rozběhlo přechodem z draftu na „ready", jenže merge o čtrnáct vteřin později ho
@@ -287,7 +305,8 @@ Pro tenhle repo jsou z toho podstatné tři věci:
 *Zbývá:*
 1. ~~Spustit migraci `20260909_vr_holds.sql`~~ — **hotovo 15. 9. 2026** (i `20260910_vr_payments.sql`
    a `20260915_vr_contracts.sql`; po každé `notify pgrst, 'reload schema'`).
-2. **Znovu importovat `n8n/VrConflictWatch`** (Code node „Detekce konfliktů").
+2. **Znovu importovat `n8n/VrConflictWatch`** (oba Code node — „Detekce konfliktů" i „Sestavit
+   e-maily"; od 21. 10. hlásí i ozvěny přímého prodeje).
 3. ~~Zapsat termín 14.–21. 8. 2027~~ — **hotovo 17. 9.**: potvrzený a uhrazený přímý prodej,
    v `history.json` i ve výstupních feedech (platformy ho importují od 17. 9.).
 4. ~~Předrezervace 21.–28. 8. a 7.–14. 8. 2027~~ — **obě založené**: 7.–14. 8. potvrzená

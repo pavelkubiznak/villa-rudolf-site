@@ -22,6 +22,14 @@
  * POZN.: history.json obsahuje od 9/2026 i přímý prodej ('Přímá', pole kind).
  *   Hold se SHODNÝM termínem jako událost z feedu se do něj vůbec nepublikuje
  *   (je to týž pobyt zablokovaný na platformě), takže se sem falešný pár nedostane.
+ * OZVĚNY PŘÍMÉHO PRODEJE (od 21. 10. 2026): ta zahozená událost z feedu (ruční blokace,
+ *   náš importovaný blok) je v datech k nerozeznání od NOVÉ rezervace z platformy prodané
+ *   na přesně tentýž termín. Skript kalendáře proto u přímého prodeje vyplní `echo`
+ *   (platformy, které jeho noci hlásí) a tady z každé dvojice přímý prodej × platforma
+ *   vznikne položka „ověř" (kind 'overlap', detail.type 'echo' — tabulka jiný kind
+ *   nepustí). E-mail odejde JEDNOU, při prvním výskytu platformy; znovu se ozve, až
+ *   přibude jiná platforma nebo se přímý prodej přesune. Archivní řádek ozvěny je od
+ *   téže změny rovnou stale, takže už nedělá falešnou dvojitou rezervaci výš (23. 9. 2026).
  * DETEKCE ZMIZELÝCH: booking s uidh a departure>=dnes, jehož uidh NENÍ ve feedu =
  *   pravděpodobné storno. Jen pro arrival do 12 měsíců (feed má 13měsíční cutoff
  *   dopředu → vzdálenější pobyty můžou chybět legitimně, žádný false poplach).
@@ -95,6 +103,20 @@ for (let i = 0; i < active.length; i++) {
     } });
   }
 }
+
+// ---- OZVĚNY PŘÍMÉHO PRODEJE ----
+feed.forEach(f => {
+  if (f.platform !== 'Přímá' || !f.uidh || !Array.isArray(f.echo) || f.end <= today) return;
+  f.echo.forEach(p => {
+    if (!p) return;
+    const key = 'echo:' + f.uidh + '|' + p + '|' + f.start + '_' + f.end;
+    if (seen[key]) return; seen[key] = 1;
+    desired.push({ kind: 'overlap', key, detail: {
+      type: 'echo', uidh: f.uidh, start: f.start, end: f.end, platform: p,
+      hold: f.kind === 'hold'
+    } });
+  });
+});
 
 // ---- ZMIZELÉ (storno) ----
 const feedUidh = {}; feed.forEach(f => { if (f.uidh) feedUidh[f.uidh] = 1; });
