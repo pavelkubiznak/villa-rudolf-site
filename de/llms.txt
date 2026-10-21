@@ -2,6 +2,8 @@
 
 > Die Villa Rudolf ist eine Villa in Svoboda nad Úpou im tschechischen Riesengebirge (Krkonoše), die immer als Ganzes an eine einzige Gruppe von 6–22 Personen vermietet wird. 7 Schlafzimmer, 19 feste Betten und 3 vollwertige Zustellbetten, 5 Bäder, 257 m², eingezäuntes Grundstück mit 4.500 m², private finnische Sauna, beheizter überdachter Pool (Mai bis Ende September), Skiraum, Feuerstelle und Pavillon mit zwei Elektrogrills. Gastgeber: Pavel. Früher Rudolfův dvůr.
 
+Aktualisiert am 17. 10. 2026 (Fakten, Preise und Gästebewertungen).
+
 Haus und Grundstück gehören nur einer Gruppe, nichts wird mit fremden Gästen geteilt. Die nächsten Pisten liegen direkt in Svoboda nad Úpou (1,9 km), Černá hora und Janské Lázně 4 km, Pec pod Sněžkou 13 km, alles mit einem Skipass des SkiResorts Černá hora – Pec. Der kostenlose Skibus hält 200 m vom Tor. Ins Ortszentrum sind es 150 m, zur Bushaltestelle 100 m, zum Bahnhof 500 m. Prag und Breslau (Wrocław) sind mit dem Auto etwa 2 Stunden entfernt, Dresden 3 Stunden.
 
 ## Fakten
@@ -17,6 +19,7 @@ Haus und Grundstück gehören nur einer Gruppe, nichts wird mit fremden Gästen 
 - Hunde willkommen. Nichtraucherhaus. Check-in ab 15:00, Check-out bis 10:00. Nebenkosten inklusive.
 - Wegen der Nachbarn keine Lautsprecher im Garten und abends keine Musik. Am Feuer sitzen und reden bis spät in die Nacht ist in Ordnung.
 - Ein Masseur praktiziert gleich nebenan, den Termin reservieren wir.
+- Gästebewertungen: Airbnb 5,0/5 (8 Bewertungen), Booking.com 9,7/10 (18 Bewertungen), geprüft am 8. 10. 2026. Gäste loben am häufigsten den Platz für große Gruppen, die Sauberkeit, die große Küche, den Pool, die Sauna, die Betten und den hilfsbereiten Gastgeber.
 - Preis für das ganze Haus pro Nacht bei Direktbuchung: 13 400 Kč in der Nebensaison; 14 900 Kč im Winter (Januar bis Mitte März), an Ostern, in den Tagen um den 1. Mai, um den Wechsel von Oktober zu November und im Sommer (Ende Juni bis Anfang September); 16 400 Kč in ausgewählten Wochen im Februar und Anfang Januar; 18 000 Kč an Weihnachten und 20 000 Kč an Silvester. Mindestens 2 Nächte, an Feiertagen 3, im Sommer 5, an Weihnachten und Silvester 6. Dazu kommen die Endreinigung 3 500 Kč pro Aufenthalt, die Kurtaxe von 25 Kč pro Erwachsenen und Nacht und 500 Kč pro Hund. Den genauen Preis für einen Termin rechnet der Kalender auf der Website aus.
 
 ## Buchung und Kontakt
@@ -26,7 +29,9 @@ Adresse: Luční 519, 542 24 Svoboda nad Úpou, Tschechien. GPS 50.6254, 15.8136
 ## Seiten
 - [Haus, Ausstattung, Preisliste, Kalender und Anfrage](https://villarudolf.com/de/)
 - [Häufige Fragen](https://villarudolf.com/de/faq/)
+- [Für wen: Freundesgruppe, Familientreffen, Firmenausflug, Geburtstag, Skiwoche mit Kindern, Sommer mit Pool](https://villarudolf.com/de/pro/)
+- [Vergleich: ganze Villa, Hotel oder zwei Hütten; direkt oder über ein Portal](https://villarudolf.com/de/srovnani/)
 - [Ausflüge und Planer für Sommer und Winter](https://villarudolf.com/vylety/?lang=de)
-- [Praktische Infos zum Aufenthalt](https://villarudolf.com/info/?lang=de)
-- [Buchungsbedingungen und Storno](https://villarudolf.com/podminky/?lang=de)
+- [Praktische Infos zum Aufenthalt](https://villarudolf.com/de/info/)
+- [Buchungsbedingungen, Storno, Kaution und Hund](https://villarudolf.com/de/podminky/)
 - Andere Sprachen: [Čeština](https://villarudolf.com/) ([llms.txt](https://villarudolf.com/llms.txt)) · [Polski](https://villarudolf.com/pl/) · [English](https://villarudolf.com/en/)

@@ -15,3 +15,17 @@
 .pi-root .faq-book{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;letter-spacing:.02em;
   color:var(--pi-on-accent);background:var(--pi-accent);border-radius:2px;padding:12px 20px}
 .pi-root .faq-book:hover{background:var(--pi-accent-2)}
+/* Stránky „Pro koho" (/pro/…) — stejný vzhled, odrážky s fakty a odkazy na další příležitosti. */
+.pk-list{margin:0;padding:0 0 0 1.1em;display:grid;gap:10px;font-size:15px;line-height:1.62;color:var(--pi-muted);max-width:68ch}
+.pk-list li::marker{color:var(--pi-accent)}
+.pi-root .pk-card h2 a{color:inherit}
+.pi-root .pk-card h2 a:hover{color:var(--pi-accent)}
+.pk-card .pi-name{font-size:inherit}
+/* Srovnání (/srovnani/): tabulky, na mobilu se posouvají jen ony, ne celá stránka. */
+.pk-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -2px}
+.pk-table{width:100%;min-width:560px;border-collapse:collapse;font-size:14.5px;line-height:1.55;color:var(--pi-muted)}
+.pk-table th,.pk-table td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--pi-line,rgba(127,127,127,.25))}
+.pk-table thead th{font-weight:600;color:var(--pi-text)}
+.pk-table tbody th{font-weight:600;color:var(--pi-text);min-width:7.5em}
+.pk-table td:nth-child(2){color:var(--pi-text)}
+.pi-root .pk-table a{color:var(--pi-accent);text-decoration:underline;text-underline-offset:2px}
