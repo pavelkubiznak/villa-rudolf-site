@@ -34,6 +34,13 @@ function vanishedCard(d) {
     '<div style="color:#333;font-size:14px;margin:8px 0 2px">' + esc(d.platform || '—') + (d.name ? ' · ' + esc(d.name) : '') + '</div>' +
     '<div style="color:#6b736f;font-size:13px;margin-top:6px">Pobyt s hostem ve správě už není ve feedu kalendáře — pravděpodobně <b>storno na platformě</b>. Ověř a případně smaž ve správě.</div>', '#c48a1a');
 }
+function echoCard(d) {
+  const co = d.hold ? 'předrezervace' : 'potvrzené přímé rezervace';
+  return card('<div style="font-weight:700;color:#8a4a11;font-size:15px">🟠 Ověř termín přímého prodeje — ' + esc(fmtTermin(d.start, d.end)) + '</div>' +
+    '<div style="color:#333;font-size:14px;margin:8px 0 2px"><b>' + esc(d.platform || '—') + '</b> hlásí obsazeno přesně na termín ' + co + '.</div>' +
+    '<div style="color:#6b736f;font-size:13px;margin-top:6px">Když jsi tam termín zablokoval ty (nebo je to náš blok převzatý z kalendáře), je to v pořádku a nic nedělej — znovu se kvůli tomu neozvu. ' +
+    'Když ne, je to <b>nová rezervace na ' + esc(d.platform || 'platformě') + '</b> na stejný termín = dvojitý prodej. Ověř v extranetu.</div>', '#d9822b');
+}
 function resolvedCard(d) {
   const t = d.type === 'overlap' ? ('Dvojitá rezervace ' + esc(fmtTermin(d.overlap_start, d.overlap_end)))
                                  : ('Zmizelý pobyt ' + esc(fmtTermin(d.start, d.end)));
@@ -55,16 +62,25 @@ const applyResp = ($input.first() && $input.first().json) || {};
 const nw = applyResp.to_notify_new || [];
 const rs = applyResp.to_notify_resolved || [];
 const out = [];
+// Ozvěna, která zmizela (majitel zrušil blokaci), není zpráva — „vyřešeno" se neposílá.
+const rsMail = rs.filter(c => !(c.detail && c.detail.type === 'echo'));
 
 if (nw.length) {
-  const rows = nw.map(c => c.kind === 'overlap' ? overlapCard(c.detail) : vanishedCard(c.detail)).join('');
-  const n = nw.length, word = n === 1 ? 'konflikt' : (n <= 4 ? 'konflikty' : 'konfliktů');
-  out.push({ json: { kind: 'new', count: n, subject: '🔴 Villa Rudolf — KONFLIKT v kalendáři',
-    html: wrap('Nalezen ' + (n === 1 ? '' : n + ' ') + word + ' v kalendáři', 'Zkontroluj a vyřeš co nejdřív.', rows) } });
+  const isEcho = c => c.detail && c.detail.type === 'echo';
+  const rows = nw.map(c => isEcho(c) ? echoCard(c.detail) : c.kind === 'overlap' ? overlapCard(c.detail) : vanishedCard(c.detail)).join('');
+  const n = nw.length;
+  if (nw.every(isEcho)) {
+    out.push({ json: { kind: 'new', count: n, subject: '🟠 Villa Rudolf — ověř termín přímého prodeje',
+      html: wrap('Ověř termín přímého prodeje', 'Platforma hlásí obsazeno na termín, který jsi prodal napřímo.', rows) } });
+  } else {
+    const word = n === 1 ? 'konflikt' : (n <= 4 ? 'konflikty' : 'konfliktů');
+    out.push({ json: { kind: 'new', count: n, subject: '🔴 Villa Rudolf — KONFLIKT v kalendáři',
+      html: wrap('Nalezen ' + (n === 1 ? '' : n + ' ') + word + ' v kalendáři', 'Zkontroluj a vyřeš co nejdřív.', rows) } });
+  }
 }
-if (rs.length) {
-  const rows = rs.map(c => resolvedCard(c.detail)).join('');
-  out.push({ json: { kind: 'resolved', count: rs.length, subject: '✅ Villa Rudolf — konflikt vyřešen',
+if (rsMail.length) {
+  const rows = rsMail.map(c => resolvedCard(c.detail)).join('');
+  out.push({ json: { kind: 'resolved', count: rsMail.length, subject: '✅ Villa Rudolf — konflikt vyřešen',
     html: wrap('Konflikt vyřešen', 'Situace v kalendáři se srovnala.', rows) } });
 }
 return out;

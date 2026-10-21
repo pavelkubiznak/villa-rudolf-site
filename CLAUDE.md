@@ -124,7 +124,10 @@ záznam ze správy (do 17. 9. to bylo obráceně — zahazoval se hold). `buildS
 pravidlo: záznam z feedu na termín přímého prodeje, který už kalendář nese pod vlastním
 `uidh`, přeskočí; když ho ještě nenese, spáruje s předrezervací první takový záznam a další ozvěny téhož termínu
 (i z jiné platformy) přeskočí. Jeden pobyt, ne dva,
-a žádná falešná dvojitá rezervace. **Ozvěna je to ale jen bez vlastního hosta** (nebo s hostem
+a žádná falešná dvojitá rezervace. **Zahozená ozvěna se ale hlásí** (od 21. 10. 2026): nová
+rezervace z platformy na přesně tentýž termín vypadá v datech stejně, takže přímý prodej nese
+v `history.json` pole `echo` (platformy) a `buildStays()` k němu přidá i řádky, které sloučila
+sama — `/sprava/` ukáže šedé „ověř" a `n8n/VrConflictWatch` pošle jednou e-mail. **Ozvěna je to ale jen bez vlastního hosta** (nebo s hostem
 té předrezervace) — rezervace z platformy se spárovaným hostem na tentýž termín je druhý
 nárok a zůstane samostatně, i s červeným konfliktem (`echoOfHold()`). Hlídač překryvů ruční pobyty
 jinak ignoruje (bývají to kopie feedu), ale **ruční rezervaci z jiné platformy než „Přímá"

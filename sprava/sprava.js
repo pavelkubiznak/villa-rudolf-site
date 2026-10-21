@@ -648,6 +648,16 @@
       return !!hb && hb.id === cb.id;
     }
 
+    // Kdo hlásí noci přímého prodeje (id předrezervace → platformy). Ozvěna se slučuje
+    // nebo přeskakuje, jenže nová rezervace z platformy na přesně tentýž termín vypadá
+    // v datech stejně — odliší ji jen majitel v extranetu. Proto se nezahazuje beze stopy:
+    // z kalendáře (pole `echo`, které ozvěny zahozené už skriptem) i z řádků sloučených tady.
+    var echoOf = {};
+    function noteEcho(h, platform) {
+      if (!h || !platform || platform === 'Přímá') return;
+      (echoOf[h.id] = echoOf[h.id] || {})[platform] = true;
+    }
+
     stays = [];
     var usedBookingIds = {};
 
@@ -666,16 +676,18 @@
       // ještě STARÝ termín. Ten řádek už nic nedrží — přeskočit a předrezervaci nechat
       // na kroku 2, který ji ukáže s aktuálním datem (i pro hlídač překryvů).
       if (h && (h.arrival !== c.start || h.departure !== c.end)) return;
+      if (h && Array.isArray(c.echo)) c.echo.forEach(function (p) { noteEcho(h, p); });
       if (!h) {
         var hs = holdBySpan[c.start + '|' + c.end] || null;
         if (hs && !echoOfHold(c, hs)) hs = null;   // vlastní host = samostatná rezervace
         // Ozvěna přímého prodeje, který má v kalendáři vlastní řádek → ten řádek stačí.
-        if (hs && hs.uidh && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) return;
+        if (hs && hs.uidh && calUidh[hs.uidh + '|' + hs.arrival + '|' + hs.departure]) { noteEcho(hs, c.platform); return; }
         // přímý prodej v kalendáři ještě není (Action po 3 h) → spárovat s blokací.
         // Jen s JEDNÍM řádkem: kryje-li termín víc ozvěn (i z různých platforem),
         // další jsou tentýž nárok — přeskočit. Jako samostatný pobyt by dostaly
         // falešný konflikt s předrezervací a s hostem by se zdvojily zprávy a úkoly.
-        if (hs && usedHoldIds[hs.id]) return;
+        if (hs && usedHoldIds[hs.id]) { noteEcho(hs, c.platform); return; }
+        noteEcho(hs, c.platform);
         h = hs;
       }
       if (h) usedHoldIds[h.id] = true;
@@ -722,6 +734,9 @@
       });
     });
 
+    stays.forEach(function (s) {
+      s.echo = (s.hold && echoOf[s.hold.id]) ? Object.keys(echoOf[s.hold.id]).sort() : [];
+    });
     stays.sort(function (x, y) { return x.start < y.start ? -1 : x.start > y.start ? 1 : 0; });
   }
 
@@ -732,7 +747,7 @@
   function overlapsRange(a, b) { return a.start < b.end && b.start < a.end; }
   function detectConflictsClient() {
     var today = isoToday();
-    var res = { overlaps: [], artifacts: [], vanished: [] };
+    var res = { overlaps: [], artifacts: [], vanished: [], echoes: [] };
     for (var i = 0; i < stays.length; i++) {
       for (var j = i + 1; j < stays.length; j++) {
         var A = stays[i], B = stays[j];
@@ -764,6 +779,11 @@
         else res.overlaps.push(item);
       }
     }
+    // Přímý prodej, jehož noci hlásí i platforma: blokace, nebo nová rezervace? Stejné
+    // položky „ověř" posílá e-mailem VrConflictWatch (jednou na platformu).
+    stays.forEach(function (s) {
+      if (s.hold && s.echo && s.echo.length && s.end > today) res.echoes.push(s);
+    });
     // Jen platné záznamy: nepotvrzený (storno) si history.json pamatuje dál, a kdyby
     // se počítal, banner „Pobyt zmizel" by u storna nikdy nevyskočil.
     var cancelled = cancelledOnPlatform(today);
@@ -793,9 +813,11 @@
     if (!host) return;
     var det = detectConflictsClient();
     lastDetect = det;
-    var resolved = (serverConflicts || []).filter(function (c) { return c && c.resolved_at; });
+    var resolved = (serverConflicts || []).filter(function (c) {
+      return c && c.resolved_at && !(c.detail && c.detail.type === 'echo');
+    });
 
-    if (!det.overlaps.length && !det.vanished.length && !det.artifacts.length && !resolved.length) {
+    if (!det.overlaps.length && !det.vanished.length && !det.artifacts.length && !det.echoes.length && !resolved.length) {
       host.hidden = true; host.innerHTML = ''; return;
     }
     var html = '';
@@ -833,6 +855,14 @@
         '<div class="cb cb-green">' +
         '<div class="cb-h">✅ Vyřešeno — ' + (d.type === 'overlap' ? 'dvojitá rezervace ' : 'zmizelý pobyt ') + esc(termin) + '</div>' +
         '<div class="cb-note dim">Konflikt už v kalendáři není. Hlídač ho uzavřel.</div>' +
+        '</div>';
+    });
+
+    det.echoes.forEach(function (s) {
+      html +=
+        '<div class="cb cb-muted">' +
+        '<div class="cb-h dim">⚙︎ Termín přímého prodeje hlásí i ' + esc(s.echo.join(', ')) + ' — ' + esc(fmtTermin(s.start, s.end)) + '</div>' +
+        '<div class="cb-note dim">Nejspíš tvoje blokace nebo náš blok převzatý z kalendáře. Nová rezervace na přesně tentýž termín by ale vypadala stejně — jednou to ověř v extranetu. E-mail o tom posílá hlídač jen poprvé.</div>' +
         '</div>';
     });
 
