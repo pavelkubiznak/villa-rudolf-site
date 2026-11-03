@@ -20,12 +20,12 @@ const BASE = 'https://villarudolf.com';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Soubor v repu → veřejná URL. Jen indexovatelné stránky: homepage a Časté dotazy ve všech
-   jazycích, výlety, praktické info, podmínky a llms.txt. Stránky pro hosty a majitele
+   jazycích, praktické info, podmínky, Srovnání a stránky Pro koho (pro/…) ve všech jazycích, výlety a llms.txt. Stránky pro hosty a majitele
    (/sprava/, /registrace/, /checkin/, /album/, /smlouvy/, /pruvodce/, /tv/, /metrika/) mají
    noindex a neohlašují se. */
 function naUrl(f) {
-  if (/^(?:(?:de|pl|en|nl|fr)\/)?(?:faq\/)?index\.html$/.test(f)) return BASE + '/' + f.replace(/index\.html$/, '');
-  if (/^(?:vylety|info|podminky)\/index\.html$/.test(f)) return BASE + '/' + f.replace(/index\.html$/, '');
+  if (/^(?:(?:de|pl|en|nl|fr)\/)?(?:(?:faq|info|podminky|srovnani|pro|pro\/[a-z-]+)\/)?index\.html$/.test(f)) return BASE + '/' + f.replace(/index\.html$/, '');
+  if (/^vylety\/index\.html$/.test(f)) return BASE + '/' + f.replace(/index\.html$/, '');
   if (/^(?:(?:de|pl|en|nl|fr)\/)?llms\.txt$/.test(f)) return BASE + '/' + f;
   return null;
 }

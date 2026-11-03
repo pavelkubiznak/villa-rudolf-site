@@ -28,6 +28,11 @@ let aktualni = true;
 try { execFileSync(process.execPath, [join(root, 'tools/gen-jazyky.mjs'), '--check'], { cwd: root, stdio: 'pipe' }); }
 catch (e) { aktualni = false; console.log(String(e.stderr || e.stdout || e.message).trim()); }
 ok(aktualni, 'statické stránky odpovídají site.js a šabloně (gen-jazyky --check)');
+// Druhý den se nesmí nic změnit: datum „aktualizováno" (a lastmod v sitemap) se posouvá jen při změně obsahu.
+let zitra = true;
+try { execFileSync(process.execPath, [join(root, 'tools/gen-jazyky.mjs'), '--check'], { cwd: root, stdio: 'pipe', env: { ...process.env, GEN_DNES: '2099-01-01' } }); }
+catch (e) { zitra = false; console.log(String(e.stderr || e.stdout || e.message).trim()); }
+ok(zitra, 'jiný den bez změny obsahu = stejné stránky (datum „aktualizováno" se neposouvá samo)');
 
 // ---------- 2. přesměrování na „/" ----------
 const index = readFileSync(join(root, 'index.html'), 'utf8');
@@ -110,7 +115,25 @@ for (const [jazyk, fakta] of Object.entries(FAKTA)) {
 }
 
 // ---------- 4. relativní odkazy a cesty ve statických stránkách vedou na existující soubory ----------
-const stranky = ['', 'de/', 'pl/', 'en/', 'nl/', 'fr/'].flatMap((j) => [j + 'index.html', j + 'faq/index.html']);
+// Praktické info a podmínky (od 10/2026 statické v každém jazyce): robot bez JS musí dostat fakta.
+const PODSTRANKY_FAKTA = {
+  '': ['Check-in od 15:00', '5 000 Kč', '60 a více dní před příjezdem', 'Sintera Czech s.r.o.'],
+  'de/': ['Check-in ab 15:00', '5 000 Kč', '60 oder mehr Tage vor Anreise', 'Sintera Czech s.r.o.'],
+  'pl/': ['Zameldowanie od 15:00', '5 000 Kč', '60 lub więcej dni przed przyjazdem', 'Sintera Czech s.r.o.'],
+  'en/': ['Check-in from 15:00', '5 000 Kč', '60 or more days before arrival', 'Sintera Czech s.r.o.'],
+  'nl/': ['Inchecken vanaf 15:00', '5 000 Kč', '60 of meer dagen vóór aankomst', 'Sintera Czech s.r.o.'],
+  'fr/': ['Arrivée à partir de 15h00', '5 000 Kč', '60 jours ou plus avant l’arrivée', 'Sintera Czech s.r.o.'],
+};
+for (const [j, fakta] of Object.entries(PODSTRANKY_FAKTA)) {
+  const html = ['info/index.html', 'podminky/index.html'].map((s) => (existsSync(join(root, j + s)) ? readFileSync(join(root, j + s), 'utf8') : '')).join('\n')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '').replace(/\u00a0/g, ' ');
+  const chybi = fakta.filter((f) => !html.includes(f));
+  ok(!chybi.length, `/${j}info/ a /${j}podminky/ bez JavaScriptu nesou check-in, kauci, storno a provozovatele${chybi.length ? ' — chybí: ' + chybi.join(', ') : ''}`);
+}
+
+const PRO = ['', 'pratele/', 'rodina/', 'firmy/', 'oslava/', 'lyze-s-detmi/', 'leto-s-bazenem/'].map((x) => 'pro/' + x + 'index.html');
+const stranky = ['', 'de/', 'pl/', 'en/', 'nl/', 'fr/'].flatMap((j) => [j + 'index.html', j + 'faq/index.html', j + 'info/index.html', j + 'podminky/index.html', j + 'srovnani/index.html', ...PRO.map((x) => j + x)]);
+ok(stranky.every((s) => existsSync(join(root, s))), 'všechny stránky Pro koho a Srovnání existují ve všech jazycích');
 for (const s of stranky) {
   if (!existsSync(join(root, s))) continue;
   const html = readFileSync(join(root, s), 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, (m) => m.replace(/>[\s\S]*$/, '>'));
@@ -128,6 +151,24 @@ for (const s of stranky) {
     if (!existsSync(join(root, soubor))) rozbite.add(u);
   }
   ok(!rozbite.size, `${s}: všechny relativní odkazy a cesty vedou na existující soubor${rozbite.size ? ' — rozbité: ' + [...rozbite].slice(0, 6).join(', ') : ''}`);
+}
+
+// ---------- 5. hodnocení v llms.txt sedí s VR_REVIEWS (site.js) ----------
+// llms.txt se píše ručně; po aktualizaci čísel ve VR_REVIEWS je potřeba přepsat i řádek „Hodnocení hostů".
+const siteJs = readFileSync(join(root, 'assets/site.js'), 'utf8');
+const overeno = (/checkedAt: '(\d{4})-(\d{2})-(\d{2})'/.exec(siteJs) || []).slice(1).map(Number);
+const platformy = [...siteJs.matchAll(/\{ key: '(\w+)',\s*name: '([^']+)',\s*rating: ([\d.]+),\s*outOf: (\d+),\s*count: (\d+),([^}]*)\}/g)]
+  .filter((m) => !/hidden: true/.test(m[6]));
+for (const f of ['llms.txt', 'de/llms.txt']) {
+  const txt = readFileSync(join(root, f), 'utf8');
+  const chybi = platformy.map((m) => `${m[2]} ${Number(m[3]).toFixed(1).replace('.', ',')}/${m[4]} (${m[5]} `).filter((x) => !txt.includes(x));
+  if (overeno.length && !txt.includes(`${overeno[2]}. ${overeno[1]}. ${overeno[0]}`)) chybi.push('datum ověření ' + overeno.reverse().join('. '));
+  ok(platformy.length && !chybi.length, `${f}: hodnocení hostů odpovídá VR_REVIEWS${chybi.length ? ' — chybí: ' + chybi.join(', ') : ''}`);
+  // „Aktualizováno" v llms.txt se píše ručně — nesmí být starší než ověření hodnocení.
+  const a = /(?:Aktualizováno|Aktualisiert am) (\d{1,2})\. (\d{1,2})\. (\d{4})/.exec(txt);
+  const isoA = a ? `${a[3]}-${a[2].padStart(2, '0')}-${a[1].padStart(2, '0')}` : '';
+  const isoR = (/checkedAt: '(\d{4}-\d{2}-\d{2})'/.exec(siteJs) || [])[1] || '';
+  ok(a && isoA >= isoR, `${f}: má datum „Aktualizováno" a není starší než ověření hodnocení (${isoA || 'chybí'} ≥ ${isoR})`);
 }
 
 if (chyby) { console.log(`\n${chyby} chyb`); process.exit(1); }
