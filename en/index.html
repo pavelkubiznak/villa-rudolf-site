@@ -175,7 +175,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="../assets/site.css?v=60">
+<link rel="stylesheet" href="../assets/site.css?v=61">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
@@ -1131,6 +1131,30 @@
             <span class="sw"><i style="background:var(--vr-ember)"></i><span data-t="book.chosen">Your stay</span></span>
             <span class="sw"><i style="background:linear-gradient(135deg,var(--vr-day-free) 0 50%,transparent 50%);border:1px solid var(--vr-line)"></i><span data-t="book.checkoutOnly">checkout only</span></span>
             <span class="demo" id="vr-avail-note" role="status" aria-live="polite"></span>
+          </div>
+          <!-- Volné termíny jako text pro roboty bez JavaScriptu (AI asistenti). Plní tools/gen-jazyky.mjs z assets/volno.json. -->
+          <div class="vr-volno" id="vr-volno">
+            <details>
+              <summary>Free dates as a list</summary>
+              <p>As of 3 November 2026. The list updates automatically twice a day from the booking calendar and only shows dates long enough for the minimum stay. First date = arrival, second = departure. We always confirm your dates personally.</p>
+              <p>Christmas 2026: booked · New Year’s Eve 2026/27: booked · Christmas 2027: free · New Year’s Eve 2027/28: free · Christmas 2028: free · New Year’s Eve 2028/29: free</p>
+              <ul>
+                <li>10 January – 30 January 2027 (20 nights)</li>
+                <li>13 February – 20 February 2027 (7 nights)</li>
+                <li>27 February – 4 March 2027 (5 nights)</li>
+                <li>7 March – 29 April 2027 (53 nights)</li>
+                <li>2 May – 5 May 2027 (3 nights)</li>
+                <li>9 May – 14 May 2027 (5 nights)</li>
+                <li>18 May – 22 May 2027 (4 nights)</li>
+                <li>29 May – 2 June 2027 (4 nights)</li>
+                <li>6 June – 10 June 2027 (4 nights)</li>
+                <li>13 June – 17 June 2027 (4 nights)</li>
+                <li>20 June – 23 June 2027 (3 nights)</li>
+                <li>5 September – 29 October 2027 (54 nights)</li>
+                <li>1 November 2027 – 25 May 2028 (206 nights)</li>
+                <li>from 28 May 2028 onwards (the calendar is open until 11 January 2029)</li>
+              </ul>
+            </details>
           </div>
         </div>
         <aside class="vr-book-aside" data-state="form">
