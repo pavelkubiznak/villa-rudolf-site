@@ -28,7 +28,7 @@ Adresa: Luční 519, 542 24 Svoboda nad Úpou, Česko. GPS 50.6254, 15.8136.
 
 <!-- VOLNO:START — generuje tools/gen-jazyky.mjs z assets/volno.json (2× denně), ručně neupravovat -->
 ## Volné termíny
-Stav k 17. října 2026. Seznam se obnovuje automaticky dvakrát denně z rezervačního kalendáře; uvádí jen termíny, do kterých se vejde minimální pobyt. První datum je příjezd, druhé odjezd. Termín vždy potvrzujeme osobně.
+Stav k 3. listopadu 2026. Seznam se obnovuje automaticky dvakrát denně z rezervačního kalendáře; uvádí jen termíny, do kterých se vejde minimální pobyt. První datum je příjezd, druhé odjezd. Termín vždy potvrzujeme osobně.
 
 - Vánoce 2026: obsazeno
 - Silvestr 2026/27: obsazeno
@@ -36,7 +36,6 @@ Stav k 17. října 2026. Seznam se obnovuje automaticky dvakrát denně z rezerv
 - Silvestr 2027/28: volno
 - Vánoce 2028: volno
 - Silvestr 2028/29: volno
-- 26. října – 28. října 2026 (2 noci)
 - 10. ledna – 30. ledna 2027 (20 nocí)
 - 13. února – 20. února 2027 (7 nocí)
 - 27. února – 4. března 2027 (5 nocí)
@@ -53,7 +52,7 @@ Stav k 17. října 2026. Seznam se obnovuje automaticky dvakrát denně z rezerv
 - 28. května 2028 a dál (kalendář je otevřený do 11. ledna 2029)
 
 ## Free dates
-As of 17 October 2026. The list updates automatically twice a day from the booking calendar and only shows dates long enough for the minimum stay. First date = arrival, second = departure. We always confirm your dates personally.
+As of 3 November 2026. The list updates automatically twice a day from the booking calendar and only shows dates long enough for the minimum stay. First date = arrival, second = departure. We always confirm your dates personally.
 
 - Christmas 2026: booked
 - New Year’s Eve 2026/27: booked
@@ -61,7 +60,6 @@ As of 17 October 2026. The list updates automatically twice a day from the booki
 - New Year’s Eve 2027/28: free
 - Christmas 2028: free
 - New Year’s Eve 2028/29: free
-- 26 October – 28 October 2026 (2 nights)
 - 10 January – 30 January 2027 (20 nights)
 - 13 February – 20 February 2027 (7 nights)
 - 27 February – 4 March 2027 (5 nights)

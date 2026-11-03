@@ -175,7 +175,7 @@
 <meta name="theme-color" content="#0E1311">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230E1311'/%3E%3Cpath d='M4 25 L12.5 9 L17.5 18 L20.5 12.5 L28 25 Z' fill='%23D68A4C'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
-<link rel="stylesheet" href="../assets/site.css?v=60">
+<link rel="stylesheet" href="../assets/site.css?v=61">
 <!-- Výchozí sezóna (?season → datum → uložená volba) se musí rozhodnout ještě
      před prvním vykreslením, jinak by v lednu bliklo léto. Proto synchronně,
      bez defer — soubor je pár set bajtů. -->
@@ -1131,6 +1131,30 @@
             <span class="sw"><i style="background:var(--vr-ember)"></i><span data-t="book.chosen">Euer Aufenthalt</span></span>
             <span class="sw"><i style="background:linear-gradient(135deg,var(--vr-day-free) 0 50%,transparent 50%);border:1px solid var(--vr-line)"></i><span data-t="book.checkoutOnly">nur Abreise</span></span>
             <span class="demo" id="vr-avail-note" role="status" aria-live="polite"></span>
+          </div>
+          <!-- Volné termíny jako text pro roboty bez JavaScriptu (AI asistenti). Plní tools/gen-jazyky.mjs z assets/volno.json. -->
+          <div class="vr-volno" id="vr-volno">
+            <details>
+              <summary>Freie Termine als Liste</summary>
+              <p>Stand: 3. November 2026. Die Liste wird zweimal täglich automatisch aus dem Buchungskalender aktualisiert und nennt nur Zeiträume, in die der Mindestaufenthalt passt. Erstes Datum = Anreise, zweites = Abreise. Den Termin bestätigen wir euch immer persönlich.</p>
+              <p>Weihnachten 2026: ausgebucht · Silvester 2026/27: ausgebucht · Weihnachten 2027: frei · Silvester 2027/28: frei · Weihnachten 2028: frei · Silvester 2028/29: frei</p>
+              <ul>
+                <li>10. Januar – 30. Januar 2027 (20 Nächte)</li>
+                <li>13. Februar – 20. Februar 2027 (7 Nächte)</li>
+                <li>27. Februar – 4. März 2027 (5 Nächte)</li>
+                <li>7. März – 29. April 2027 (53 Nächte)</li>
+                <li>2. Mai – 5. Mai 2027 (3 Nächte)</li>
+                <li>9. Mai – 14. Mai 2027 (5 Nächte)</li>
+                <li>18. Mai – 22. Mai 2027 (4 Nächte)</li>
+                <li>29. Mai – 2. Juni 2027 (4 Nächte)</li>
+                <li>6. Juni – 10. Juni 2027 (4 Nächte)</li>
+                <li>13. Juni – 17. Juni 2027 (4 Nächte)</li>
+                <li>20. Juni – 23. Juni 2027 (3 Nächte)</li>
+                <li>5. September – 29. Oktober 2027 (54 Nächte)</li>
+                <li>1. November 2027 – 25. Mai 2028 (206 Nächte)</li>
+                <li>ab 28. Mai 2028 (der Kalender ist bis 11. Januar 2029 offen)</li>
+              </ul>
+            </details>
           </div>
         </div>
         <aside class="vr-book-aside" data-state="form">
