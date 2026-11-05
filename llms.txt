@@ -47,7 +47,8 @@ Stav k 5. listopadu 2026. Seznam se obnovuje automaticky dvakrát denně z rezer
 - 6. června – 10. června 2027 (4 noci)
 - 13. června – 17. června 2027 (4 noci)
 - 20. června – 23. června 2027 (3 noci)
-- 5. září – 29. října 2027 (54 nocí)
+- 5. září – 17. září 2027 (12 nocí)
+- 19. září – 29. října 2027 (40 nocí)
 - 1. listopadu 2027 – 25. května 2028 (206 nocí)
 - 28. května 2028 a dál (kalendář je otevřený do 11. ledna 2029)
 
@@ -71,7 +72,8 @@ As of 5 November 2026. The list updates automatically twice a day from the booki
 - 6 June – 10 June 2027 (4 nights)
 - 13 June – 17 June 2027 (4 nights)
 - 20 June – 23 June 2027 (3 nights)
-- 5 September – 29 October 2027 (54 nights)
+- 5 September – 17 September 2027 (12 nights)
+- 19 September – 29 October 2027 (40 nights)
 - 1 November 2027 – 25 May 2028 (206 nights)
 - from 28 May 2028 onwards (the calendar is open until 11 January 2029)
 <!-- VOLNO:END -->
