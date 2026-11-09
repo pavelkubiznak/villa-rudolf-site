@@ -28,7 +28,7 @@ Adresa: Luční 519, 542 24 Svoboda nad Úpou, Česko. GPS 50.6254, 15.8136.
 
 <!-- VOLNO:START — generuje tools/gen-jazyky.mjs z assets/volno.json (2× denně), ručně neupravovat -->
 ## Volné termíny
-Stav k 8. listopadu 2026. Seznam se obnovuje automaticky dvakrát denně z rezervačního kalendáře; uvádí jen termíny, do kterých se vejde minimální pobyt. První datum je příjezd, druhé odjezd. Termín vždy potvrzujeme osobně.
+Stav k 9. listopadu 2026. Seznam se obnovuje automaticky dvakrát denně z rezervačního kalendáře; uvádí jen termíny, do kterých se vejde minimální pobyt. První datum je příjezd, druhé odjezd. Termín vždy potvrzujeme osobně.
 
 - Vánoce 2026: obsazeno
 - Silvestr 2026/27: obsazeno
@@ -55,7 +55,7 @@ Stav k 8. listopadu 2026. Seznam se obnovuje automaticky dvakrát denně z rezer
 - 28. května 2028 a dál (kalendář je otevřený do 11. ledna 2029)
 
 ## Free dates
-As of 8 November 2026. The list updates automatically twice a day from the booking calendar and only shows dates long enough for the minimum stay. First date = arrival, second = departure. We always confirm your dates personally.
+As of 9 November 2026. The list updates automatically twice a day from the booking calendar and only shows dates long enough for the minimum stay. First date = arrival, second = departure. We always confirm your dates personally.
 
 - Christmas 2026: booked
 - New Year’s Eve 2026/27: booked
