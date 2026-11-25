@@ -28,7 +28,7 @@ Adresse: Luční 519, 542 24 Svoboda nad Úpou, Tschechien. GPS 50.6254, 15.8136
 
 <!-- VOLNO:START — generiert von tools/gen-jazyky.mjs aus assets/volno.json (2× täglich), nicht von Hand ändern -->
 ## Freie Termine
-Stand: 24. November 2026. Die Liste wird zweimal täglich automatisch aus dem Buchungskalender aktualisiert und nennt nur Zeiträume, in die der Mindestaufenthalt passt. Erstes Datum = Anreise, zweites = Abreise. Den Termin bestätigen wir euch immer persönlich.
+Stand: 25. November 2026. Die Liste wird zweimal täglich automatisch aus dem Buchungskalender aktualisiert und nennt nur Zeiträume, in die der Mindestaufenthalt passt. Erstes Datum = Anreise, zweites = Abreise. Den Termin bestätigen wir euch immer persönlich.
 
 - Weihnachten 2026: ausgebucht
 - Silvester 2026/27: ausgebucht
@@ -38,7 +38,6 @@ Stand: 24. November 2026. Die Liste wird zweimal täglich automatisch aus dem Bu
 - Silvester 2028/29: frei
 - 10. Januar – 14. Januar 2027 (4 Nächte)
 - 17. Januar – 30. Januar 2027 (13 Nächte)
-- 13. Februar – 20. Februar 2027 (7 Nächte)
 - 27. Februar – 4. März 2027 (5 Nächte)
 - 14. März – 19. März 2027 (5 Nächte)
 - 21. März – 26. März 2027 (5 Nächte)
